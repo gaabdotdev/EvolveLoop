@@ -1,0 +1,37 @@
+apiVersion: evolveloop.io/v3
+kind: SchemaContract
+metadata:
+  id: EvolutionCandidateStub
+  version: "0.1.2"
+  status: draft
+  owners: [orchestrator-v3]
+spec:
+  schema_kinds:
+    - EvolutionCandidateStub
+  source_refs:
+    - EVOLVELOOP_V3.md#229
+    - EVOLVELOOP_V3.md#231
+  description: >
+    Schema-only evolution candidate stub. NO promote / Self-Evolution runtime.
+  enums:
+    EvolutionBlastRadius: [LOCAL, SUBSYSTEM, RUNTIME, GLOBAL]
+  required_fields:
+    EvolutionCandidateStub:
+      - metadata.candidate_id
+      - spec.target
+      - spec.problem_statement
+      - spec.baseline
+      - spec.hypothesis
+      - spec.proposed_change
+      - spec.expected_gain
+      - spec.risk
+      - spec.affected_contracts
+      - spec.affected_capabilities
+      - spec.test_plan
+      - spec.red_team_plan
+      - spec.benchmark_plan
+      - spec.rollback_plan
+      - spec.blast_radius
+  non_goals:
+    - promote pipeline
+    - canary rollout execution

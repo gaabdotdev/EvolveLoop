@@ -111,7 +111,7 @@ export {
   type EvolveLoopProfile,
 } from "./config/profile.js";
 export { MemoryStore } from "./memory/memory-store.js";
-export { FilesystemMemoryStore } from "./memory/filesystem-memory-store.js";
+export { FilesystemMemoryStore, assertFeatureIdConfined } from "./memory/filesystem-memory-store.js";
 export { JsonlEventPersister } from "./persistence/jsonl-event-persister.js";
 export { resolveDataPaths, type DataPaths } from "./persistence/paths.js";
 export { MetricsAccumulator } from "./telemetry/metrics-accumulator.js";
@@ -194,3 +194,6 @@ export { JobStore, type SkillJob, type SkillJobResult } from "./jobs/job-store.j
 export { invokePickup, buildPickupPrompt, type PickupPlan } from "./jobs/job-pickup.js";
 export { jobResultToExecuteResult, loadEvidenceFile } from "./jobs/job-resume.js";
 export { saveCheckpoint, loadCheckpoint, clearCheckpoint, type EngineCheckpoint } from "./jobs/checkpoint.js";
+
+// V3 additive — contracts + minimal Agency Layer (proposes; does not execute)
+export * from "./v3/index.js";

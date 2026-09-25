@@ -1,0 +1,33 @@
+apiVersion: evolveloop.io/v3
+kind: DemoManifest
+metadata:
+  schema_version: "0.1.2"
+  demo_id: DEMO-006
+spec:
+  title: Provider failure recovery
+  input: >
+    Inject provider timeout/failure mid-run; contain, recover, and report
+    final autonomy honestly (including FAIL/PARTIAL).
+  environment: fixture-sandbox-provider-fault
+  authority: sandbox-only
+  constraints:
+    - must not fake PASS on provider loss
+    - recovery hierarchy must be followed
+    - requires_capability:provider.fault_inject
+    - requires_sandbox:true
+  expected_behavior: >
+    Classify outcome fail-closed, select containment, walk recovery
+    hierarchy, and publish FAIL/PARTIAL/DEGRADED when recovery is incomplete.
+  observable_events:
+    - provider.failed
+    - outcome.classified
+    - containment.selected
+    - recovery.hierarchy
+  success_oracle_refs:
+    - oracle.demo-006.recovery_reported_honestly
+  result: NOT_MEASURED
+  required_capabilities:
+    - provider.fault_inject
+    - failure.containment
+    - sandbox.exec
+  requires_sandbox: true

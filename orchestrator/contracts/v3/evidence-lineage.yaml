@@ -1,0 +1,24 @@
+apiVersion: evolveloop.io/v3
+kind: SchemaContract
+metadata:
+  id: EvidenceLineage
+  version: "0.1.2"
+  status: draft
+  owners: [orchestrator-v3]
+spec:
+  schema_kinds:
+    - EvidenceLineage
+  source_refs:
+    - EVOLVELOOP_V3.md#328
+  description: >
+    Bidirectional provenance graph around existing Evidence v2.1 objects.
+    Points to capability-orchestrator.io/v2 Evidence; does NOT replace builders.
+  invariants:
+    - evidence_api_version MUST be capability-orchestrator.io/v2
+    - Do not fork or rewrite evidence/builders.ts
+  required_fields:
+    EvidenceLineage:
+      - spec.evidence_ref
+      - spec.evidence_api_version
+      - spec.backward
+      - spec.forward

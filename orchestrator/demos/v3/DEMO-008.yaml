@@ -1,0 +1,33 @@
+apiVersion: evolveloop.io/v3
+kind: DemoManifest
+metadata:
+  schema_version: "0.1.2"
+  demo_id: DEMO-008
+spec:
+  title: Self-testing / adversarial verification
+  input: >
+    Run adversarial self-checks against the demo surface itself: refuse
+    forged PASS, detect missing evidence, and surface NOT_MEASURED gaps.
+  environment: fixture-sandbox-adversarial
+  authority: sandbox-only
+  constraints:
+    - never invent PASS without oracle evidence
+    - adversarial cases must remain measurable as FAIL/BLOCKED/NOT_MEASURED
+    - requires_capability:verify.adversarial
+    - requires_sandbox:true
+  expected_behavior: >
+    Attempt forged success paths, verify they are rejected, and emit an
+    evidence package (or honest NOT_MEASURED) for third-party inspection.
+  observable_events:
+    - adversarial.case
+    - forged_pass.rejected
+    - oracle.evaluated
+    - evidence.package
+  success_oracle_refs:
+    - oracle.demo-008.forged_pass_rejected
+  result: NOT_MEASURED
+  required_capabilities:
+    - verify.adversarial
+    - evidence.package
+    - sandbox.exec
+  requires_sandbox: true

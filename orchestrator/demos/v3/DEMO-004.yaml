@@ -1,0 +1,33 @@
+apiVersion: evolveloop.io/v3
+kind: DemoManifest
+metadata:
+  schema_version: "0.1.2"
+  demo_id: DEMO-004
+spec:
+  title: Novel debugging task
+  input: >
+    Debug a novel failure mode not covered by canned playbooks; revise
+    beliefs from observations.
+  environment: fixture-sandbox-novel-debug
+  authority: sandbox-only
+  constraints:
+    - no copy-paste of known benchmark solutions
+    - world-model beliefs must cite observations
+    - requires_capability:debug.novel
+    - requires_sandbox:true
+  expected_behavior: >
+    Observe, form beliefs, hypothesize, test under sandbox, update world
+    model, and leave lineage of evidence for the diagnosis.
+  observable_events:
+    - observation.recorded
+    - belief.revised
+    - hypothesis.tested
+    - evidence.lineage
+  success_oracle_refs:
+    - oracle.demo-004.root_cause_evidenced
+  result: NOT_MEASURED
+  required_capabilities:
+    - debug.novel
+    - world.observe
+    - sandbox.exec
+  requires_sandbox: true

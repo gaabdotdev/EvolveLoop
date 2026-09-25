@@ -1,0 +1,33 @@
+apiVersion: evolveloop.io/v3
+kind: DemoManifest
+metadata:
+  schema_version: "0.1.2"
+  demo_id: DEMO-002
+spec:
+  title: Broken application recovery
+  input: >
+    Start from a fixture application that fails health checks; restore a
+    working state without inventing success.
+  environment: fixture-sandbox-broken-app
+  authority: sandbox-only
+  constraints:
+    - no production writes
+    - recovery must leave evidence trail
+    - requires_capability:app.diagnose
+    - requires_sandbox:true
+  expected_behavior: >
+    Detect failure, contain blast radius, recover via hierarchy, and verify
+    with SuccessOracle — never coerce UNKNOWN to PASS.
+  observable_events:
+    - failure.classified
+    - containment.selected
+    - recovery.step
+    - oracle.evaluated
+  success_oracle_refs:
+    - oracle.demo-002.health_restored
+  result: NOT_MEASURED
+  required_capabilities:
+    - app.diagnose
+    - app.recover
+    - sandbox.exec
+  requires_sandbox: true

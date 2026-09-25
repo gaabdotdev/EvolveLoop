@@ -1,0 +1,37 @@
+apiVersion: evolveloop.io/v3
+kind: SchemaContract
+metadata:
+  id: BeliefObservation
+  version: "0.1.2"
+  status: draft
+  owners: [orchestrator-v3]
+spec:
+  schema_kinds:
+    - Observation
+    - Belief
+  source_refs:
+    - EVOLVELOOP_V3.md#187
+    - EVOLVELOOP_V3.md#188
+  description: >
+    Strict separation of raw observations from interpretive beliefs.
+    Hypotheses MUST NOT be stored as facts.
+  enums:
+    BeliefStatus:
+      - hypothesis
+      - supported
+      - strongly_supported
+      - suspect
+      - invalidated
+  required_fields:
+    Observation:
+      - metadata.observation_id
+      - metadata.observed_at
+      - spec.raw
+      - spec.source
+    Belief:
+      - metadata.belief_id
+      - metadata.updated_at
+      - spec.statement
+      - spec.status
+      - spec.supporting_observation_refs
+      - spec.confidence

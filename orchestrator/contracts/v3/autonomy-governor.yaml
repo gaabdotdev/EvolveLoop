@@ -1,0 +1,47 @@
+apiVersion: evolveloop.io/v3
+kind: SchemaContract
+metadata:
+  id: AutonomyGovernor
+  version: "0.1.2"
+  status: draft
+  owners: [orchestrator-v3]
+spec:
+  schema_kinds:
+    - AutonomyGovernorDecision
+    - GovernorDecisionMatrixRule
+  source_refs:
+    - EVOLVELOOP_V3.md#Meta-44
+    - EVOLVELOOP_V3.md#255
+  description: >
+    Operational autonomy level proposal from risk/authority/safety_state inputs.
+    Does not replace Policy Engine — proposes level within policy bounds.
+    FW-H01: typed decision matrix is enforceable in validators + AutonomyGovernor.
+  enums:
+    AutonomyGovernorLevel:
+      - AUTONOMOUS
+      - AUTONOMOUS_WITH_REVIEW
+      - HUMAN_GATE
+      - BLOCK
+    DegradedAutonomyMode:
+      - FULL_AUTONOMY
+      - LIMITED_AUTONOMY
+      - READ_ONLY
+      - OBSERVE_ONLY
+      - SANDBOX_ONLY
+      - HUMAN_APPROVAL
+      - QUARANTINED
+  decision_matrix_invariants:
+    - QUARANTINED safety_state requires level BLOCK
+    - risk=critical forbids AUTONOMOUS and AUTONOMOUS_WITH_REVIEW
+    - risk=critical + irreversible requires BLOCK
+    - risk=high forbids AUTONOMOUS
+    - SUSPECT|RESTRICTED|RECOVERING forbids AUTONOMOUS
+    - policy_ref required when level != BLOCK
+  required_fields:
+    AutonomyGovernorDecision:
+      - metadata.decision_id
+      - spec.inputs
+      - spec.inputs.safety_state
+      - spec.level
+      - spec.rationale
+      - spec.decided_at

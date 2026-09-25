@@ -1,0 +1,32 @@
+apiVersion: evolveloop.io/v3
+kind: DemoManifest
+metadata:
+  schema_version: "0.1.2"
+  demo_id: DEMO-001
+spec:
+  title: Unknown repository task
+  input: >
+    Clone an unfamiliar repository fixture and accomplish a documented goal
+    without prior project-specific memory.
+  environment: fixture-sandbox-unknown-repo
+  authority: sandbox-only
+  constraints:
+    - no network outside sandbox
+    - no prior project memory
+    - requires_capability:repo.inspect
+    - requires_sandbox:true
+  expected_behavior: >
+    Discover structure, form goals, plan under policy, execute inside sandbox,
+    and emit verifiable evidence of task outcome.
+  observable_events:
+    - goal.accepted
+    - capability.discovered
+    - action.executed
+    - evidence.recorded
+  success_oracle_refs:
+    - oracle.demo-001.task_complete
+  result: NOT_MEASURED
+  required_capabilities:
+    - repo.inspect
+    - sandbox.exec
+  requires_sandbox: true

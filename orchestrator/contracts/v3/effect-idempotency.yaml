@@ -1,0 +1,36 @@
+apiVersion: evolveloop.io/v3
+kind: SchemaContract
+metadata:
+  id: EffectIdempotency
+  version: "0.1.2"
+  status: draft
+  owners: [orchestrator-v3]
+spec:
+  schema_kinds:
+    - EffectClassification
+    - IdempotencyClass
+    - EffectIdempotencyDeclaration
+  source_refs:
+    - EVOLVELOOP_V3.md#258
+    - EVOLVELOOP_V3.md#259
+  description: >
+    Effect and idempotency declarations for external capabilities.
+  enums:
+    EffectClassification:
+      - READ
+      - DERIVE
+      - LOCAL_WRITE
+      - EXTERNAL_WRITE
+      - COMMUNICATION
+      - DESTRUCTIVE
+      - IRREVERSIBLE
+    IdempotencyClass:
+      - idempotent
+      - conditionally_idempotent
+      - non_idempotent
+      - unknown
+  required_fields:
+    EffectIdempotencyDeclaration:
+      - spec.capability_id
+      - spec.effects
+      - spec.idempotency

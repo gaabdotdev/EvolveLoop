@@ -1,0 +1,44 @@
+apiVersion: evolveloop.io/v3
+kind: SchemaContract
+metadata:
+  id: MemoryTrustClass
+  version: "0.1.2"
+  status: draft
+  owners: [orchestrator-v3]
+spec:
+  schema_kinds:
+    - MemoryTrustClass
+    - MemoryTrustAnnotation
+    - MemoryEntryWithTrust
+  source_refs:
+    - EVOLVELOOP_V3.md#191
+  description: >
+    V3 memory trust classification bridged onto V2 MemoryEntry.
+    FW-H04: MemoryEntryWithTrust extends MemoryEntry with optional trust_class.
+    Does NOT create a second MemoryStore — use annotateMemoryEntry().
+  enums:
+    MemoryTrustClass:
+      - OBSERVED
+      - VERIFIED
+      - INFERRED
+      - REPORTED
+      - LEARNED
+      - PREDICTED
+      - INVALIDATED
+      - STALE
+  invariants:
+    - store_namespace MUST be v3_memory_trust
+    - Does not mutate V2 MemoryStore APIs
+    - MemoryEntryWithTrust is a bridge type over V2 MemoryEntry (timestamp,source,type,content)
+    - annotateMemoryEntry is the only supported annotation helper (no MemoryStore2)
+  required_fields:
+    MemoryTrustAnnotation:
+      - spec.memory_ref
+      - spec.trust_class
+      - spec.annotated_at
+      - spec.store_namespace
+    MemoryEntryWithTrust:
+      - timestamp
+      - source
+      - type
+      - content

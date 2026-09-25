@@ -1,0 +1,40 @@
+apiVersion: evolveloop.io/v3
+kind: SchemaContract
+metadata:
+  id: SuccessOracle
+  version: "0.1.2"
+  status: draft
+  owners: [orchestrator-v3]
+spec:
+  schema_kinds:
+    - SuccessOracleCriterion
+    - GoalSatisfactionProof
+  source_refs:
+    - EVOLVELOOP_V3.md#Meta-3
+    - EVOLVELOOP_V3.md#180
+    - EVOLVELOOP_V3.md#181
+  description: >
+    Multi-dimensional success criteria and proof package for goal satisfaction.
+  enums:
+    OracleCriterionType: [functional, quality, safety, operational, resource, user_defined]
+    OracleCriterionStatus: [pending, met, unmet, uncertain, waived]
+    SatisfactionDecision: [success, partial_success, failure, uncertain]
+  required_fields:
+    SuccessOracleCriterion:
+      - spec.criterion_id
+      - spec.type
+      - spec.required
+      - spec.measurement
+      - spec.threshold
+      - spec.evidence_source
+      - spec.verification_method
+      - spec.status
+    GoalSatisfactionProof:
+      - metadata.goal_id
+      - spec.requested_outcome
+      - spec.observed_changes
+      - spec.observation_summary
+      - spec.criterion_evidence
+      - spec.uncertain_criteria
+      - spec.assumptions
+      - spec.decision

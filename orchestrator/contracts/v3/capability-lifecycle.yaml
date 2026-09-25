@@ -1,0 +1,35 @@
+apiVersion: evolveloop.io/v3
+kind: SchemaContract
+metadata:
+  id: CapabilityLifecycle
+  version: "0.1.2"
+  status: draft
+  owners: [orchestrator-v3]
+spec:
+  schema_kinds:
+    - CapabilityLifecycleRecord
+    - CapabilityLifecycleState
+  source_refs:
+    - EVOLVELOOP_V3.md#204
+  description: >
+    Fabric-ready lifecycle annotation for registry capabilities.
+    Does NOT introduce a second capability registry.
+  enums:
+    CapabilityLifecycleState:
+      - DISCOVERED
+      - CANDIDATE
+      - VALIDATED
+      - AVAILABLE
+      - DEGRADED
+      - QUARANTINED
+      - REVOKED
+      - REPLACED
+      - REVALIDATED
+  required_fields:
+    CapabilityLifecycleRecord:
+      - spec.capability_id
+      - spec.capability_version
+      - spec.state
+      - spec.updated_at
+  notes:
+    - capability_id references existing registry entries only

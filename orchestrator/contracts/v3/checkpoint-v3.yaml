@@ -1,0 +1,35 @@
+apiVersion: evolveloop.io/v3
+kind: SchemaContract
+metadata:
+  id: CheckpointSchemaV3
+  version: "0.1.2"
+  status: draft
+  owners: [orchestrator-v3]
+spec:
+  schema_kinds:
+    - CheckpointSchemaV3
+  source_refs:
+    - EVOLVELOOP_V3.md#264
+  description: >
+    Long-horizon checkpoint envelope. Conceptually extends job checkpoint fields
+    without breaking EngineCheckpoint apiVersion capability-orchestrator.io/v2.
+  invariants:
+    - CheckpointSchemaV3.apiVersion is evolveloop.io/v3
+    - Optional engine_checkpoint_ref points to v2 EngineCheckpoint; never rewrite v2 apiVersion
+  required_fields:
+    CheckpointSchemaV3:
+      - metadata.checkpoint_id
+      - metadata.saved_at
+      - spec.goal_state_ref
+      - spec.active_belief_refs
+      - spec.memory_refs
+  optional_fields:
+    - spec.engine_checkpoint_ref
+    - spec.world_model_snapshot_ref
+    - spec.task_graph_ref
+    - spec.resource_accounting
+    - spec.policy_snapshot_ref
+    - spec.authority
+    - spec.capability_state_refs
+    - spec.pending_effects
+    - spec.recovery_metadata

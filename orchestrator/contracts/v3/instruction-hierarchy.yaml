@@ -1,0 +1,41 @@
+apiVersion: evolveloop.io/v3
+kind: SchemaContract
+metadata:
+  id: InstructionHierarchy
+  version: "0.1.2"
+  status: draft
+  owners: [orchestrator-v3]
+spec:
+  schema_kinds:
+    - InstructionHierarchyLevel
+    - InstructionHierarchyBinding
+  source_refs:
+    - EVOLVELOOP_V3.md#299
+    - EVOLVELOOP_V3.md#300
+  description: >
+    Instruction precedence — external data cannot override higher authority.
+    FW-H03: sealed_root + authority_issued for levels above external_data.
+  enums:
+    InstructionHierarchyLevel_precedence_high_to_low:
+      - system_policy
+      - authority_policy
+      - goal_constraints
+      - task_instructions
+      - external_data
+    sealed_root_levels:
+      - system_policy
+      - authority_policy
+  invariants:
+    - may_override_levels must be strictly lower precedence than level
+    - external_data may_override_levels must be empty
+    - external_data must not set sealed_root=true
+    - system_policy and authority_policy require sealed_root=true and authority_issued=true
+    - every level above external_data requires authority_issued=true
+    - lower-priority content cannot override higher-priority content
+  required_fields:
+    InstructionHierarchyBinding:
+      - spec.level
+      - spec.content_ref
+      - spec.may_override_levels
+      - spec.sealed_root
+      - spec.authority_issued

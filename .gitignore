@@ -20,8 +20,8 @@ agent-setup/.pytest_cache/
 *.pyc
 *.tsbuildinfo
 
-# Local memory / sessions / workspaces
-memory/
+# Local memory / sessions / workspaces (repo-root only — do NOT ignore orchestrator/src/memory/)
+/memory/
 *-workspace/
 security-workspace/
 **/runs/

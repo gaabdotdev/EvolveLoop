@@ -1,0 +1,33 @@
+apiVersion: evolveloop.io/v3
+kind: DemoManifest
+metadata:
+  schema_version: "0.1.2"
+  demo_id: DEMO-007
+spec:
+  title: External-world interaction
+  input: >
+    Interact with an external-world fixture (API/tool boundary) under
+    least authority and sandbox depth gates.
+  environment: fixture-sandbox-external-world
+  authority: delegated-external-read
+  constraints:
+    - least authority
+    - effect classes must match sandbox depth
+    - requires_capability:world.external
+    - requires_sandbox:true
+  expected_behavior: >
+    Gate effects by SafetySandboxContext, record observations from the
+    external boundary, and refuse depth/effect mismatches.
+  observable_events:
+    - sandbox.depth_checked
+    - effect.classified
+    - external.action
+    - observation.recorded
+  success_oracle_refs:
+    - oracle.demo-007.external_effect_gated
+  result: NOT_MEASURED
+  required_capabilities:
+    - world.external
+    - safety.sandbox
+    - sandbox.exec
+  requires_sandbox: true

@@ -1,0 +1,44 @@
+apiVersion: evolveloop.io/v3
+kind: SchemaContract
+metadata:
+  id: Meta0EvidenceDemo
+  version: "0.1.2"
+  status: draft
+  owners: [orchestrator-v3]
+spec:
+  schema_kinds:
+    - EvidencePackageManifest
+    - DemoManifest
+  source_refs:
+    - v3-metas-topo.md#Meta-0
+  description: >
+    Meta0 public proof schemas — reproducible evidence packages and demo catalog entries.
+    Meta0 is not in EVOLVELOOP_V3.md body (GAP); formalized from v3-metas-topo.md.
+  required_fields:
+    EvidencePackageManifest:
+      - metadata.package_id
+      - spec.execution_id
+      - spec.goal
+      - spec.environment
+      - spec.version
+      - spec.agent
+      - spec.providers
+      - spec.capabilities
+      - spec.policy
+      - spec.final_outcome
+      - spec.package_root
+      - spec.files.manifest
+    DemoManifest:
+      - metadata.demo_id
+      - spec.title
+      - spec.input
+      - spec.environment
+      - spec.authority
+      - spec.constraints
+      - spec.expected_behavior
+      - spec.observable_events
+      - spec.success_oracle_refs
+  notes:
+    - Demo catalog fixtures live under orchestrator/demos/v3 (DEMO-001..008)
+    - Meta0 stub runner (runDemoStub) reports NOT_MEASURED/BLOCKED — never fakes PASS
+    - Live EvidencePackage generation remains future work

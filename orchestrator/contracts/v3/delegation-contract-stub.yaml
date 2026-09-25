@@ -1,0 +1,24 @@
+apiVersion: evolveloop.io/v3
+kind: SchemaContract
+metadata:
+  id: DelegationContractStub
+  version: "0.1.2"
+  status: draft
+  owners: [orchestrator-v3]
+spec:
+  schema_kinds:
+    - DelegationContractStub
+  source_refs:
+    - EVOLVELOOP_V3.md#237
+  description: >
+    Delegation boundary stub — delegated agents must not inherit unrestricted authority.
+  required_fields:
+    DelegationContractStub:
+      - metadata.delegation_id
+      - spec.what_is_delegated
+      - spec.what_is_not_delegated
+      - spec.allowed_capabilities
+      - spec.forbidden_capabilities
+      - spec.data_scope
+      - spec.success_criteria
+      - spec.evidence_expected

@@ -52,4 +52,28 @@ describe("FilesystemMemoryStore", () => {
     const reloaded = new FilesystemMemoryStore(dir);
     expect(reloaded.getPreferences("2026-login")).toHaveLength(1);
   });
+
+  it("SEC-002: rejects featureId path traversal (../evil)", () => {
+    const dir = mkdtempSync(join(tmpdir(), "orch-mem-"));
+    const mem = new FilesystemMemoryStore(dir);
+
+    expect(() =>
+      mem.initFeature("../evil", { ir_id: "x", policy: "rapid-prototype" }),
+    ).toThrow(/escape|featureId/i);
+
+    expect(() =>
+      mem.append("../evil", {
+        timestamp: "2026-06-30T10:00:00Z",
+        source: "user",
+        type: "preference",
+        content: "should not write",
+      }),
+    ).toThrow(/escape|featureId/i);
+
+    expect(() =>
+      mem.initFeature("foo/bar", { ir_id: "x", policy: "rapid-prototype" }),
+    ).toThrow(/escape|featureId/i);
+
+    expect(existsSync(join(dir, "..", "evil"))).toBe(false);
+  });
 });

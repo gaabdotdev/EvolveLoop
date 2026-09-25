@@ -1,0 +1,61 @@
+apiVersion: evolveloop.io/v3
+kind: SchemaContract
+metadata:
+  id: GoalContract
+  version: "0.1.2"
+  status: draft
+  owners: [orchestrator-v3]
+spec:
+  schema_kinds:
+    - GoalContract
+    - GoalLifecycleState
+    - GoalVersion
+    - GoalTransition
+  source_refs:
+    - EVOLVELOOP_V3.md#176
+    - EVOLVELOOP_V3.md#Meta-3
+  description: >
+    Operational goal representation with lifecycle and versioning (§176).
+    Conclusion depends on Success Oracle evidence, not task-list exhaustion.
+  enums:
+    GoalLifecycleState:
+      - proposed
+      - accepted
+      - active
+      - blocked
+      - paused
+      - replanning
+      - verifying
+      - completed
+      - abandoned
+      - cancelled
+      - expired
+      - failed
+      - superseded
+  required_fields:
+    GoalContract:
+      - apiVersion
+      - kind
+      - metadata.id
+      - metadata.schema_version
+      - spec.desired_outcome
+      - spec.constraints
+      - spec.non_goals
+      - spec.success_criteria_refs
+      - spec.lifecycle_state
+      - spec.goal_version
+    GoalTransition:
+      - goal_id
+      - version
+      - reason
+      - evidence
+      - timestamp
+      - actor
+      - from_state
+      - to_state
+  notes:
+    - Schema 0.1.1 reconciles GoalLifecycle with EVOLVELOOP_V3.md §176 (FW-C02)
+    - parent_goal_id is optional on GoalContract.metadata (root goals omit it)
+    - GoalTransition must preserve goal_id, parent_goal_id, version, reason, evidence, timestamp, policy_snapshot, actor
+    - Does not implement Agency loop
+    - success_criteria_refs point to SuccessOracleCriterion.criterion_id

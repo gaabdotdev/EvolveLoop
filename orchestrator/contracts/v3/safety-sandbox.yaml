@@ -1,0 +1,56 @@
+apiVersion: evolveloop.io/v3
+kind: SchemaContract
+metadata:
+  id: SafetySandbox
+  version: "0.1.2"
+  status: draft
+  owners: [orchestrator-v3]
+spec:
+  schema_kinds:
+    - SafetyState
+    - SandboxDepth
+    - SandboxDepthRequirement
+    - SafetySandboxContext
+  source_refs:
+    - EVOLVELOOP_V3.md#254
+    - EVOLVELOOP_V3.md#211
+    - EVOLVELOOP_V3.md#259
+  description: >
+    Safety state machine and sandbox depth classification S0–S5.
+    Schema only — no sandbox OS implementation.
+    FW-H02: SandboxDepthRequirement binds effect_class → min_depth.
+  enums:
+    SafetyState:
+      - NORMAL
+      - SUSPECT
+      - RESTRICTED
+      - QUARANTINED
+      - RECOVERING
+      - RESTORED
+    SandboxDepth:
+      S0: logical restriction
+      S1: workspace isolation
+      S2: process isolation
+      S3: container isolation
+      S4: VM / microVM isolation
+      S5: hardened external execution boundary
+  sandbox_depth_requirements:
+    READ: S0
+    DERIVE: S0
+    LOCAL_WRITE: S1
+    EXTERNAL_WRITE: S2
+    COMMUNICATION: S2
+    DESTRUCTIVE: S3
+    IRREVERSIBLE: S4
+  invariants:
+    - DESTRUCTIVE at S0 MUST be rejected
+    - IRREVERSIBLE requires min_depth S4
+    - When SafetySandboxContext.spec.effect_classes is set, each class must meet min_depth
+  required_fields:
+    SafetySandboxContext:
+      - spec.safety_state
+      - spec.sandbox_depth
+      - spec.updated_at
+    SandboxDepthRequirement:
+      - effect_class
+      - min_depth

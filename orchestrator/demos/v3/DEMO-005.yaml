@@ -1,0 +1,33 @@
+apiVersion: evolveloop.io/v3
+kind: DemoManifest
+metadata:
+  schema_version: "0.1.2"
+  demo_id: DEMO-005
+spec:
+  title: Long-horizon engineering
+  input: >
+    Multi-step engineering goal spanning planning, execution, checkpoint,
+    and verification across a long wall-clock budget.
+  environment: fixture-sandbox-long-horizon
+  authority: sandbox-only
+  constraints:
+    - checkpoints required before irreversible steps
+    - stagnation detection must be active
+    - requires_capability:plan.long_horizon
+    - requires_sandbox:true
+  expected_behavior: >
+    Maintain goal lifecycle across steps, checkpoint state, detect
+    stagnation, and verify completion via SuccessOracle — not agent claim.
+  observable_events:
+    - goal.transition
+    - checkpoint.saved
+    - stagnation.checked
+    - oracle.evaluated
+  success_oracle_refs:
+    - oracle.demo-005.horizon_complete
+  result: NOT_MEASURED
+  required_capabilities:
+    - plan.long_horizon
+    - checkpoint.v3
+    - sandbox.exec
+  requires_sandbox: true
