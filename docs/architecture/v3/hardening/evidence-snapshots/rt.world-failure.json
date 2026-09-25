@@ -1,0 +1,138 @@
+{
+  "artifact": "rt.world-failure",
+  "role": "critic",
+  "parent_cycle_id": "evolveloop-v3-h0",
+  "spawn_depth": 1,
+  "reviewed_at": "2026-09-24T21:25:00-03:00",
+  "mission": "Red-team World Model poisoning, Belief contamination, Failure classification coercion, Stagnation false-negative, Recovery hierarchy unused",
+  "knowledge_grounding": {
+    "status": "applied_with_gap",
+    "sources_applied": [
+      "docs/architecture/v3/WORLD-MODEL.md",
+      "docs/architecture/v3/hardening/INDEPENDENT-RECON.md",
+      "orchestrator/src/v3/world-model/{assert,reconcile,world-model-store}.ts",
+      "orchestrator/src/v3/failure/{classify-outcome,stagnation,recovery-hierarchy}.ts",
+      "orchestrator/src/v3/agency/agency-loop.ts",
+      "orchestrator/src/v3/adapters/agency-runtime.ts",
+      "EVOLVELOOP_V3.md §184–185"
+    ],
+    "gaps": [
+      "long-horizon daemon absent (AgencyLoop single-step)",
+      "EvolveLoop wiki pack still stub (log-only)",
+      "RecoveryHierarchy advances are stub strategy walks only — no real rollback/OS kill auto-execute"
+    ]
+  },
+  "contracts_checked": {
+    "observation_ne_belief": {
+      "status": "held_after_fix",
+      "note": "Structural Belief reject + inference-language heuristic on Observation.spec.raw (§184)"
+    },
+    "zero_silent_failure": {
+      "status": "held_after_fix",
+      "note": "true/{ok:true}/arrays never PASS; UNKNOWN/N/A→NOT_MEASURED after slash normalize"
+    },
+    "stagnation_detection": {
+      "status": "held_after_fix",
+      "note": "Same action_id ×20 with tiny fingerprint drift → repeated_action. action_id trim+lowercase normalize closes WF-04b."
+    },
+    "recovery_hierarchy_wired": {
+      "status": "held_after_fix",
+      "note": "agency-runtime imports RecoveryHierarchy; advances on FAIL/BLOCKED|stagnation|containment; AgencyRunReport.recovery {current_step,history}"
+    }
+  },
+  "test_run": {
+    "command": "nvm use 24; npm test -- --run tests/unit/v3",
+    "result": "13 files / 174 tests passed",
+    "adversarial_file": "orchestrator/tests/unit/v3/adversarial/world-failure.test.ts"
+  },
+  "attacks": [
+    {
+      "id": "WF-01",
+      "name": "putObservation inference language (Belief contamination)",
+      "severity_if_open": "high",
+      "status": "FIXED",
+      "test": "WF-01",
+      "result": "PASS (after fix)",
+      "fix": "assertObservationVsBelief rejects inference markers in spec.raw via looksLikeInferenceLanguage"
+    },
+    {
+      "id": "WF-02",
+      "name": "Belief contradiction not surfaced in toSnapshot open_signals",
+      "severity_if_open": "high",
+      "status": "DEFENDED",
+      "test": "WF-02",
+      "result": "PASS (defense works)",
+      "note": "contradicts revision edge → contradictory:* in open_signals; hasContradictionSignals true"
+    },
+    {
+      "id": "WF-03",
+      "name": "classifyOutcome coercion (success/PASS/true/{ok:true})",
+      "severity_if_open": "critical",
+      "status": "FIXED",
+      "test": "WF-03",
+      "result": "PASS (after fix)",
+      "fix": "normalizeToken now collapses '/' so N/A→N_A→NOT_MEASURED; non-strings remain NOT_MEASURED; unknown tokens UNCERTAIN never PASS"
+    },
+    {
+      "id": "WF-04",
+      "name": "StagnationDetector same action 20× tiny content change",
+      "severity_if_open": "high",
+      "status": "DEFENDED",
+      "test": "WF-04",
+      "result": "PASS (defense works)",
+      "note": "repeated_action fires despite fingerprint micro-drift"
+    },
+    {
+      "id": "WF-04b",
+      "name": "Stagnation false-negative via action_id case/whitespace",
+      "severity_if_open": "medium",
+      "status": "FIXED",
+      "severity": "MEDIUM",
+      "test": "WF-04b",
+      "result": "PASS (after fix)",
+      "fix": "normalizeActionId(trim+lowercase) applied in StagnationDetector.observe before keying; it.fails → it"
+    },
+    {
+      "id": "WF-05",
+      "name": "RecoveryHierarchy never called from agency-runtime",
+      "severity_if_open": "high",
+      "status": "FIXED",
+      "severity": "HIGH",
+      "test": "WF-05 (assert WIRED)",
+      "result": "PASS (wired)",
+      "fix": "agency-runtime instantiates RecoveryHierarchy; advanceRecoveryHierarchy on FAIL/BLOCKED|stagnation|containment; AgencyRunReport.recovery with current step + history (stub advances only)"
+    },
+    {
+      "id": "WF-06",
+      "name": "World drift obs Y vs belief X → AgencyLoop risk bump",
+      "severity_if_open": "high",
+      "status": "FIXED",
+      "test": "WF-06",
+      "result": "PASS (after fix)",
+      "fix": "reconcile emits contradictory when supporting observation polarity opposes belief statement; AgencyLoop escalates risk≥high → governor confirm under NORMAL"
+    }
+  ],
+  "open_findings": [],
+  "fixed_this_turn": [
+    {
+      "id": "WF-04b",
+      "severity": "MEDIUM",
+      "summary": "Normalize action_id (trim+lowercase) in StagnationDetector before keying"
+    },
+    {
+      "id": "WF-05",
+      "severity": "HIGH",
+      "summary": "Wire RecoveryHierarchy into agency-runtime failure path; AgencyRunReport.recovery"
+    }
+  ],
+  "verdict_summary": "Six attack surfaces encoded. WF-01/03/06 previously fixed. WF-04b closed via action_id normalize. WF-05 closed: RecoveryHierarchy reachable on failure path with report.recovery (stub strategy advances — real rollback auto-execute remains intentional gap).",
+  "entrega": {
+    "tests": "orchestrator/tests/unit/v3/adversarial/world-failure.test.ts",
+    "code_fixes": [
+      "orchestrator/src/v3/failure/stagnation.ts",
+      "orchestrator/src/v3/adapters/agency-runtime.ts",
+      "orchestrator/src/v3/adapters/index.ts"
+    ],
+    "evidence": "memory/evolveloop-v3-hardening/evidence/rt.world-failure.json"
+  }
+}

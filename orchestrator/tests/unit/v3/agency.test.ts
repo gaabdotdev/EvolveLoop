@@ -98,8 +98,8 @@ describe("V3 AgencyLoop", () => {
 
     const low = result.proposals.find((p) => p.goal_id === "goal-low");
     expect(low).toBeTruthy();
-    // low → medium after contradiction bump
-    expect(low!.risk).toBe("medium");
+    // low → high after contradiction (skip silent ALLOW; HUMAN_GATE under NORMAL)
+    expect(low!.risk).toBe("high");
     expect(low!.rationale).toMatch(/open_signals/);
     expect(low!.rationale).toMatch(/belief_ids=b1,b2/);
     expect(low!.rationale).toMatch(/world_contradiction/);

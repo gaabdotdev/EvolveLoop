@@ -17,6 +17,18 @@ const BELIEF_ONLY_SPEC_KEYS = [
 ] as const;
 
 /**
+ * Heuristic markers that turn raw text into Belief/inference (§184).
+ * Fail-closed: inference language must not silently become Observation.
+ */
+export const INFERENCE_LANGUAGE_RE =
+  /\b(?:i (?:infer|believe|think|conclude|assume|suspect)|we (?:can|should) (?:infer|conclude)|therefore|presumably|it (?:seems|appears)(?: that| like)?|my (?:hypothesis|inference|belief)|inferred (?:that|from)|probably (?:because|due)|likely (?:because|due)|hypothesis:)\b/i;
+
+/** True when text looks like interpretive inference rather than a raw sensor fact. */
+export function looksLikeInferenceLanguage(raw: string): boolean {
+  return INFERENCE_LANGUAGE_RE.test(raw);
+}
+
+/**
  * Garanta that `candidate` is a raw Observation, not a Belief or inference-shaped object.
  * Throws ChannelSeparationError on violation; returns the validated Observation otherwise.
  */
@@ -36,6 +48,14 @@ export function assertObservationVsBelief(candidate: unknown): Observation {
       if (key in candidate.spec) {
         details.push(`spec.${key} is Belief-only and forbidden on Observation`);
       }
+    }
+    if (
+      typeof candidate.spec.raw === "string" &&
+      looksLikeInferenceLanguage(candidate.spec.raw)
+    ) {
+      details.push(
+        "spec.raw contains inference language — write interpretive claims on the Belief channel",
+      );
     }
   }
 

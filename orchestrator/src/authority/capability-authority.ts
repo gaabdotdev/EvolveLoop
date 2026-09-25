@@ -48,14 +48,47 @@ export interface AuthorityResult {
   };
 }
 
+/**
+ * Expand percent-encoding / backslash separators before escape check (SEC-010).
+ * Prevents `..%2f` / `..\\` theater that Node resolve would otherwise treat as literals.
+ */
+function expandPathAttackVariants(targetPath: string): string[] {
+  const variants = new Set<string>([targetPath]);
+  let cur = targetPath;
+  for (let i = 0; i < 3; i++) {
+    try {
+      const decoded = decodeURIComponent(cur.replace(/\+/g, "%20"));
+      if (decoded === cur) break;
+      variants.add(decoded);
+      cur = decoded;
+    } catch {
+      break;
+    }
+  }
+  // Windows-style separators → POSIX for resolve confinement on Linux hosts.
+  for (const v of [...variants]) {
+    if (v.includes("\\")) variants.add(v.replace(/\\/g, "/"));
+  }
+  return [...variants];
+}
+
 export function pathEscapesWorkspace(
   targetPath: string | undefined,
   workspaceRoot: string | undefined,
 ): boolean {
   if (!targetPath || !workspaceRoot) return false;
+  // Null bytes truncate / confuse FS APIs — treat as escape (deny).
+  if (targetPath.includes("\0")) return true;
+
   const root = resolve(workspaceRoot);
-  const resolved = resolve(root, targetPath);
-  return !(resolved === root || resolved.startsWith(root + "/"));
+  for (const candidate of expandPathAttackVariants(targetPath)) {
+    if (candidate.includes("\0")) return true;
+    const resolved = resolve(root, candidate);
+    if (!(resolved === root || resolved.startsWith(root + "/"))) {
+      return true;
+    }
+  }
+  return false;
 }
 
 function isShell(req: AuthorityRequest): boolean {

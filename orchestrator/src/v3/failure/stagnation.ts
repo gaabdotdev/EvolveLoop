@@ -18,6 +18,15 @@ export interface StagnationDetectorOptions {
   no_progress_threshold?: number;
 }
 
+/**
+ * Normalize action tokens before keying (WF-04b).
+ * Trim + lowercase so case/whitespace variants collapse to one key.
+ */
+export function normalizeActionId(actionId: string | undefined): string | undefined {
+  if (typeof actionId !== "string") return actionId;
+  return actionId.trim().toLowerCase();
+}
+
 function countRepeats(values: Array<string | undefined>, key: string): number {
   return values.filter((v) => v === key).length;
 }
@@ -63,6 +72,7 @@ export class StagnationDetector {
   observe(event: StagnationEvent): StagnationReport {
     this.events.push({
       ...event,
+      action_id: normalizeActionId(event.action_id),
       at: event.at ?? new Date().toISOString(),
     });
     while (this.events.length > this.windowSize) {

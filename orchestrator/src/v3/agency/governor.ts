@@ -15,6 +15,7 @@ import type {
   SafetyState,
 } from "../contracts/types.js";
 import { validateAutonomyGovernorDecision } from "../contracts/validators.js";
+import { isSafetyState } from "../failure/safety-transitions.js";
 import type { AgencyProposal, GovernorAction, GovernorDecideInput } from "./types.js";
 
 export interface GovernorDecisionResult {
@@ -31,7 +32,20 @@ const ACTION_TO_LEVEL: Record<GovernorAction, AutonomyGovernorLevel> = {
 };
 
 /**
+ * Normalize + validate safety_state at the governor boundary (SEC-009).
+ * Trim + exact enum match. Unknown / casing variants → null (caller denies).
+ * Whitespace-padded valid enums coerce to the canonical SafetyState.
+ */
+export function coerceSafetyState(raw: unknown): SafetyState | null {
+  if (typeof raw !== "string") return null;
+  const trimmed = raw.trim();
+  if (!isSafetyState(trimmed)) return null;
+  return trimmed;
+}
+
+/**
  * Deterministic rules aligned to AUTONOMY_GOVERNOR_DECISION_MATRIX (FW-H01):
+ * - invalid / unknown safety_state → deny (fail-closed)
  * - QUARANTINED → deny
  * - RESTRICTED + critical/high → deny; else degrade
  * - SUSPECT + critical → deny; high → confirm; else degrade
@@ -43,22 +57,25 @@ const ACTION_TO_LEVEL: Record<GovernorAction, AutonomyGovernorLevel> = {
  */
 export function selectGovernorAction(
   risk: AgencyProposal["risk"],
-  safety_state: SafetyState,
+  safety_state: SafetyState | string,
 ): GovernorAction {
-  if (safety_state === "QUARANTINED") return "deny";
+  const state = coerceSafetyState(safety_state);
+  if (!state) return "deny";
 
-  if (safety_state === "RESTRICTED") {
+  if (state === "QUARANTINED") return "deny";
+
+  if (state === "RESTRICTED") {
     if (risk === "critical" || risk === "high") return "deny";
     return "degrade";
   }
 
-  if (safety_state === "SUSPECT") {
+  if (state === "SUSPECT") {
     if (risk === "critical") return "deny";
     if (risk === "high") return "confirm";
     return "degrade";
   }
 
-  if (safety_state === "RECOVERING") {
+  if (state === "RECOVERING") {
     if (risk === "critical" || risk === "high") return "deny";
     if (risk === "medium") return "confirm";
     return "degrade";
@@ -68,7 +85,7 @@ export function selectGovernorAction(
   if (risk === "critical") return "deny";
   if (risk === "high") return "confirm";
   if (risk === "medium") {
-    return safety_state === "NORMAL" || safety_state === "RESTORED" ? "allow" : "confirm";
+    return state === "NORMAL" || state === "RESTORED" ? "allow" : "confirm";
   }
   return "allow";
 }
@@ -138,8 +155,11 @@ function buildDecision(
 }
 
 export function decideAutonomy(input: GovernorDecideInput): GovernorDecisionResult {
-  const action = selectGovernorAction(input.proposal.risk, input.safety_state);
-  const decision = buildDecision(input, action);
+  const coerced = coerceSafetyState(input.safety_state);
+  // Fail-closed: unknown safety stamps as QUARANTINED for the decision record.
+  const safety_state: SafetyState = coerced ?? "QUARANTINED";
+  const action = selectGovernorAction(input.proposal.risk, safety_state);
+  const decision = buildDecision({ ...input, safety_state }, action);
   return {
     action,
     level: ACTION_TO_LEVEL[action],

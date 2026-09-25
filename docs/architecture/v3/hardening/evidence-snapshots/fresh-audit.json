@@ -1,0 +1,196 @@
+{
+  "artifact": "fresh-audit",
+  "role": "critic",
+  "parent_cycle_id": "evolveloop-v3-h0",
+  "spawn_depth": 1,
+  "max_spawn_depth": 3,
+  "reviewed_at": "2026-09-24T21:24:00-03:00",
+  "branch": "evolve-v3-hardening",
+  "mission": "Independent second-pass audit AFTER hardening — distrust FIXED labels; re-read code + run adversarial tests",
+  "knowledge_grounding": {
+    "status": "applied_with_gap",
+    "sources_applied": [
+      "orchestrator/src/v3/adapters/agency-runtime.ts",
+      "orchestrator/src/v3/goals/success-oracle.ts",
+      "orchestrator/src/v3/agency/governor.ts",
+      "orchestrator/src/v3/failure/{recovery-hierarchy,stagnation,classify-outcome,containment}.ts",
+      "orchestrator/src/memory/{memory-store,secret-redaction}.ts",
+      "orchestrator/tests/unit/v3/adversarial/*",
+      "docs/architecture/v3/hardening/{SSOT,INDEPENDENT-RECON}.md",
+      "memory/evolveloop-v3-hardening/evidence/rt.*.json (hearsay only)"
+    ],
+    "gaps": [
+      "OS sandbox NOT_IMPLEMENTED",
+      "long-horizon / AgencyLoop daemon absent",
+      "self-evolution promote absent in V3",
+      "multi-agent / DelegationContractStub schema-only",
+      "EvolveLoop wiki pack still log-only"
+    ]
+  },
+  "test_run": {
+    "command": "nvm use 24; npm test -- --run tests/unit/v3/adversarial",
+    "node": "v24.18.0",
+    "result": "5 files / 60 tests passed",
+    "it_fails_remaining": 0,
+    "describe_skip_remaining": 0
+  },
+  "briefing_answers": {
+    "Q1_RecoveryHierarchy_invoked": {
+      "verdict": "CONFIRMED_FIXED",
+      "detail": "runAgencyRuntime instantiates RecoveryHierarchy; advanceRecoveryHierarchy → failCurrent on FAIL/BLOCKED|stagnation|containment (degrade path + post-oracle). AgencyRunReport.recovery includes snapshot + history. Behavioral assert in agency-runtime.test.ts (history.length≥1)."
+    },
+    "Q2_DESTRUCTIVE_with_only_sandbox_attestation": {
+      "verdict": "CONFIRMED_FIXED",
+      "detail": "isDestructiveDeniedWithoutOsSandbox runs BEFORE attestation gate. sandbox_attestation:true alone → BLOCKED with destructive_denied_os_sandbox_not_implemented unless EVOLVELOOP_ALLOW_DESTRUCTIVE_WITHOUT_OS_SANDBOX=true. OS isolation still NOT_IMPLEMENTED (PARTIAL honesty)."
+    },
+    "Q3_oracle_success_without_revision_stamp_after_mutate": {
+      "verdict": "CONFIRMED_FIXED",
+      "nuance": "NEW_PARTIAL",
+      "detail": "SuccessOracle.evaluateGoal rejects omit/mismatch of evidence_goal_revision for success (RT-05b). Direct API attack confirmed. Nuance: agency-runtime ALWAYS injects evidence_goal_revision=goal.spec.goal_version.revision at oracle time — omit path never exercised on runtime; stamp is caller-trust not collection-time provenance (FA-01)."
+    },
+    "Q4_secrets_redacted_on_disk": {
+      "verdict": "CONFIRMED_FIXED",
+      "detail": "MemoryStore.append redacts via redactSecretLikeContent before push; FilesystemMemoryStore inherits — unit + ADV tests prove hunter2/AKIA/Bearer/sk- absent from preferences.yaml."
+    },
+    "Q5_quarantine_casing_bypass": {
+      "verdict": "CONFIRMED_FIXED",
+      "detail": "coerceSafetyState: trim + exact SAFETY_STATES match; wrong-case/unknown → null → selectGovernorAction deny; runtime entry coerces unknown → QUARANTINED. 'quarantined' cannot reach allow."
+    },
+    "Q6_recovery_wiring_new_bypass": {
+      "verdict": "CONFIRMED_FIXED",
+      "detail": "Recovery advances are strategy-walk + report only; do not skip DESTRUCTIVE deny, attestation, governor deny, or quarantine. No new allow bypass found from recovery wiring."
+    },
+    "Q7_partial_fixes_skipped_tests": {
+      "verdict": "STILL_OPEN_DOCUMENTED",
+      "detail": "No it.fails/it.skip in adversarial suite. OPEN documented in tests: SEC-004 risk_by_goal host override, SEC-005 InstructionHierarchy schema-only, SEC-008 AcquisitionGate self-attest, MockProvider authority bypass (informational). SEC-001 OS sandbox still NOT_IMPLEMENTED."
+    },
+    "Q8_cross_domain_coherence": {
+      "verdict": "COHERENT_WITH_GAPS",
+      "detail": "Agency→Governor→IR/fixture→Engine→Oracle→classify/containment/stagnation/recovery chain consistent fail-closed. Fabric optional enrichment; AcquisitionGate not on runtime path. World contradiction bumps risk. Evidence eligibility + oracle gates hold. Expected missing: OS sandbox, long-horizon, self-evolution, multi-agent."
+    }
+  },
+  "findings": [
+    {
+      "id": "FA-01",
+      "status": "NEW",
+      "severity": "medium",
+      "title": "Runtime auto-stamps evidence_goal_revision to live goal revision",
+      "paths": [
+        "orchestrator/src/v3/adapters/agency-runtime.ts (EvidenceRefBundle construction ~L907-913)"
+      ],
+      "note": "RT-05b omit-stamp defense holds on SuccessOracle API. agency-runtime never omits — always stamps current revision at eval time. Binding proves caller agreement with current goal.revision, not that evidence was collected under that revision. In-tick evidence is coherent; cross-session provenance remains host-trust. Not a regression of omit-reject; partial vs claimed 'revision binding'."
+    },
+    {
+      "id": "FA-02",
+      "status": "NEW",
+      "severity": "low",
+      "title": "WF-05 adversarial test is mostly source-grep; behavior covered elsewhere",
+      "paths": [
+        "orchestrator/tests/unit/v3/adversarial/world-failure.test.ts (WF-05)",
+        "orchestrator/tests/unit/v3/agency-runtime.test.ts (recovery.history)"
+      ],
+      "note": "Adversarial WF-05 does not execute a failure tick — it greps agency-runtime.ts. Behavioral wiring is proven in agency-runtime.test.ts. Not a functional hole; test-depth gap."
+    },
+    {
+      "id": "WF-05",
+      "status": "CONFIRMED_FIXED",
+      "severity_was": "high",
+      "title": "RecoveryHierarchy wired into agency-runtime",
+      "residual": "STILL_OPEN — stub strategy walk only; no real rollback/OS kill auto-execute"
+    },
+    {
+      "id": "SEC-001",
+      "status": "CONFIRMED_FIXED",
+      "severity_was": "high",
+      "title": "DESTRUCTIVE denied without env opt-in even with sandbox_attestation",
+      "residual": "STILL_OPEN — OS sandbox NOT_IMPLEMENTED; non-DESTRUCTIVE high-risk + attestation remains host theater"
+    },
+    {
+      "id": "RT-05b",
+      "status": "CONFIRMED_FIXED",
+      "severity_was": "high",
+      "title": "Oracle refuses success when evidence_goal_revision omitted",
+      "residual": "see FA-01 nuance on runtime auto-stamp"
+    },
+    {
+      "id": "RT-09b",
+      "status": "CONFIRMED_FIXED",
+      "severity_was": "high",
+      "title": "desired_outcome requires outcome_met or non-presence criterion"
+    },
+    {
+      "id": "SEC-006",
+      "status": "CONFIRMED_FIXED",
+      "severity_was": "high",
+      "title": "Secrets redacted before memory disk write"
+    },
+    {
+      "id": "SEC-009",
+      "status": "CONFIRMED_FIXED",
+      "severity_was": "high",
+      "title": "QUARANTINED casing/unknown fail-closed deny"
+    },
+    {
+      "id": "WF-04b",
+      "status": "CONFIRMED_FIXED",
+      "severity_was": "medium",
+      "title": "Stagnation action_id normalize trim+lowercase"
+    },
+    {
+      "id": "SEC-004",
+      "status": "STILL_OPEN",
+      "severity": "medium",
+      "title": "risk_by_goal host override can downgrade governor risk"
+    },
+    {
+      "id": "SEC-005",
+      "status": "STILL_OPEN",
+      "severity": "medium",
+      "title": "InstructionHierarchy schema-only — not runtime-wired"
+    },
+    {
+      "id": "SEC-008",
+      "status": "STILL_OPEN",
+      "severity": "medium",
+      "title": "AcquisitionGate self-attested REGISTER; not called by agency-runtime"
+    },
+    {
+      "id": "META-OS-SANDBOX",
+      "status": "STILL_OPEN",
+      "severity": "high",
+      "title": "OS process sandbox NOT_IMPLEMENTED"
+    },
+    {
+      "id": "META-LONG-HORIZON",
+      "status": "STILL_OPEN",
+      "severity": "high",
+      "title": "Persistent agency / long-horizon daemon absent"
+    },
+    {
+      "id": "META-SELF-EVOLUTION",
+      "status": "STILL_OPEN",
+      "severity": "medium",
+      "title": "V3 EvolutionCandidateStub — no promote path"
+    },
+    {
+      "id": "META-MULTI-AGENT",
+      "status": "STILL_OPEN",
+      "severity": "medium",
+      "title": "DelegationContractStub schema-only — no multi-agent runtime"
+    },
+    {
+      "id": "NOVEL-D",
+      "status": "STILL_OPEN",
+      "severity": "medium",
+      "title": "Goal Bankruptcy §320 unimplemented (novel harness D NOT_MEASURED)"
+    }
+  ],
+  "regressions": [],
+  "code_fixes_this_audit": [],
+  "verdict_summary": "Independent re-verify: prior HIGH FIXED claims for Recovery wiring, DESTRUCTIVE deny, oracle omit-stamp, secret redaction, quarantine casing HOLD under code+tests (60/60 adversarial PASS). No REGRESSION. Two NEW notes (FA-01 revision stamp provenance theater on runtime path; FA-02 WF-05 grep-depth). Expected gaps still open: OS sandbox, long-horizon, self-evolution, multi-agent, SEC-004/005/008.",
+  "release_posture": "blocked_for_autonomy_production_claims",
+  "entrega": {
+    "evidence": "memory/evolveloop-v3-hardening/evidence/fresh-audit.json",
+    "doc": "docs/architecture/v3/hardening/FRESH-AUDIT.md"
+  }
+}

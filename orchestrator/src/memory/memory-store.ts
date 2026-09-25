@@ -1,4 +1,5 @@
 import type { MemoryEntry } from "../types/index.js";
+import { redactSecretLikeContent } from "./secret-redaction.js";
 
 export interface FeatureMemoryMeta {
   ir_id: string;
@@ -48,7 +49,11 @@ export class MemoryStore {
       feat = { entries: [] };
       this.features.set(featureId, feat);
     }
-    feat.entries.push({ ...entry });
+    // SEC-006: redact secret-like content before store (in-memory and filesystem).
+    feat.entries.push({
+      ...entry,
+      content: redactSecretLikeContent(String(entry.content ?? "")),
+    });
   }
 
   getPreferences(featureId: string): MemoryEntry[] {

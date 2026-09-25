@@ -240,11 +240,36 @@ describe("V3 SuccessOracle", () => {
 
     const pass = oracle.evaluateGoal(store.get("g-oracle")!, map, {
       evidence_refs: ["evidence:pass"],
+      executor_id: "execution-engine",
+      verifier_id: "success-oracle",
+      evidence_goal_revision: store.get("g-oracle")!.spec.goal_version.revision,
+      outcome_met: true,
     });
     expect(pass.decision).toBe("success");
     expect(pass.proof.spec.decision).toBe("success");
 
     const fail = evaluateGoal(goal, map, { evidence_refs: [] });
     expect(fail.decision).toBe("failure");
+  });
+
+  it("executor≠verifier: success withheld without distinct identities", () => {
+    const store = new GoalStore();
+    store.create({
+      id: "g-ev",
+      desired_outcome: "done",
+      success_criteria_refs: ["c1"],
+    });
+    activateGoal(store, "g-ev");
+    const map = new Map([["c1", criterion("c1", "presence_of_evidence")]]);
+    const same = evaluateGoal(store.get("g-ev")!, map, {
+      evidence_refs: ["evidence:ok"],
+      executor_id: "self",
+      verifier_id: "self",
+    });
+    expect(same.decision).not.toBe("success");
+    const missing = evaluateGoal(store.get("g-ev")!, map, {
+      evidence_refs: ["evidence:ok"],
+    });
+    expect(missing.decision).toBe("uncertain");
   });
 });

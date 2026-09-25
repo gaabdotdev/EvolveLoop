@@ -1,0 +1,159 @@
+{
+  "artifact": "rt.mutation",
+  "role": "gate",
+  "parent_cycle_id": "evolveloop-v3-h0",
+  "spawn_depth": 1,
+  "reviewed_at": "2026-09-24T21:16:00-03:00",
+  "mission": "Test-the-tests via mutation analysis on critical security functions WITHOUT permanently breaking production code",
+  "knowledge_grounding": {
+    "status": "applied_with_gap",
+    "sources_applied": [
+      "orchestrator/src/v3/failure/classify-outcome.ts",
+      "orchestrator/src/v3/goals/success-oracle.ts (isEligibleEvidenceRef)",
+      "orchestrator/src/v3/agency/governor.ts (coerceSafetyState)",
+      "orchestrator/tests/unit/v3/adversarial/*",
+      "orchestrator/tests/unit/v3/failure.test.ts",
+      "docs/architecture/v3/hardening/SSOT.md"
+    ],
+    "gaps": [
+      "EvolveLoop wiki pack still stub (log-only)",
+      "gaabwiki CLI scout returned vault listing only — contracts taken from code"
+    ]
+  },
+  "approach": {
+    "primary": "in-process property tables + shadow mutants (pure twins) in mutation-guards.test.ts",
+    "empirical": "temporary file mutate → run detect subset → restore (sha256 verified)",
+    "production_left_mutated": false
+  },
+  "targets": [
+    {
+      "fn": "isEligibleEvidenceRef",
+      "file": "orchestrator/src/v3/goals/success-oracle.ts",
+      "mutants": [
+        {
+          "id": "always_true",
+          "shadow_kill": true,
+          "empirical": "KILLED",
+          "empirical_failures": 7,
+          "empirical_passed": 31,
+          "detect_tests": [
+            "tests/unit/v3/adversarial/mutation-guards.test.ts",
+            "tests/unit/v3/adversarial/false-success.test.ts",
+            "tests/unit/v3/goals.test.ts"
+          ],
+          "restored_clean": true
+        },
+        {
+          "id": "accept_run_prefix",
+          "shadow_kill": true,
+          "empirical": "not_run",
+          "note": "covered by FAKE_EVIDENCE_PREFIX_ATTACKS + EVIDENCE_MUST_REJECT"
+        },
+        {
+          "id": "drop_whitespace_check",
+          "shadow_kill": true,
+          "empirical": "not_run",
+          "note": "narrative refs with whitespace kill via property table"
+        }
+      ]
+    },
+    {
+      "fn": "classifyOutcome",
+      "file": "orchestrator/src/v3/failure/classify-outcome.ts",
+      "mutants": [
+        {
+          "id": "always_pass",
+          "shadow_kill": true,
+          "empirical": "KILLED",
+          "empirical_failures": 7,
+          "empirical_passed": 25,
+          "detect_tests": [
+            "tests/unit/v3/adversarial/mutation-guards.test.ts",
+            "tests/unit/v3/failure.test.ts"
+          ],
+          "restored_clean": true
+        },
+        {
+          "id": "unknown_as_pass",
+          "shadow_kill": true,
+          "empirical": "not_run"
+        }
+      ]
+    },
+    {
+      "fn": "coerceSafetyState",
+      "file": "orchestrator/src/v3/agency/governor.ts",
+      "mutants": [
+        {
+          "id": "always_normal",
+          "shadow_kill": true,
+          "empirical": "KILLED",
+          "empirical_failures": 12,
+          "empirical_passed": 28,
+          "detect_tests": [
+            "tests/unit/v3/adversarial/mutation-guards.test.ts",
+            "tests/unit/v3/adversarial/policy-sandbox-auth.test.ts",
+            "tests/unit/v3/agency.test.ts"
+          ],
+          "restored_clean": true
+        },
+        {
+          "id": "case_insensitive",
+          "shadow_kill": true,
+          "empirical": "not_run",
+          "note": "wrong-case stamps must stay null (SEC-009 fail-closed)"
+        },
+        {
+          "id": "passthrough_raw",
+          "shadow_kill": true,
+          "empirical": "not_run"
+        }
+      ]
+    }
+  ],
+  "kill_score_summary": {
+    "empirical_mutants_run": 3,
+    "empirical_killed": 3,
+    "empirical_survived": 0,
+    "kill_rate": 1.0,
+    "shadow_mutants_asserted": 8,
+    "shadow_all_killed_by_property_table": true
+  },
+  "kill_score_gaps": [
+    {
+      "id": "GAP-M01",
+      "severity": "low",
+      "status": "mitigated_during_cycle",
+      "note": "Prior: 'N/A' (slash) normalized poorly → UNCERTAIN not NOT_MEASURED. normalizeToken now collapses '/' ; mutation-guards assert UNKNOWN family → NOT_MEASURED."
+    },
+    {
+      "id": "GAP-M02",
+      "severity": "info",
+      "status": "open_documentation",
+      "note": "Empirical mutation only covered 3 extreme mutants (always-true / always-pass / always-normal). Partial mutants (e.g. drop only run: ban, accept only bare paths) rely on shadow tables + adversarial RT-01/03/04 — not re-mutated on disk."
+    },
+    {
+      "id": "GAP-M03",
+      "severity": "info",
+      "status": "open_documentation",
+      "note": "No Stryker/mutation-testing CI gate yet — kill scores are manual gate evidence for h0."
+    }
+  ],
+  "it_fails_remaining": [
+    {
+      "file": "orchestrator/tests/unit/v3/adversarial/world-failure.test.ts",
+      "approx_line": 203,
+      "note": "1× it.fails remains (OPEN world/failure gap documented by WF suite). false-success RT-05b/RT-09b no longer it.fails (gaps closed → regular defenses)."
+    }
+  ],
+  "test_run": {
+    "command": "nvm use 24; npm test -- --run tests/unit/v3",
+    "result": "12 files / 168 tests passed",
+    "mutation_guards": "orchestrator/tests/unit/v3/adversarial/mutation-guards.test.ts (11 tests)",
+    "production_mutation_markers": "none (verified CLEAN)"
+  },
+  "verdict": {
+    "status": "PASS",
+    "summary": "Property + empirical mutation analysis kills all 3 critical always-* mutants; production restored clean; full v3 suite green (168). Residual: 1 it.fails in world-failure; no Stryker CI yet."
+  }
+}

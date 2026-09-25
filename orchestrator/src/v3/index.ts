@@ -17,5 +17,6 @@ export * from "./fabric/index.js";
 export * from "./failure/index.js";
 export * from "./adapters/index.js";
 export * from "./meta0/index.js";
+export * from "./hardening/index.js";
 // adapters/agency-bridge re-exports for path discoverability; symbols already
 // covered by agency/ + fabric/ barrels (no second export * of bridge to avoid clashes).

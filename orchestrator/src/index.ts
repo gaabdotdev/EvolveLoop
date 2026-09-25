@@ -112,6 +112,10 @@ export {
 } from "./config/profile.js";
 export { MemoryStore } from "./memory/memory-store.js";
 export { FilesystemMemoryStore, assertFeatureIdConfined } from "./memory/filesystem-memory-store.js";
+export {
+  redactSecretLikeContent,
+  SECRET_REDACTION_TOKEN,
+} from "./memory/secret-redaction.js";
 export { JsonlEventPersister } from "./persistence/jsonl-event-persister.js";
 export { resolveDataPaths, type DataPaths } from "./persistence/paths.js";
 export { MetricsAccumulator } from "./telemetry/metrics-accumulator.js";

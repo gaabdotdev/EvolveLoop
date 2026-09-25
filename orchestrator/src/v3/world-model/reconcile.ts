@@ -14,9 +14,25 @@ const DEFAULT_STALE_AFTER_MS = 24 * 60 * 60 * 1000;
 
 const ACTIVE_STATUSES = new Set(["hypothesis", "supported", "strongly_supported", "suspect"]);
 
+/** Minimal polarity pairs for observation-vs-belief contradictory property (§185). */
+const POLARITY_PAIRS: ReadonlyArray<readonly [RegExp, RegExp]> = [
+  [
+    /\b(up|healthy|ok|success|online|restored|available|pass(?:ed)?)\b/i,
+    /\b(down|unhealthy|fail(?:ing|ed)?|offline|error|unavailable|broken|outage)\b/i,
+  ],
+];
+
 function parseTime(iso: string): number {
   const t = Date.parse(iso);
   return Number.isFinite(t) ? t : NaN;
+}
+
+/** True when two texts pull opposite polarity tokens (no LLM). */
+export function textsContradictPolarity(a: string, b: string): boolean {
+  for (const [pos, neg] of POLARITY_PAIRS) {
+    if ((pos.test(a) && neg.test(b)) || (neg.test(a) && pos.test(b))) return true;
+  }
+  return false;
 }
 
 /**
@@ -63,6 +79,22 @@ export function reconcile(
         subject_id: bid,
         detail: `status ${belief.spec.status} requires supporting observations`,
       });
+    }
+
+    // Observation-vs-belief contradictory property (supporting fact vs statement)
+    if (ACTIVE_STATUSES.has(belief.spec.status) && belief.spec.status !== "suspect") {
+      for (const ref of refs) {
+        const obs = obsById.get(ref);
+        if (!obs) continue;
+        if (textsContradictPolarity(belief.spec.statement, obs.spec.raw)) {
+          drifts.push({
+            type: "contradictory",
+            subject_id: bid,
+            detail: `observation ${ref} contradicts belief statement`,
+            related_refs: [ref],
+          });
+        }
+      }
     }
 
     // Stale: wall-clock age, or newer supporting observation than belief.updated_at

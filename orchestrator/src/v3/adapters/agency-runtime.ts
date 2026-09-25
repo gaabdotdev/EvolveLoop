@@ -3,13 +3,16 @@
  *
  * Flow: AgencyLoop.step → AutonomyGovernor.decide → IR skeleton | needs_planner
  *       → sandbox attestation gate (SEC-001) → ExecutionEngine.run
- *       → SuccessOracle → classifyOutcome / StagnationDetector / selectContainment.
+ *       → SuccessOracle → classifyOutcome / StagnationDetector / selectContainment
+ *       → RecoveryHierarchy (strategy walk on FAIL / stagnation / containment).
  *
  * Prohibits inventing IR when needs_planner (unless caller supplies an explicit
  * fixture). Never claims PASS without oracle evaluation on eligible evidence.
  *
- * Limits (honest): no OS sandbox — `sandbox_attestation` / env / SafetySandboxContext
- * depth are host-declared readiness signals only (NOT OS isolation);
+ * Limits (honest): OS sandbox is NOT_IMPLEMENTED.
+ * `sandbox_attestation` / SafetySandboxContext depth are host-declared readiness only
+ * (NOT OS isolation). DESTRUCTIVE effects are DENY by default even with attestation;
+ * escape hatch: EVOLVELOOP_ALLOW_DESTRUCTIVE_WITHOUT_OS_SANDBOX=true (still not OS isolation).
  * degrade skips run (does not constrain Policy); multi-step fabric → needs_planner;
  * world grounding is signal/risk bump only.
  */
@@ -17,7 +20,11 @@
 import type { ExecutionEngine } from "../../engine/execution-engine.js";
 import type { CapabilityIR, CapabilityRegistry, RunResult } from "../../types/index.js";
 import { AgencyLoop } from "../agency/agency-loop.js";
-import { AutonomyGovernor, type GovernorDecisionResult } from "../agency/governor.js";
+import {
+  AutonomyGovernor,
+  coerceSafetyState,
+  type GovernorDecisionResult,
+} from "../agency/governor.js";
 import type {
   AgencyLoopResult,
   AgencyProposal,
@@ -45,6 +52,11 @@ import {
   selectContainment,
   type ContainmentDecision,
 } from "../failure/containment.js";
+import { RecoveryExhaustedError } from "../failure/errors.js";
+import {
+  RecoveryHierarchy,
+  type RecoveryState,
+} from "../failure/recovery-hierarchy.js";
 import { StagnationDetector } from "../failure/stagnation.js";
 import {
   evaluateSafetyTransition,
@@ -52,6 +64,7 @@ import {
 } from "../failure/safety-transitions.js";
 import type {
   OutcomeStatus,
+  RecoveryStep,
   StagnationReport,
   SafetyTransitionResult,
 } from "../failure/types.js";
@@ -66,6 +79,17 @@ import type { WorldModelStore } from "../world-model/world-model-store.js";
 
 /** Host env flag for sandbox attestation until OS sandbox exists (SEC-001). */
 export const SANDBOX_ATTESTATION_ENV = "EVOLVELOOP_SANDBOX_ATTESTATION";
+
+/**
+ * Explicit opt-in to run DESTRUCTIVE effects without a real OS sandbox (SEC-001).
+ * Default DENY — sandbox_attestation alone is insufficient for DESTRUCTIVE.
+ * Honesty: even when true, this is NOT OS process isolation.
+ */
+export const ALLOW_DESTRUCTIVE_WITHOUT_OS_SANDBOX_ENV =
+  "EVOLVELOOP_ALLOW_DESTRUCTIVE_WITHOUT_OS_SANDBOX";
+
+export const DESTRUCTIVE_DENIED_REASON =
+  "destructive_denied_os_sandbox_not_implemented" as const;
 
 const EFFECT_HINT_PATTERNS: Array<{
   hint: "LOCAL_WRITE" | "DESTRUCTIVE" | "NETWORK";
@@ -96,6 +120,33 @@ export function inferEffectHints(
 export function requiresSandboxAttestation(proposal: AgencyProposal): boolean {
   if (proposal.risk === "high" || proposal.risk === "critical") return true;
   return inferEffectHints(proposal).length > 0;
+}
+
+/** True when proposal surfaces infer a DESTRUCTIVE effect class. */
+export function hasDestructiveEffectHint(proposal: AgencyProposal): boolean {
+  return inferEffectHints(proposal).includes("DESTRUCTIVE");
+}
+
+/**
+ * Host opt-in for DESTRUCTIVE without OS sandbox.
+ * Default false — fail-closed (SEC-001 partial).
+ */
+export function allowsDestructiveWithoutOsSandbox(
+  env: NodeJS.ProcessEnv = process.env,
+): boolean {
+  const v = env[ALLOW_DESTRUCTIVE_WITHOUT_OS_SANDBOX_ENV];
+  return v === "1" || v === "true" || v === "yes";
+}
+
+/**
+ * SEC-001: DESTRUCTIVE must be denied unless explicit env opt-in.
+ * sandbox_attestation / S3 labels alone do NOT authorize DESTRUCTIVE.
+ */
+export function isDestructiveDeniedWithoutOsSandbox(
+  proposal: AgencyProposal,
+  env: NodeJS.ProcessEnv = process.env,
+): boolean {
+  return hasDestructiveEffectHint(proposal) && !allowsDestructiveWithoutOsSandbox(env);
 }
 
 function effectHintToClassification(
@@ -200,6 +251,30 @@ export interface AgencyContainmentEntry {
   safety_transition?: SafetyTransitionResult;
 }
 
+/** Why RecoveryHierarchy advanced on the failure path (WF-05). */
+export type RecoveryTrigger =
+  | "outcome_fail"
+  | "stagnation"
+  | "containment";
+
+export interface AgencyRecoveryHistoryEntry {
+  at: string;
+  proposal_id: string;
+  goal_id: string;
+  trigger: RecoveryTrigger;
+  previous: RecoveryStep;
+  current: RecoveryStep;
+  exhausted: boolean;
+}
+
+/**
+ * RecoveryHierarchy snapshot on AgencyRunReport (WF-05).
+ * Strategy selection only — does not execute real rollback / OS kill.
+ */
+export interface AgencyRecoveryReport extends RecoveryState {
+  history: AgencyRecoveryHistoryEntry[];
+}
+
 export interface AgencyRunReport {
   proposals: AgencyProposal[];
   decisions: Array<{
@@ -216,6 +291,11 @@ export interface AgencyRunReport {
   containment: AgencyContainmentEntry[];
   /** Stagnation window after this tick. */
   stagnation: StagnationReport;
+  /**
+   * Recovery hierarchy walk on FAIL / stagnation / containment (WF-05).
+   * Always present; history empty when no recovery trigger fired.
+   */
+  recovery: AgencyRecoveryReport;
   /** Safety state after applying quarantine transitions (if any). */
   safety_state_after: SafetyState;
   emitted_at: string;
@@ -253,6 +333,8 @@ export interface AgencyRuntimeOptions {
   oracle?: SuccessOracle;
   /** Shared stagnation detector across ticks (optional). */
   stagnation?: StagnationDetector;
+  /** Shared recovery hierarchy across ticks (optional). Stub advances only. */
+  recovery?: RecoveryHierarchy;
   /** policy_id passed to ExecutionEngine.run; defaults to policy.policy_ref. */
   policy_id?: string;
   /**
@@ -366,6 +448,60 @@ function shouldContain(outcome: OutcomeStatus, stagnant: boolean): boolean {
   );
 }
 
+/**
+ * Recovery path triggers (WF-05): FAIL/BLOCKED outcome, stagnation, or containment.
+ * Does not execute real rollback — only walks RecoveryHierarchy strategy steps.
+ */
+function resolveRecoveryTrigger(
+  outcome: OutcomeStatus,
+  stagnant: boolean,
+  containmentApplied: boolean,
+): RecoveryTrigger | null {
+  if (outcome === "FAIL" || outcome === "BLOCKED") return "outcome_fail";
+  if (stagnant) return "stagnation";
+  if (containmentApplied) return "containment";
+  return null;
+}
+
+function advanceRecoveryHierarchy(
+  hierarchy: RecoveryHierarchy,
+  history: AgencyRecoveryHistoryEntry[],
+  args: {
+    at: string;
+    proposal_id: string;
+    goal_id: string;
+    trigger: RecoveryTrigger;
+  },
+): void {
+  try {
+    const advanced = hierarchy.failCurrent();
+    history.push({
+      at: args.at,
+      proposal_id: args.proposal_id,
+      goal_id: args.goal_id,
+      trigger: args.trigger,
+      previous: advanced.previous,
+      current: advanced.current,
+      exhausted: advanced.exhausted,
+    });
+  } catch (err) {
+    if (err instanceof RecoveryExhaustedError) {
+      const snap = hierarchy.snapshot();
+      history.push({
+        at: args.at,
+        proposal_id: args.proposal_id,
+        goal_id: args.goal_id,
+        trigger: args.trigger,
+        previous: snap.current_step,
+        current: snap.current_step,
+        exhausted: true,
+      });
+      return;
+    }
+    throw err;
+  }
+}
+
 function applyContainmentSafety(
   from: SafetyState,
   containment: ContainmentDecision,
@@ -388,7 +524,7 @@ function applyContainmentSafety(
 
 /**
  * One Agency tick wired through Governor → IR/fixture → ExecutionEngine → Oracle
- * → Failure classify/containment/stagnation.
+ * → Failure classify/containment/stagnation/recovery.
  * Policy Engine inside ExecutionEngine remains the execution authority.
  */
 export async function runAgencyRuntime(
@@ -399,6 +535,8 @@ export async function runAgencyRuntime(
   const governor = options.governor ?? new AutonomyGovernor();
   const oracle = options.oracle ?? new SuccessOracle();
   const stagnationDetector = options.stagnation ?? new StagnationDetector();
+  const recoveryHierarchy = options.recovery ?? new RecoveryHierarchy();
+  const recoveryHistory: AgencyRecoveryHistoryEntry[] = [];
   const approvals = asApprovalSet(options.approvals);
   const fixtures = asFixtureMap(options.ir_fixtures);
   const criteriaById = options.criteriaById ?? new Map();
@@ -407,6 +545,13 @@ export async function runAgencyRuntime(
   const world = resolveWorld(options.world);
 
   let safetyState: SafetyState = options.safety_state;
+  // SEC-009: refuse unknown safety stamps before any proposal tick.
+  const coercedEntry = coerceSafetyState(options.safety_state);
+  if (!coercedEntry) {
+    safetyState = "QUARANTINED";
+  } else {
+    safetyState = coercedEntry;
+  }
 
   const agencyResult = agency.step({
     portfolio: options.portfolio,
@@ -506,6 +651,16 @@ export async function runAgencyRuntime(
           containment,
           safety_transition: applied.transition,
         });
+
+        const trigger = resolveRecoveryTrigger("DEGRADED", stagn.stagnant, true);
+        if (trigger) {
+          advanceRecoveryHierarchy(recoveryHierarchy, recoveryHistory, {
+            at: emitted_at,
+            proposal_id: proposal.proposal_id,
+            goal_id: proposal.goal_id,
+            trigger,
+          });
+        }
       }
       continue;
     }
@@ -598,6 +753,23 @@ export async function runAgencyRuntime(
     }
 
     const feature_id = proposal.goal_id;
+
+    // SEC-001 (partial): DESTRUCTIVE → DENY by default. OS sandbox NOT_IMPLEMENTED.
+    // sandbox_attestation alone is insufficient; require explicit env opt-in.
+    if (isDestructiveDeniedWithoutOsSandbox(proposal)) {
+      runs.push({
+        proposal_id: proposal.proposal_id,
+        goal_id: proposal.goal_id,
+        feature_id,
+        status: "BLOCKED",
+        reason: DESTRUCTIVE_DENIED_REASON,
+        bridge_status,
+        executed: false,
+        evidence_refs: [],
+        composition_pending: composition_pending || undefined,
+      });
+      continue;
+    }
 
     // SEC-001 (partial): fail-closed without host attestation / adequate sandbox depth.
     // Attestation is host-declared until OS sandbox exists — NOT OS isolation.
@@ -732,7 +904,13 @@ export async function runAgencyRuntime(
       continue;
     }
 
-    const evidence: EvidenceRefBundle = { evidence_refs: refs };
+    const evidence: EvidenceRefBundle = {
+      evidence_refs: refs,
+      // Contract executor≠verifier: engine produced effects; oracle verifies.
+      executor_id: "execution-engine",
+      verifier_id: "success-oracle",
+      evidence_goal_revision: goal.spec.goal_version.revision,
+    };
     const evalResult = oracle.evaluateGoal(goal, criteriaById, evidence);
     const status = mapOracleDecision(evalResult.decision);
     // Classify oracle outcome through fail-closed path (PASS only if explicit).
@@ -753,7 +931,7 @@ export async function runAgencyRuntime(
     }
   }
 
-  // AR-C02: post-oracle containment + stagnation for executed / failed outcomes.
+  // AR-C02: post-oracle containment + stagnation + recovery for executed / failed outcomes.
   for (const run of runs) {
     if (run.status === "DEGRADED" && containmentEntries.some((c) => c.proposal_id === run.proposal_id)) {
       continue; // already contained on degrade path
@@ -787,8 +965,19 @@ export async function runAgencyRuntime(
       containment,
       safety_transition: applied.transition,
     });
+
+    const trigger = resolveRecoveryTrigger(run.status, stagn.stagnant, true);
+    if (trigger) {
+      advanceRecoveryHierarchy(recoveryHierarchy, recoveryHistory, {
+        at: emitted_at,
+        proposal_id: run.proposal_id,
+        goal_id: run.goal_id,
+        trigger,
+      });
+    }
   }
 
+  const recoverySnap = recoveryHierarchy.snapshot();
   return {
     proposals: agencyResult.proposals,
     decisions,
@@ -798,6 +987,10 @@ export async function runAgencyRuntime(
     agency: agencyResult,
     containment: containmentEntries,
     stagnation: stagnationDetector.evaluate(),
+    recovery: {
+      ...recoverySnap,
+      history: recoveryHistory,
+    },
     safety_state_after: safetyState,
     emitted_at,
   };

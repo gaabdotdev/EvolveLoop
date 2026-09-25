@@ -114,7 +114,14 @@ export function runAgencyStep(input: AgencyLoopInput): AgencyLoopResult {
   const proposals: AgencyProposal[] = candidates.map((goal, index) => {
     let risk = inferRisk(goal, input.risk_by_goal?.[goal.metadata.id]);
     if (grounding.contradiction) {
+      // AR-H01 / false-success: contradiction must not leave low-risk on ALLOW path.
+      // Escalate at least to high → HUMAN_GATE (confirm) under NORMAL.
       risk = bumpRisk(risk);
+      const idx = RISK_ORDER.indexOf(risk);
+      const highIdx = RISK_ORDER.indexOf("high");
+      if (idx >= 0 && highIdx >= 0 && idx < highIdx) {
+        risk = "high";
+      }
     }
     const hint = capabilityHint(goal);
     const governor_required =

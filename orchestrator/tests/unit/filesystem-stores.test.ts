@@ -53,6 +53,23 @@ describe("FilesystemMemoryStore", () => {
     expect(reloaded.getPreferences("2026-login")).toHaveLength(1);
   });
 
+  it("SEC-006: redacts secret-like substrings on append (not on disk)", () => {
+    const dir = mkdtempSync(join(tmpdir(), "orch-mem-redact-"));
+    const mem = new FilesystemMemoryStore(dir);
+    mem.initFeature("feat-r", { ir_id: "feat-r", policy: "rapid-prototype" });
+    mem.append("feat-r", {
+      timestamp: "2026-06-30T10:00:00Z",
+      source: "user",
+      type: "preference",
+      content: "token password=hunter2 and Bearer abc.def.ghi",
+    });
+
+    const raw = readFileSync(join(dir, "feat-r", "preferences.yaml"), "utf-8");
+    expect(raw).not.toContain("hunter2");
+    expect(raw).not.toContain("Bearer abc.def.ghi");
+    expect(raw).toMatch(/\[REDACTED\]/);
+  });
+
   it("SEC-002: rejects featureId path traversal (../evil)", () => {
     const dir = mkdtempSync(join(tmpdir(), "orch-mem-"));
     const mem = new FilesystemMemoryStore(dir);

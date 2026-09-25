@@ -31,10 +31,13 @@ export type OracleStubType = (typeof ORACLE_STUB_TYPES)[number];
 /**
  * Synthetic run-status stamps (e.g. `run:feature:finished`) and bare paths are NOT evidence.
  * SEC-003 / AR-C01: eligible refs MUST start with `evidence:`, `lineage:`, or `check:`.
+ * Narrative / agent-claim strings (whitespace in the ref) are never eligible.
  */
 export function isEligibleEvidenceRef(ref: string): boolean {
   const trimmed = ref.trim();
   if (trimmed.length === 0) return false;
+  // Agent narrative / free-text claims are not evidence refs
+  if (/\s/.test(trimmed)) return false;
   // Explicit synthetic stamp from agency-runtime / engine status alone
   if (/^run:/i.test(trimmed)) return false;
   return /^(evidence|lineage|check):/i.test(trimmed);
@@ -57,6 +60,27 @@ export interface EvidenceRefBundle {
    * Missing key ⇒ uncertain.
    */
   callback_results?: Record<string, boolean>;
+  /**
+   * Executor identity that produced effects/evidence.
+   * Required (with verifier_id) for decision=success — executor≠verifier.
+   */
+  executor_id?: string;
+  /**
+   * Verifier identity that evaluated criteria.
+   * Must differ from executor_id for decision=success.
+   */
+  verifier_id?: string;
+  /**
+   * Goal revision under which evidence was collected.
+   * When set and older than goal.spec.goal_version.revision → stale (no success).
+   */
+  evidence_goal_revision?: number;
+  /**
+   * Explicit binding that desired_outcome was observed met.
+   * When false, presence-only criteria must not yield success.
+   * When undefined, left to caller policy (adversarial suite treats missing as fail-closed for outcome attacks).
+   */
+  outcome_met?: boolean;
 }
 
 export interface CriterionEvalResult {
@@ -237,8 +261,70 @@ export function evaluateGoal(
     results.push(evaluateCriterion(criterion, evidence));
   }
 
-  const decision = decideSatisfaction(results, requiredIds);
-  const uncertain_criteria = results.filter((r) => r.status === "uncertain").map((r) => r.criterion_id);
+  const decisionRaw = decideSatisfaction(results, requiredIds);
+  let decision = decisionRaw;
+  const assumptions = ["stub oracle — no LLM"];
+  const uncertain_criteria = results
+    .filter((r) => r.status === "uncertain")
+    .map((r) => r.criterion_id);
+
+  // Contract: executor≠verifier — success requires distinct identities.
+  if (decision === "success") {
+    const exec = evidence.executor_id?.trim() ?? "";
+    const ver = evidence.verifier_id?.trim() ?? "";
+    if (!exec || !ver) {
+      decision = "uncertain";
+      assumptions.push("success withheld — executor_id and verifier_id required (executor≠verifier)");
+      if (!uncertain_criteria.includes("__executor_verifier__")) {
+        uncertain_criteria.push("__executor_verifier__");
+      }
+    } else if (exec === ver) {
+      decision = "failure";
+      assumptions.push("success rejected — executor_id === verifier_id (self-verification forbidden)");
+    }
+  }
+
+  // RT-05b: evidence_goal_revision must match current goal_version.revision for success.
+  // Missing stamp after mutation (or anytime) must not yield success.
+  if (decision === "success") {
+    const currentRev = goal.spec.goal_version.revision;
+    const stamped = evidence.evidence_goal_revision;
+    if (stamped === undefined || stamped === null || Number.isNaN(Number(stamped))) {
+      decision = "failure";
+      assumptions.push(
+        `evidence_goal_revision required for success (goal.revision=${currentRev}) — omit stamp rejected`,
+      );
+    } else if (stamped !== currentRev) {
+      decision = "failure";
+      assumptions.push(
+        stamped < currentRev
+          ? `stale evidence_goal_revision=${stamped} < goal.revision=${currentRev}`
+          : `evidence_goal_revision=${stamped} !== goal.revision=${currentRev}`,
+      );
+    }
+  }
+
+  // RT-09b / desired_outcome binding: presence_of_evidence alone is insufficient when
+  // desired_outcome is set — require outcome_met:true or a non-presence criterion pass.
+  if (decision === "success" && evidence.outcome_met === false) {
+    decision = "failure";
+    assumptions.push("desired_outcome unmet (outcome_met=false) — false success rejected");
+  } else if (decision === "success") {
+    const desired = goal.spec.desired_outcome?.trim() ?? "";
+    if (desired.length > 0) {
+      const hasOutcomeCriterionPass = results.some(
+        (r) =>
+          r.pass &&
+          (r.stub_type === "boolean_predicate" || r.stub_type === "external_callback_ref"),
+      );
+      if (evidence.outcome_met !== true && !hasOutcomeCriterionPass) {
+        decision = "partial_success";
+        assumptions.push(
+          "desired_outcome set but unproven — require outcome_met:true or boolean_predicate/callback covering outcome (presence_of_evidence alone insufficient)",
+        );
+      }
+    }
+  }
 
   const proof: GoalSatisfactionProof = {
     apiVersion: V3_API_VERSION,
@@ -257,7 +343,7 @@ export function evaluateGoal(
         status: r.status,
       })),
       uncertain_criteria,
-      assumptions: ["stub oracle — no LLM"],
+      assumptions,
       decision,
     },
   };

@@ -31,7 +31,8 @@ const ALIASES: Readonly<Record<string, OutcomeStatus>> = {
 };
 
 function normalizeToken(raw: string): string {
-  return raw.trim().toUpperCase().replace(/[\s-]+/g, "_");
+  // Collapse whitespace, hyphens, and slashes so "N/A" / "n-a" → "N_A".
+  return raw.trim().toUpperCase().replace(/[\s\-/]+/g, "_");
 }
 
 /**

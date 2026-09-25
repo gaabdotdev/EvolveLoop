@@ -264,6 +264,20 @@ describe("V3 AgencyRuntime adapter", () => {
       signals: expect.any(Array),
       recommended_action: expect.any(String),
     });
+    // WF-05: RecoveryHierarchy reachable on FAIL/BLOCKED / containment path
+    expect(report.recovery).toMatchObject({
+      current_step: expect.any(String),
+      step_index: expect.any(Number),
+      attempts_at_step: expect.any(Number),
+      exhausted: expect.any(Boolean),
+      history: expect.any(Array),
+    });
+    expect(report.recovery.history.length).toBeGreaterThanOrEqual(1);
+    expect(report.recovery.history[0]).toMatchObject({
+      trigger: expect.stringMatching(/outcome_fail|stagnation|containment/),
+      previous: expect.any(String),
+      current: expect.any(String),
+    });
     expect(report.safety_state_after).toBeTruthy();
   });
 

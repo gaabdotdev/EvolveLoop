@@ -4,6 +4,7 @@
  */
 
 import type { MemoryEntry } from "../../types/index.js";
+import { redactSecretLikeContent } from "../../memory/secret-redaction.js";
 import { fail, ok, type V3ValidationResult } from "./common.js";
 import {
   AUTONOMY_GOVERNOR_DECISION_MATRIX,
@@ -223,6 +224,7 @@ export function assertInstructionHierarchyConstraints(
 
 /**
  * FW-H04 — annotate V2 MemoryEntry with trust_class without creating MemoryStore2.
+ * SEC-006: also redact secret-like content on annotate path.
  */
 export function annotateMemoryEntry(
   entry: MemoryEntry,
@@ -232,7 +234,7 @@ export function annotateMemoryEntry(
     timestamp: entry.timestamp,
     source: entry.source,
     type: entry.type,
-    content: entry.content,
+    content: redactSecretLikeContent(String(entry.content ?? "")),
     trust_class,
   };
 }

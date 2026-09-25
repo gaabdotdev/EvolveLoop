@@ -7,14 +7,23 @@ import { MemoryStore, type FeatureMemoryMeta } from "./memory-store.js";
 import type { MemoryEntry } from "../types/index.js";
 
 /**
- * SEC-002 — confine featureId under rootDir.
- * Reject `/`, `\`, `..`, or any id whose resolve escapes rootDir.
+ * SEC-002 / SEC-010 — confine featureId under rootDir.
+ * Allowlist only: ASCII alnum + `._-` (no `/`, `\`, `..`, `%`, unicode separators, null).
+ * Also reject any id whose resolve escapes rootDir.
  */
+const FEATURE_ID_ALLOWLIST = /^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$/;
+
 export function assertFeatureIdConfined(rootDir: string, featureId: string): void {
   if (typeof featureId !== "string" || featureId.trim().length === 0) {
     throw new PathEscapeError("featureId must be a non-empty string");
   }
-  if (featureId.includes("/") || featureId.includes("\\") || featureId.includes("..")) {
+  if (featureId.includes("\0")) {
+    throw new PathEscapeError(`featureId escapes memory root: null byte`);
+  }
+  if (!FEATURE_ID_ALLOWLIST.test(featureId)) {
+    throw new PathEscapeError(`featureId escapes memory root: ${featureId}`);
+  }
+  if (featureId.includes("..")) {
     throw new PathEscapeError(`featureId escapes memory root: ${featureId}`);
   }
   if (pathEscapesWorkspace(featureId, rootDir)) {

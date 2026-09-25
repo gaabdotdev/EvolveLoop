@@ -1,0 +1,183 @@
+{
+  "artifact": "rt.false-success",
+  "role": "critic",
+  "parent_cycle_id": "evolveloop-v3-h0",
+  "spawn_depth": 1,
+  "reviewed_at": "2026-09-24T21:16:00-03:00",
+  "mission": "Adversarial red-team: make FALSE SUCCESS look like PASS; assert REJECT",
+  "knowledge_grounding": {
+    "status": "applied_with_gap",
+    "sources_applied": [
+      "orchestrator/src/v3/goals/success-oracle.ts",
+      "orchestrator/src/v3/adapters/agency-runtime.ts",
+      "orchestrator/src/v3/agency/{agency-loop,governor}.ts",
+      "orchestrator/tests/unit/v3/**",
+      "memory/evolveloop-v3/evidence/critic.agency-runtime.json (prior AR-C01)"
+    ],
+    "gaps": [
+      "EvolveLoop wiki pack still stub (log-only)",
+      "presence_of_evidence does not resolve Evidence objects in a registry",
+      "desired_outcome is not semantically verified by stub oracle (requires outcome_met or boolean/callback criterion)"
+    ]
+  },
+  "contracts_checked": {
+    "false_success_must_be_rejectable": {
+      "status": "held",
+      "note": "Prefix filter + empty-evidence PARTIAL + executor≠verifier + outcome_met=false + revision stamp required + presence-only without outcome binding all reject."
+    },
+    "executor_ne_verifier": {
+      "status": "held_after_fix",
+      "note": "SuccessOracle now requires distinct executor_id/verifier_id for decision=success; agency-runtime stamps execution-engine vs success-oracle."
+    },
+    "evidence_goal_revision_binding": {
+      "status": "held_after_fix",
+      "note": "RT-05b FIXED: evidence_goal_revision required and must equal goal.spec.goal_version.revision for success."
+    },
+    "desired_outcome_binding": {
+      "status": "held_after_fix",
+      "note": "RT-09b FIXED: when desired_outcome set, require outcome_met:true or passing boolean_predicate/external_callback_ref; else partial_success."
+    }
+  },
+  "test_run": {
+    "command": "nvm use 24; npm test -- --run tests/unit/v3 tests/unit/filesystem-stores.test.ts",
+    "result": "13 files / 172 tests passed",
+    "adversarial_file": "orchestrator/tests/unit/v3/adversarial/false-success.test.ts",
+    "hardening_helpers": "orchestrator/src/v3/hardening/false-success.ts"
+  },
+  "attacks": [
+    {
+      "id": "RT-01",
+      "name": "Fake evidence prefix",
+      "severity_if_open": "high",
+      "status": "DEFENDED",
+      "test": "RT-01: fake/plausible wrong prefixes must NOT satisfy presence_of_evidence",
+      "result": "PASS (defense works)",
+      "note": "evidance:/proof:/artifact:/provider:/run: rejected by isEligibleEvidenceRef"
+    },
+    {
+      "id": "RT-02",
+      "name": "Engine success + empty evidence",
+      "severity_if_open": "critical",
+      "status": "DEFENDED",
+      "test": "RT-02",
+      "result": "PASS (defense works)",
+      "note": "agency-runtime keeps PARTIAL when no eligible refs; never oracle PASS"
+    },
+    {
+      "id": "RT-03",
+      "name": "Bare artifact path as evidence",
+      "severity_if_open": "high",
+      "status": "DEFENDED",
+      "test": "RT-03",
+      "result": "PASS (defense works)",
+      "note": "SEC-003 / AR-C01 path filter"
+    },
+    {
+      "id": "RT-04",
+      "name": "Agent narrative as evidence",
+      "severity_if_open": "high",
+      "status": "DEFENDED",
+      "test": "RT-04",
+      "result": "PASS (defense works)",
+      "note": "Whitespace in refs rejected; free-text claims ineligible"
+    },
+    {
+      "id": "RT-05",
+      "name": "Stale evidence after goal mutation (stamped older revision)",
+      "severity_if_open": "high",
+      "status": "DEFENDED",
+      "test": "RT-05",
+      "result": "PASS (defense works)",
+      "note": "evidence_goal_revision < goal.revision → failure"
+    },
+    {
+      "id": "RT-05b",
+      "name": "Stale evidence after mutation WITHOUT revision stamp",
+      "severity_if_open": "high",
+      "status": "FIXED",
+      "severity": "HIGH",
+      "test": "RT-05b",
+      "result": "PASS (after fix)",
+      "fix": "evaluateGoal requires evidence_goal_revision === goal.spec.goal_version.revision for success; omit stamp → failure"
+    },
+    {
+      "id": "RT-06",
+      "name": "Executor === verifier (self-verification)",
+      "severity_if_open": "critical",
+      "status": "FIXED",
+      "test": "RT-06",
+      "result": "PASS (after fix)",
+      "fix": "success-oracle rejects success when ids missing or equal; agency-runtime sets executor_id=execution-engine, verifier_id=success-oracle"
+    },
+    {
+      "id": "RT-07",
+      "name": "Governor deny still runs",
+      "severity_if_open": "critical",
+      "status": "DEFENDED",
+      "test": "RT-07",
+      "result": "PASS (defense works)",
+      "note": "deny → executed:false, engine.run never called, no PASS"
+    },
+    {
+      "id": "RT-08",
+      "name": "Governor degrade still executes",
+      "severity_if_open": "critical",
+      "status": "DEFENDED",
+      "test": "RT-08",
+      "result": "PASS (defense works / regression)",
+      "note": "AR-H02: degrade skips ExecutionEngine"
+    },
+    {
+      "id": "RT-09",
+      "name": "Tasks done but desired_outcome unmet (outcome_met=false)",
+      "severity_if_open": "high",
+      "status": "DEFENDED",
+      "test": "RT-09",
+      "result": "PASS (defense works)",
+      "note": "outcome_met=false forces failure despite eligible presence refs"
+    },
+    {
+      "id": "RT-09b",
+      "name": "Presence-only success without outcome_met binding",
+      "severity_if_open": "high",
+      "status": "FIXED",
+      "severity": "HIGH",
+      "test": "RT-09b",
+      "result": "PASS (after fix)",
+      "fix": "When desired_outcome set: require outcome_met:true or boolean_predicate/external_callback_ref pass; else partial_success"
+    },
+    {
+      "id": "RT-10",
+      "name": "World contradiction ignored → still ALLOW low risk",
+      "severity_if_open": "high",
+      "status": "FIXED",
+      "test": "RT-10",
+      "result": "PASS (after fix)",
+      "fix": "agency-loop escalates contradiction risk at least to high → selectGovernorAction(NORMAL)=confirm (not allow)"
+    }
+  ],
+  "open_findings": [],
+  "fixed_this_turn": [
+    {
+      "id": "RT-05b",
+      "severity": "HIGH",
+      "summary": "Require evidence_goal_revision matching current goal revision for oracle success"
+    },
+    {
+      "id": "RT-09b",
+      "severity": "HIGH",
+      "summary": "desired_outcome requires outcome_met:true or non-presence criterion; presence-only → partial_success"
+    }
+  ],
+  "verdict_summary": "Red-team suite encodes 10+ attacks. All previously OPEN HIGH holes (RT-05b revision stamp omit, RT-09b presence-only without outcome binding) are FIXED with passing defenses. it.fails converted to it.",
+  "entrega": {
+    "tests": "orchestrator/tests/unit/v3/adversarial/false-success.test.ts",
+    "helpers": "orchestrator/src/v3/hardening/",
+    "code_fixes": [
+      "orchestrator/src/v3/goals/success-oracle.ts",
+      "orchestrator/tests/unit/v3/adversarial/false-success.test.ts",
+      "orchestrator/tests/unit/v3/goals.test.ts"
+    ],
+    "evidence": "memory/evolveloop-v3-hardening/evidence/rt.false-success.json"
+  }
+}

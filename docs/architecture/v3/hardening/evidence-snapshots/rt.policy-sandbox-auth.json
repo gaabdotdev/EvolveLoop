@@ -1,0 +1,218 @@
+{
+  "artifact": "rt.policy-sandbox-auth",
+  "role": "gate",
+  "skill": "security",
+  "cycle_id": "evolveloop-v3-h0",
+  "parent_cycle_id": "evolveloop-v3-h0",
+  "spawn_depth": 1,
+  "submitted_at": "2026-09-25T00:16:00Z",
+  "verdict": "BLOQUEADO - RISCO DETECTADO",
+  "release_posture": "blocked_for_autonomy_production_claims",
+  "orchestrator_instruction": "Status geral = bloqueado while OS sandbox NOT_IMPLEMENTED; SEC-001 partial DENY for DESTRUCTIVE without env opt-in; SEC-006 redaction FIXED. Residual theater for non-DESTRUCTIVE high-risk attestation remains honest.",
+  "counts": {
+    "critical": 0,
+    "high": 0,
+    "medium": 4,
+    "low": 1,
+    "informational": 2
+  },
+  "knowledge_grounding": {
+    "status": "applied_with_gap",
+    "sources": [
+      "orchestrator/src/v3/agency/governor.ts",
+      "orchestrator/src/v3/adapters/agency-runtime.ts",
+      "orchestrator/src/v3/fabric/acquisition.ts",
+      "orchestrator/src/authority/capability-authority.ts",
+      "orchestrator/src/memory/filesystem-memory-store.ts",
+      "orchestrator/src/memory/secret-redaction.ts",
+      "orchestrator/src/providers/deterministic/index.ts",
+      "orchestrator/src/providers/mock-provider.ts",
+      "memory/evolveloop-v3/evidence/gate.security.json"
+    ],
+    "gaps": [
+      "OS sandbox NOT_IMPLEMENTED (DESTRUCTIVE DENY by default; opt-in env is NOT OS isolation)",
+      "sandbox labels ≠ OS isolation",
+      "InstructionHierarchy schema-only (not runtime-wired)"
+    ]
+  },
+  "campaign": {
+    "tests": "orchestrator/tests/unit/v3/adversarial/policy-sandbox-auth.test.ts",
+    "npm_test": "npm test -- --run tests/unit/v3 tests/unit/filesystem-stores.test.ts",
+    "result": "172 passed"
+  },
+  "attacks_attempted": [
+    {
+      "id": "ATK-001",
+      "title": "DeterministicProvider shell without Authority",
+      "result": "BLOCKED",
+      "notes": "CONFIRMATION_REQUIRED / AUTHORITY_DENIED"
+    },
+    {
+      "id": "ATK-002",
+      "title": "MockProvider shell without CapabilityAuthority",
+      "result": "OPEN",
+      "severity": "informational",
+      "notes": "Test harness bypass — MockProvider has no authorize(); must not ship as production provider"
+    },
+    {
+      "id": "ATK-003",
+      "title": "AcquisitionGate self-attested validation_status=passed → REGISTER",
+      "result": "OPEN",
+      "severity": "medium",
+      "finding": "SEC-008"
+    },
+    {
+      "id": "ATK-004",
+      "title": "QUARANTINED stamp bypass via casing/whitespace/unknown",
+      "result": "FIXED",
+      "severity_was": "high",
+      "finding": "SEC-009",
+      "mitigation": "coerceSafetyState + fail-closed deny; runtime entry coerces unknown → QUARANTINED"
+    },
+    {
+      "id": "ATK-005",
+      "title": "InstructionHierarchy external_data may_override system_policy",
+      "result": "SCHEMA_BLOCKED / RUNTIME_OPEN",
+      "severity": "medium",
+      "finding": "SEC-005"
+    },
+    {
+      "id": "ATK-006",
+      "title": "Memory append secret-like content redaction",
+      "result": "FIXED",
+      "severity_was": "high",
+      "finding": "SEC-006",
+      "notes": "MemoryStore.append + annotateMemoryEntry redact; unit test proves secret not on disk"
+    },
+    {
+      "id": "ATK-007",
+      "title": "featureId unicode / percent-encoded / null traversal",
+      "result": "FIXED",
+      "severity_was": "high",
+      "finding": "SEC-010",
+      "mitigation": "FEATURE_ID_ALLOWLIST + pathEscapesWorkspace decodeURIComponent/backslash/null"
+    },
+    {
+      "id": "ATK-008",
+      "title": "risk_by_goal override force low on high policy",
+      "result": "OPEN",
+      "severity": "medium",
+      "finding": "SEC-004",
+      "notes": "Host-trusted API; destructive tokens still trip DENY / attestation"
+    },
+    {
+      "id": "ATK-009",
+      "title": "sandbox_attestation:true allows DESTRUCTIVE without OS sandbox",
+      "result": "FIXED_PARTIAL",
+      "severity_was": "high",
+      "finding": "SEC-001",
+      "notes": "DESTRUCTIVE DENY by default; EVOLVELOOP_ALLOW_DESTRUCTIVE_WITHOUT_OS_SANDBOX=true opt-in; OS sandbox still NOT_IMPLEMENTED"
+    }
+  ],
+  "findings": [
+    {
+      "id": "SEC-001",
+      "severity": "high",
+      "title": "Sandbox attestation theater — host boolean ≠ OS isolation",
+      "status": "FIXED",
+      "note": "PARTIAL: DESTRUCTIVE denied by default without EVOLVELOOP_ALLOW_DESTRUCTIVE_WITHOUT_OS_SANDBOX; sandbox_attestation alone insufficient for DESTRUCTIVE. OS sandbox remains NOT_IMPLEMENTED — honesty documented.",
+      "paths": [
+        "orchestrator/src/v3/adapters/agency-runtime.ts:isDestructiveDeniedWithoutOsSandbox",
+        "orchestrator/src/v3/adapters/agency-runtime.ts:ALLOW_DESTRUCTIVE_WITHOUT_OS_SANDBOX_ENV"
+      ]
+    },
+    {
+      "id": "SEC-006",
+      "severity": "high",
+      "title": "Secrets lifecycle / memory redaction",
+      "status": "FIXED",
+      "paths": [
+        "orchestrator/src/memory/secret-redaction.ts",
+        "orchestrator/src/memory/memory-store.ts:append",
+        "orchestrator/src/v3/contracts/enforcement.ts:annotateMemoryEntry"
+      ]
+    },
+    {
+      "id": "SEC-009",
+      "severity": "high",
+      "title": "QUARANTINED safety_state stamp bypass (casing/unknown → allow path)",
+      "status": "FIXED",
+      "paths": [
+        "orchestrator/src/v3/agency/governor.ts:coerceSafetyState",
+        "orchestrator/src/v3/adapters/agency-runtime.ts"
+      ]
+    },
+    {
+      "id": "SEC-010",
+      "severity": "high",
+      "title": "featureId/path percent-encoded and unicode traversal variants",
+      "status": "FIXED",
+      "paths": [
+        "orchestrator/src/memory/filesystem-memory-store.ts:assertFeatureIdConfined",
+        "orchestrator/src/authority/capability-authority.ts:pathEscapesWorkspace"
+      ]
+    },
+    {
+      "id": "SEC-004",
+      "severity": "medium",
+      "title": "risk_by_goal host override can downgrade governor risk",
+      "status": "OPEN"
+    },
+    {
+      "id": "SEC-005",
+      "severity": "medium",
+      "title": "InstructionHierarchy schema-only — not runtime-wired",
+      "status": "OPEN"
+    },
+    {
+      "id": "SEC-008",
+      "severity": "medium",
+      "title": "AcquisitionGate self-attested REGISTER (stub)",
+      "status": "OPEN"
+    },
+    {
+      "id": "SEC-INF-002",
+      "severity": "informational",
+      "title": "MockProvider bypasses CapabilityAuthority",
+      "status": "OPEN_DOCUMENTED"
+    }
+  ],
+  "local_fixes_applied": [
+    {
+      "id": "SEC-009",
+      "files": [
+        "orchestrator/src/v3/agency/governor.ts",
+        "orchestrator/src/v3/adapters/agency-runtime.ts"
+      ],
+      "regression": "tests/unit/v3/adversarial/policy-sandbox-auth.test.ts ADV: SEC-009"
+    },
+    {
+      "id": "SEC-010",
+      "files": [
+        "orchestrator/src/memory/filesystem-memory-store.ts",
+        "orchestrator/src/authority/capability-authority.ts"
+      ],
+      "regression": "tests/unit/v3/adversarial/policy-sandbox-auth.test.ts ADV: SEC-010"
+    },
+    {
+      "id": "SEC-006",
+      "files": [
+        "orchestrator/src/memory/secret-redaction.ts",
+        "orchestrator/src/memory/memory-store.ts",
+        "orchestrator/src/v3/contracts/enforcement.ts"
+      ],
+      "regression": "tests/unit/v3/adversarial/policy-sandbox-auth.test.ts ADV: SEC-006 + filesystem-stores.test.ts"
+    },
+    {
+      "id": "SEC-001",
+      "files": [
+        "orchestrator/src/v3/adapters/agency-runtime.ts"
+      ],
+      "regression": "tests/unit/v3/adversarial/policy-sandbox-auth.test.ts ADV: SEC-001 DESTRUCTIVE DENY"
+    }
+  ],
+  "not_implemented_honest": {
+    "os_sandbox": "NOT_IMPLEMENTED — DESTRUCTIVE DENY by default; EVOLVELOOP_ALLOW_DESTRUCTIVE_WITHOUT_OS_SANDBOX=true is explicit host opt-in and still NOT OS isolation; sandbox_attestation / SafetySandboxContext depth remain host-declared labels for non-DESTRUCTIVE high-risk"
+  },
+  "wiki_register": "EvolveLoop/log.md append"
+}
