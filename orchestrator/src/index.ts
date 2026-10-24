@@ -194,3 +194,7 @@ export { JobStore, type SkillJob, type SkillJobResult } from "./jobs/job-store.j
 export { invokePickup, buildPickupPrompt, type PickupPlan } from "./jobs/job-pickup.js";
 export { jobResultToExecuteResult, loadEvidenceFile } from "./jobs/job-resume.js";
 export { saveCheckpoint, loadCheckpoint, clearCheckpoint, type EngineCheckpoint } from "./jobs/checkpoint.js";
+
+// Observability G1 exports (V2.5 Integration)
+export * from "./observability/index.js";
+
