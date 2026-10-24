@@ -15,6 +15,12 @@ import {
   persistVendorCacheTelemetry,
   type VendorCacheTelemetryRecord,
 } from "./vendor-cache-telemetry.js";
+import {
+  classifyHttpInferenceUsage,
+  type InferenceSpanRecord,
+} from "../../observability/inference-usage.js";
+import { appendInferenceSpan } from "../../observability/inference-ledger.js";
+import { resolveLlmGatewayUrl } from "./llm-gateway-target.js";
 
 export type FetchFn = typeof fetch;
 
@@ -23,6 +29,7 @@ export interface LlmAdapterResult {
   raw: unknown;
   usage: VendorCacheUsage;
   telemetry: VendorCacheTelemetryRecord;
+  span?: InferenceSpanRecord;
 }
 
 export interface AnthropicCompleteInput {
@@ -35,6 +42,12 @@ export interface AnthropicCompleteInput {
   memoryRoot?: string;
   callIndex?: number;
   liveProbe?: boolean;
+  runId?: string;
+  taskId?: string;
+  agentId?: string;
+  phase?: string;
+  retryIndex?: number;
+  durationMs?: number;
 }
 
 export interface OpenAiCompleteInput {
@@ -47,6 +60,12 @@ export interface OpenAiCompleteInput {
   memoryRoot?: string;
   callIndex?: number;
   liveProbe?: boolean;
+  runId?: string;
+  taskId?: string;
+  agentId?: string;
+  phase?: string;
+  retryIndex?: number;
+  durationMs?: number;
 }
 
 export function buildAnthropicMessagesBody(input: {
@@ -111,19 +130,54 @@ export class LlmHttpProviderAdapter {
 
   async completeAnthropic(input: AnthropicCompleteInput): Promise<LlmAdapterResult> {
     const body = buildAnthropicMessagesBody(input);
-    const res = await this.fetchImpl("https://api.anthropic.com/v1/messages", {
-      method: "POST",
-      headers: {
-        "content-type": "application/json",
-        "x-api-key": input.apiKey,
-        "anthropic-version": "2023-06-01",
-      },
-      body: JSON.stringify(body),
-    });
-    const raw = (await res.json()) as unknown;
+    const url = resolveLlmGatewayUrl("anthropic", process.env);
+    let res: Response;
+    try {
+      res = await this.fetchImpl(url, {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+          "x-api-key": input.apiKey,
+          "anthropic-version": "2023-06-01",
+        },
+        body: JSON.stringify(body),
+      });
+    } catch (err) {
+      if (input.memoryRoot && input.featureId) {
+        const failureSpan = classifyHttpInferenceUsage({
+          httpOk: false,
+          runId: input.runId,
+          taskId: input.taskId,
+          agentId: input.agentId,
+          phase: input.phase,
+          provider: "anthropic",
+          model: input.model,
+          retryIndex: input.retryIndex,
+          durationMs: input.durationMs,
+          outcome: "error",
+        });
+        appendInferenceSpan(input.memoryRoot, input.featureId, failureSpan);
+      }
+      throw err;
+    }
     if (!res.ok) {
+      if (input.memoryRoot && input.featureId) {
+        const failureSpan = classifyHttpInferenceUsage({
+          httpOk: false,
+          runId: input.runId,
+          taskId: input.taskId,
+          agentId: input.agentId,
+          phase: input.phase,
+          provider: "anthropic",
+          model: input.model,
+          retryIndex: input.retryIndex,
+          durationMs: input.durationMs,
+        });
+        appendInferenceSpan(input.memoryRoot, input.featureId, failureSpan);
+      }
       throw new Error(`anthropic_http_${res.status}`);
     }
+    const raw = (await res.json()) as unknown;
     const usage = parseAnthropicCacheUsage(raw);
     const telemetry = buildVendorCacheTelemetry({
       vendor: "anthropic",
@@ -132,26 +186,75 @@ export class LlmHttpProviderAdapter {
       callIndex: input.callIndex,
       liveProbe: input.liveProbe,
     });
+    let span: InferenceSpanRecord | undefined;
     if (input.memoryRoot && input.featureId) {
       persistVendorCacheTelemetry(input.memoryRoot, input.featureId, telemetry);
+      span = classifyHttpInferenceUsage({
+        httpOk: true,
+        body: raw,
+        runId: input.runId,
+        taskId: input.taskId,
+        agentId: input.agentId,
+        phase: input.phase,
+        provider: "anthropic",
+        model: input.model,
+        retryIndex: input.retryIndex,
+        durationMs: input.durationMs,
+      });
+      appendInferenceSpan(input.memoryRoot, input.featureId, span);
     }
-    return { text: extractAnthropicText(raw), raw, usage, telemetry };
+    return { text: extractAnthropicText(raw), raw, usage, telemetry, span };
   }
 
   async completeOpenAi(input: OpenAiCompleteInput): Promise<LlmAdapterResult> {
     const body = buildOpenAiChatBody(input);
-    const res = await this.fetchImpl("https://api.openai.com/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        "content-type": "application/json",
-        authorization: `Bearer ${input.apiKey}`,
-      },
-      body: JSON.stringify(body),
-    });
-    const raw = (await res.json()) as unknown;
+    const url = resolveLlmGatewayUrl("openai", process.env);
+    let res: Response;
+    try {
+      res = await this.fetchImpl(url, {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+          authorization: `Bearer ${input.apiKey}`,
+        },
+        body: JSON.stringify(body),
+      });
+    } catch (err) {
+      if (input.memoryRoot && input.featureId) {
+        const failureSpan = classifyHttpInferenceUsage({
+          httpOk: false,
+          runId: input.runId,
+          taskId: input.taskId,
+          agentId: input.agentId,
+          phase: input.phase,
+          provider: "openai",
+          model: input.model,
+          retryIndex: input.retryIndex,
+          durationMs: input.durationMs,
+          outcome: "error",
+        });
+        appendInferenceSpan(input.memoryRoot, input.featureId, failureSpan);
+      }
+      throw err;
+    }
     if (!res.ok) {
+      if (input.memoryRoot && input.featureId) {
+        const failureSpan = classifyHttpInferenceUsage({
+          httpOk: false,
+          runId: input.runId,
+          taskId: input.taskId,
+          agentId: input.agentId,
+          phase: input.phase,
+          provider: "openai",
+          model: input.model,
+          retryIndex: input.retryIndex,
+          durationMs: input.durationMs,
+        });
+        appendInferenceSpan(input.memoryRoot, input.featureId, failureSpan);
+      }
       throw new Error(`openai_http_${res.status}`);
     }
+    const raw = (await res.json()) as unknown;
     const usage = parseOpenAiCacheUsage(raw);
     const telemetry = buildVendorCacheTelemetry({
       vendor: "openai",
@@ -160,9 +263,23 @@ export class LlmHttpProviderAdapter {
       callIndex: input.callIndex,
       liveProbe: input.liveProbe,
     });
+    let span: InferenceSpanRecord | undefined;
     if (input.memoryRoot && input.featureId) {
       persistVendorCacheTelemetry(input.memoryRoot, input.featureId, telemetry);
+      span = classifyHttpInferenceUsage({
+        httpOk: true,
+        body: raw,
+        runId: input.runId,
+        taskId: input.taskId,
+        agentId: input.agentId,
+        phase: input.phase,
+        provider: "openai",
+        model: input.model,
+        retryIndex: input.retryIndex,
+        durationMs: input.durationMs,
+      });
+      appendInferenceSpan(input.memoryRoot, input.featureId, span);
     }
-    return { text: extractOpenAiText(raw), raw, usage, telemetry };
+    return { text: extractOpenAiText(raw), raw, usage, telemetry, span };
   }
 }

@@ -168,6 +168,40 @@ export {
   copySanitizedEvidenceToJobsDir,
 } from "./evidence/evidence-bus.js";
 export {
+  classifyHttpInferenceUsage,
+  classifyHttpPayloadUsage,
+  assertSameMeasurementClass,
+  NOT_MEASURED,
+  type InferenceSpanRecord,
+  type InferenceUsageSource,
+  type InferenceUsageConfidence,
+  type InferenceOutcome,
+  type ClassifyHttpInferenceUsageInput,
+  type NotMeasured,
+} from "./observability/inference-usage.js";
+export {
+  resolveInferenceSpansPath,
+  appendInferenceSpan,
+  readInferenceSpans,
+  sanitizeSpanRecord,
+} from "./observability/inference-ledger.js";
+export {
+  compareBenchmarkSamples,
+  assertNotProviderTokens,
+  E001_PROXY_SERIES,
+  type BenchmarkSample,
+  type BenchmarkMeasurementClass,
+  type BenchmarkComparisonResult,
+  type E001ProxySeries,
+} from "./observability/benchmark-comparison.js";
+export {
+  evaluateBenchmarkRun,
+  BENCHMARK_BLOCKERS,
+  type EvaluateBenchmarkRunInput,
+  type BenchmarkRunGateResult,
+  type BenchmarkBlocker,
+} from "./observability/benchmark-run-gate.js";
+export {
   isTruthFenceEnabled,
   resolveKnowledgeProjectRoot,
 } from "./providers/deterministic/knowledge.js";
@@ -347,3 +381,4 @@ export {
   probeVendorCacheLive,
   type VendorLiveProbeReport,
 } from "./providers/llm/vendor-cache-live-probe.js";
+export { resolveLlmGatewayUrl } from "./providers/llm/llm-gateway-target.js";
