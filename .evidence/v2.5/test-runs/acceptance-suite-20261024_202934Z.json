@@ -1,0 +1,10 @@
+{
+  "suite": "EvolveLoop V2.5 Acceptance Tests",
+  "timestamp": "20261024_202934Z",
+  "total_tests": 7,
+  "passed": 7,
+  "failed": 0,
+  "results": [
+    {"test_id": "A", "name": "Antigravity Initialization & CLI Runner", "status": "PASS", "duration_s": 3.90, "duration_ms": 3898},{"test_id": "B", "name": "Mandatory Delegation & Coordinator Non-Authoring", "status": "PASS", "duration_s": 0.01, "duration_ms": 15},{"test_id": "C", "name": "Recursive Delegation & Depth Limit", "status": "PASS", "duration_s": 0.02, "duration_ms": 21},{"test_id": "D", "name": "Independent Review & Deliberate Failure Catch", "status": "PASS", "duration_s": 0.06, "duration_ms": 60},{"test_id": "E", "name": "Scope Isolation & Whitelist Protection", "status": "PASS", "duration_s": 0.02, "duration_ms": 19},{"test_id": "F", "name": "Real Failure & Timeout Detection", "status": "PASS", "duration_s": 3.21, "duration_ms": 3211},{"test_id": "G", "name": "Protected Operations Approval & Blocking", "status": "PASS", "duration_s": 0.02, "duration_ms": 18}
+  ]
+}

@@ -1,0 +1,7 @@
+{
+  "contract_id": "del-test-b",
+  "delegator": "implementation_coordinator",
+  "delegate": "v25_executor",
+  "target_file": "/home/gaab/orca/workspaces/EvolveLoop/v.2.5/.test-harness/test-b/executor/result.txt",
+  "expected_content": "PROCESSED_BY_DEDICATED_EXECUTOR"
+}
