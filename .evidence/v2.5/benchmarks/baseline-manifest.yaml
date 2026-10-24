@@ -1,0 +1,31 @@
+manifest_version: "2.5.0"
+manifest_type: "BASELINE_FREEZE_MANIFEST"
+timestamp: "2026-10-24T21:46:00Z"
+compiled_by: "v25_setup_executor"
+phase: "Phase 1: Baseline Freeze"
+workspace_root: "/home/gaab/orca/workspaces/EvolveLoop/v.2.5"
+
+baseline_artifacts:
+  - path: ".evidence/v2.5/benchmarks/p0-baseline-report.json"
+    type: "MEASURED_DETERMINISTIC_CONTEXT"
+    sha256: "baff8bd510de6f1323ad820473ad629ea0216865e5c15414307dc6067426065f"
+    description: "Consolidated reference metrics from EvolveLoop V2.2."
+    
+  - path: "docs/v2.5/setup/08-EVIDENCE_REPORTING_CONTRACT.md"
+    type: "CANONICAL_SPECIFICATION"
+    sha256: "313165b4c489b8ee52bf9b50b57e75929668ceac1d01ddaa944d18ec0a4b77f8"
+    description: "Evidence bus and epistemic classification contract."
+
+  - path: "memory/v25-uks-decisions/token-efficiency-hypotheses.md"
+    type: "CANONICAL_HYPOTHESES"
+    sha256: "4a0ea27cf4fffa54fb0566373b60fb39a4891b07223b246a4892c9066ff05119"
+    description: "Falsifiable token reduction hypotheses H-01 to H-04."
+
+  - path: "memory/v25-uks-decisions/uks-validation-plan.md"
+    type: "CANONICAL_VALIDATION_PLAN"
+    sha256: "d53517cf2d5f87b8d4f6ee3778cf6db8c547fbda318f2bb73273e970b40e32f5"
+    description: "24-task benchmark protocol and evaluation arms B0, B1, B3, B_UKS."
+
+verification:
+  all_artifacts_exist_on_disk: true
+  status: "FROZEN_CERTIFIED"

@@ -1,0 +1,53 @@
+{
+  "task_id": "phase10-cutover-completion",
+  "phase": "Phase 10: Definitive Cutover & Legacy Silo Deprecation (UKS Core V2.5)",
+  "timestamp": "2026-10-24T22:32:56.007Z",
+  "status": "PASSED",
+  "total_tests": 7,
+  "passed_tests": 7,
+  "failed_tests": 0,
+  "cutover_state": {
+    "canonical_production_backend": "uks",
+    "canonical_backend_class": "UKSKnowledgeBackend",
+    "default_activation_without_env_vars": true,
+    "contingency_rollback_supported": true,
+    "contingency_env_var": "EVOLVELOOP_UKS_DISABLED=1",
+    "shadow_mode_supported": true,
+    "shadow_env_var": "EVOLVELOOP_UKS_SHADOW=1",
+    "measured_search_latency_ms": 13.52,
+    "slo_target_ms": 50,
+    "slo_pass": true
+  },
+  "deprecations_audit": {
+    "filesystem_knowledge_store_deprecated": true,
+    "wiki_subprocess_backend_deprecated": true,
+    "graphify_cli_deprecated": true
+  },
+  "artifacts": [
+    {
+      "path": "orchestrator/src/knowledge/backend/resolve.ts",
+      "type": "VERIFIED_IN_CODE",
+      "sha256": "8038d5899cb25a9db2b29da09108b7ead91c53f1e630523a5f4fb290ab70b306"
+    },
+    {
+      "path": "orchestrator/src/knowledge/backend/uks-backend.ts",
+      "type": "VERIFIED_IN_CODE",
+      "sha256": "484b7c8fbeeb896638c535dffd376e9b61b2ec6085d4a22f7ad0869dc2c3d9d5"
+    },
+    {
+      "path": "orchestrator/src/knowledge/backend/wiki-backend.ts",
+      "type": "VERIFIED_IN_CODE",
+      "sha256": "cdb9436241b102f4c593cf9fdde76ac52a92f782f23eac3dfc735f43f78dde1c"
+    },
+    {
+      "path": "orchestrator/src/knowledge/filesystem-knowledge-store.ts",
+      "type": "VERIFIED_IN_CODE",
+      "sha256": "b3e6ba1bc1aaec20c6e80878fe1cc8f3fcd7c590e1db9135c805bf35effe2647"
+    },
+    {
+      "path": "scripts/v2.5/test-cutover-verification.mjs",
+      "type": "VERIFIED_IN_CODE",
+      "sha256": "d4f9f5ae7029e9784526e7fe2a659c491349191e2e5d9b648d87b1f55e5a6bf9"
+    }
+  ]
+}

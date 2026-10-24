@@ -7,8 +7,8 @@
 
 import type { EvidenceSet } from "../../capabilities/results.js";
 
-/** Registered backend ids. Default production backend is always "wiki". */
-export type KnowledgeBackendId = "wiki" | "fake";
+/** Registered backend ids. Default production backend is always "wiki". Supports "uks" and "shadow" (Phase 9). */
+export type KnowledgeBackendId = "wiki" | "fake" | "uks" | "shadow";
 
 export interface KnowledgeHealth {
   available: boolean;

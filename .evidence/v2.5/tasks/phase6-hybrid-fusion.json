@@ -1,0 +1,81 @@
+{
+  "task_id": "phase6-hybrid-fusion-validation",
+  "phase": "Phase 6: Reciprocal Rank Fusion (RRF) Hybrid Fusion and Graceful Degradation",
+  "timestamp": "2026-10-24T22:32:54.420Z",
+  "status": "PASSED",
+  "total_tests": 6,
+  "passed_tests": 6,
+  "failed_tests": 0,
+  "tests": [
+    {
+      "name": "RRF mathematical precision: w / (k + rank) for single channel",
+      "status": "PASS",
+      "duration_ms": 1
+    },
+    {
+      "name": "RRF multi-channel score summation: BM25 + AST",
+      "status": "PASS",
+      "duration_ms": 0
+    },
+    {
+      "name": "Synergistic ranking: Joint AST + BM25 hit elevates above isolated BM25 hits",
+      "status": "PASS",
+      "duration_ms": 0
+    },
+    {
+      "name": "Graceful degradation: degraded_mode is true when vector unavailable without crashing",
+      "status": "PASS",
+      "duration_ms": 1
+    },
+    {
+      "name": "Overlapping chunk deduplication and surgical citation references",
+      "status": "PASS",
+      "duration_ms": 0
+    },
+    {
+      "name": "In-process fusion latency benchmark adheres strictly to sub-5ms SLO",
+      "status": "PASS",
+      "duration_ms": 11
+    }
+  ],
+  "measurements": {
+    "fusion_algorithm": "Reciprocal Rank Fusion (RRF)",
+    "rrf_constant_k": 60,
+    "default_weights": {
+      "bm25": 1,
+      "ast": 1.2,
+      "vector": 0.8
+    },
+    "channels_tested": [
+      "bm25",
+      "ast",
+      "vector"
+    ],
+    "benchmark_iterations": 100,
+    "median_fusion_latency_ms": 0.066,
+    "p95_fusion_latency_ms": 0.22,
+    "slo_latency_target_ms": 5,
+    "slo_latency_pass": true,
+    "legacy_v22_subprocess_latency_ms": 1639,
+    "speedup_factor": 24789.8,
+    "degraded_mode_support": true,
+    "snippet_deduplication_support": true
+  },
+  "artifacts": [
+    {
+      "path": "orchestrator/src/knowledge/uks/hybrid-fusion.ts",
+      "type": "VERIFIED_IN_CODE",
+      "sha256": "fb499242d43bc7351feee7c3f6ddca57294d61df93738281fc9d135e22ce3509"
+    },
+    {
+      "path": "orchestrator/tests/knowledge/uks/hybrid-fusion.test.ts",
+      "type": "VERIFIED_IN_CODE",
+      "sha256": "b17f850f2543cd6564839d2acdb1389e146c9164baa78cf3763d8f6097361738"
+    },
+    {
+      "path": "scripts/v2.5/test-hybrid-fusion.mjs",
+      "type": "VERIFIED_IN_CODE",
+      "sha256": "315a71afe7271985d65f21aed8fcfe1ac4a3a2de9ce7b943d0bec7439f4e61e4"
+    }
+  ]
+}

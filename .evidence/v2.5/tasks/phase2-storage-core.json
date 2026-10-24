@@ -1,0 +1,58 @@
+{
+  "task_id": "phase2-storage-core-validation",
+  "phase": "Phase 2: Storage Core & .data Foundation",
+  "timestamp": "2026-10-24T22:32:52.928Z",
+  "status": "PASSED",
+  "total_tests": 6,
+  "passed_tests": 6,
+  "failed_tests": 0,
+  "tests": [
+    {
+      "name": "computeSha256 produces valid cryptographic hashes",
+      "status": "PASS",
+      "duration_ms": 1
+    },
+    {
+      "name": "assertPathConfined allows authorized nested paths",
+      "status": "PASS",
+      "duration_ms": 0
+    },
+    {
+      "name": "assertPathConfined blocks directory traversal attacks",
+      "status": "PASS",
+      "duration_ms": 1
+    },
+    {
+      "name": "writeAtomicJson persists data atomically and readJson retrieves it",
+      "status": "PASS",
+      "duration_ms": 2
+    },
+    {
+      "name": "readJson returns null for missing files without throwing",
+      "status": "PASS",
+      "duration_ms": 0
+    },
+    {
+      "name": "initializeDataDirectory initializes .data/ with integrity-manifest.json",
+      "status": "PASS",
+      "duration_ms": 3
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "orchestrator/src/knowledge/uks/storage-core.ts",
+      "type": "VERIFIED_IN_CODE",
+      "sha256": "9ef398b1d852e65c5cc89410123eaeb799ee660d8cc6a9e322c6f7e1cb9e6fef"
+    },
+    {
+      "path": "orchestrator/tests/knowledge/uks/storage-core.test.ts",
+      "type": "VERIFIED_IN_CODE",
+      "sha256": "2842dd335ac24f54abdeb839227c0746378b8f392ca05e1795fee18ed26a8da3"
+    },
+    {
+      "path": ".data/integrity-manifest.json",
+      "type": "MEASURED",
+      "sha256": "37fbeb14ecdb8035fbd4277cfb51eaab0511e388995965d4126b616bb9dccaa9"
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "task_id": "task-acceptance-test-a-20261024_202934Z",
+  "role": "test_engineer",
+  "engine": "agy --dangerously-skip-permissions",
+  "status": "TIMEOUT_EXPIRED",
+  "exit_code": 124,
+  "start_time": "2026-10-24T20:29:34Z",
+  "end_time": "2026-10-24T20:29:38Z",
+  "duration_ms": 3868,
+  "duration_secs": 3.87,
+  "timeout_secs": 3,
+  "worktree_path": "/home/gaab/orca/workspaces/EvolveLoop/v.2.5",
+  "model": "default",
+  "log_file": "/home/gaab/orca/workspaces/EvolveLoop/v.2.5/.evidence/v2.5/logs/task-acceptance-test-a-20261024_202934Z.log"
+}

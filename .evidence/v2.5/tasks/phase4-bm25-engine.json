@@ -1,0 +1,123 @@
+{
+  "task_id": "phase4-bm25-engine-validation",
+  "phase": "Phase 4: Okapi BM25 Lexical Engine Porting (ADR-D01)",
+  "timestamp": "2026-10-24T22:32:54.214Z",
+  "status": "PASSED",
+  "total_tests": 4,
+  "passed_tests": 4,
+  "failed_tests": 0,
+  "tests": [
+    {
+      "name": "tokenize normalizes text, strips stopwords, and splits compound tokens",
+      "status": "PASS",
+      "duration_ms": 0
+    },
+    {
+      "name": "chunkMarkdownDocument extracts structured chunks with precise line ranges",
+      "status": "PASS",
+      "duration_ms": 0
+    },
+    {
+      "name": "Bm25Engine ranks documents accurately based on term frequency and length normalization",
+      "status": "PASS",
+      "duration_ms": 1
+    },
+    {
+      "name": "indexes repository docs, persists .data/project-bm25.json, and achieves sub-15ms latency",
+      "status": "PASS",
+      "duration_ms": 909
+    }
+  ],
+  "measurements": {
+    "total_documents_indexed": 347,
+    "total_chunks_indexed": 3247,
+    "total_terms_indexed": 13316,
+    "avg_chunk_length": 50.55,
+    "search_queries_evaluated": 10,
+    "median_search_latency_ms": 3.89,
+    "p95_search_latency_ms": 5.07,
+    "slo_latency_target_ms": 15,
+    "slo_latency_pass": true,
+    "legacy_v22_subprocess_latency_ms": 1639,
+    "speedup_factor": 421.3,
+    "query_details": [
+      {
+        "query": "orchestrator contract operational boundaries",
+        "latency_ms": 5.07,
+        "hits_count": 5,
+        "top_hit": "docs/architecture/skills/audit/SKILL-USAGE-FINAL-REPORT-V2.md"
+      },
+      {
+        "query": "agent delegation protocol acceptance criteria",
+        "latency_ms": 4.97,
+        "hits_count": 5,
+        "top_hit": "docs/architecture/finalization/adrs/ADR-DR-0004-define-stuck-semantics-first.md"
+      },
+      {
+        "query": "worktree policy branch isolation",
+        "latency_ms": 3.16,
+        "hits_count": 5,
+        "top_hit": "docs/v2.5/setup/06-WORKTREE_POLICY.md"
+      },
+      {
+        "query": "atomic write storage core POSIX rename",
+        "latency_ms": 2.73,
+        "hits_count": 5,
+        "top_hit": "docs/v2.5/setup/03-DELEGATION_PROTOCOL.md"
+      },
+      {
+        "query": "failure recovery partial plan reset",
+        "latency_ms": 2.73,
+        "hits_count": 5,
+        "top_hit": "docs/v2.5/setup/09-FAILURE_RECOVERY_POLICY.md"
+      },
+      {
+        "query": "truthfence authority hierarchy code ai vault",
+        "latency_ms": 4.14,
+        "hits_count": 5,
+        "top_hit": "docs/adr/0004-project-knowledge-contract.md"
+      },
+      {
+        "query": "epistemic taxonomy VERIFIED_IN_CODE MEASURED",
+        "latency_ms": 4.76,
+        "hits_count": 5,
+        "top_hit": "docs/v2.5/setup/08-EVIDENCE_REPORTING_CONTRACT.md"
+      },
+      {
+        "query": "subagent depth limit concurrency ceiling",
+        "latency_ms": 2.51,
+        "hits_count": 5,
+        "top_hit": "docs/v2.5/setup/05-SUBAGENT_POLICY.md"
+      },
+      {
+        "query": "antigravity dangerously-skip-permissions CLI launcher",
+        "latency_ms": 3.64,
+        "hits_count": 5,
+        "top_hit": "docs/v2.5/setup/12-VALIDATION_REPORT.md"
+      },
+      {
+        "query": "evidence manifest sha256 checksums",
+        "latency_ms": 3.89,
+        "hits_count": 5,
+        "top_hit": "docs/internal/historical/evals/docs-evals/baseline/RUNTIME-BASELINE.md"
+      }
+    ]
+  },
+  "artifacts": [
+    {
+      "path": "orchestrator/src/knowledge/uks/bm25-engine.ts",
+      "type": "VERIFIED_IN_CODE",
+      "sha256": "d2a4dc3ad743dd319f29e7552c6c6b890d1c0bcc271e7645d2ea3ce22b7727fe"
+    },
+    {
+      "path": "orchestrator/tests/knowledge/uks/bm25-engine.test.ts",
+      "type": "VERIFIED_IN_CODE",
+      "sha256": "fd75eaa2d504d0c5864ee7183d5da675e5cd2c1b46a262f3f69a722d545da084"
+    },
+    {
+      "path": ".data/project-bm25.json",
+      "type": "MEASURED",
+      "sha256": "6b255be8c720bd79256487e1755b1d43331a2315e2f5fb5e9ab5655c3bd307af"
+    }
+  ]
+}

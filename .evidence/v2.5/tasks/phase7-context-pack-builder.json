@@ -1,0 +1,101 @@
+{
+  "task_id": "phase7-context-pack-builder-validation",
+  "phase": "Phase 7: Context Pack Assembly & ContextBudget Slicing (ADR-D01/D04, Hypothesis H-01)",
+  "timestamp": "2026-10-24T22:32:54.697Z",
+  "status": "PASSED",
+  "total_tests": 6,
+  "passed_tests": 6,
+  "failed_tests": 0,
+  "tests": [
+    {
+      "name": "End-to-end 10-step pipeline produces structured UKSQueryResponse",
+      "status": "PASS",
+      "duration_ms": 3
+    },
+    {
+      "name": "ContextBudget ceiling is strictly respected; overflow hits discarded gracefully",
+      "status": "PASS",
+      "duration_ms": 8
+    },
+    {
+      "name": "Hypothesis H-01 validation: Surgical snippet reduces input tokens by >= 60%",
+      "status": "PASS",
+      "duration_ms": 1
+    },
+    {
+      "name": "TruthFence prioritizes Tier 0 Code over Tier 1 Docs and suppresses obsolete items",
+      "status": "PASS",
+      "duration_ms": 1
+    },
+    {
+      "name": "Adversarial foreign canary triggers SECURITY_LEAK_PREVENTED abort",
+      "status": "PASS",
+      "duration_ms": 1
+    },
+    {
+      "name": "Live query against repository AST & BM25 indexes meets sub-50ms latency SLO",
+      "status": "PASS",
+      "duration_ms": 127
+    }
+  ],
+  "hypothesis_h01": {
+    "enunciation": "Surgical snippet injection (file:start_line-end_line) reduces input tokens by >= 60% compared to full file reading",
+    "acceptance_threshold_pct": 60,
+    "achieved_average_reduction_pct": 64.77,
+    "status": "VERIFIED"
+  },
+  "performance_metrics": {
+    "median_query_latency_ms": 6.24,
+    "p95_query_latency_ms": 9.78,
+    "slo_latency_target_ms": 50,
+    "slo_latency_pass": true,
+    "queries_evaluated": 4,
+    "query_telemetry": [
+      {
+        "query": "writeAtomicJson storage core",
+        "duration_ms": 9.78,
+        "hits_count": 14,
+        "tokens": 1975,
+        "reduction_pct": 89.41
+      },
+      {
+        "query": "ast extractor symbols typescript",
+        "duration_ms": 6.24,
+        "hits_count": 15,
+        "tokens": 1943,
+        "reduction_pct": 94.1
+      },
+      {
+        "query": "bm25 lexical engine tokenization",
+        "duration_ms": 5.38,
+        "hits_count": 1,
+        "tokens": 1963,
+        "reduction_pct": 41.94
+      },
+      {
+        "query": "reciprocal rank fusion hybrid",
+        "duration_ms": 5.12,
+        "hits_count": 2,
+        "tokens": 1915,
+        "reduction_pct": 33.65
+      }
+    ]
+  },
+  "artifacts": [
+    {
+      "path": "orchestrator/src/knowledge/uks/context-pack-builder.ts",
+      "type": "VERIFIED_IN_CODE",
+      "sha256": "54ae41b40a9c9c8abf9fea776ee6657b44e92b091affcfe5c8b4b9a1536a3842"
+    },
+    {
+      "path": "orchestrator/tests/knowledge/uks/context-pack-builder.test.ts",
+      "type": "VERIFIED_IN_CODE",
+      "sha256": "af1c5c520ff38bff8a4bd33ab6fb56fbf534586f065d1f1fb60d5c84d781e800"
+    },
+    {
+      "path": "scripts/v2.5/test-context-pack-builder.mjs",
+      "type": "VERIFIED_IN_CODE",
+      "sha256": "08a0133c3e1a1ca1f5f36af1f64b2751019e9bb9fb3c764f634ee0fde5ef62d4"
+    }
+  ]
+}

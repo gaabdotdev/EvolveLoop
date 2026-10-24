@@ -1,18 +1,19 @@
 /**
- * WikiKnowledgeBackend — default KnowledgeBackend implementation.
- * Wraps the existing Wiki vault CLI bridge (EXTERNAL module name via WIKI_CLI_MODULE).
- * Does not reimplement RAG.
+ * @deprecated Superseded by UKS Core V2.5 (ADR-D01/D04).
+ * External Python subprocess `gaabwiki` backend is deprecated and retained solely
+ * for contingency rollback via `EVOLVELOOP_UKS_DISABLED=1`.
+ * Production default is now `UKSKnowledgeBackend` (Phase 10 Cutover).
  */
 
 import { spawn } from "node:child_process";
 import { existsSync } from "node:fs";
-import type { EvidenceSet, KnowledgeHit } from "../../capabilities/results.js";
-import { cleanOutput } from "../../capabilities/results.js";
+import type { EvidenceSet, KnowledgeHit } from "../../capabilities/results.ts";
+import { cleanOutput } from "../../capabilities/results.ts";
 import type {
   KnowledgeBackend,
   KnowledgeHealth,
   KnowledgeInspectResult,
-} from "./types.js";
+} from "./types.ts";
 
 /**
  * Wiki corpus root — portable.

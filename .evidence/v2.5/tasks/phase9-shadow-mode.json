@@ -1,0 +1,175 @@
+{
+  "task_id": "phase9-shadow-mode-validation",
+  "phase": "Phase 9: Shadow Mode in /evolve Cycles (EVOLVELOOP_UKS_SHADOW=1)",
+  "timestamp": "2026-10-24T22:32:55.698Z",
+  "status": "PASSED",
+  "total_cycles_executed": 50,
+  "successful_cycles": 50,
+  "drift_failures": 0,
+  "leak_failures": 0,
+  "error_failures": 0,
+  "performance_metrics": {
+    "legacy_b1_baseline_latency_ms": 1639,
+    "uks_shadow_median_latency_ms": 6.97,
+    "uks_shadow_p95_latency_ms": 10,
+    "average_speedup_vs_legacy_b1": 238.9,
+    "speedup_criterion_target": 50,
+    "speedup_criterion_met": true
+  },
+  "criteria_validation": {
+    "all_cycles_passed_criterion": true,
+    "zero_behavioral_drift_criterion": true,
+    "zero_canary_leak_criterion": true,
+    "sub_50ms_latency_criterion": true,
+    "overall_verdict": "HOMOLOGADO COM LOUVOR"
+  },
+  "artifacts": [
+    {
+      "path": "orchestrator/src/knowledge/backend/types.ts",
+      "type": "VERIFIED_IN_CODE",
+      "sha256": "4170efa9ad790738fb484c59df416b92df637d95dfda8a27c8911ca455308982"
+    },
+    {
+      "path": "orchestrator/src/knowledge/backend/uks-backend.ts",
+      "type": "VERIFIED_IN_CODE",
+      "sha256": "484b7c8fbeeb896638c535dffd376e9b61b2ec6085d4a22f7ad0869dc2c3d9d5"
+    },
+    {
+      "path": "orchestrator/src/knowledge/backend/shadow-backend.ts",
+      "type": "VERIFIED_IN_CODE",
+      "sha256": "6275eaf47b493b57e15484d2a967b939fdaa1878f7a88e58fe7750d5b0681d27"
+    },
+    {
+      "path": "orchestrator/src/knowledge/backend/resolve.ts",
+      "type": "VERIFIED_IN_CODE",
+      "sha256": "8038d5899cb25a9db2b29da09108b7ead91c53f1e630523a5f4fb290ab70b306"
+    },
+    {
+      "path": "scripts/v2.5/test-shadow-mode.mjs",
+      "type": "VERIFIED_IN_CODE",
+      "sha256": "ade5814faa3423af9f173760b74ff3c634358b62d0f07d1557e1ad3f53a01b60"
+    }
+  ],
+  "sample_cycles_telemetry": [
+    {
+      "cycle_number": 1,
+      "query": "writeAtomicJson storage core POSIX rename",
+      "primary_latency_ms": 0.31,
+      "shadow_uks_latency_ms": 115.64,
+      "speedup_vs_legacy_b1": 14.2,
+      "shadow_hits_count": 13,
+      "primary_hits_count": 1,
+      "zero_drift": true,
+      "zero_leak": true,
+      "status": "PASS"
+    },
+    {
+      "cycle_number": 2,
+      "query": "computeSha256 cryptographic integrity manifest",
+      "primary_latency_ms": 0.02,
+      "shadow_uks_latency_ms": 7.06,
+      "speedup_vs_legacy_b1": 232.2,
+      "shadow_hits_count": 15,
+      "primary_hits_count": 1,
+      "zero_drift": true,
+      "zero_leak": true,
+      "status": "PASS"
+    },
+    {
+      "cycle_number": 3,
+      "query": "assertPathConfined directory traversal veto",
+      "primary_latency_ms": 0.02,
+      "shadow_uks_latency_ms": 6.55,
+      "speedup_vs_legacy_b1": 250.2,
+      "shadow_hits_count": 14,
+      "primary_hits_count": 1,
+      "zero_drift": true,
+      "zero_leak": true,
+      "status": "PASS"
+    },
+    {
+      "cycle_number": 4,
+      "query": "initializeDataDirectory .data layout setup",
+      "primary_latency_ms": 0.02,
+      "shadow_uks_latency_ms": 6.68,
+      "speedup_vs_legacy_b1": 245.4,
+      "shadow_hits_count": 15,
+      "primary_hits_count": 1,
+      "zero_drift": true,
+      "zero_leak": true,
+      "status": "PASS"
+    },
+    {
+      "cycle_number": 5,
+      "query": "readJson safe atomic disk retrieval",
+      "primary_latency_ms": 0.02,
+      "shadow_uks_latency_ms": 7.12,
+      "speedup_vs_legacy_b1": 230.2,
+      "shadow_hits_count": 16,
+      "primary_hits_count": 1,
+      "zero_drift": true,
+      "zero_leak": true,
+      "status": "PASS"
+    },
+    {
+      "cycle_number": 6,
+      "query": "extractTsJsAst symbol parser typescript interfaces",
+      "primary_latency_ms": 0.02,
+      "shadow_uks_latency_ms": 7.15,
+      "speedup_vs_legacy_b1": 229.2,
+      "shadow_hits_count": 12,
+      "primary_hits_count": 1,
+      "zero_drift": true,
+      "zero_leak": true,
+      "status": "PASS"
+    },
+    {
+      "cycle_number": 7,
+      "query": "extractPythonAst classes methods functions",
+      "primary_latency_ms": 0.02,
+      "shadow_uks_latency_ms": 4.4,
+      "speedup_vs_legacy_b1": 372.5,
+      "shadow_hits_count": 12,
+      "primary_hits_count": 1,
+      "zero_drift": true,
+      "zero_leak": true,
+      "status": "PASS"
+    },
+    {
+      "cycle_number": 8,
+      "query": "findSymbol symbol definition query index",
+      "primary_latency_ms": 0.01,
+      "shadow_uks_latency_ms": 5.74,
+      "speedup_vs_legacy_b1": 285.5,
+      "shadow_hits_count": 14,
+      "primary_hits_count": 1,
+      "zero_drift": true,
+      "zero_leak": true,
+      "status": "PASS"
+    },
+    {
+      "cycle_number": 9,
+      "query": "findImplementations interface inheritance graph",
+      "primary_latency_ms": 0.02,
+      "shadow_uks_latency_ms": 6.34,
+      "speedup_vs_legacy_b1": 258.5,
+      "shadow_hits_count": 14,
+      "primary_hits_count": 1,
+      "zero_drift": true,
+      "zero_leak": true,
+      "status": "PASS"
+    },
+    {
+      "cycle_number": 10,
+      "query": "SymbolDefinition kind signature is_exported",
+      "primary_latency_ms": 0.03,
+      "shadow_uks_latency_ms": 6.65,
+      "speedup_vs_legacy_b1": 246.5,
+      "shadow_hits_count": 14,
+      "primary_hits_count": 1,
+      "zero_drift": true,
+      "zero_leak": true,
+      "status": "PASS"
+    }
+  ]
+}

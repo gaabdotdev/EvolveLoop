@@ -1,12 +1,20 @@
 /**
  * Resolve the active KnowledgeBackend.
- * Default: wiki. Test-only: fake (when KNOWLEDGE_BACKEND=fake).
+ * 
+ * Production default in EvolveLoop V2.5: UKS Core ("uks") (Phase 10 Cutover).
+ * 
+ * Contingency / Rollback Triggers:
+ * - EVOLVELOOP_UKS_DISABLED === "1": Reverts automatically to legacy "wiki" backend.
+ * - EVOLVELOOP_UKS_SHADOW === "1": Runs UKS in parallel with primary (Shadow Mode).
+ * - KNOWLEDGE_BACKEND=fake: Test-only backend.
+ * - KNOWLEDGE_BACKEND=wiki: Explicit legacy wiki selection.
  */
 
-import { loadMegaBrainProfile, resolveKnowledgeBackendId } from "../../config/profile.js";
-import { FakeKnowledgeBackend } from "./fake-backend.js";
-import type { KnowledgeBackend } from "./types.js";
-import { WikiKnowledgeBackend } from "./wiki-backend.js";
+import { FakeKnowledgeBackend } from "./fake-backend.ts";
+import { WikiKnowledgeBackend } from "./wiki-backend.ts";
+import { UKSKnowledgeBackend } from "./uks-backend.ts";
+import { ShadowKnowledgeBackend } from "./shadow-backend.ts";
+import type { KnowledgeBackend, KnowledgeBackendId } from "./types.ts";
 
 let cached: KnowledgeBackend | null = null;
 let cachedKey: string | null = null;
@@ -22,27 +30,72 @@ export function resolveKnowledgeBackend(options?: {
   backendId?: string;
   /** Inject instance (tests). */
   instance?: KnowledgeBackend;
+  /** Workspace root path */
+  workspaceRoot?: string;
 }): KnowledgeBackend {
   if (options?.instance) return options.instance;
 
-  const profile = loadMegaBrainProfile();
-  const id = (options?.backendId ?? resolveKnowledgeBackendId(profile)).toLowerCase();
+  const isUksDisabled = process.env.EVOLVELOOP_UKS_DISABLED === "1";
+  const isShadowMode = process.env.EVOLVELOOP_UKS_SHADOW === "1";
+  const envBackend = (process.env.KNOWLEDGE_BACKEND || "").toLowerCase();
 
-  if (cached && cachedKey === id) return cached;
-
-  let backend: KnowledgeBackend;
-  switch (id) {
-    case "fake":
-      backend = new FakeKnowledgeBackend();
-      break;
-    case "wiki":
-    default:
-      // Unknown ids fall back to wiki (safe default) — do not silently skip grounding.
-      backend = new WikiKnowledgeBackend();
-      break;
+  // If UKS is explicitly disabled by rollback trigger, force wiki unless fake requested
+  let targetId: string;
+  if (options?.backendId) {
+    targetId = options.backendId.toLowerCase();
+  } else if (isUksDisabled) {
+    targetId = envBackend === "fake" ? "fake" : "wiki";
+  } else if (envBackend) {
+    targetId = envBackend;
+  } else {
+    // V2.5 Canonical Production Default: UKS Core!
+    targetId = "uks";
   }
 
-  cached = backend;
-  cachedKey = id === "fake" || id === "wiki" ? id : "wiki";
-  return backend;
+  const cacheKey = `${targetId}:disabled=${isUksDisabled}:shadow=${isShadowMode}`;
+  if (cached && cachedKey === cacheKey) return cached;
+
+  let finalBackend: KnowledgeBackend;
+
+  if (isShadowMode && targetId !== "shadow") {
+    // In shadow mode, primary is legacy wiki (or fake if requested), shadow is UKS
+    const primary = targetId === "fake" ? new FakeKnowledgeBackend() : new WikiKnowledgeBackend();
+    const shadow = new UKSKnowledgeBackend({ workspaceRoot: options?.workspaceRoot });
+    finalBackend = new ShadowKnowledgeBackend({
+      primary,
+      shadow,
+      workspaceRoot: options?.workspaceRoot
+    });
+  } else {
+    switch (targetId) {
+      case "shadow": {
+        const primary = isUksDisabled ? new WikiKnowledgeBackend() : new FakeKnowledgeBackend();
+        const shadow = new UKSKnowledgeBackend({ workspaceRoot: options?.workspaceRoot });
+        finalBackend = new ShadowKnowledgeBackend({
+          primary,
+          shadow,
+          workspaceRoot: options?.workspaceRoot
+        });
+        break;
+      }
+      case "fake":
+        finalBackend = new FakeKnowledgeBackend();
+        break;
+      case "wiki":
+        finalBackend = new WikiKnowledgeBackend();
+        break;
+      case "uks":
+      default:
+        if (isUksDisabled) {
+          finalBackend = new WikiKnowledgeBackend();
+        } else {
+          finalBackend = new UKSKnowledgeBackend({ workspaceRoot: options?.workspaceRoot });
+        }
+        break;
+    }
+  }
+
+  cached = finalBackend;
+  cachedKey = cacheKey;
+  return finalBackend;
 }

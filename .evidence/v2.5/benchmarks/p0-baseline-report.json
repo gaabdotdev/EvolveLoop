@@ -1,0 +1,80 @@
+{
+  "schema_version": "2.5.0",
+  "report_id": "EL-V25-BENCHMARK-P0-BASELINE",
+  "generated_at": "2026-10-24T21:45:00.000Z",
+  "status": "FROZEN_BASELINE",
+  "epistemic_class": "MEASURED_DETERMINISTIC_CONTEXT",
+  "description": "Consolidação canônica das medições de referência do EvolveLoop V2.2 para avaliação comparativa contra o UKS Core V2.5.",
+  "baseline_commit": "51e5bed42e0321c179c3756b1990ec82662058aa",
+  "canonical_metrics": {
+    "latency": {
+      "b0_grep_median_ms": 76.0,
+      "b1_wiki_subprocess_median_ms": 1639.0,
+      "b3_graphify_cli_median_ms": 750.0,
+      "python_runtime_cold_start_ms": 12.4,
+      "vault_bm25_search_raw_ms": 40.5,
+      "ipc_overhead_percent": 96.8
+    },
+    "tokens": {
+      "typical_blind_read_input_tokens_min": 20000,
+      "typical_blind_read_input_tokens_max": 45000,
+      "median_task_input_tokens": 20500,
+      "canonical_context_budget_max_input_tokens": 22000,
+      "target_uks_context_pack_tokens": 2000
+    },
+    "storage_footprint": {
+      "graphify_graph_json_size_bytes": 7759462,
+      "graphify_graph_json_size_mb": 7.4,
+      "graphify_graph_json_lines": 137940,
+      "target_uks_project_index_size_kb": 480
+    },
+    "recall_and_quality": {
+      "b0_grep_dev_recall": 0.45,
+      "b1_wiki_dev_recall": 0.75,
+      "b3_graphify_dev_recall": 0.75,
+      "b3_graphify_heldout_recall": 1.00,
+      "target_uks_heldout_recall_min": 0.833
+    }
+  },
+  "frozen_tasks_dataset": {
+    "total_tasks": 24,
+    "group_1_dev_tasks": [
+      {"id": "H07", "category": "architecture", "query": "auth module dependency resolution", "expected_anchor": "src/auth/"},
+      {"id": "H08", "category": "contracts", "query": "KnowledgeStore interface contract", "expected_anchor": "src/knowledge/"},
+      {"id": "H09", "category": "runtime", "query": "WikiKnowledgeBackend subprocess timeout rules", "expected_anchor": "wiki-backend.ts:31-75"},
+      {"id": "H10", "category": "resilience", "query": "YAML parsing error recovery", "expected_anchor": "src/config/"},
+      {"id": "H11", "category": "governance", "query": "worktree branch naming conventions", "expected_anchor": "docs/v2.5/setup/06-WORKTREE_POLICY.md"},
+      {"id": "H12", "category": "authority", "query": "TruthFence authority hierarchy invariants", "expected_anchor": "fence.ts:18-65"},
+      {"id": "H13", "category": "evidence", "query": "EvidenceBus gate output listeners", "expected_anchor": "evidence-bus.ts:22-58"},
+      {"id": "H14", "category": "security", "query": "secret-redaction token scrubbing patterns", "expected_anchor": "secret-redaction.ts"},
+      {"id": "H15", "category": "ast", "query": "BaseAdapter derived class hierarchy", "expected_anchor": "src/adapters/"},
+      {"id": "H16", "category": "audit", "query": "unhandled async promise rejections", "expected_anchor": "src/core/"},
+      {"id": "H17", "category": "tokenizer", "query": "tiktoken subprocess invocations", "expected_anchor": "tokenizer.ts:11-50"},
+      {"id": "H18", "category": "budget", "query": "ContextBudget protected slice retention", "expected_anchor": "budget.ts:12-18"}
+    ],
+    "group_2_held_out_tasks": [
+      {"id": "H19", "category": "dag", "query": "GraphStore capability task state mutations", "held_out": true},
+      {"id": "H20", "category": "adr", "query": "qualitative model routing decisions", "held_out": true},
+      {"id": "H21", "category": "testing", "query": "orphan test fixtures identification", "held_out": true},
+      {"id": "H22", "category": "messaging", "query": "send_message subagent protocols", "held_out": true},
+      {"id": "H23", "category": "lifecycle", "query": "CapabilityIR state transition rules", "held_out": true},
+      {"id": "H24", "category": "dependencies", "query": "package.json Node.js engine compatibility", "held_out": true}
+    ],
+    "group_3_adversarial_isolation_tasks": [
+      {"id": "X01", "attack_vector": "cross_project_canary_injection", "target_leak_rate": 0.00},
+      {"id": "X02", "attack_vector": "semantic_collision_homonym_terms", "target_leak_rate": 0.00},
+      {"id": "X03", "attack_vector": "directory_traversal_source_paths", "target_blocked": true},
+      {"id": "X04", "attack_vector": "truthfence_stale_bypass_attempt", "target_blocked": true},
+      {"id": "X05", "attack_vector": "global_embedding_leakage_vector", "target_leak_rate": 0.00},
+      {"id": "X06", "attack_vector": "context_budget_dos_chunk_injection", "target_protected_slices_preserved": true}
+    ]
+  },
+  "acceptance_targets": {
+    "AC_01_held_out_recall": ">= 83.3% (5/6)",
+    "AC_02_cross_project_leakage": "0.00% (Strict)",
+    "AC_03_token_reduction_vs_b0": ">= 10% global, >= 60% code",
+    "AC_04_staleness_detection": "100%",
+    "AC_05_median_latency": "< 250 ms (target < 100 ms)",
+    "AC_06_test_suite_pass_rate": "100%"
+  }
+}

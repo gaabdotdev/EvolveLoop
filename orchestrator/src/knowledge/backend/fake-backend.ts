@@ -3,23 +3,30 @@
  * NOT for production. Selected only when KNOWLEDGE_BACKEND=fake.
  */
 
-import type { EvidenceSet } from "../../capabilities/results.js";
+import type { EvidenceSet } from "../../capabilities/results.ts";
 import type {
   KnowledgeBackend,
   KnowledgeHealth,
   KnowledgeInspectResult,
-} from "./types.js";
+} from "./types.ts";
 
 export class FakeKnowledgeBackend implements KnowledgeBackend {
   readonly id = "fake" as const;
+  private opts: {
+    hits?: EvidenceSet["hits"];
+    error_code?: string | null;
+    available?: boolean;
+  };
 
   constructor(
-    private readonly opts: {
+    opts: {
       hits?: EvidenceSet["hits"];
       error_code?: string | null;
       available?: boolean;
     } = {},
-  ) {}
+  ) {
+    this.opts = opts;
+  }
 
   async search(query: string): Promise<EvidenceSet> {
     if (this.opts.error_code) {

@@ -1,0 +1,125 @@
+{
+  "task_id": "phase5-scope-enforcer-validation",
+  "phase": "Phase 5: TruthFence & Scope Isolation Integration (ADR-D03)",
+  "timestamp": "2026-10-24T22:32:54.315Z",
+  "status": "PASSED",
+  "total_tests": 9,
+  "passed_tests": 9,
+  "failed_tests": 0,
+  "tests": [
+    {
+      "name": "resolveProjectScopeId generates deterministic 16-hex partition namespaces",
+      "status": "PASS",
+      "duration_ms": 0
+    },
+    {
+      "name": "TruthFence prioritizes Tier 0 Code over Tier 1 Docs and Tier 2 Vault",
+      "status": "PASS",
+      "duration_ms": 0
+    },
+    {
+      "name": "TruthFence rejects items with status == obsoleto",
+      "status": "PASS",
+      "duration_ms": 0
+    },
+    {
+      "name": "X01: Project A attempts to read Project B secret -> 0.00% LEAK",
+      "status": "PASS",
+      "duration_ms": 0
+    },
+    {
+      "name": "X02: Partial directory prefix collision (/project vs /project-rogue) -> ISOLATED",
+      "status": "PASS",
+      "duration_ms": 0
+    },
+    {
+      "name": "X03: Directory traversal injection in path (../../) -> SANITIZATION VETO",
+      "status": "PASS",
+      "duration_ms": 0
+    },
+    {
+      "name": "X04: 100% textual match from foreign project -> VETOED BY BOOLEAN PRE-FILTER",
+      "status": "PASS",
+      "duration_ms": 0
+    },
+    {
+      "name": "X05: Foreign Canary token in payload -> SECURITY_LEAK_PREVENTED EXCEPTION",
+      "status": "PASS",
+      "duration_ms": 1
+    },
+    {
+      "name": "X06: Query to global scope retrieves public packs without exposing private items",
+      "status": "PASS",
+      "duration_ms": 0
+    }
+  ],
+  "adversarial_scenarios": [
+    {
+      "scenario": "X01",
+      "attack": "Cross-Project Secret Read",
+      "target": "Project B Secret read from Project A",
+      "outcome": "BLOCKED",
+      "leak_rate_percent": 0
+    },
+    {
+      "scenario": "X02",
+      "attack": "Prefix Collision",
+      "target": "/project vs /project-rogue",
+      "outcome": "BLOCKED",
+      "leak_rate_percent": 0
+    },
+    {
+      "scenario": "X03",
+      "attack": "Directory Traversal",
+      "target": "../../etc/shadow escape",
+      "outcome": "BLOCKED",
+      "leak_rate_percent": 0
+    },
+    {
+      "scenario": "X04",
+      "attack": "Semantic Collision / Pre-Filter Bypass",
+      "target": "Foreign item with 100% query relevance",
+      "outcome": "BLOCKED",
+      "leak_rate_percent": 0
+    },
+    {
+      "scenario": "X05",
+      "attack": "Canary Token Injection",
+      "target": "CRITICAL_CANARY_TOKEN_PROJECT_B_CONFIDENTIAL_XYZ777",
+      "outcome": "BLOCKED",
+      "leak_rate_percent": 0
+    },
+    {
+      "scenario": "X06",
+      "attack": "Global Scope Tampering",
+      "target": "Retrieval of global packs mixed with private items",
+      "outcome": "BLOCKED",
+      "leak_rate_percent": 0
+    }
+  ],
+  "metrics": {
+    "cross_project_leakage_rate_percent": 0,
+    "canary_detection_rate_percent": 100,
+    "default_closed_enforced": true,
+    "truth_fence_tiers_supported": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "ac_02_leakage_target": "0.00%",
+    "ac_02_status": "PASS"
+  },
+  "artifacts": [
+    {
+      "path": "orchestrator/src/knowledge/uks/scope-enforcer.ts",
+      "type": "VERIFIED_IN_CODE",
+      "sha256": "9fde05b69297ae22397edd75d402d665c51493edb0a55862edf9636288e3e7d9"
+    },
+    {
+      "path": "orchestrator/tests/knowledge/uks/scope-enforcer.test.ts",
+      "type": "VERIFIED_IN_CODE",
+      "sha256": "1d81f7c27c2bcdcfba5028118ab8f0e9b639bf13388cc1330322daa82549f470"
+    }
+  ]
+}

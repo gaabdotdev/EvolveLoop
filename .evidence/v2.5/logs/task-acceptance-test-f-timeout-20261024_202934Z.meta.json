@@ -1,0 +1,15 @@
+{
+  "task_id": "task-acceptance-test-f-timeout-20261024_202934Z",
+  "role": "eval_specialist",
+  "engine": "agy --dangerously-skip-permissions",
+  "status": "TIMEOUT_EXPIRED",
+  "exit_code": 124,
+  "start_time": "2026-10-24T20:29:38Z",
+  "end_time": "2026-10-24T20:29:41Z",
+  "duration_ms": 3175,
+  "duration_secs": 3.17,
+  "timeout_secs": 2,
+  "worktree_path": "/home/gaab/orca/workspaces/EvolveLoop/v.2.5",
+  "model": "default",
+  "log_file": "/home/gaab/orca/workspaces/EvolveLoop/v.2.5/.evidence/v2.5/logs/task-acceptance-test-f-timeout-20261024_202934Z.log"
+}

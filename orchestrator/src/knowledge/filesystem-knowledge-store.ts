@@ -1,3 +1,13 @@
+/**
+ * @deprecated Superseded by UKS Core V2.5 (ADR-D01/D02/D03).
+ * Flat filesystem storage with YAML frontmatter has been replaced by the Unified Knowledge System:
+ * - Atomic persistence via `storage-core.ts` (.data/ layout)
+ * - In-process lexical indexing via `bm25-engine.ts`
+ * - Native AST syntax analysis via `ast-extractor.ts`
+ * - 4-Tier Authority and scope isolation via `scope-enforcer.ts`
+ * Retained strictly for backwards compatibility with legacy providers.
+ */
+
 import { mkdirSync, readFileSync, readdirSync, writeFileSync, existsSync } from "node:fs";
 import { join } from "node:path";
 import { parse as parseYaml, stringify as stringifyYaml } from "yaml";
