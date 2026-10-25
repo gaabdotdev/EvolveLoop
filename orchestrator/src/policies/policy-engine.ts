@@ -7,11 +7,10 @@ export const DEFAULT_INFERENCE_TIMEOUT_MS = 60000; // 60s fallback
 export function normalizeRetryCount(raw: unknown): number | undefined {
   if (raw === undefined || raw === null) return undefined;
   if (typeof raw === "number") {
-    if (!Number.isFinite(raw) || Number.isNaN(raw)) return undefined;
-    const floor = Math.floor(raw);
-    if (floor < 0) return 0;
-    if (floor > 10) return 10;
-    return floor;
+    if (!Number.isFinite(raw) || Number.isNaN(raw) || !Number.isInteger(raw)) return undefined;
+    if (raw < 0) return 0;
+    if (raw > 10) return 10;
+    return raw;
   }
   if (typeof raw === "string") {
     const trimmed = raw.trim();
@@ -27,13 +26,14 @@ export function normalizeRetryCount(raw: unknown): number | undefined {
   return undefined;
 }
 
-export function parseTimeoutMs(timeout?: string | number): number | undefined {
+export function parseTimeoutMs(timeout?: unknown): number | undefined {
   if (timeout === undefined || timeout === null) return undefined;
   if (typeof timeout === "number") {
     if (!Number.isFinite(timeout) || timeout <= 0) return undefined;
     return Math.floor(timeout);
   }
-  const str = String(timeout).trim();
+  if (typeof timeout !== "string") return undefined;
+  const str = timeout.trim();
   if (str === "" || str === "0" || str === "0ms" || str === "0s") return undefined;
   const m = str.match(/^(\d+)(ms|s|m|h)?$/i);
   if (!m) return undefined;
@@ -194,11 +194,12 @@ export class PolicyEngine {
     const policyRetries = normalizeRetryCount(policyRetriesRaw) ?? 0;
 
     const contractMaxRaw = contract?.spec?.retry_policy?.max;
-    const contractMax = normalizeRetryCount(contractMaxRaw);
-
-    if (contractMax !== undefined) {
-      // Precedence: effective retries is constrained by both the operational policy ceiling
-      // and the contract capability tolerance ceiling. Neither can silently override the tighter limit.
+    if (contractMaxRaw !== undefined) {
+      const contractMax = normalizeRetryCount(contractMaxRaw);
+      if (contractMax === undefined) {
+        // Fail-closed: contrato especificou retry_policy.max inválido, limita a 0 retries
+        return 0;
+      }
       return Math.min(policyRetries, contractMax);
     }
 
@@ -207,17 +208,24 @@ export class PolicyEngine {
 
   resolveTimeoutMs(policy: ExecutionPolicy, node: GraphNode, contract?: ContractDocument): number {
     const policyTimeoutStr = policy.spec.timeouts?.step_timeout;
-    const contractTimeoutStr = contract?.spec?.timeout;
-
     const policyTimeoutMs = parseTimeoutMs(policyTimeoutStr);
-    const contractTimeoutMs = parseTimeoutMs(contractTimeoutStr);
+    const contractTimeoutRaw = contract?.spec?.timeout;
 
-    if (policyTimeoutMs !== undefined && contractTimeoutMs !== undefined) {
-      // Both defined: take the tighter bound to respect both operational budget and capability constraints
-      return Math.min(policyTimeoutMs, contractTimeoutMs);
+    if (contractTimeoutRaw !== undefined) {
+      const contractTimeoutMs = parseTimeoutMs(contractTimeoutRaw);
+      if (contractTimeoutMs === undefined) {
+        // Fail-closed: contrato especificou timeout inválido, faz clamp para DEFAULT_INFERENCE_TIMEOUT_MS
+        return policyTimeoutMs !== undefined
+          ? Math.min(policyTimeoutMs, DEFAULT_INFERENCE_TIMEOUT_MS)
+          : DEFAULT_INFERENCE_TIMEOUT_MS;
+      }
+      if (policyTimeoutMs !== undefined) {
+        return Math.min(policyTimeoutMs, contractTimeoutMs);
+      }
+      return contractTimeoutMs;
     }
 
-    return policyTimeoutMs ?? contractTimeoutMs ?? DEFAULT_INFERENCE_TIMEOUT_MS;
+    return policyTimeoutMs ?? DEFAULT_INFERENCE_TIMEOUT_MS;
   }
 
   maxParallel(policy: ExecutionPolicy): number {

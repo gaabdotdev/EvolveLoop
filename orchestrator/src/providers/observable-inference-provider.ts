@@ -12,6 +12,10 @@ import type {
 } from "../types/index.js";
 import { buildWorkerEvidence } from "../evidence/builders.js";
 import {
+  DEFAULT_INFERENCE_TIMEOUT_MS,
+  parseTimeoutMs,
+} from "../policies/policy-engine.js";
+import {
   ObservableLlmProviderAdapter,
   type FetchFn,
   type DnsLookupFn,
@@ -131,10 +135,13 @@ export class ObservableInferenceProvider implements ProviderRuntime {
     const memoryRoot = inputs.memoryRoot ?? inputs.memory_root ?? this.memoryRoot ?? process.cwd();
     const featureId = request.memory_scope || request.node_id;
 
+    const rawTimeoutInput = inputs.timeoutMs ?? inputs.timeout_ms ?? inputs.timeout;
+    const inputTimeoutMs = parseTimeoutMs(rawTimeoutInput);
+
     const timeoutMs =
-      (typeof inputs.timeoutMs === "number" ? inputs.timeoutMs : undefined) ??
+      inputTimeoutMs ??
       request.policy?.timeout_ms ??
-      60000;
+      DEFAULT_INFERENCE_TIMEOUT_MS;
 
     const completionInput: ObservableCompletionInput = {
       provider,

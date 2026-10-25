@@ -135,12 +135,17 @@ export class SmartMockExecutor implements ProviderRuntime {
     };
 
     if (timeoutMs) {
-      return Promise.race([
-        run(),
-        new Promise<ExecuteResult>((resolve) =>
-          setTimeout(() => resolve(this.timeoutResult(request, start)), timeoutMs),
-        ),
-      ]);
+      let timerId: NodeJS.Timeout | undefined;
+      try {
+        const timeoutPromise = new Promise<ExecuteResult>((resolve) => {
+          timerId = setTimeout(() => resolve(this.timeoutResult(request, start)), timeoutMs);
+        });
+        return await Promise.race([run(), timeoutPromise]);
+      } finally {
+        if (timerId !== undefined) {
+          clearTimeout(timerId);
+        }
+      }
     }
 
     return run();

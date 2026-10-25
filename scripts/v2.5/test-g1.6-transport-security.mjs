@@ -49,6 +49,8 @@ const {
   ObservableLlmProviderAdapter,
   validateTargetUrl,
   validateTargetUrlAndResolve,
+  isForbiddenIPv4,
+  isForbiddenIPv6,
   pinnedLookup,
   createPinnedFetch,
   DEFAULT_ALLOWLIST,
@@ -198,50 +200,64 @@ await runTest("G1.6-A: Pinned fetch connects directly to pinned IP and preserves
 });
 
 await runTest("G1.6-A: Dynamic DNS Rebinding Attack is neutralized by transport-level IP pinning", async () => {
-  // Adversarial Simulation:
-  // Nameserver returns safe public IP on query 1 (validation)
-  // Nameserver mutates to 169.254.169.254 on query 2 (connect time)
+  // Adversarial Simulation with Real Transport:
+  // Nameserver returns safe local IP on query 1 (validation)
+  // Nameserver mutates to 169.254.169.254 on query 2 (connect time if unpinned)
   let dnsQueryCount = 0;
   const rebindingDnsLookup = async (hostname) => {
     dnsQueryCount++;
     if (dnsQueryCount === 1) {
-      return [{ address: "93.184.216.34", family: 4 }];
+      return [{ address: "127.0.0.1", family: 4 }];
     }
     // Rebound IP
     return [{ address: "169.254.169.254", family: 4 }];
   };
 
-  let capturedPinnedIp = null;
-  let capturedUrl = null;
+  let serverReceived = false;
+  let serverReceivedHost = null;
 
-  // Mock fetch verifying what the adapter passes to the transport layer
-  const transportSpy = async (url, init) => {
-    capturedUrl = url;
-    capturedPinnedIp = init?.pinnedIp;
-    return new Response(JSON.stringify({
-      id: "resp_ok",
-      type: "message",
-      role: "assistant",
-      content: [{ type: "text", text: "Safe response" }],
-      usage: { input_tokens: 10, output_tokens: 15 },
-    }), { status: 200, headers: { "content-type": "application/json" } });
-  };
-
-  const adapter = new ObservableLlmProviderAdapter(transportSpy, {
-    allowCustomGateway: true,
-    dnsLookup: rebindingDnsLookup,
+  const server = http.createServer((req, res) => {
+    serverReceived = true;
+    serverReceivedHost = req.headers.host;
+    res.writeHead(200, { "content-type": "application/json" });
+    res.end(
+      JSON.stringify({
+        id: "resp_ok",
+        type: "message",
+        role: "assistant",
+        content: [{ type: "text", text: "Safe response via real pinned transport" }],
+        usage: { input_tokens: 10, output_tokens: 15 },
+      }),
+    );
   });
 
-  const res = await adapter.complete({
-    provider: "anthropic",
-    prompt: "Test rebinding defense",
-    gatewayUrl: "https://rebind-test.attacker.com/v1",
-  });
+  await new Promise((resolve) => server.listen(0, "127.0.0.1", resolve));
+  const port = server.address().port;
 
-  assert(res.text === "Safe response", "Request should succeed using pinned IP");
-  assert(dnsQueryCount === 1, `Validation should perform DNS resolution; query count was ${dnsQueryCount}`);
-  assert(capturedPinnedIp === "93.184.216.34", `Transport MUST receive pinned IP 93.184.216.34! Received: ${capturedPinnedIp}`);
-  assert(capturedPinnedIp !== "169.254.169.254", "CRITICAL VULNERABILITY: Transport was not pinned and received rebinded IP!");
+  try {
+    // Real default transport (createPinnedFetch) - NO mock transportSpy!
+    const adapter = new ObservableLlmProviderAdapter(undefined, {
+      allowCustomGateway: true,
+      allowLoopback: true,
+      dnsLookup: rebindingDnsLookup,
+    });
+
+    const res = await adapter.complete({
+      provider: "anthropic",
+      prompt: "Test rebinding defense with real transport",
+      gatewayUrl: `http://rebind-test.attacker.com:${port}/v1`,
+    });
+
+    assert(res.text === "Safe response via real pinned transport", "Request should succeed using pinned IP");
+    assert(serverReceived === true, "Real TCP socket must connect to local pinned server");
+    assert(
+      serverReceivedHost === `rebind-test.attacker.com:${port}`,
+      `Host header must preserve original domain! Got: ${serverReceivedHost}`,
+    );
+    assert(dnsQueryCount === 1, `Validation should perform DNS resolution once; query count was ${dnsQueryCount}`);
+  } finally {
+    server.close();
+  }
 });
 
 await runTest("G1.6-A: DNS resolution returning Cloud Metadata (169.254.169.254) is blocked immediately", async () => {
@@ -361,6 +377,208 @@ await runTest("G1.6-A: IPv4-mapped IPv6 and link-local representations are rejec
   assert(threwMetadataV6, "IPv4-mapped metadata IPv6 was not blocked");
 });
 
+await runTest("G1.6-A: Production allowlist and allowedGateways enforce DNS resolution and IP pinning with real transport", async () => {
+  let dnsLookupCalled = false;
+  const safeDnsLookup = async (hostname) => {
+    dnsLookupCalled = true;
+    return [{ address: "127.0.0.1", family: 4 }];
+  };
+
+  let serverReceived = false;
+  const server = http.createServer((req, res) => {
+    serverReceived = true;
+    res.writeHead(200, { "content-type": "application/json" });
+    res.end(
+      JSON.stringify({
+        id: "msg_prod",
+        type: "message",
+        role: "assistant",
+        content: [{ type: "text", text: "Production pinned response" }],
+        usage: { input_tokens: 5, output_tokens: 5 },
+      }),
+    );
+  });
+  await new Promise((resolve) => server.listen(0, "127.0.0.1", resolve));
+  const port = server.address().port;
+
+  try {
+    const adapter = new ObservableLlmProviderAdapter(undefined, {
+      allowedGateways: ["safe-gateway.internal.com"],
+      allowCustomGateway: false, // Default-closed secure mode!
+      allowLoopback: true,
+      dnsLookup: safeDnsLookup,
+    });
+
+    const res = await adapter.complete({
+      provider: "anthropic",
+      prompt: "Production pinned gateway test",
+      gatewayUrl: `http://safe-gateway.internal.com:${port}/v1`,
+    });
+
+    assert(res.text === "Production pinned response", "Should succeed with real transport");
+    assert(serverReceived === true, "Server received connection via pinned IP");
+    assert(dnsLookupCalled === true, "DNS lookup must be invoked even with allowCustomGateway: false");
+  } finally {
+    server.close();
+  }
+});
+
+await runTest("G1.6-A: Gateway in allowedGateways resolving to metadata IP is blocked under allowCustomGateway: false", async () => {
+  const metadataDns = async () => [{ address: "169.254.169.254", family: 4 }];
+
+  let threw = false;
+  try {
+    await validateTargetUrlAndResolve("https://trusted-gateway.company.internal.com/v1", {
+      allowedGateways: ["trusted-gateway.company.internal.com"],
+      allowCustomGateway: false,
+      dnsLookup: metadataDns,
+    });
+  } catch (err) {
+    threw = true;
+    assert(err.message.includes("SECURITY_SSRF_VIOLATION"), `Expected SSRF error, got: ${err.message}`);
+    assert(err.message.includes("169.254.169.254"), `Error must mention metadata IP: ${err.message}`);
+  }
+  assert(threw, "Metadata IP in allowedGateways was not blocked!");
+});
+
+await runTest("G1.6-A: Public IP literal is rejected when allowCustomGateway is false", async () => {
+  let threwV4 = false;
+  try {
+    await validateTargetUrlAndResolve("https://93.184.216.34/v1", {
+      allowCustomGateway: false,
+      allowedGateways: [],
+    });
+  } catch (err) {
+    threwV4 = true;
+    assert(err.message.includes("not in the approved endpoint allowlist"), `Unexpected error: ${err.message}`);
+  }
+  assert(threwV4, "IPv4 literal bypassed allowlist when allowCustomGateway: false");
+
+  let threwV6 = false;
+  try {
+    await validateTargetUrlAndResolve("https://[2606:2800:220:1:248:1893:25c8:1946]/v1", {
+      allowCustomGateway: false,
+      allowedGateways: [],
+    });
+  } catch (err) {
+    threwV6 = true;
+    assert(err.message.includes("not in the approved endpoint allowlist"), `Unexpected error: ${err.message}`);
+  }
+  assert(threwV6, "IPv6 literal bypassed allowlist when allowCustomGateway: false");
+});
+
+await runTest("G1.6-A: IPv4-compatible IPv6 addresses (metadata & loopback) are rejected", async () => {
+  // Metadata dotted & hex
+  let threwMetaDotted = false;
+  try {
+    validateTargetUrl("https://[::169.254.169.254]/v1");
+  } catch (err) {
+    threwMetaDotted = true;
+    assert(err.message.includes("SECURITY_SSRF_VIOLATION"), `Unexpected error: ${err.message}`);
+  }
+  assert(threwMetaDotted, "[::169.254.169.254] was not blocked");
+
+  let threwMetaHex = false;
+  try {
+    validateTargetUrl("https://[::a9fe:a9fe]/v1");
+  } catch (err) {
+    threwMetaHex = true;
+    assert(err.message.includes("SECURITY_SSRF_VIOLATION"), `Unexpected error: ${err.message}`);
+  }
+  assert(threwMetaHex, "[::a9fe:a9fe] was not blocked");
+
+  // Loopback dotted & hex
+  let threwLoopDotted = false;
+  try {
+    validateTargetUrl("https://[::127.0.0.1]/v1");
+  } catch (err) {
+    threwLoopDotted = true;
+    assert(err.message.includes("SECURITY_SSRF_VIOLATION"), `Unexpected error: ${err.message}`);
+  }
+  assert(threwLoopDotted, "[::127.0.0.1] was not blocked");
+
+  let threwLoopHex = false;
+  try {
+    validateTargetUrl("https://[::7f00:1]/v1");
+  } catch (err) {
+    threwLoopHex = true;
+    assert(err.message.includes("SECURITY_SSRF_VIOLATION"), `Unexpected error: ${err.message}`);
+  }
+  assert(threwLoopHex, "[::7f00:1] was not blocked");
+});
+
+await runTest("G1.6-A: NAT64 (64:ff9b::/96) and 6to4 (2002::/16) embedding metadata are rejected", async () => {
+  let threwNatDotted = false;
+  try {
+    validateTargetUrl("https://[64:ff9b::169.254.169.254]/v1");
+  } catch (err) {
+    threwNatDotted = true;
+    assert(err.message.includes("SECURITY_SSRF_VIOLATION"), `Unexpected error: ${err.message}`);
+  }
+  assert(threwNatDotted, "NAT64 dotted metadata was not blocked");
+
+  let threwNatHex = false;
+  try {
+    validateTargetUrl("https://[64:ff9b::a9fe:a9fe]/v1");
+  } catch (err) {
+    threwNatHex = true;
+    assert(err.message.includes("SECURITY_SSRF_VIOLATION"), `Unexpected error: ${err.message}`);
+  }
+  assert(threwNatHex, "NAT64 hex metadata was not blocked");
+
+  let threw6to4 = false;
+  try {
+    validateTargetUrl("https://[2002:a9fe:a9fe::1]/v1");
+  } catch (err) {
+    threw6to4 = true;
+    assert(err.message.includes("SECURITY_SSRF_VIOLATION"), `Unexpected error: ${err.message}`);
+  }
+  assert(threw6to4, "6to4 metadata was not blocked");
+});
+
+await runTest("G1.6-A: Non-canonical IPv6 strings and RFC 6890 reserved ranges are rejected", async () => {
+  const nonCanonicalIps = ["0:0:0:0:0:0:0:0001", "::0001", "::1%lo"];
+  for (const ip of nonCanonicalIps) {
+    const res = isForbiddenIPv6(ip);
+    assert(res.forbidden === true, `Expected ${ip} to be forbidden`);
+  }
+
+  const reservedIps = [
+    "192.0.0.1",
+    "192.0.2.1",
+    "198.18.0.1",
+    "198.19.255.1",
+    "198.51.100.1",
+    "203.0.113.1",
+  ];
+  for (const ip of reservedIps) {
+    const octets = ip.split(".").map(Number);
+    const res = isForbiddenIPv4(octets);
+    assert(res.forbidden === true, `Expected ${ip} to be forbidden`);
+  }
+});
+
+await runTest("G1.6-A: Multiple trailing dots cannot bypass loopback or allowlist filters", async () => {
+  let threw = false;
+  try {
+    validateTargetUrl("https://localhost../v1");
+  } catch (err) {
+    threw = true;
+    assert(err.message.includes("SECURITY_SSRF_VIOLATION"), `Unexpected error: ${err.message}`);
+  }
+  assert(threw, "Multiple trailing dots on localhost was not blocked!");
+
+  // And in validateTargetUrlAndResolve
+  let threwResolve = false;
+  try {
+    await validateTargetUrlAndResolve("https://localhost.../v1");
+  } catch (err) {
+    threwResolve = true;
+    assert(err.message.includes("SECURITY_SSRF_VIOLATION"), `Unexpected error: ${err.message}`);
+  }
+  assert(threwResolve, "Multiple trailing dots in validateTargetUrlAndResolve was not blocked!");
+});
+
 // ================================================================================================
 // GROUP 2: SCOPE B — Mandatory Default Timeout (60,000ms Fallback)
 // ================================================================================================
@@ -433,7 +651,7 @@ await runTest("G1.6-C: normalizeRetryCount parses valid numeric strings, numbers
 
   // Invalid values return undefined
   assert(normalizeRetryCount("2.5") === undefined, "Decimal string '2.5' must be rejected");
-  assert(normalizeRetryCount(2.5) === 2, "Decimal number 2.5 floored to 2");
+  assert(normalizeRetryCount(2.5) === undefined, "Decimal number 2.5 must be rejected");
   assert(normalizeRetryCount("foo") === undefined, "String 'foo' must return undefined");
   assert(normalizeRetryCount("") === undefined, "Empty string must return undefined");
   assert(normalizeRetryCount(NaN) === undefined, "NaN must return undefined");
