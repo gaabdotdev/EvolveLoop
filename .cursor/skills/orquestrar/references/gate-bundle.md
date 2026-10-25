@@ -27,6 +27,9 @@ image_to_code_skill: ~/.agents/skills/image-to-code/SKILL.md | n/a
 grill_me_required: true | false
 grill_me_status: satisfied | blocked | failed | exempt | absent | n/a
 grill_me_skill: ~/.agents/skills/grill-me/SKILL.md | n/a
+graphify_skill: required | optional | n/a
+graphify_skill_status: satisfied | blocked | exempt | n/a
+graphify_skill_path: .cursor/skills/graphify/SKILL.md | n/a
 outer_loop: cycle_id=… outer_cycle=…/… last_decision=… reentry=…
 anti_vibe: coding via Agent tools — NÃO wiki vibe / Composer CLI
 wiki_register: se editar código → append {Projeto}/log.md (± wiki/); NUNCA raw/; executor: librarian se spawnado, senão exec/raiz
@@ -43,6 +46,7 @@ vault: /home/gaab/Documentos/karpathyWiki
 | `knowledge_grounding` | Se `pending` e a missão toca código/arquitectura Gaab: o filho **deve** retrieve (skill/CLI/vault) antes de editar, ou declarar GAP |
 | `image_attachment: true` | Filho visual **obrigado** a `image-to-code` |
 | `grill_me_required: true` | Filho `role: plan` **obrigado** a evidência `gate.grill-me.json` `satisfied|exempt` — senão `bloqueado: grill_me_gate` |
+| `graphify_skill_status` | Conforme `ADR-D02`, Graphify externo foi descontinuado e substituído pelo UKS AST nativo. O status legítimo na ausência do binário `/tmp/` é `blocked` (não-fatal) |
 | `wiki_register` | Qualquer edit de código no filho → registo wiki (ou handoff explícito ao raiz com lista de paths). **Executor:** `librarian` se spawnado; senão `exec` / raiz. Ver [pda-roles.md](pda-roles.md) |
 
 ---

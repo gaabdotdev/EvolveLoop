@@ -671,7 +671,7 @@ Mapeamento **actual** Capability → Provider → Skill. Amanhã qualquer linha 
 | `backend-implementation` | `backend` | `.cursor/skills/backend/SKILL.md` | Worker | ✓ |
 | `frontend-ui` | `frontend-pro` | `.cursor/skills/frontend-pro/SKILL.md` | Worker | ✓ |
 | `frontend-visual-review` | `frontend-pro` | idem (modo Review/Audit) | Gate | ✓ |
-| `testing` | `testing` | *a criar* | Gate | ✗ |
+| `testing` | `testing` | `.cursor/skills/testing/SKILL.md` | Gate | ✓ |
 | `security-review` | `security` | `.cursor/skills/security/SKILL.md` | Gate | ✓ |
 | `po-acceptance` | `po-review` | `.cursor/skills/po-review/SKILL.md` | Gate | ✓ |
 | `documentation` | `documentation` | `.cursor/skills/documentation/SKILL.md` | Gate | ✓ |
@@ -724,7 +724,7 @@ Comandos são **atalhos de invocação** — não definem arquitectura.
 | `/backend` | `backend-implementation` | `backend` |
 | `/frontend` | `frontend-ui` | `frontend-pro` |
 | `/frontend-review` | `frontend-visual-review` | `frontend-pro` |
-| `/testes` | `testing` | `testing` ⚠ |
+| `/testes` | `testing` | `testing` |
 | `/seguranca` | `security-review` | `security` |
 | `/validar` | `po-acceptance` | `po-review` |
 | `/documentar` | `documentation` | `documentation` |
@@ -740,7 +740,7 @@ Comandos são **atalhos de invocação** — não definem arquitectura.
 | Capability | Provider esperado | Estado | Acção |
 |------------|-------------------|--------|-------|
 | `frontend-ui` | `frontend` (legado no SKILL.md) | ✗ path incorrecto | Registry → `frontend-pro` |
-| `testing` | `testing` | ✗ não existe | Criar provider local |
+| `testing` | `testing` | ✓ implementado | Provider local presente (.cursor/skills/testing/) |
 | Comandos `/` | — | Parcial | Criar `/MegaBrain`, `/planejar`, etc. |
 
 ---
@@ -855,7 +855,7 @@ Mapa de capabilities de domínio — cada uma resolve via Registry, não via ski
 | Onboarding dev | `documentation` modo `onboarding` | `documentation` | Não — ver abaixo |
 | Onboarding produto | `frontend-ui` | `frontend-pro` | Fora do ciclo dev |
 | UI / UX | `frontend-ui` + `frontend-visual-review` | `frontend-pro` | — |
-| Testes | `testing` | ✗ | **Prioridade máxima** |
+| Testes | `testing` | ✓ | Implementado em `.cursor/skills/testing/` |
 | Deploy | `devops-deploy` | `devops` | ✓ |
 
 ### Onboarding — duas capabilities distintas
