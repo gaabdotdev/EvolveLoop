@@ -19,6 +19,7 @@ import { MetricsAccumulator } from "../telemetry/metrics-accumulator.js";
 import { Orchestrator } from "../orchestrator/orchestrator.js";
 import { Scheduler } from "../scheduler/scheduler.js";
 import { ProviderRouter } from "../providers/mock-provider.js";
+import { ObservableInferenceProvider } from "../providers/observable-inference-provider.js";
 import { validateEvidence } from "../evidence/validator.js";
 import type { ContractRegistry } from "../contracts/contract-registry.js";
 import { loadContractsFromDir } from "../contracts/contract-registry.js";
@@ -220,13 +221,19 @@ export class ExecutionEngine {
       }
 
       if (this.orchestratorDecision === "corrigir") {
-        const failed = graph.getAllNodes().find((n) => n.status === "failed" || n.status === "blocked");
-        if (failed) {
-          graph.setNodeStatus(failed.id, "pending");
-          scheduler.invalidateDownstream(graph, failed.id);
+        const canRetry = (n: GraphNode) => n.retry_count < this.policyEngine.retriesFor(policy, n);
+        const fixable = graph.getAllNodes().find(
+          (n) => (n.status === "failed" || n.status === "blocked") && canRetry(n),
+        );
+        if (fixable) {
+          graph.setNodeStatus(fixable.id, "pending");
+          scheduler.invalidateDownstream(graph, fixable.id);
+          this.blockedReason = null;
+        } else {
+          this.blockedReason = "unrecoverable_failure";
+          break;
         }
         this.orchestratorDecision = null;
-        this.blockedReason = null;
         continue;
       }
 
@@ -239,6 +246,10 @@ export class ExecutionEngine {
         this.orchestratorDecision = decision;
         if (decision === "continuar") {
           this.blockedReason = null;
+          continue;
+        }
+        if (decision === "replan" && !this.replanIr) {
+          break;
         }
         continue;
       }
@@ -277,7 +288,7 @@ export class ExecutionEngine {
 
         if (graph.hasFailedWithoutRetry((n) => this.policyEngine.retriesFor(policy, n))) {
           this.blockedReason = "unrecoverable_failure";
-          continue;
+          break;
         }
         if (graph.isFinished()) break;
         this.blockedReason = "deadlock_or_waiting_external";
@@ -457,7 +468,7 @@ export class ExecutionEngine {
     try {
       return this.registry.selectWithEvidence(node.capability, strategy, constraints, versionOpts);
     } catch (err) {
-      if (!this.discovery || !this.agentsRoot) throw err;
+      if (!this.discovery) throw err;
 
       eventBus.emit("ProviderDiscoveryStarted", featureId, "engine", {
         capability: node.capability,
@@ -467,13 +478,20 @@ export class ExecutionEngine {
       const manifest = discoverManifestForCapability(node.capability, this.discovery);
       if (!manifest) throw err;
 
-      const loader = new PluginLoader(this.agentsRoot);
-      const executor = this.jobsDir ? new JobFileExecutor(this.jobsDir) : undefined;
-      if (!executor) throw err;
+      if (manifest.spec.plugin?.type === "observable-inference") {
+        const runtime = new ObservableInferenceProvider({ id: manifest.metadata.name });
+        this.providers.register(runtime);
+        this.registry.registerFromManifest(manifest);
+      } else {
+        if (!this.agentsRoot) throw err;
+        const loader = new PluginLoader(this.agentsRoot);
+        const executor = this.jobsDir ? new JobFileExecutor(this.jobsDir) : undefined;
+        if (!executor) throw err;
 
-      const runtime = loader.load(manifest, executor);
-      this.providers.register(runtime);
-      this.registry.registerFromManifest(manifest);
+        const runtime = loader.load(manifest, executor);
+        this.providers.register(runtime);
+        this.registry.registerFromManifest(manifest);
+      }
 
       eventBus.emit("ProviderDiscoveryCompleted", featureId, "engine", {
         capability: node.capability,
@@ -557,7 +575,7 @@ export class ExecutionEngine {
 
       graph.setNodeStatus(nodeId, "failed");
       this.registry.recordFailure(run.provider_id, run);
-      this.blockedReason = run.error?.message ?? "unrecoverable_failure";
+      this.blockedReason = "unrecoverable_failure";
       return;
     }
 

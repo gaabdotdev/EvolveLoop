@@ -10,14 +10,18 @@ export class Orchestrator {
   decide(context: DecideContext): OrchestratorDecision {
     const reason = context.blocked_reason;
 
-    if (reason === "contract_version_mismatch" || reason === "unrecoverable_failure") {
+    if (
+      reason === "contract_version_mismatch" ||
+      reason === "unrecoverable_failure" ||
+      reason.startsWith("inference_error") ||
+      reason.startsWith("http_error")
+    ) {
       return "replan";
     }
 
     if (
       reason === "gate_rejected" ||
-      reason.startsWith("dod_failed:") ||
-      reason === "gate_rejected"
+      reason.startsWith("dod_failed:")
     ) {
       return "corrigir";
     }
@@ -26,7 +30,7 @@ export class Orchestrator {
       return "continuar";
     }
 
-    return "corrigir";
+    return "replan";
   }
 
   applyDecision(

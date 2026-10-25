@@ -2,6 +2,8 @@ import fs from "node:fs";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
 const YAML_CANDIDATES = [
+  "/home/gaab/orca/workspaces/EvolveLoop/v24-g1-observability/orchestrator/node_modules/yaml/browser/index.js",
+  "/home/gaab/orca/workspaces/EvolveLoop/v.2.5/node_modules/yaml/browser/index.js",
   "/home/gaab/orca/workspaces/EvolveLoop/v24-g1-observability/orchestrator/node_modules/yaml/dist/index.js",
   "/home/gaab/orca/workspaces/EvolveLoop/v.2.5/node_modules/yaml/dist/index.js",
 ];
@@ -10,7 +12,12 @@ export async function resolve(specifier, context, nextResolve) {
   if (specifier === "yaml") {
     for (const cand of YAML_CANDIDATES) {
       if (fs.existsSync(cand)) {
-        return { url: pathToFileURL(cand).href, shortCircuit: true };
+        const isEsm = cand.includes("browser");
+        return {
+          url: pathToFileURL(cand).href,
+          format: isEsm ? "module" : "commonjs",
+          shortCircuit: true,
+        };
       }
     }
   }

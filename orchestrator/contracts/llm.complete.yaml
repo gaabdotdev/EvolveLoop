@@ -12,6 +12,20 @@ spec:
     major: 1
     minor: 0
     patch: 0
+  inputs:
+    - name: prompt
+      required: true
+    - name: provider
+      required: false
+    - name: model
+      required: false
+
+  outputs:
+    - name: text
+      required: true
+    - name: usage
+      required: true
+
   deterministic: false
   side_effects: false
   requires_confirmation: false

@@ -1,13 +1,13 @@
 {
   "schema_version": "2.5.0",
-  "indexed_at": "2026-10-24T22:32:53.188Z",
+  "indexed_at": "2026-10-25T01:50:05.942Z",
   "workspace_root": "/home/gaab/orca/workspaces/EvolveLoop/v.2.5",
   "stats": {
-    "total_files_scanned": 94,
-    "total_symbols": 497,
-    "total_imports": 345,
-    "duration_ms": 89,
-    "index_size_bytes": 162254
+    "total_files_scanned": 101,
+    "total_symbols": 541,
+    "total_imports": 364,
+    "duration_ms": 41,
+    "index_size_bytes": 176816
   },
   "symbols": {
     "AuthorityDecision": [
@@ -312,8 +312,8 @@
         "name": "parseArgs",
         "kind": "function",
         "file_path": "orchestrator/src/cli/run-engine.ts",
-        "start_line": 33,
-        "end_line": 48,
+        "start_line": 34,
+        "end_line": 49,
         "signature": "function parseArgs(argv: string[])",
         "is_exported": false
       },
@@ -352,8 +352,8 @@
         "name": "main",
         "kind": "function",
         "file_path": "orchestrator/src/cli/run-engine.ts",
-        "start_line": 172,
-        "end_line": 274,
+        "start_line": 175,
+        "end_line": 277,
         "signature": "async function main()",
         "is_exported": false
       },
@@ -372,8 +372,8 @@
         "name": "loadProviderManifests",
         "kind": "function",
         "file_path": "orchestrator/src/cli/run-engine.ts",
-        "start_line": 50,
-        "end_line": 62,
+        "start_line": 51,
+        "end_line": 63,
         "signature": "function loadProviderManifests(providersDir: string): ProviderManifest[]",
         "is_exported": false
       }
@@ -383,8 +383,8 @@
         "name": "supplementRegistry",
         "kind": "function",
         "file_path": "orchestrator/src/cli/run-engine.ts",
-        "start_line": 64,
-        "end_line": 89,
+        "start_line": 65,
+        "end_line": 90,
         "signature": "function supplementRegistry(",
         "is_exported": false
       }
@@ -394,8 +394,8 @@
         "name": "registryForMockRun",
         "kind": "function",
         "file_path": "orchestrator/src/cli/run-engine.ts",
-        "start_line": 91,
-        "end_line": 117,
+        "start_line": 92,
+        "end_line": 118,
         "signature": "function registryForMockRun(",
         "is_exported": false
       }
@@ -405,8 +405,8 @@
         "name": "setupProviders",
         "kind": "function",
         "file_path": "orchestrator/src/cli/run-engine.ts",
-        "start_line": 119,
-        "end_line": 147,
+        "start_line": 120,
+        "end_line": 150,
         "signature": "function setupProviders(",
         "is_exported": false
       }
@@ -416,8 +416,8 @@
         "name": "parseEvolveScope",
         "kind": "function",
         "file_path": "orchestrator/src/cli/run-engine.ts",
-        "start_line": 149,
-        "end_line": 170,
+        "start_line": 152,
+        "end_line": 173,
         "signature": "function parseEvolveScope(args: Record<string, string>): AnalysisScope | null",
         "is_exported": false
       }
@@ -540,8 +540,8 @@
         "name": "ContractRegistry",
         "kind": "class",
         "file_path": "orchestrator/src/contracts/contract-registry.ts",
-        "start_line": 7,
-        "end_line": 75,
+        "start_line": 13,
+        "end_line": 81,
         "signature": "export class ContractRegistry",
         "is_exported": true,
         "heritage": {}
@@ -552,8 +552,8 @@
         "name": "loadContractsFromDir",
         "kind": "function",
         "file_path": "orchestrator/src/contracts/contract-registry.ts",
-        "start_line": 77,
-        "end_line": 87,
+        "start_line": 83,
+        "end_line": 93,
         "signature": "export function loadContractsFromDir(dir: string): ContractRegistry",
         "is_exported": true
       }
@@ -563,8 +563,8 @@
         "name": "parseContractRef",
         "kind": "function",
         "file_path": "orchestrator/src/contracts/contract-registry.ts",
-        "start_line": 89,
-        "end_line": 89,
+        "start_line": 95,
+        "end_line": 95,
         "signature": "export function parseContractRef(ref: string):",
         "is_exported": true
       }
@@ -687,8 +687,8 @@
         "name": "capabilitiesForProfile",
         "kind": "function",
         "file_path": "orchestrator/src/discovery/capability-profiles.ts",
-        "start_line": 43,
-        "end_line": 46,
+        "start_line": 45,
+        "end_line": 48,
         "signature": "export function capabilitiesForProfile(profile: CapabilityProfile): string[] | null",
         "is_exported": true
       }
@@ -698,8 +698,8 @@
         "name": "filterRegistryByProfile",
         "kind": "function",
         "file_path": "orchestrator/src/discovery/capability-profiles.ts",
-        "start_line": 48,
-        "end_line": 64,
+        "start_line": 50,
+        "end_line": 66,
         "signature": "export function filterRegistryByProfile(",
         "is_exported": true
       }
@@ -733,7 +733,7 @@
         "kind": "function",
         "file_path": "orchestrator/src/discovery/provider-discovery.ts",
         "start_line": 36,
-        "end_line": 46,
+        "end_line": 50,
         "signature": "export function discoverAllManifests(options: DiscoveryOptions): ProviderManifest[]",
         "is_exported": true
       }
@@ -743,8 +743,8 @@
         "name": "discoverManifestForCapability",
         "kind": "function",
         "file_path": "orchestrator/src/discovery/provider-discovery.ts",
-        "start_line": 49,
-        "end_line": 59,
+        "start_line": 53,
+        "end_line": 63,
         "signature": "export function discoverManifestForCapability(",
         "is_exported": true
       }
@@ -754,8 +754,8 @@
         "name": "inferManifestFromSkill",
         "kind": "function",
         "file_path": "orchestrator/src/discovery/provider-discovery.ts",
-        "start_line": 62,
-        "end_line": 81,
+        "start_line": 66,
+        "end_line": 85,
         "signature": "export function inferManifestFromSkill(skillDir: string, capability: string): ProviderManifest | null",
         "is_exported": true
       }
@@ -765,8 +765,8 @@
         "name": "dedupeByName",
         "kind": "function",
         "file_path": "orchestrator/src/discovery/provider-discovery.ts",
-        "start_line": 83,
-        "end_line": 87,
+        "start_line": 87,
+        "end_line": 91,
         "signature": "function dedupeByName(manifests: ProviderManifest[]): ProviderManifest[]",
         "is_exported": false
       }
@@ -776,8 +776,8 @@
         "name": "manifestEntries",
         "kind": "function",
         "file_path": "orchestrator/src/discovery/provider-discovery.ts",
-        "start_line": 89,
-        "end_line": 91,
+        "start_line": 93,
+        "end_line": 95,
         "signature": "export function manifestEntries(manifest: ProviderManifest)",
         "is_exported": true
       }
@@ -787,8 +787,8 @@
         "name": "ExecutionEngineOptions",
         "kind": "interface",
         "file_path": "orchestrator/src/engine/execution-engine.ts",
-        "start_line": 44,
-        "end_line": 69,
+        "start_line": 45,
+        "end_line": 70,
         "signature": "export interface ExecutionEngineOptions",
         "is_exported": true,
         "heritage": {}
@@ -799,8 +799,8 @@
         "name": "ExecutionEngine",
         "kind": "class",
         "file_path": "orchestrator/src/engine/execution-engine.ts",
-        "start_line": 71,
-        "end_line": 653,
+        "start_line": 72,
+        "end_line": 671,
         "signature": "export class ExecutionEngine",
         "is_exported": true,
         "heritage": {}
@@ -811,9 +811,20 @@
         "name": "subscribeMetrics",
         "kind": "function",
         "file_path": "orchestrator/src/engine/execution-engine.ts",
-        "start_line": 191,
-        "end_line": 193,
+        "start_line": 192,
+        "end_line": 194,
         "signature": "const subscribeMetrics = (e: Parameters<EventBus[\"emit\"]>[0]) => ...",
+        "is_exported": false
+      }
+    ],
+    "canRetry": [
+      {
+        "name": "canRetry",
+        "kind": "function",
+        "file_path": "orchestrator/src/engine/execution-engine.ts",
+        "start_line": 224,
+        "end_line": 224,
+        "signature": "const canRetry = (n: GraphNode) => ...",
         "is_exported": false
       }
     ],
@@ -3983,6 +3994,472 @@
         "heritage": {}
       }
     ],
+    "assertFeatureIdConfined": [
+      {
+        "name": "assertFeatureIdConfined",
+        "kind": "function",
+        "file_path": "orchestrator/src/memory/filesystem-memory-store.ts",
+        "start_line": 13,
+        "end_line": 23,
+        "signature": "export function assertFeatureIdConfined(rootDir: string, featureId: string): void",
+        "is_exported": true
+      },
+      {
+        "name": "assertFeatureIdConfined",
+        "kind": "function",
+        "file_path": "orchestrator/src/observability/inference-ledger.ts",
+        "start_line": 41,
+        "end_line": 50,
+        "signature": "export function assertFeatureIdConfined(rootDir: string, featureId: string): void",
+        "is_exported": true
+      }
+    ],
+    "EntriesFile": [
+      {
+        "name": "EntriesFile",
+        "kind": "interface",
+        "file_path": "orchestrator/src/memory/filesystem-memory-store.ts",
+        "start_line": 25,
+        "end_line": 27,
+        "signature": "interface EntriesFile",
+        "is_exported": false,
+        "heritage": {}
+      }
+    ],
+    "ContextFile": [
+      {
+        "name": "ContextFile",
+        "kind": "interface",
+        "file_path": "orchestrator/src/memory/filesystem-memory-store.ts",
+        "start_line": 29,
+        "end_line": 35,
+        "signature": "interface ContextFile",
+        "is_exported": false,
+        "heritage": {}
+      }
+    ],
+    "MemoryFormatError": [
+      {
+        "name": "MemoryFormatError",
+        "kind": "class",
+        "file_path": "orchestrator/src/memory/filesystem-memory-store.ts",
+        "start_line": 37,
+        "end_line": 43,
+        "signature": "export class MemoryFormatError extends Error",
+        "is_exported": true,
+        "heritage": {
+          "extends": [
+            "Error"
+          ]
+        }
+      }
+    ],
+    "readEntriesFile": [
+      {
+        "name": "readEntriesFile",
+        "kind": "function",
+        "file_path": "orchestrator/src/memory/filesystem-memory-store.ts",
+        "start_line": 45,
+        "end_line": 84,
+        "signature": "function readEntriesFile(path: string): MemoryEntry[]",
+        "is_exported": false
+      }
+    ],
+    "writeEntriesFile": [
+      {
+        "name": "writeEntriesFile",
+        "kind": "function",
+        "file_path": "orchestrator/src/memory/filesystem-memory-store.ts",
+        "start_line": 86,
+        "end_line": 89,
+        "signature": "function writeEntriesFile(path: string, entries: MemoryEntry[]): void",
+        "is_exported": false
+      }
+    ],
+    "loadFeatureFromDisk": [
+      {
+        "name": "loadFeatureFromDisk",
+        "kind": "function",
+        "file_path": "orchestrator/src/memory/filesystem-memory-store.ts",
+        "start_line": 91,
+        "end_line": 94,
+        "signature": "function loadFeatureFromDisk(",
+        "is_exported": false
+      }
+    ],
+    "loadAllFromDisk": [
+      {
+        "name": "loadAllFromDisk",
+        "kind": "function",
+        "file_path": "orchestrator/src/memory/filesystem-memory-store.ts",
+        "start_line": 113,
+        "end_line": 113,
+        "signature": "function loadAllFromDisk(rootDir: string): Map<string,",
+        "is_exported": false
+      }
+    ],
+    "FilesystemMemoryStore": [
+      {
+        "name": "FilesystemMemoryStore",
+        "kind": "class",
+        "file_path": "orchestrator/src/memory/filesystem-memory-store.ts",
+        "start_line": 134,
+        "end_line": 191,
+        "signature": "export class FilesystemMemoryStore extends MemoryStore",
+        "is_exported": true,
+        "heritage": {
+          "extends": [
+            "MemoryStore"
+          ]
+        }
+      }
+    ],
+    "FeatureMemoryMeta": [
+      {
+        "name": "FeatureMemoryMeta",
+        "kind": "interface",
+        "file_path": "orchestrator/src/memory/memory-store.ts",
+        "start_line": 3,
+        "end_line": 8,
+        "signature": "export interface FeatureMemoryMeta",
+        "is_exported": true,
+        "heritage": {}
+      }
+    ],
+    "FeatureMemory": [
+      {
+        "name": "FeatureMemory",
+        "kind": "interface",
+        "file_path": "orchestrator/src/memory/memory-store.ts",
+        "start_line": 10,
+        "end_line": 13,
+        "signature": "interface FeatureMemory",
+        "is_exported": false,
+        "heritage": {}
+      }
+    ],
+    "isPreference": [
+      {
+        "name": "isPreference",
+        "kind": "function",
+        "file_path": "orchestrator/src/memory/memory-store.ts",
+        "start_line": 15,
+        "end_line": 17,
+        "signature": "function isPreference(entry: MemoryEntry): boolean",
+        "is_exported": false
+      }
+    ],
+    "isDecision": [
+      {
+        "name": "isDecision",
+        "kind": "function",
+        "file_path": "orchestrator/src/memory/memory-store.ts",
+        "start_line": 19,
+        "end_line": 21,
+        "signature": "function isDecision(entry: MemoryEntry): boolean",
+        "is_exported": false
+      }
+    ],
+    "MemoryStore": [
+      {
+        "name": "MemoryStore",
+        "kind": "class",
+        "file_path": "orchestrator/src/memory/memory-store.ts",
+        "start_line": 27,
+        "end_line": 85,
+        "signature": "export class MemoryStore",
+        "is_exported": true,
+        "heritage": {}
+      }
+    ],
+    "PathEscapeError": [
+      {
+        "name": "PathEscapeError",
+        "kind": "class",
+        "file_path": "orchestrator/src/observability/inference-ledger.ts",
+        "start_line": 12,
+        "end_line": 18,
+        "signature": "export class PathEscapeError extends Error",
+        "is_exported": true,
+        "heritage": {
+          "extends": [
+            "Error"
+          ]
+        }
+      },
+      {
+        "name": "PathEscapeError",
+        "kind": "class",
+        "file_path": "orchestrator/src/providers/deterministic/paths.ts",
+        "start_line": 8,
+        "end_line": 14,
+        "signature": "export class PathEscapeError extends Error",
+        "is_exported": true,
+        "heritage": {
+          "extends": [
+            "Error"
+          ]
+        }
+      }
+    ],
+    "isForbiddenKey": [
+      {
+        "name": "isForbiddenKey",
+        "kind": "function",
+        "file_path": "orchestrator/src/observability/inference-ledger.ts",
+        "start_line": 52,
+        "end_line": 56,
+        "signature": "function isForbiddenKey(key: string): boolean",
+        "is_exported": false
+      }
+    ],
+    "sanitizeValue": [
+      {
+        "name": "sanitizeValue",
+        "kind": "function",
+        "file_path": "orchestrator/src/observability/inference-ledger.ts",
+        "start_line": 58,
+        "end_line": 69,
+        "signature": "function sanitizeValue(value: unknown): unknown",
+        "is_exported": false
+      }
+    ],
+    "resolveInferenceSpansPath": [
+      {
+        "name": "resolveInferenceSpansPath",
+        "kind": "function",
+        "file_path": "orchestrator/src/observability/inference-ledger.ts",
+        "start_line": 91,
+        "end_line": 99,
+        "signature": "export function resolveInferenceSpansPath(",
+        "is_exported": true
+      }
+    ],
+    "appendInferenceSpan": [
+      {
+        "name": "appendInferenceSpan",
+        "kind": "function",
+        "file_path": "orchestrator/src/observability/inference-ledger.ts",
+        "start_line": 107,
+        "end_line": 111,
+        "signature": "export function appendInferenceSpan(",
+        "is_exported": true
+      }
+    ],
+    "readInferenceSpans": [
+      {
+        "name": "readInferenceSpans",
+        "kind": "function",
+        "file_path": "orchestrator/src/observability/inference-ledger.ts",
+        "start_line": 133,
+        "end_line": 160,
+        "signature": "export function readInferenceSpans(",
+        "is_exported": true
+      }
+    ],
+    "InferenceUsageSource": [
+      {
+        "name": "InferenceUsageSource",
+        "kind": "type",
+        "file_path": "orchestrator/src/observability/inference-usage.ts",
+        "start_line": 7,
+        "end_line": 11,
+        "signature": "export type InferenceUsageSource =",
+        "is_exported": true
+      }
+    ],
+    "InferenceUsageConfidence": [
+      {
+        "name": "InferenceUsageConfidence",
+        "kind": "type",
+        "file_path": "orchestrator/src/observability/inference-usage.ts",
+        "start_line": 13,
+        "end_line": 17,
+        "signature": "export type InferenceUsageConfidence =",
+        "is_exported": true
+      }
+    ],
+    "InferenceOutcome": [
+      {
+        "name": "InferenceOutcome",
+        "kind": "type",
+        "file_path": "orchestrator/src/observability/inference-usage.ts",
+        "start_line": 19,
+        "end_line": 19,
+        "signature": "export type InferenceOutcome = \"success\" | \"error\" | \"interrupted\";",
+        "is_exported": true
+      }
+    ],
+    "NotMeasured": [
+      {
+        "name": "NotMeasured",
+        "kind": "type",
+        "file_path": "orchestrator/src/observability/inference-usage.ts",
+        "start_line": 22,
+        "end_line": 22,
+        "signature": "export type NotMeasured = typeof NOT_MEASURED;",
+        "is_exported": true
+      }
+    ],
+    "InferenceSpanRecord": [
+      {
+        "name": "InferenceSpanRecord",
+        "kind": "interface",
+        "file_path": "orchestrator/src/observability/inference-usage.ts",
+        "start_line": 24,
+        "end_line": 41,
+        "signature": "export interface InferenceSpanRecord",
+        "is_exported": true,
+        "heritage": {}
+      }
+    ],
+    "ClassifyHttpInferenceUsageInput": [
+      {
+        "name": "ClassifyHttpInferenceUsageInput",
+        "kind": "interface",
+        "file_path": "orchestrator/src/observability/inference-usage.ts",
+        "start_line": 43,
+        "end_line": 62,
+        "signature": "export interface ClassifyHttpInferenceUsageInput",
+        "is_exported": true,
+        "heritage": {}
+      }
+    ],
+    "cleanString": [
+      {
+        "name": "cleanString",
+        "kind": "function",
+        "file_path": "orchestrator/src/observability/inference-usage.ts",
+        "start_line": 64,
+        "end_line": 66,
+        "signature": "function cleanString(val: unknown): string | null",
+        "is_exported": false
+      }
+    ],
+    "isFiniteNumber": [
+      {
+        "name": "isFiniteNumber",
+        "kind": "function",
+        "file_path": "orchestrator/src/observability/inference-usage.ts",
+        "start_line": 68,
+        "end_line": 70,
+        "signature": "function isFiniteNumber(val: unknown): val is number",
+        "is_exported": false
+      }
+    ],
+    "extractMeasurementClass": [
+      {
+        "name": "extractMeasurementClass",
+        "kind": "function",
+        "file_path": "orchestrator/src/observability/inference-usage.ts",
+        "start_line": 72,
+        "end_line": 73,
+        "signature": "function extractMeasurementClass(",
+        "is_exported": false
+      }
+    ],
+    "assertSameMeasurementClass": [
+      {
+        "name": "assertSameMeasurementClass",
+        "kind": "function",
+        "file_path": "orchestrator/src/observability/inference-usage.ts",
+        "start_line": 91,
+        "end_line": 92,
+        "signature": "export function assertSameMeasurementClass(",
+        "is_exported": true
+      }
+    ],
+    "classifyHttpInferenceUsage": [
+      {
+        "name": "classifyHttpInferenceUsage",
+        "kind": "function",
+        "file_path": "orchestrator/src/observability/inference-usage.ts",
+        "start_line": 107,
+        "end_line": 213,
+        "signature": "export function classifyHttpInferenceUsage(",
+        "is_exported": true
+      }
+    ],
+    "FetchFn": [
+      {
+        "name": "FetchFn",
+        "kind": "type",
+        "file_path": "orchestrator/src/observability/observable-llm-adapter.ts",
+        "start_line": 17,
+        "end_line": 17,
+        "signature": "export type FetchFn = typeof fetch;",
+        "is_exported": true
+      }
+    ],
+    "ObservableLlmAdapterResult": [
+      {
+        "name": "ObservableLlmAdapterResult",
+        "kind": "interface",
+        "file_path": "orchestrator/src/observability/observable-llm-adapter.ts",
+        "start_line": 19,
+        "end_line": 25,
+        "signature": "export interface ObservableLlmAdapterResult",
+        "is_exported": true,
+        "heritage": {}
+      }
+    ],
+    "ObservableCompletionInput": [
+      {
+        "name": "ObservableCompletionInput",
+        "kind": "interface",
+        "file_path": "orchestrator/src/observability/observable-llm-adapter.ts",
+        "start_line": 27,
+        "end_line": 45,
+        "signature": "export interface ObservableCompletionInput",
+        "is_exported": true,
+        "heritage": {}
+      }
+    ],
+    "isForbiddenIPv4": [
+      {
+        "name": "isForbiddenIPv4",
+        "kind": "function",
+        "file_path": "orchestrator/src/observability/observable-llm-adapter.ts",
+        "start_line": 62,
+        "end_line": 62,
+        "signature": "export function isForbiddenIPv4(octets: number[]):",
+        "is_exported": true
+      }
+    ],
+    "isForbiddenIPv6": [
+      {
+        "name": "isForbiddenIPv6",
+        "kind": "function",
+        "file_path": "orchestrator/src/observability/observable-llm-adapter.ts",
+        "start_line": 106,
+        "end_line": 106,
+        "signature": "export function isForbiddenIPv6(rawIpv6: string):",
+        "is_exported": true
+      }
+    ],
+    "validateTargetUrl": [
+      {
+        "name": "validateTargetUrl",
+        "kind": "function",
+        "file_path": "orchestrator/src/observability/observable-llm-adapter.ts",
+        "start_line": 164,
+        "end_line": 236,
+        "signature": "export function validateTargetUrl(rawUrl: string, allowLoopback = false): URL",
+        "is_exported": true
+      }
+    ],
+    "ObservableLlmProviderAdapter": [
+      {
+        "name": "ObservableLlmProviderAdapter",
+        "kind": "class",
+        "file_path": "orchestrator/src/observability/observable-llm-adapter.ts",
+        "start_line": 238,
+        "end_line": 426,
+        "signature": "export class ObservableLlmProviderAdapter",
+        "is_exported": true,
+        "heritage": {}
+      }
+    ],
     "DecideContext": [
       {
         "name": "DecideContext",
@@ -4001,7 +4478,7 @@
         "kind": "class",
         "file_path": "orchestrator/src/orchestrator/orchestrator.ts",
         "start_line": 9,
-        "end_line": 43,
+        "end_line": 47,
         "signature": "export class Orchestrator",
         "is_exported": true,
         "heritage": {}
@@ -4531,22 +5008,6 @@
         "is_exported": true
       }
     ],
-    "PathEscapeError": [
-      {
-        "name": "PathEscapeError",
-        "kind": "class",
-        "file_path": "orchestrator/src/providers/deterministic/paths.ts",
-        "start_line": 8,
-        "end_line": 14,
-        "signature": "export class PathEscapeError extends Error",
-        "is_exported": true,
-        "heritage": {
-          "extends": [
-            "Error"
-          ]
-        }
-      }
-    ],
     "assertWithinWorkspace": [
       {
         "name": "assertWithinWorkspace",
@@ -4708,13 +5169,63 @@
         "is_exported": true
       }
     ],
+    "extractInputs": [
+      {
+        "name": "extractInputs",
+        "kind": "function",
+        "file_path": "orchestrator/src/providers/observable-inference-provider.ts",
+        "start_line": 20,
+        "end_line": 49,
+        "signature": "function extractInputs(request: ExecuteRequest): Record<string, string>",
+        "is_exported": false
+      }
+    ],
+    "ObservableInferenceProviderOptions": [
+      {
+        "name": "ObservableInferenceProviderOptions",
+        "kind": "interface",
+        "file_path": "orchestrator/src/providers/observable-inference-provider.ts",
+        "start_line": 51,
+        "end_line": 61,
+        "signature": "export interface ObservableInferenceProviderOptions",
+        "is_exported": true,
+        "heritage": {}
+      }
+    ],
+    "ObservableInferenceProvider": [
+      {
+        "name": "ObservableInferenceProvider",
+        "kind": "class",
+        "file_path": "orchestrator/src/providers/observable-inference-provider.ts",
+        "start_line": 63,
+        "end_line": 185,
+        "signature": "export class ObservableInferenceProvider implements ProviderRuntime",
+        "is_exported": true,
+        "heritage": {
+          "implements": [
+            "ProviderRuntime"
+          ]
+        }
+      }
+    ],
+    "createObservableInferenceProvider": [
+      {
+        "name": "createObservableInferenceProvider",
+        "kind": "function",
+        "file_path": "orchestrator/src/providers/observable-inference-provider.ts",
+        "start_line": 187,
+        "end_line": 191,
+        "signature": "export function createObservableInferenceProvider(",
+        "is_exported": true
+      }
+    ],
     "loadYamlFile": [
       {
         "name": "loadYamlFile",
         "kind": "function",
         "file_path": "orchestrator/src/registry/manifest-loader.ts",
-        "start_line": 8,
-        "end_line": 11,
+        "start_line": 11,
+        "end_line": 14,
         "signature": "export function loadYamlFile<T>(path: string): T",
         "is_exported": true
       }
@@ -4724,8 +5235,8 @@
         "name": "manifestToRegistryEntries",
         "kind": "function",
         "file_path": "orchestrator/src/registry/manifest-loader.ts",
-        "start_line": 13,
-        "end_line": 13,
+        "start_line": 16,
+        "end_line": 16,
         "signature": "export function manifestToRegistryEntries(manifest: ProviderManifest): Array<",
         "is_exported": true
       }
@@ -4735,8 +5246,8 @@
         "name": "buildRegistryFromManifestFiles",
         "kind": "function",
         "file_path": "orchestrator/src/registry/manifest-loader.ts",
-        "start_line": 36,
-        "end_line": 39,
+        "start_line": 39,
+        "end_line": 42,
         "signature": "export function buildRegistryFromManifestFiles(manifests: ProviderManifest[]): CapabilityRegistry",
         "is_exported": true
       }
@@ -4746,8 +5257,8 @@
         "name": "loadPolicy",
         "kind": "function",
         "file_path": "orchestrator/src/registry/manifest-loader.ts",
-        "start_line": 41,
-        "end_line": 43,
+        "start_line": 44,
+        "end_line": 46,
         "signature": "export function loadPolicy(path: string): ExecutionPolicy",
         "is_exported": true
       }
@@ -4757,8 +5268,8 @@
         "name": "loadPoliciesFromDir",
         "kind": "function",
         "file_path": "orchestrator/src/registry/manifest-loader.ts",
-        "start_line": 46,
-        "end_line": 51,
+        "start_line": 49,
+        "end_line": 54,
         "signature": "export function loadPoliciesFromDir(dir: string): ExecutionPolicy[]",
         "is_exported": true
       }
@@ -4881,7 +5392,7 @@
         "kind": "class",
         "file_path": "orchestrator/src/registry/registry-client.ts",
         "start_line": 17,
-        "end_line": 205,
+        "end_line": 207,
         "signature": "export class RegistryClient",
         "is_exported": true,
         "heritage": {}
@@ -4892,8 +5403,8 @@
         "name": "buildRegistryFromManifests",
         "kind": "function",
         "file_path": "orchestrator/src/registry/registry-client.ts",
-        "start_line": 207,
-        "end_line": 208,
+        "start_line": 209,
+        "end_line": 210,
         "signature": "export function buildRegistryFromManifests(",
         "is_exported": true
       }
@@ -5784,8 +6295,8 @@
       "exports": []
     },
     "orchestrator/src/cli/run-engine.ts": {
-      "sha256": "8b0c87b616b8bec3b557d811824d70aa4c1c42b6be768b3dfa8a612cbe5cf22d",
-      "line_count": 280,
+      "sha256": "951f7c7f8fd1fba0c598aab19231c217a54d792016a543deb9b0980d2bb4e6f9",
+      "line_count": 283,
       "symbol_names": [
         "parseArgs",
         "loadProviderManifests",
@@ -5855,8 +6366,8 @@
       ]
     },
     "orchestrator/src/contracts/contract-registry.ts": {
-      "sha256": "0fca589b7905d88158604ae815763f8f54cdad5a40f45212654727e32b3afa9c",
-      "line_count": 94,
+      "sha256": "8a4f2ae3cba467cb280a00f8709c264b778f28490734bcd724bcb686151a62fd",
+      "line_count": 100,
       "symbol_names": [
         "ContractRegistry",
         "loadContractsFromDir",
@@ -5913,8 +6424,8 @@
       ]
     },
     "orchestrator/src/discovery/capability-profiles.ts": {
-      "sha256": "163a5022d7be2024004dcec7d1891614a767ad458fb51f1d65f4f34cb987a0bd",
-      "line_count": 65,
+      "sha256": "783b232d8424e7f4ee635585d479ea3f19e44d16875413ac19bd5388497b604a",
+      "line_count": 67,
       "symbol_names": [
         "CapabilityProfile",
         "capabilitiesForProfile",
@@ -5930,8 +6441,8 @@
       ]
     },
     "orchestrator/src/discovery/provider-discovery.ts": {
-      "sha256": "313afe545047e197a1f17fa60ae186c92ccb6da280aed50be42ae51cb183f929",
-      "line_count": 92,
+      "sha256": "4e83ec6904fe41dea4cb9fc50079bbeba634f711b6729bfc550b699ece4b25ab",
+      "line_count": 96,
       "symbol_names": [
         "DiscoveryOptions",
         "scanProviderYaml",
@@ -5956,12 +6467,13 @@
       ]
     },
     "orchestrator/src/engine/execution-engine.ts": {
-      "sha256": "009a6811e6958e99f44449a2c2a3d6b235c1fc6b763ab67d6abf936f781cc900",
-      "line_count": 654,
+      "sha256": "578b2f0bf9452e77796462e0f5f1af46496c2d55d24ed520515593233e3da724",
+      "line_count": 672,
       "symbol_names": [
         "ExecutionEngineOptions",
         "ExecutionEngine",
-        "subscribeMetrics"
+        "subscribeMetrics",
+        "canRetry"
       ],
       "import_modules": [
         "../types/index.js",
@@ -5977,6 +6489,7 @@
         "../orchestrator/orchestrator.js",
         "../scheduler/scheduler.js",
         "../providers/mock-provider.js",
+        "../providers/observable-inference-provider.js",
         "../evidence/validator.js",
         "../contracts/contract-registry.js",
         "../plugins/plugin-loader.js",
@@ -6728,8 +7241,8 @@
       ]
     },
     "orchestrator/src/index.ts": {
-      "sha256": "0336f4ea5bff27ca1b523607fa245536b1d9755e788bda18a0d3110ae9c359ed",
-      "line_count": 197,
+      "sha256": "2684d3c3940ac853b51a9e8d1d6488746d83815808603aaa1541d4b60f9fde7d",
+      "line_count": 207,
       "symbol_names": [],
       "import_modules": [],
       "exports": []
@@ -7190,9 +7703,144 @@
         "PatternAggregator"
       ]
     },
+    "orchestrator/src/memory/filesystem-memory-store.ts": {
+      "sha256": "7f52cc03e580fa7a9500301f7a75a93a0d23bfcbc004ca31de23dfcb313bce82",
+      "line_count": 192,
+      "symbol_names": [
+        "assertFeatureIdConfined",
+        "EntriesFile",
+        "ContextFile",
+        "MemoryFormatError",
+        "readEntriesFile",
+        "writeEntriesFile",
+        "loadFeatureFromDisk",
+        "loadAllFromDisk",
+        "FilesystemMemoryStore"
+      ],
+      "import_modules": [
+        "node:fs",
+        "node:path",
+        "yaml",
+        "../authority/capability-authority.js",
+        "../providers/deterministic/paths.js",
+        "./memory-store.js",
+        "../types/index.js"
+      ],
+      "exports": [
+        "assertFeatureIdConfined",
+        "MemoryFormatError",
+        "FilesystemMemoryStore"
+      ]
+    },
+    "orchestrator/src/memory/memory-store.ts": {
+      "sha256": "625e58b647bc2ba9509e053aae28e65d5376715cde3ea3e895a5b6cb5b9a6d47",
+      "line_count": 86,
+      "symbol_names": [
+        "FeatureMemoryMeta",
+        "FeatureMemory",
+        "isPreference",
+        "isDecision",
+        "MemoryStore"
+      ],
+      "import_modules": [
+        "../types/index.js"
+      ],
+      "exports": [
+        "FeatureMemoryMeta",
+        "MemoryStore"
+      ]
+    },
+    "orchestrator/src/observability/index.ts": {
+      "sha256": "e42f45854d224caa4f4bf1c99fbcb7c50a15ed02b5c139479211268be5a59360",
+      "line_count": 8,
+      "symbol_names": [],
+      "import_modules": [],
+      "exports": []
+    },
+    "orchestrator/src/observability/inference-ledger.ts": {
+      "sha256": "b2c9c26e7ec3e9e0d4e34119d9b74efd48779a983f0d7628435642b4c644988d",
+      "line_count": 161,
+      "symbol_names": [
+        "PathEscapeError",
+        "assertFeatureIdConfined",
+        "isForbiddenKey",
+        "sanitizeValue",
+        "resolveInferenceSpansPath",
+        "appendInferenceSpan",
+        "readInferenceSpans"
+      ],
+      "import_modules": [
+        "node:fs",
+        "node:path",
+        "../knowledge/uks/storage-core.ts",
+        "./inference-usage.ts"
+      ],
+      "exports": [
+        "PathEscapeError",
+        "assertFeatureIdConfined",
+        "resolveInferenceSpansPath",
+        "appendInferenceSpan",
+        "readInferenceSpans"
+      ]
+    },
+    "orchestrator/src/observability/inference-usage.ts": {
+      "sha256": "dcf9c1bc21941eb040eefd0e11470bff4bced12d50da7026cae57d2d2a5a7b06",
+      "line_count": 216,
+      "symbol_names": [
+        "InferenceUsageSource",
+        "InferenceUsageConfidence",
+        "InferenceOutcome",
+        "NotMeasured",
+        "InferenceSpanRecord",
+        "ClassifyHttpInferenceUsageInput",
+        "cleanString",
+        "isFiniteNumber",
+        "extractMeasurementClass",
+        "assertSameMeasurementClass",
+        "classifyHttpInferenceUsage"
+      ],
+      "import_modules": [],
+      "exports": [
+        "InferenceUsageSource",
+        "InferenceUsageConfidence",
+        "InferenceOutcome",
+        "NotMeasured",
+        "InferenceSpanRecord",
+        "ClassifyHttpInferenceUsageInput",
+        "assertSameMeasurementClass",
+        "classifyHttpInferenceUsage"
+      ]
+    },
+    "orchestrator/src/observability/observable-llm-adapter.ts": {
+      "sha256": "5bf5b8b7e4f57355f5abb6b08d2c5c2fa52e278309eb5835facec411e46fb8fa",
+      "line_count": 427,
+      "symbol_names": [
+        "FetchFn",
+        "ObservableLlmAdapterResult",
+        "ObservableCompletionInput",
+        "isForbiddenIPv4",
+        "isForbiddenIPv6",
+        "validateTargetUrl",
+        "ObservableLlmProviderAdapter"
+      ],
+      "import_modules": [
+        "node:net",
+        "./inference-usage.ts",
+        "./inference-ledger.ts"
+      ],
+      "exports": [
+        "FetchFn",
+        "ObservableLlmAdapterResult",
+        "ObservableCompletionInput",
+        "isForbiddenIPv4",
+        "isForbiddenIPv6",
+        "validateTargetUrl",
+        "ObservableLlmProviderAdapter"
+      ]
+    },
     "orchestrator/src/orchestrator/orchestrator.ts": {
-      "sha256": "f6aa426d67767894e5c13ebeedc22050dfc208959de71f4021d26fd393819ce9",
-      "line_count": 44,
+      "sha256": "f7b6cffd84f86e8be2c78d546ace22e3325a0862d09c02d4ec8a2d620679b468",
+      "line_count": 48,
       "symbol_names": [
         "DecideContext",
         "Orchestrator"
@@ -7543,9 +8191,29 @@
         "createMockProvider"
       ]
     },
+    "orchestrator/src/providers/observable-inference-provider.ts": {
+      "sha256": "02233c5d689e6a5f8622a6c46034d5721144cf50ba26159129bacf9cbdd78d35",
+      "line_count": 192,
+      "symbol_names": [
+        "extractInputs",
+        "ObservableInferenceProviderOptions",
+        "ObservableInferenceProvider",
+        "createObservableInferenceProvider"
+      ],
+      "import_modules": [
+        "../types/index.js",
+        "../evidence/builders.js",
+        "../observability/observable-llm-adapter.ts"
+      ],
+      "exports": [
+        "ObservableInferenceProviderOptions",
+        "ObservableInferenceProvider",
+        "createObservableInferenceProvider"
+      ]
+    },
     "orchestrator/src/registry/manifest-loader.ts": {
-      "sha256": "f1ec3a4cb04fa672e8ec478cbbc22360a7971786aacc8277648e17a177dcb445",
-      "line_count": 52,
+      "sha256": "ab0920b2235e64728a5de0d7eb4e87eae151f0204c86cf46a8b6babdba09e26f",
+      "line_count": 55,
       "symbol_names": [
         "loadYamlFile",
         "manifestToRegistryEntries",
@@ -7600,8 +8268,8 @@
       ]
     },
     "orchestrator/src/registry/registry-client.ts": {
-      "sha256": "d85a104a17c9aca55f4d2e397dbee693e1a89c958f3cee9ee1c11df734404953",
-      "line_count": 226,
+      "sha256": "07af987fade17c8aa9a4c6767aabe9139fbddea55594494c4547ba9a2ef43e30",
+      "line_count": 228,
       "symbol_names": [
         "RegistryClient",
         "buildRegistryFromManifests"

@@ -5,7 +5,7 @@ import type { ProviderManifest } from "../types/index.js";
 
 export interface DiscoveryOptions {
   /** Root containing `.cursor/skills/` or skills dir directly */
-  agentsRoot: string;
+  agentsRoot?: string;
   /** Also scan orchestrator bundled providers */
   orchestratorProvidersDir?: string;
 }
@@ -34,11 +34,15 @@ function scanProviderYaml(dir: string): ProviderManifest[] {
 
 /** Scan skills + orchestrator provider dirs for all manifests */
 export function discoverAllManifests(options: DiscoveryOptions): ProviderManifest[] {
-  const skillsDir = existsSync(join(options.agentsRoot, ".cursor", "skills"))
-    ? join(options.agentsRoot, ".cursor", "skills")
-    : join(options.agentsRoot, "skills");
+  const manifests: ProviderManifest[] = [];
 
-  const manifests = scanProviderYaml(skillsDir);
+  if (options.agentsRoot) {
+    const skillsDir = existsSync(join(options.agentsRoot, ".cursor", "skills"))
+      ? join(options.agentsRoot, ".cursor", "skills")
+      : join(options.agentsRoot, "skills");
+    manifests.push(...scanProviderYaml(skillsDir));
+  }
+
   if (options.orchestratorProvidersDir) {
     manifests.push(...scanProviderYaml(options.orchestratorProvidersDir));
   }

@@ -1,6 +1,9 @@
 import { readFileSync, readdirSync, existsSync } from "node:fs";
 import { join } from "node:path";
-import { parse as parseYaml } from "yaml";
+import * as yamlPkg from "yaml";
+// Robust extraction of parseYaml across CommonJS and ESM module boundaries
+const parseYaml: (text: string) => any =
+  (yamlPkg as any).parse ?? (yamlPkg as any).default?.parse;
 import type { CapabilityRegistry, ExecutionPolicy, ProviderManifest } from "../types/index.js";
 import { buildRegistryFromManifests } from "../registry/registry-client.js";
 import type { ProviderEntry } from "../types/index.js";

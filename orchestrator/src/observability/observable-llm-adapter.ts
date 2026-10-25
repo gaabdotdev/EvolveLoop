@@ -5,6 +5,7 @@
  * Enforces SSRF prevention, allowlisted providers, and rigorous input validation.
  */
 
+import net from "node:net";
 import {
   classifyHttpInferenceUsage,
   type InferenceSpanRecord,
@@ -56,6 +57,108 @@ const DEFAULT_MODELS: Record<string, string> = {
 };
 
 /**
+ * Checks whether an IPv4 address belongs to a forbidden/private/internal range.
+ */
+export function isForbiddenIPv4(octets: number[]): { forbidden: boolean; reason?: string } {
+  const [a, b, c, d] = octets;
+
+  // 0.0.0.0/8 (Current network)
+  if (a === 0) return { forbidden: true, reason: "Current network (0.0.0.0/8)" };
+
+  // 127.0.0.0/8 (Loopback)
+  if (a === 127) return { forbidden: true, reason: "Loopback (127.0.0.0/8)" };
+
+  // 10.0.0.0/8 (RFC 1918 Private Class A)
+  if (a === 10) return { forbidden: true, reason: "RFC 1918 Private Class A (10.0.0.0/8)" };
+
+  // 172.16.0.0/12 (RFC 1918 Private Class B)
+  if (a === 172 && b >= 16 && b <= 31) {
+    return { forbidden: true, reason: "RFC 1918 Private Class B (172.16.0.0/12)" };
+  }
+
+  // 192.168.0.0/16 (RFC 1918 Private Class C)
+  if (a === 192 && b === 168) {
+    return { forbidden: true, reason: "RFC 1918 Private Class C (192.168.0.0/16)" };
+  }
+
+  // 169.254.0.0/16 (Link-Local & Cloud Metadata)
+  if (a === 169 && b === 254) {
+    return { forbidden: true, reason: "Link-Local / Cloud Metadata (169.254.0.0/16)" };
+  }
+
+  // 100.64.0.0/10 (Carrier-Grade NAT, RFC 6598)
+  if (a === 100 && b >= 64 && b <= 127) {
+    return { forbidden: true, reason: "Carrier-Grade NAT (100.64.0.0/10)" };
+  }
+
+  // 224.0.0.0/4 (Multicast)
+  if (a >= 224 && a <= 239) return { forbidden: true, reason: "Multicast (224.0.0.0/4)" };
+
+  // 240.0.0.0/4 (Reserved / Future Use & Broadcast)
+  if (a >= 240) return { forbidden: true, reason: "Reserved / Broadcast (240.0.0.0/4)" };
+
+  return { forbidden: false };
+}
+
+/**
+ * Checks whether an IPv6 address string belongs to a forbidden range.
+ */
+export function isForbiddenIPv6(rawIpv6: string): { forbidden: boolean; reason?: string } {
+  let ip = rawIpv6.startsWith("[") && rawIpv6.endsWith("]") ? rawIpv6.slice(1, -1) : rawIpv6;
+  ip = ip.toLowerCase();
+
+  // Loopback (::1)
+  if (ip === "::1" || ip === "0:0:0:0:0:0:0:1") {
+    return { forbidden: true, reason: "IPv6 Loopback (::1)" };
+  }
+
+  // Unspecified (::)
+  if (ip === "::" || ip === "0:0:0:0:0:0:0:0") {
+    return { forbidden: true, reason: "IPv6 Unspecified (::)" };
+  }
+
+  // IPv4-mapped IPv6 (::ffff:x.x.x.x or hex)
+  if (ip.startsWith("::ffff:") || ip.includes(":ffff:")) {
+    const lastColon = ip.lastIndexOf(":");
+    const lastPart = ip.slice(lastColon + 1);
+    if (net.isIPv4(lastPart)) {
+      const octets = lastPart.split(".").map(Number);
+      const res = isForbiddenIPv4(octets);
+      if (res.forbidden) {
+        return { forbidden: true, reason: `IPv4-mapped IPv6 -> ${res.reason}` };
+      }
+    } else {
+      // Hex representation like ::ffff:a9fe:a9fe (169.254.169.254) or ::ffff:7f00:1 (127.0.0.1)
+      const parts = ip.split(":").filter(Boolean);
+      if (parts.length >= 2 && parts[parts.length - 2] === "ffff") {
+        const hexVal = parts[parts.length - 1];
+        if (hexVal === "a9fe" || hexVal.startsWith("7f") || hexVal === "0") {
+          return { forbidden: true, reason: "IPv4-mapped IPv6 metadata/loopback address" };
+        }
+      }
+      return { forbidden: true, reason: "IPv4-mapped IPv6 address" };
+    }
+  }
+
+  // fe80::/10 (Link-Local)
+  if (/^fe[89ab][0-9a-f]:/i.test(ip) || ip.startsWith("fe80:")) {
+    return { forbidden: true, reason: "IPv6 Link-Local (fe80::/10)" };
+  }
+
+  // fc00::/7 (Unique Local Address, RFC 4193)
+  if (/^f[cd][0-9a-f]{2}:/i.test(ip) || ip.startsWith("fc") || ip.startsWith("fd")) {
+    return { forbidden: true, reason: "IPv6 Unique Local (fc00::/7)" };
+  }
+
+  // ff00::/8 (Multicast)
+  if (/^ff[0-9a-f]{2}:/i.test(ip) || ip.startsWith("ff")) {
+    return { forbidden: true, reason: "IPv6 Multicast (ff00::/8)" };
+  }
+
+  return { forbidden: false };
+}
+
+/**
  * Validates target endpoint against SSRF and unauthorized network destinations.
  */
 export function validateTargetUrl(rawUrl: string, allowLoopback = false): URL {
@@ -76,17 +179,57 @@ export function validateTargetUrl(rawUrl: string, allowLoopback = false): URL {
     throw new Error("[-] SECURITY_SSRF_VIOLATION: Embedded credentials in target URL are strictly prohibited.");
   }
 
-  const hostname = parsed.hostname.toLowerCase();
+  let hostname = parsed.hostname.toLowerCase();
+  if (hostname.endsWith(".")) {
+    hostname = hostname.slice(0, -1);
+  }
 
-  // Cloud metadata endpoint protection
-  if (hostname === "169.254.169.254" || hostname === "metadata.google.internal") {
+  // Cloud metadata endpoint protection (DNS / hostnames)
+  if (
+    hostname === "169.254.169.254" ||
+    hostname === "metadata.google.internal" ||
+    hostname.endsWith(".metadata.google.internal") ||
+    hostname === "instance-data"
+  ) {
     throw new Error(`[-] SECURITY_SSRF_VIOLATION: Cloud metadata endpoint '${hostname}' is blocked.`);
   }
 
-  // Loopback and private network boundaries
-  const isLoopback = hostname === "localhost" || hostname === "127.0.0.1" || hostname === "::1";
-  if (isLoopback && !allowLoopback) {
+  // Loopback and internal DNS aliases
+  const isLoopbackHost =
+    hostname === "localhost" ||
+    hostname.endsWith(".localhost") ||
+    hostname === "localhost.localdomain" ||
+    hostname.endsWith(".localdomain") ||
+    hostname.endsWith(".local") ||
+    hostname.endsWith(".internal");
+
+  if (isLoopbackHost && !allowLoopback) {
     throw new Error(`[-] SECURITY_SSRF_VIOLATION: Loopback connection to '${hostname}' is not authorized.`);
+  }
+
+  // IP Address inspection
+  const isV6Bracket = hostname.startsWith("[") && hostname.endsWith("]");
+  const rawIpCandidate = isV6Bracket ? hostname.slice(1, -1) : hostname;
+
+  if (net.isIPv6(rawIpCandidate)) {
+    const v6Check = isForbiddenIPv6(hostname);
+    if (v6Check.forbidden) {
+      if (v6Check.reason?.includes("Loopback") && allowLoopback) {
+        // authorized loopback
+      } else {
+        throw new Error(`[-] SECURITY_SSRF_VIOLATION: IPv6 '${hostname}' is blocked: ${v6Check.reason}`);
+      }
+    }
+  } else if (net.isIPv4(rawIpCandidate)) {
+    const octets = rawIpCandidate.split(".").map(Number);
+    const v4Check = isForbiddenIPv4(octets);
+    if (v4Check.forbidden) {
+      if (v4Check.reason?.includes("Loopback") && allowLoopback) {
+        // authorized loopback
+      } else {
+        throw new Error(`[-] SECURITY_SSRF_VIOLATION: IPv4 '${hostname}' is blocked: ${v4Check.reason}`);
+      }
+    }
   }
 
   return parsed;
@@ -182,6 +325,7 @@ export class ObservableLlmProviderAdapter {
         method: "POST",
         headers,
         body: JSON.stringify(bodyPayload),
+        redirect: "error",
       });
       durationMs = Number((performance.now() - startTime).toFixed(2));
     } catch (fetchErr: unknown) {

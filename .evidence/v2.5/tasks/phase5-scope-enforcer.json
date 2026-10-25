@@ -1,7 +1,7 @@
 {
   "task_id": "phase5-scope-enforcer-validation",
   "phase": "Phase 5: TruthFence & Scope Isolation Integration (ADR-D03)",
-  "timestamp": "2026-10-24T22:32:54.315Z",
+  "timestamp": "2026-10-25T01:50:06.505Z",
   "status": "PASSED",
   "total_tests": 9,
   "passed_tests": 9,
@@ -45,7 +45,7 @@
     {
       "name": "X05: Foreign Canary token in payload -> SECURITY_LEAK_PREVENTED EXCEPTION",
       "status": "PASS",
-      "duration_ms": 1
+      "duration_ms": 0
     },
     {
       "name": "X06: Query to global scope retrieves public packs without exposing private items",

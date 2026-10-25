@@ -15,6 +15,7 @@ import {
   ExecutionEngine,
   ProviderRouter,
   createMockProvider,
+  ObservableInferenceProvider,
   loadYamlFile,
   buildRegistryFromManifestFiles,
   PluginLoader,
@@ -138,6 +139,8 @@ function setupProviders(
     const manifest = manifestByName.get(id);
     if (manifest?.spec.plugin?.type === "cursor-skill" && executor) {
       router.register(loader.load(manifest, executor));
+    } else if (manifest?.spec.plugin?.type === "observable-inference") {
+      router.register(new ObservableInferenceProvider({ id: manifest.metadata.name }));
     } else {
       router.register(createMockProvider(id));
     }

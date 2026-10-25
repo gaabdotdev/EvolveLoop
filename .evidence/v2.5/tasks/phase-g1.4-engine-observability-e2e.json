@@ -1,0 +1,62 @@
+{
+  "timestamp": "2026-10-25T01:49:53.558Z",
+  "phase": "G1.4",
+  "capability": "llm.complete",
+  "provider_runtime": "ObservableInferenceProvider",
+  "total_tests": 10,
+  "passed": 10,
+  "failed": 0,
+  "verdict": "APROVADO",
+  "test_results": [
+    {
+      "name": "AUD-G1.3-04: loadContractsFromDir loads all contracts cleanly in pure ESM without parseYaml error",
+      "status": "PASS",
+      "durationMs": 49.45
+    },
+    {
+      "name": "AUD-G1.3-03: Canonical provider.yaml for observable-inference exists and validates against schema",
+      "status": "PASS",
+      "durationMs": 0.79
+    },
+    {
+      "name": "AUD-G1.3-03: ExecutionEngine discovers and registers observable-inference dynamically at runtime",
+      "status": "PASS",
+      "durationMs": 34.69
+    },
+    {
+      "name": "ExecutionEngine executes Anthropic completion DAG propagating context, persisting single span, and redacting apiKey",
+      "status": "PASS",
+      "durationMs": 2.44
+    },
+    {
+      "name": "AUD-G1.3-05: ExecutionEngine executes authentic OpenAI Chat Completion DAG and records OpenAI tokens in ledger",
+      "status": "PASS",
+      "durationMs": 1.24
+    },
+    {
+      "name": "AUD-G1.3-01: Persistent HTTP 500 cleanly halts ExecutionEngine after policy retry budget without retry storm",
+      "status": "PASS",
+      "durationMs": 1.29
+    },
+    {
+      "name": "Transient HTTP 429 followed by HTTP 200 succeeds on retry with exact call/span accounting",
+      "status": "PASS",
+      "durationMs": 1.32
+    },
+    {
+      "name": "AUD-G1.3-02: Comprehensive SSRF rejection (IPv6 brackets, IPv4-mapped, RFC 1918, 3xx redirect error, size limit)",
+      "status": "PASS",
+      "durationMs": 0.75
+    },
+    {
+      "name": "ObservableInferenceProvider does not fail inference if disk persistence fails (best-effort)",
+      "status": "PASS",
+      "durationMs": 0.42
+    },
+    {
+      "name": "ExecutionEngine runs heterogeneous DAG with deterministic capabilities alongside llm.complete",
+      "status": "PASS",
+      "durationMs": 2.11
+    }
+  ]
+}

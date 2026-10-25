@@ -1,0 +1,39 @@
+apiVersion: capability-orchestrator.io/v2
+kind: Provider
+metadata:
+  name: observable-inference
+  version: "1.0.0"
+  description: "Observable LLM Inference Provider (capability llm.complete)"
+  owner: agents-team
+
+spec:
+  plugin:
+    type: observable-inference
+    entrypoint: "orchestrator/src/providers/observable-inference-provider.ts"
+
+  capabilities:
+    - id: llm.complete
+      contract: contracts/llm.complete@1.0.0
+      type: worker
+
+  interfaces:
+    outputs:
+      - name: llm-completion
+        schema: evidence/worker-default@1.0.0
+
+  runtime:
+    cost: high
+    subagent_type: inference
+
+  runtime_compatibility:
+    engine: ">=2.0.0 <3.0.0"
+    evidence: ">=2.1.0 <3.0.0"
+    scheduler: ">=2.0.0"
+    execution: ">=2.1.0"
+    executor_types: [observable-inference]
+
+  telemetry:
+    key: provider.observable-inference
+
+  availability: active
+  priority: 90

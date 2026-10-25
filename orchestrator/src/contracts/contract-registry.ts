@@ -1,8 +1,14 @@
 import { readdirSync, readFileSync, existsSync } from "node:fs";
 import { join } from "node:path";
-import { parse as parseYaml } from "yaml";
+import * as yamlPkg from "yaml";
 import type { ContractCompatibilityResult, ContractDocument } from "./contract-types.js";
 import { contractRefId, contractRefVersion, matchesPattern, parseSemVer, satisfies } from "./semver.js";
+
+const parseYaml =
+  (typeof (yamlPkg as Record<string, unknown>).parse === "function"
+    ? (yamlPkg as { parse: (text: string) => unknown }).parse
+    : (yamlPkg as { default?: { parse?: (text: string) => unknown } })?.default?.parse) ??
+  ((text: string) => JSON.parse(text));
 
 export class ContractRegistry {
   private contracts = new Map<string, ContractDocument>();
