@@ -1,6 +1,39 @@
-import { describe, expect, it } from "vitest";
-import { readOmniRouteTelemetry, validateTargetUrl } from "../../src/observability/observable-llm-adapter.js";
+import { afterEach, describe, expect, it } from "vitest";
+import { readOmniRouteTelemetry, validateTargetUrl, ObservableLlmProviderAdapter } from "../../src/observability/observable-llm-adapter.js";
 import { selectInferenceRoute } from "../../src/inference/route-policy.js";
+import { ObservableInferenceProvider } from "../../src/providers/observable-inference-provider.js";
+import type { ExecuteRequest } from "../../src/types/index.js";
+
+function request(taskClass: string): ExecuteRequest {
+  return {
+    run_id: "run-route-1",
+    node_id: "node-route-1",
+    capability: "llm.complete",
+    inputs: [{ prompt: "ping", task_class: taskClass }],
+    definition_of_done: [],
+    policy: { retries_remaining: 0, timeout_ms: 1000 },
+    provider_id: "observable-inference",
+    executor_type: "observable-inference",
+    memory_scope: "feat-route",
+    knowledge_hits: [],
+    briefing: "ping",
+    node: {
+      id: "node-route-1",
+      capability: "llm.complete",
+      type: "worker",
+      dependencies: [],
+      definition_of_done: [{ id: "d1", check: "done", verification: "evidence" }],
+      inputs: [],
+      retry_count: 0,
+      status: "pending",
+    },
+  } as ExecuteRequest;
+}
+
+afterEach(() => {
+  delete process.env.EVOLVELOOP_INFERENCE_GATEWAY;
+  delete process.env.EVOLVELOOP_OMNIROUTE_API_KEY;
+});
 
 describe("inference route policy", () => {
   it("keeps the direct provider when OmniRoute is not enabled", () => {
@@ -60,6 +93,41 @@ describe("OmniRoute response telemetry", () => {
 
   it("returns undefined when the response did not come from OmniRoute", () => {
     expect(readOmniRouteTelemetry(new Headers({ "content-type": "application/json" }))).toBeUndefined();
+  });
+
+  it("routes a provider execution through the configured gateway and blocks review", async () => {
+    process.env.EVOLVELOOP_INFERENCE_GATEWAY = "omniroute";
+    process.env.EVOLVELOOP_OMNIROUTE_API_KEY = "local-test-key";
+    let called = "";
+    const fetchImpl = async (url: string) => {
+      called = url;
+      return new Response(
+        JSON.stringify({
+          choices: [{ message: { content: "pong" } }],
+          usage: { prompt_tokens: 3, completion_tokens: 1, total_tokens: 4, estimated: true },
+        }),
+        {
+          status: 200,
+          headers: {
+            "content-type": "application/json",
+            "x-omniroute-version": "3.8.52",
+            "x-omniroute-provider": "ddgw",
+            "x-omniroute-model": "gpt-5.4-mini",
+          },
+        },
+      );
+    };
+    const adapter = new ObservableLlmProviderAdapter(fetchImpl as never, {
+      allowLoopback: true,
+      allowedGateways: ["127.0.0.1"],
+    });
+    const provider = new ObservableInferenceProvider({ id: "route-test", adapter, memoryRoot: "/tmp/omniroute-route-test" });
+    const ok = await provider.execute(request("simple"));
+    expect(ok.success).toBe(true);
+    expect(called).toContain("http://127.0.0.1:20128/api/v1/chat/completions");
+    const blocked = await provider.execute(request("review"));
+    expect(blocked.success).toBe(false);
+    expect(blocked.error?.code).toBe("ROUTE_BLOCKED");
   });
 
   it("ignores an authorization header", () => {

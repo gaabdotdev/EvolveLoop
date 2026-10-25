@@ -21,6 +21,7 @@ import {
   type DnsLookupFn,
   type ObservableCompletionInput,
 } from "../observability/observable-llm-adapter.js";
+import { selectInferenceRoute, type InferenceTaskClass } from "../inference/route-policy.js";
 
 function extractInputs(request: ExecuteRequest): Record<string, string> {
   const out: Record<string, string> = {};
@@ -128,10 +129,26 @@ export class ObservableInferenceProvider implements ProviderRuntime {
 
     const inputs = extractInputs(request);
     const prompt = inputs.prompt ?? inputs.query ?? inputs.briefing ?? request.briefing;
-    const provider = inputs.provider ?? this.defaultProvider;
-    const model = inputs.model ?? this.defaultModel;
-    const apiKey = inputs.apiKey ?? inputs.api_key ?? this.apiKey;
-    const gatewayUrl = inputs.gatewayUrl ?? inputs.gateway_url ?? this.gatewayUrl;
+    const taskClass = (inputs.task_class ?? "simple") as InferenceTaskClass;
+    const route = selectInferenceRoute(taskClass);
+    if (route.gateway === "blocked") {
+      this.activeControllers.delete(request.run_id);
+      return {
+        run_id: request.run_id,
+        success: false,
+        error: { code: "ROUTE_BLOCKED", message: route.reason },
+        duration_ms: Date.now() - start,
+        provider_id: this.id,
+      };
+    }
+    const provider = route.gateway === "omniroute" ? route.provider : (inputs.provider ?? this.defaultProvider);
+    const model = route.gateway === "omniroute" ? route.model : (inputs.model ?? this.defaultModel);
+    const apiKey = route.gateway === "omniroute"
+      ? (process.env.EVOLVELOOP_OMNIROUTE_API_KEY ?? inputs.apiKey ?? inputs.api_key ?? this.apiKey)
+      : (inputs.apiKey ?? inputs.api_key ?? this.apiKey);
+    const gatewayUrl = route.gateway === "omniroute"
+      ? route.gatewayUrl
+      : (inputs.gatewayUrl ?? inputs.gateway_url ?? this.gatewayUrl);
     const memoryRoot = inputs.memoryRoot ?? inputs.memory_root ?? this.memoryRoot ?? process.cwd();
     const featureId = request.memory_scope || request.node_id;
 
