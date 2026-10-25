@@ -95,6 +95,10 @@ while [[ $# -gt 0 ]]; do
             MODE="$2"
             shift 2
             ;;
+        --dry-run)
+            DRY_RUN=true
+            shift
+            ;;
         -h|--help)
             usage 0
             ;;
@@ -186,13 +190,17 @@ echo "------------------------------------------------------------------------" 
 EXIT_CODE=0
 set +e
 
-# Execute within isolated worktree directory and apply timeout protection
-(
-    cd "${WORKTREE_PATH}"
-    timeout --kill-after=5s "${TIMEOUT_SECS}s" "${CMD[@]}"
-) >> "${LOG_FILE}" 2>&1
-
-EXIT_CODE=$?
+if [[ "${DRY_RUN:-false}" == "true" ]]; then
+    EXIT_CODE=0
+    echo "[+] Dry-run validation mode completed" | tee -a "${LOG_FILE}"
+else
+    # Execute within isolated worktree directory and apply timeout protection
+    (
+        cd "${WORKTREE_PATH}"
+        timeout --kill-after=5s "${TIMEOUT_SECS}s" "${CMD[@]}"
+    ) >> "${LOG_FILE}" 2>&1
+    EXIT_CODE=$?
+fi
 set -e
 
 END_TIME_EPOCH=$(date +%s%N)

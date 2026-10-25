@@ -1,7 +1,7 @@
 {
   "task_id": "phase8-benchmark-suite",
   "phase": "Phase 8: Execution of the 24 Frozen Benchmark Tasks (AC-01 to AC-06)",
-  "timestamp": "2026-10-25T03:54:35.644Z",
+  "timestamp": "2026-10-25T16:11:17.189Z",
   "status": "PASSED",
   "total_tasks": 24,
   "passed_tasks": 24,
@@ -18,12 +18,12 @@
     {
       "path": "scripts/v2.5/run-uks-benchmark.mjs",
       "type": "VERIFIED_IN_CODE",
-      "sha256": "cfbe6bcdbafec6fe19cd8d6c8899558d4de8053fad5e1ccf70fbcb8b70b28c17"
+      "sha256": "135572133ea2036a4d3178c810102cf4b6ddf615537749c72f2303fa98578641"
     },
     {
       "path": ".evidence/v2.5/benchmarks/uks_validation_results.json",
       "type": "MEASURED",
-      "sha256": "233942aa7d480d8be578b412fa4c320131f5da7998e3228c5abe7ac0c212a2ad"
+      "sha256": "7df4a4da5dd580355749a8f01876d8a255f0a42b98deeaec05be9c01d8ef4253"
     }
   ]
 }

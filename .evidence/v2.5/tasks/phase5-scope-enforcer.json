@@ -1,7 +1,7 @@
 {
   "task_id": "phase5-scope-enforcer-validation",
   "phase": "Phase 5: TruthFence & Scope Isolation Integration (ADR-D03)",
-  "timestamp": "2026-10-25T03:54:32.981Z",
+  "timestamp": "2026-10-25T16:06:42.107Z",
   "status": "PASSED",
   "total_tests": 9,
   "passed_tests": 9,
@@ -25,7 +25,7 @@
     {
       "name": "X01: Project A attempts to read Project B secret -> 0.00% LEAK",
       "status": "PASS",
-      "duration_ms": 0
+      "duration_ms": 1
     },
     {
       "name": "X02: Partial directory prefix collision (/project vs /project-rogue) -> ISOLATED",
@@ -35,7 +35,7 @@
     {
       "name": "X03: Directory traversal injection in path (../../) -> SANITIZATION VETO",
       "status": "PASS",
-      "duration_ms": 1
+      "duration_ms": 0
     },
     {
       "name": "X04: 100% textual match from foreign project -> VETOED BY BOOLEAN PRE-FILTER",
@@ -45,7 +45,7 @@
     {
       "name": "X05: Foreign Canary token in payload -> SECURITY_LEAK_PREVENTED EXCEPTION",
       "status": "PASS",
-      "duration_ms": 0
+      "duration_ms": 1
     },
     {
       "name": "X06: Query to global scope retrieves public packs without exposing private items",
@@ -114,12 +114,12 @@
     {
       "path": "orchestrator/src/knowledge/uks/scope-enforcer.ts",
       "type": "VERIFIED_IN_CODE",
-      "sha256": "9fde05b69297ae22397edd75d402d665c51493edb0a55862edf9636288e3e7d9"
+      "sha256": "5e0a448c88463e243509362e933e1e3847e35ca8c95efa1d56c44545e853172c"
     },
     {
       "path": "orchestrator/tests/knowledge/uks/scope-enforcer.test.ts",
       "type": "VERIFIED_IN_CODE",
-      "sha256": "1d81f7c27c2bcdcfba5028118ab8f0e9b639bf13388cc1330322daa82549f470"
+      "sha256": "2e36594a1a6b4423017c5c4afcc8987cf61882a8e8a221a3e79d0cc5836d6dbb"
     }
   ]
 }

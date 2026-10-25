@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-10-25T15:42:18.781Z",
+  "timestamp": "2026-10-25T16:06:41.312Z",
   "phase": "G1.4",
   "capability": "llm.complete",
   "provider_runtime": "ObservableInferenceProvider",
@@ -11,52 +11,52 @@
     {
       "name": "AUD-G1.3-04: loadContractsFromDir loads all contracts cleanly in pure ESM without parseYaml error",
       "status": "PASS",
-      "durationMs": 47.67
+      "durationMs": 61.48
     },
     {
       "name": "AUD-G1.3-03: Canonical provider.yaml for observable-inference exists and validates against schema",
       "status": "PASS",
-      "durationMs": 1.06
+      "durationMs": 1.61
     },
     {
       "name": "AUD-G1.3-03: ExecutionEngine discovers and registers observable-inference dynamically at runtime",
       "status": "PASS",
-      "durationMs": 63
+      "durationMs": 69.16
     },
     {
       "name": "ExecutionEngine executes Anthropic completion DAG propagating context, persisting single span, and redacting apiKey",
       "status": "PASS",
-      "durationMs": 40.02
+      "durationMs": 46.37
     },
     {
       "name": "AUD-G1.3-05: ExecutionEngine executes authentic OpenAI Chat Completion DAG and records OpenAI tokens in ledger",
       "status": "PASS",
-      "durationMs": 40.77
+      "durationMs": 45.24
     },
     {
       "name": "AUD-G1.3-01: Persistent HTTP 500 cleanly halts ExecutionEngine after policy retry budget without retry storm",
       "status": "PASS",
-      "durationMs": 77.46
+      "durationMs": 88.29
     },
     {
       "name": "Transient HTTP 429 followed by HTTP 200 succeeds on retry with exact call/span accounting",
       "status": "PASS",
-      "durationMs": 76.17
+      "durationMs": 86.4
     },
     {
       "name": "AUD-G1.3-02: Comprehensive SSRF rejection (IPv6 brackets, IPv4-mapped, RFC 1918, 3xx redirect error, size limit)",
       "status": "PASS",
-      "durationMs": 39.76
+      "durationMs": 44.55
     },
     {
       "name": "ObservableInferenceProvider does not fail inference if disk persistence fails (best-effort)",
       "status": "PASS",
-      "durationMs": 40.32
+      "durationMs": 43.1
     },
     {
       "name": "ExecutionEngine runs heterogeneous DAG with deterministic capabilities alongside llm.complete",
       "status": "PASS",
-      "durationMs": 39.43
+      "durationMs": 46.8
     }
   ]
 }

@@ -225,17 +225,8 @@ export class ExecutionEngine {
       policy_id: policy.metadata.id,
     });
 
-    const subscribeMetrics = (e: Parameters<EventBus["emit"]>[0]) => {
-      void e;
-    };
-    void subscribeMetrics;
-
     for (const event of eventBus.getEvents()) metrics.recordEvent(event);
-
-    eventBus.subscribe("ProviderSelected", (e) => metrics.recordEvent(e));
-    eventBus.subscribe("RetryScheduled", (e) => metrics.recordEvent(e));
-    eventBus.subscribe("SubgraphInvalidated", (e) => metrics.recordEvent(e));
-    eventBus.subscribe("PlannerReplan", (e) => metrics.recordEvent(e));
+    eventBus.onEvent((e) => metrics.recordEvent(e));
 
     const maxIterations = 500;
     let iterations = 0;
@@ -620,14 +611,6 @@ export class ExecutionEngine {
           attempt: node.retry_count,
           max_retries: maxRetries,
         });
-        metrics.recordEvent({
-          event_id: "",
-          type: "RetryScheduled",
-          timestamp: "",
-          feature_id: featureId,
-          source: "scheduler",
-          payload: { node_id: nodeId },
-        });
         this.registry.recordFailure(run.provider_id, run);
         return;
       }
@@ -690,6 +673,7 @@ export class ExecutionEngine {
     graph.setNodeStatus(nodeId, "satisfied");
     graph.setNodeEvidence(nodeId, run.evidence);
     this.registry.recordSuccess(run.provider_id, run);
+    metrics.recordCapability(node.capability);
 
     eventBus.emit("NodeCompleted", featureId, "scheduler", {
       run_id: run.run_id,

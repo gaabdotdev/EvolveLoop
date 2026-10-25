@@ -13,6 +13,17 @@ import { join } from "node:path";
 import { parse as parseYaml, stringify as stringifyYaml } from "yaml";
 import { KnowledgeStore } from "./knowledge-store.js";
 import type { KnowledgeEntry, ProposedKnowledgeEntry } from "../types/index.js";
+import { assertPathConfined } from "./uks/storage-core.js";
+
+export function assertKnowledgeIdConfined(id: string): string {
+  if (!id || typeof id !== "string") {
+    throw new Error("SECURITY_PATH_TRAVERSAL_VIOLATION: Invalid knowledge id: empty or non-string");
+  }
+  if (id.includes("..") || id.includes("/") || id.includes("\\") || /[\0\r\n\t]/.test(id)) {
+    throw new Error(`SECURITY_PATH_TRAVERSAL_VIOLATION: Illegal traversal characters in knowledge id: '${id}'`);
+  }
+  return id;
+}
 
 interface KnowledgeIndex {
   entries: Array<{
@@ -60,7 +71,11 @@ function loadFromDisk(rootDir: string): KnowledgeEntry[] {
   if (existsSync(indexPath)) {
     const index = parseYaml(readFileSync(indexPath, "utf-8")) as KnowledgeIndex;
     return index.entries
-      .map((e) => parseMarkdownEntry(join(rootDir, e.path), e.id))
+      .map((e) => {
+        assertKnowledgeIdConfined(e.id);
+        const resolvedPath = assertPathConfined(join(rootDir, e.path), rootDir);
+        return parseMarkdownEntry(resolvedPath, e.id);
+      })
       .filter((e): e is KnowledgeEntry => e !== null);
   }
 
@@ -71,7 +86,9 @@ function loadFromDisk(rootDir: string): KnowledgeEntry[] {
     for (const file of readdirSync(dir)) {
       if (!file.endsWith(".md")) continue;
       const id = file.replace(/\.md$/, "");
-      const entry = parseMarkdownEntry(join(dir, file), id);
+      assertKnowledgeIdConfined(id);
+      const abs = assertPathConfined(join(dir, file), rootDir);
+      const entry = parseMarkdownEntry(abs, id);
       if (entry) entries.push(entry);
     }
   }
@@ -79,8 +96,9 @@ function loadFromDisk(rootDir: string): KnowledgeEntry[] {
 }
 
 function writeEntry(rootDir: string, entry: KnowledgeEntry): string {
+  assertKnowledgeIdConfined(entry.id);
   const relPath = join(kindDir(entry.kind), `${entry.id}.md`);
-  const absPath = join(rootDir, relPath);
+  const absPath = assertPathConfined(join(rootDir, relPath), rootDir);
   mkdirSync(join(rootDir, kindDir(entry.kind)), { recursive: true });
 
   const frontmatter = stringifyYaml({
@@ -99,16 +117,20 @@ function writeEntry(rootDir: string, entry: KnowledgeEntry): string {
 function writeIndex(rootDir: string, entries: KnowledgeEntry[]): void {
   mkdirSync(rootDir, { recursive: true });
   const index: KnowledgeIndex = {
-    entries: entries.map((e) => ({
-      id: e.id,
-      kind: e.kind,
-      path: join(kindDir(e.kind), `${e.id}.md`),
-      capabilities: e.capabilities,
-      tags: e.tags,
-      confidence: e.confidence,
-    })),
+    entries: entries.map((e) => {
+      assertKnowledgeIdConfined(e.id);
+      return {
+        id: e.id,
+        kind: e.kind,
+        path: join(kindDir(e.kind), `${e.id}.md`),
+        capabilities: e.capabilities,
+        tags: e.tags,
+        confidence: e.confidence,
+      };
+    }),
   };
-  writeFileSync(join(rootDir, "index.yaml"), stringifyYaml(index), "utf-8");
+  const indexPath = assertPathConfined(join(rootDir, "index.yaml"), rootDir);
+  writeFileSync(indexPath, stringifyYaml(index), "utf-8");
 }
 
 export class FilesystemKnowledgeStore extends KnowledgeStore {
@@ -118,12 +140,14 @@ export class FilesystemKnowledgeStore extends KnowledgeStore {
 
   override propose(entry: ProposedKnowledgeEntry): KnowledgeEntry {
     const full = super.propose(entry);
+    assertKnowledgeIdConfined(full.id);
     writeEntry(this.rootDir, full);
     writeIndex(this.rootDir, this.getAll());
     return full;
   }
 
   override verify(entryId: string): void {
+    assertKnowledgeIdConfined(entryId);
     super.verify(entryId);
     const entry = this.getAll().find((e) => e.id === entryId);
     if (entry) {

@@ -1,5 +1,25 @@
-import { readdirSync, readFileSync, writeFileSync, existsSync, unlinkSync } from "node:fs";
-import { join } from "node:path";
+import { readdirSync, readFileSync, writeFileSync, renameSync, mkdirSync, existsSync, unlinkSync } from "node:fs";
+import { join, dirname, resolve } from "node:path";
+import { assertPathConfined } from "../knowledge/uks/storage-core.js";
+
+export function assertRunIdConfined(runId: string): string {
+  if (!runId || typeof runId !== "string") {
+    throw new Error("SECURITY_PATH_TRAVERSAL_VIOLATION: Invalid runId: empty or non-string");
+  }
+  if (runId.includes("..") || runId.includes("/") || runId.includes("\\") || /[\0\r\n\t]/.test(runId)) {
+    throw new Error(`SECURITY_PATH_TRAVERSAL_VIOLATION: Illegal traversal characters in runId: '${runId}'`);
+  }
+  return runId;
+}
+
+export function writeAtomicJsonSync<T>(filePath: string, data: T): void {
+  const targetPath = resolve(filePath);
+  const targetDir = dirname(targetPath);
+  mkdirSync(targetDir, { recursive: true });
+  const tmpPath = `${targetPath}.${process.pid}.${Date.now()}.${Math.random().toString(36).slice(2)}.tmp`;
+  writeFileSync(tmpPath, JSON.stringify(data, null, 2), "utf-8");
+  renameSync(tmpPath, targetPath);
+}
 
 export interface SkillJob {
   apiVersion: string;
@@ -26,22 +46,43 @@ export interface SkillJobResult {
 export class JobStore {
   constructor(private jobsDir: string) {}
 
+  jobPath(runId: string): string {
+    assertRunIdConfined(runId);
+    const target = join(this.jobsDir, `${runId}.json`);
+    assertPathConfined(target, this.jobsDir);
+    return target;
+  }
+
+  resultPath(runId: string): string {
+    assertRunIdConfined(runId);
+    const target = join(this.jobsDir, `${runId}.result.json`);
+    assertPathConfined(target, this.jobsDir);
+    return target;
+  }
+
   listPending(): SkillJob[] {
     if (!existsSync(this.jobsDir)) return [];
     return readdirSync(this.jobsDir)
       .filter((f) => f.endsWith(".json") && !f.endsWith(".result.json"))
-      .map((f) => this.readJob(f.replace(/\.json$/, "")))
+      .map((f) => {
+        const id = f.replace(/\.json$/, "");
+        try {
+          return this.readJob(id);
+        } catch {
+          return null;
+        }
+      })
       .filter((j): j is SkillJob => j !== null && j.status === "pending");
   }
 
   readJob(runId: string): SkillJob | null {
-    const path = join(this.jobsDir, `${runId}.json`);
+    const path = this.jobPath(runId);
     if (!existsSync(path)) return null;
     return JSON.parse(readFileSync(path, "utf-8")) as SkillJob;
   }
 
   readResult(runId: string): SkillJobResult | null {
-    const path = join(this.jobsDir, `${runId}.result.json`);
+    const path = this.resultPath(runId);
     if (!existsSync(path)) return null;
     return JSON.parse(readFileSync(path, "utf-8")) as SkillJobResult;
   }
@@ -56,19 +97,22 @@ export class JobStore {
     const job = this.readJob(runId);
     if (!job) throw new Error(`Job not found: ${runId}`);
 
-    job.status = result.success ? "completed" : "failed";
-    writeFileSync(join(this.jobsDir, `${runId}.json`), JSON.stringify(job, null, 2));
-
-    const full: SkillJobResult = {
+    const fullResult: SkillJobResult = {
       run_id: runId,
       completed_at: new Date().toISOString(),
       ...result,
     };
-    writeFileSync(join(this.jobsDir, `${runId}.result.json`), JSON.stringify(full, null, 2));
+
+    // Atomic write 1: Result file FIRST
+    writeAtomicJsonSync(this.resultPath(runId), fullResult);
+
+    // Atomic write 2: Job status SECOND
+    job.status = result.success ? "completed" : "failed";
+    writeAtomicJsonSync(this.jobPath(runId), job);
   }
 
   deleteResult(runId: string): void {
-    const path = join(this.jobsDir, `${runId}.result.json`);
+    const path = this.resultPath(runId);
     if (existsSync(path)) unlinkSync(path);
   }
 }

@@ -506,9 +506,9 @@ export class ContextPackBuilder {
             }
         }
 
-        // If no unique files found, set baseline to 3x total tokens
+        // If no unique files found, baseline equals total tokens without artificial multiplier
         if (rawFilesTokensTotal === 0) {
-            rawFilesTokensTotal = totalEstimatedTokens * 3;
+            rawFilesTokensTotal = totalEstimatedTokens;
         }
 
         const tokenReductionPct = rawFilesTokensTotal > 0

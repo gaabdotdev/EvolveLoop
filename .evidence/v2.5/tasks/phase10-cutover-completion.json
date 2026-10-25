@@ -1,7 +1,7 @@
 {
   "task_id": "phase10-cutover-completion",
   "phase": "Phase 10: Definitive Cutover & Legacy Silo Deprecation (UKS Core V2.5)",
-  "timestamp": "2026-10-25T15:42:17.531Z",
+  "timestamp": "2026-10-25T16:06:41.930Z",
   "status": "PASSED",
   "total_tests": 7,
   "passed_tests": 7,
@@ -14,7 +14,7 @@
     "contingency_env_var": "EVOLVELOOP_UKS_DISABLED=1",
     "shadow_mode_supported": true,
     "shadow_env_var": "EVOLVELOOP_UKS_SHADOW=1",
-    "measured_search_latency_ms": 14.21,
+    "measured_search_latency_ms": 18.52,
     "slo_target_ms": 50,
     "slo_pass": true
   },
@@ -42,7 +42,7 @@
     {
       "path": "orchestrator/src/knowledge/filesystem-knowledge-store.ts",
       "type": "VERIFIED_IN_CODE",
-      "sha256": "b3e6ba1bc1aaec20c6e80878fe1cc8f3fcd7c590e1db9135c805bf35effe2647"
+      "sha256": "42dcab9b1b25240514e505a555029ced9dacccb45bde1e2fec01c6f28bb170c6"
     },
     {
       "path": "scripts/v2.5/test-cutover-verification.mjs",

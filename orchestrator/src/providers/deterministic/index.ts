@@ -180,6 +180,15 @@ export class DeterministicProvider implements ProviderRuntime {
       workspaceRoot: this.workspaceRoot,
     };
     const inputs = requestInputs(request);
+    const candidatePaths: string[] = [];
+    if (typeof inputs.path === "string" && inputs.path) candidatePaths.push(inputs.path);
+    if (typeof inputs.file === "string" && inputs.file) candidatePaths.push(inputs.file);
+    if (typeof inputs.cwd === "string" && inputs.cwd) candidatePaths.push(inputs.cwd);
+    if (Array.isArray(inputs.paths)) {
+      for (const p of inputs.paths) {
+        if (typeof p === "string" && p) candidatePaths.push(p);
+      }
+    }
 
     const auth = authorize({
       capability: request.capability,
@@ -189,7 +198,8 @@ export class DeterministicProvider implements ProviderRuntime {
       deterministic: true,
       requires_confirmation:
         request.capability === "shell.execute" || request.capability === "filesystem.write",
-      targetPath: inputs.path ?? inputs.file ?? inputs.cwd,
+      targetPath: candidatePaths[0],
+      targetPaths: candidatePaths,
       context: authCtx,
     });
 
