@@ -17,12 +17,14 @@ const COST_ORDER: Record<string, number> = { low: 0, medium: 1, high: 2 };
 export class RegistryClient {
   private registry: CapabilityRegistry;
   private runtimeStats = new Map<string, ProviderEntry["telemetry"]>();
+  private contracts?: ContractRegistry;
 
   constructor(
     registry: CapabilityRegistry,
-    private contracts?: ContractRegistry,
+    contracts?: ContractRegistry,
   ) {
     this.registry = registry;
+    this.contracts = contracts;
     for (const cap of Object.values(registry.capabilities)) {
       for (const p of cap.providers) {
         this.runtimeStats.set(p.id, { ...p.telemetry });

@@ -18,6 +18,7 @@ export const CAPABILITY_PROFILES: Record<Exclude<CapabilityProfile, "all">, stri
     "project.search",
     "shell.execute",
     "knowledge.search",
+    "llm.complete",
   ],
   research: [
     "knowledge.search",
@@ -26,6 +27,7 @@ export const CAPABILITY_PROFILES: Record<Exclude<CapabilityProfile, "all">, stri
     "browser.extract",
     "filesystem.read",
     "filesystem.search",
+    "llm.complete",
   ],
   diagnose: [
     "system.inspect",

@@ -197,4 +197,10 @@ export { saveCheckpoint, loadCheckpoint, clearCheckpoint, type EngineCheckpoint 
 
 // Observability G1 exports (V2.5 Integration)
 export * from "./observability/index.js";
+export {
+  ObservableInferenceProvider,
+  createObservableInferenceProvider,
+  type ObservableInferenceProviderOptions,
+} from "./providers/observable-inference-provider.js";
+
 

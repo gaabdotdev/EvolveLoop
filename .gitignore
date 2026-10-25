@@ -21,8 +21,8 @@ agent-setup/.pytest_cache/
 *.tsbuildinfo
 
 # Local memory / sessions / workspaces
-memory/
-!memory/v25-uks-decisions/
+/memory/
+!/memory/v25-uks-decisions/
 *-workspace/
 security-workspace/
 **/runs/

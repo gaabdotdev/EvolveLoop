@@ -1,0 +1,37 @@
+{
+  "timestamp": "2026-10-25T01:15:07.315Z",
+  "phase": "G1.3",
+  "capability": "llm.complete",
+  "provider_runtime": "ObservableInferenceProvider",
+  "total_tests": 5,
+  "passed": 5,
+  "failed": 0,
+  "verdict": "APROVADO",
+  "test_results": [
+    {
+      "name": "ExecutionEngine.run executes authentic DAG with llm.complete, propagating context and persisting spans",
+      "status": "PASS",
+      "durationMs": 18.47
+    },
+    {
+      "name": "ObservableInferenceProvider handles HTTP 429 recording 'error' span with redacted telemetry",
+      "status": "PASS",
+      "durationMs": 0.72
+    },
+    {
+      "name": "ObservableLlmProviderAdapter enforces SSRF prevention against cloud metadata and illegal schemes",
+      "status": "PASS",
+      "durationMs": 0.32
+    },
+    {
+      "name": "ObservableInferenceProvider does not fail inference if disk persistence fails (best-effort)",
+      "status": "PASS",
+      "durationMs": 0.5
+    },
+    {
+      "name": "ExecutionEngine runs heterogeneous DAG with deterministic capabilities alongside llm.complete",
+      "status": "PASS",
+      "durationMs": 1.37
+    }
+  ]
+}
