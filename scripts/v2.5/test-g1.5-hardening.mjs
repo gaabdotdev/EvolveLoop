@@ -365,12 +365,20 @@ await runTest("G1.5-B: External cancellation via provider.cancel(runId) aborts i
   let abortedByExternal = false;
   const longFetch = async (url, init) => {
     return new Promise((resolve, reject) => {
-      init?.signal?.addEventListener("abort", () => {
+      const failAbort = () => {
         abortedByExternal = true;
         const err = new Error("This operation was aborted");
         err.name = "AbortError";
         reject(err);
-      });
+      };
+      // Node 22 does not dispatch "abort" if the signal is already aborted
+      // when the listener is added. cancel() can win the race against DNS,
+      // so fetch is entered with signal.aborted === true (reason CANCELLED).
+      if (init?.signal?.aborted) {
+        failAbort();
+        return;
+      }
+      init?.signal?.addEventListener("abort", failAbort);
     });
   };
 
