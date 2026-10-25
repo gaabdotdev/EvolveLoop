@@ -10,6 +10,10 @@ const YAML_CANDIDATES = [
   path.join(__workspaceRoot, "node_modules/yaml/browser/index.js"),
   path.join(__workspaceRoot, "orchestrator/node_modules/yaml/dist/index.js"),
   path.join(__workspaceRoot, "node_modules/yaml/dist/index.js"),
+  path.join(process.cwd(), "orchestrator/node_modules/yaml/browser/index.js"),
+  path.join(process.cwd(), "orchestrator/node_modules/yaml/dist/index.js"),
+  path.join(process.cwd(), "node_modules/yaml/browser/index.js"),
+  path.join(process.cwd(), "node_modules/yaml/dist/index.js"),
 ];
 
 export async function resolve(specifier, context, nextResolve) {

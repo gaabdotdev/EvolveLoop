@@ -19,15 +19,15 @@ import {
 } from "../../../src/knowledge/uks/scope-enforcer";
 
 describe("UKS Scope Enforcer & TruthFence", () => {
-    const projectRootA = "/home/gaab/workspaces/project-alpha";
-    const projectRootB = "/home/gaab/workspaces/project-beta";
+    const projectRootA = "/mock-workspaces/project-alpha";
+    const projectRootB = "/mock-workspaces/project-beta";
     const scopeA = resolveProjectScopeId(projectRootA);
     const scopeB = resolveProjectScopeId(projectRootB);
 
     describe("Deterministic Scope Resolution", () => {
         it("should generate stable 16-hex project scope IDs", () => {
-            const s1 = resolveProjectScopeId("/home/gaab/workspaces/project-alpha");
-            const s2 = resolveProjectScopeId("/home/gaab/workspaces/project-alpha/");
+            const s1 = resolveProjectScopeId("/mock-workspaces/project-alpha");
+            const s2 = resolveProjectScopeId("/mock-workspaces/project-alpha/");
             expect(s1).toBe(s2);
             expect(s1).toMatch(/^project:[a-f0-9]{16}$/);
             expect(s1).not.toBe(scopeB);
@@ -115,8 +115,8 @@ describe("UKS Scope Enforcer & TruthFence", () => {
         });
 
         it("X02: Partial directory prefix collision -> MUST GENERATE DIFFERENT SCOPES", () => {
-            const rootTarget = "/home/gaab/project";
-            const rootColliding = "/home/gaab/project-rogue";
+            const rootTarget = "/mock-workspaces/project";
+            const rootColliding = "/mock-workspaces/project-rogue";
 
             const sTarget = resolveProjectScopeId(rootTarget);
             const sColliding = resolveProjectScopeId(rootColliding);
@@ -126,7 +126,7 @@ describe("UKS Scope Enforcer & TruthFence", () => {
         });
 
         it("X03: Directory traversal injection in path -> MUST THROW SANITIZATION ERROR", () => {
-            const maliciousPath = "/home/gaab/workspaces/project-alpha/../../etc/shadow";
+            const maliciousPath = "/mock-workspaces/project-alpha/../../etc/shadow";
 
             expect(() => assertPathConfined(maliciousPath, projectRootA)).toThrow("SECURITY_PATH_TRAVERSAL_VIOLATION");
         });

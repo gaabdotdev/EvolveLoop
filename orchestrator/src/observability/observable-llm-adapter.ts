@@ -44,6 +44,13 @@ export interface PinnedFetchOptions {
   defaultTimeoutMs?: number;
 }
 
+function stripTrailingRootDots(hostname: string): string {
+  while (hostname.endsWith(".")) {
+    hostname = hostname.slice(0, -1);
+  }
+  return hostname;
+}
+
 export function createPinnedFetch(options: PinnedFetchOptions = {}): FetchFn {
   return async function pinnedFetch(
     input: string | URL | Request,
@@ -76,14 +83,15 @@ export function createPinnedFetch(options: PinnedFetchOptions = {}): FetchFn {
         effectiveSignal = AbortSignal.timeout(options.defaultTimeoutMs);
       }
 
+      const sanitizedHostname = stripTrailingRootDots(url.hostname);
       const reqOpts: https.RequestOptions = {
         protocol: url.protocol,
-        hostname: url.hostname,
+        hostname: sanitizedHostname,
         port: url.port ? Number(url.port) : isHttps ? 443 : 80,
         path: url.pathname + url.search,
         method: init?.method || "POST",
         headers: reqHeaders,
-        servername: url.hostname, // Preserves SNI and certificate validation!
+        servername: sanitizedHostname, // Preserves SNI and certificate validation!
         signal: (effectiveSignal ?? undefined) as AbortSignal | undefined,
       };
 
@@ -184,7 +192,7 @@ const DEFAULT_MODELS: Record<string, string> = {
  * Checks whether an IPv4 address belongs to a forbidden/private/internal range.
  */
 export function isForbiddenIPv4(octets: number[]): { forbidden: boolean; reason?: string } {
-  const [a, b] = octets;
+  const [a, b, c] = octets;
 
   // 0.0.0.0/8 (Current network)
   if (a === 0) return { forbidden: true, reason: "Current network (0.0.0.0/8)" };
@@ -213,6 +221,31 @@ export function isForbiddenIPv4(octets: number[]): { forbidden: boolean; reason?
   // 100.64.0.0/10 (Carrier-Grade NAT, RFC 6598)
   if (a === 100 && b >= 64 && b <= 127) {
     return { forbidden: true, reason: "Carrier-Grade NAT (100.64.0.0/10)" };
+  }
+
+  // 192.0.0.0/24 (IETF Protocol Assignments, RFC 6890)
+  if (a === 192 && b === 0 && c === 0) {
+    return { forbidden: true, reason: "IETF Protocol Assignments (192.0.0.0/24)" };
+  }
+
+  // 192.0.2.0/24 (TEST-NET-1 Documentation, RFC 5737)
+  if (a === 192 && b === 0 && c === 2) {
+    return { forbidden: true, reason: "TEST-NET-1 (192.0.2.0/24)" };
+  }
+
+  // 198.18.0.0/15 (Network Benchmark Testing, RFC 2544 / RFC 6890)
+  if (a === 198 && (b === 18 || b === 19)) {
+    return { forbidden: true, reason: "Network Benchmark Testing (198.18.0.0/15)" };
+  }
+
+  // 198.51.100.0/24 (TEST-NET-2 Documentation, RFC 5737)
+  if (a === 198 && b === 51 && c === 100) {
+    return { forbidden: true, reason: "TEST-NET-2 (198.51.100.0/24)" };
+  }
+
+  // 203.0.113.0/24 (TEST-NET-3 Documentation, RFC 5737)
+  if (a === 203 && b === 0 && c === 113) {
+    return { forbidden: true, reason: "TEST-NET-3 (203.0.113.0/24)" };
   }
 
   // 224.0.0.0/4 (Multicast)
@@ -343,6 +376,12 @@ export function isForbiddenIPv6(rawIpv6: string): { forbidden: boolean; reason?:
     };
   }
 
+  // Remainder of 64:ff9b::/32, including local-use 64:ff9b:1::/48 (RFC 8215).
+  // The well-known /96 block above already returned.
+  if (bytes[0] === 0x00 && bytes[1] === 0x64 && bytes[2] === 0xff && bytes[3] === 0x9b) {
+    return { forbidden: true, reason: "NAT64 translation prefix (RFC 6052 / RFC 8215)" };
+  }
+
   // 6to4 prefix (2002::/16, RFC 3056) - IPv4 in bytes 2..5
   if (bytes[0] === 0x20 && bytes[1] === 0x02) {
     const v4 = [bytes[2], bytes[3], bytes[4], bytes[5]];
@@ -390,6 +429,20 @@ export function isForbiddenIPv6(rawIpv6: string): { forbidden: boolean; reason?:
     return { forbidden: true, reason: "IPv6 Multicast (ff00::/8)" };
   }
 
+  // 100::/64 (Discard-Only, RFC 6666)
+  if (
+    bytes[0] === 0x01 &&
+    bytes[1] === 0x00 &&
+    bytes[2] === 0x00 &&
+    bytes[3] === 0x00 &&
+    bytes[4] === 0x00 &&
+    bytes[5] === 0x00 &&
+    bytes[6] === 0x00 &&
+    bytes[7] === 0x00
+  ) {
+    return { forbidden: true, reason: "IPv6 Discard-Only (100::/64)" };
+  }
+
   return { forbidden: false };
 }
 
@@ -422,10 +475,11 @@ export function validateTargetUrl(
     throw new Error("[-] SECURITY_SSRF_VIOLATION: Embedded credentials in target URL are strictly prohibited.");
   }
 
-  let hostname = parsed.hostname.toLowerCase();
-  if (hostname.endsWith(".")) {
-    hostname = hostname.slice(0, -1);
+  const hostname = stripTrailingRootDots(parsed.hostname.toLowerCase());
+  if (hostname.length === 0) {
+    throw new Error("[-] SECURITY_SSRF_VIOLATION: Hostname cannot be empty.");
   }
+  parsed.hostname = hostname;
 
   // Cloud metadata endpoint protection (DNS / hostnames)
   if (
@@ -486,10 +540,8 @@ export async function validateTargetUrlAndResolve(
   options: TargetUrlValidationOptions = {},
 ): Promise<URL> {
   const parsed = validateTargetUrl(rawUrl, options);
-  let hostname = parsed.hostname.toLowerCase();
-  if (hostname.endsWith(".")) {
-    hostname = hostname.slice(0, -1);
-  }
+  const hostname = stripTrailingRootDots(parsed.hostname.toLowerCase());
+  parsed.hostname = hostname;
 
   const isV6Bracket = hostname.startsWith("[") && hostname.endsWith("]");
   const rawIpCandidate = isV6Bracket ? hostname.slice(1, -1) : hostname;

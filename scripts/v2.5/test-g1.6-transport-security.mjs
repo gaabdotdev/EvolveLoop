@@ -556,6 +556,11 @@ await runTest("G1.6-A: Non-canonical IPv6 strings and RFC 6890 reserved ranges a
     const res = isForbiddenIPv4(octets);
     assert(res.forbidden === true, `Expected ${ip} to be forbidden`);
   }
+
+  for (const ip of ["100::", "64:ff9b:1::"]) {
+    const res = isForbiddenIPv6(ip);
+    assert(res.forbidden === true, `Expected ${ip} to be forbidden`);
+  }
 });
 
 await runTest("G1.6-A: Multiple trailing dots cannot bypass loopback or allowlist filters", async () => {

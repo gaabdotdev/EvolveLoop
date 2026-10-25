@@ -5,15 +5,22 @@
  */
 
 import { describe, it, expect } from "vitest";
+import * as path from "node:path";
+import { fileURLToPath } from "node:url";
 import {
     ContextPackBuilder,
     estimateTokens,
     type UKSQueryRequest,
     type UKSKnowledgeItem
 } from "../../../src/knowledge/uks/context-pack-builder";
+import { resolveProjectScopeId } from "../../../src/knowledge/uks/scope-enforcer";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const workspaceRoot = process.env.WORKSPACE_ROOT || path.resolve(__dirname, "../../../..");
+const projectScope = resolveProjectScopeId(workspaceRoot);
 
 describe("UKS ContextPackBuilder", () => {
-    const workspaceRoot = "/home/gaab/orca/workspaces/EvolveLoop/v.2.5";
 
     describe("End-to-End Pipeline Execution", () => {
         it("should execute the 10-step pipeline and produce a valid UKSQueryResponse", async () => {
@@ -24,7 +31,7 @@ describe("UKS ContextPackBuilder", () => {
                     id: "item-storage",
                     title: "Storage Core Implementation",
                     content: "export async function writeAtomicJson(p: string, d: unknown) { ... }",
-                    scope: "project:auto", // will be adapted or match
+                    scope: projectScope, // will be adapted or match
                     tier: "code",
                     status: "active",
                     source_paths: ["orchestrator/src/knowledge/uks/storage-core.ts"],
@@ -61,7 +68,7 @@ describe("UKS ContextPackBuilder", () => {
                 id: `item-${i}`,
                 title: `Large Module Definition ${i}`,
                 content: `// Code implementation chunk ${i}\n`.repeat(25), // ~600 chars ~= 150 tokens
-                scope: "project:auto",
+                scope: projectScope,
                 tier: "code",
                 status: "active",
                 source_paths: [`src/module_${i}.ts`],
@@ -97,7 +104,7 @@ describe("UKS ContextPackBuilder", () => {
                     id: "item-storage-core",
                     title: "writeAtomicJson Contract",
                     content: "export async function writeAtomicJson(filePath: string, data: unknown): Promise<void> {\n    await fs.promises.writeFile(tmp, JSON.stringify(data));\n    await fs.promises.rename(tmp, filePath);\n}",
-                    scope: "project:auto",
+                    scope: projectScope,
                     tier: "code",
                     status: "active",
                     source_paths: ["orchestrator/src/knowledge/uks/storage-core.ts"],
@@ -131,7 +138,7 @@ describe("UKS ContextPackBuilder", () => {
                     id: "doc-spec",
                     title: "Storage Core Documentation",
                     content: "Old specification: storage uses synchronous writes.",
-                    scope: "project:auto",
+                    scope: projectScope,
                     tier: "ai", // Tier 1
                     status: "active",
                     topic_key: "storage_contract",
@@ -141,7 +148,7 @@ describe("UKS ContextPackBuilder", () => {
                     id: "code-impl",
                     title: "Storage Core Code Implementation",
                     content: "export async function writeAtomicJson(): Promise<void> { /* asynchronous POSIX rename */ }",
-                    scope: "project:auto",
+                    scope: projectScope,
                     tier: "code", // Tier 0
                     status: "active",
                     topic_key: "storage_contract",
@@ -176,7 +183,7 @@ describe("UKS ContextPackBuilder", () => {
                     id: "leaked-item",
                     title: "Leaked Token Item",
                     content: `Here is the leaked secret: ${foreignCanary}`,
-                    scope: "project:auto",
+                    scope: projectScope,
                     tier: "code",
                     status: "active",
                     source_paths: ["src/leak.ts"]
