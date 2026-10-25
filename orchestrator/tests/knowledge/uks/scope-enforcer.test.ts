@@ -4,6 +4,8 @@
  * TruthFence authority tiers, and adversarial attack scenarios X01 to X06.
  */
 
+import { describe, it, expect } from "vitest";
+import { assertPathConfined } from "../../../src/knowledge/uks/storage-core.js";
 import {
     resolveProjectScopeId,
     normalizeProjectRoot,
@@ -124,7 +126,6 @@ describe("UKS Scope Enforcer & TruthFence", () => {
         });
 
         it("X03: Directory traversal injection in path -> MUST THROW SANITIZATION ERROR", () => {
-            const { assertPathConfined } = require("../../../src/knowledge/uks/storage-core");
             const maliciousPath = "/home/gaab/workspaces/project-alpha/../../etc/shadow";
 
             expect(() => assertPathConfined(maliciousPath, projectRootA)).toThrow("SECURITY_PATH_TRAVERSAL_VIOLATION");

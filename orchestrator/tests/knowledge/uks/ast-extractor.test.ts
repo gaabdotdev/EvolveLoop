@@ -4,6 +4,7 @@
  * precise line mapping, import/export tracking, and index persistence.
  */
 
+import { describe, it, expect, beforeAll, afterAll } from "vitest";
 import * as fs from "node:fs";
 import * as path from "node:path";
 import {

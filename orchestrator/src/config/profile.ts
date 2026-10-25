@@ -38,7 +38,7 @@ export type MegaBrainProfile = EvolveLoopProfile;
 export const DEFAULT_PROFILE: EvolveLoopProfile = {
   id: "default",
   version: "1.0.0",
-  knowledge: { backend: "wiki" },
+  knowledge: { backend: process.env.EVOLVELOOP_UKS_DISABLED === "1" ? "wiki" : "uks" },
   memory: { enabled: false, provider: "wiki-mem" },
 };
 
@@ -109,11 +109,15 @@ export function loadEvolveLoopProfile(): EvolveLoopProfile {
 /** @deprecated Use loadEvolveLoopProfile */
 export const loadMegaBrainProfile = loadEvolveLoopProfile;
 
-/** Effective knowledge backend id: env wins over profile, default wiki. */
+/** Effective knowledge backend id: env wins over profile, default uks (or wiki if UKS disabled). */
 export function resolveKnowledgeBackendId(profile?: EvolveLoopProfile): string {
+  if (process.env.EVOLVELOOP_UKS_DISABLED === "1") {
+    const env = process.env.KNOWLEDGE_BACKEND?.trim().toLowerCase();
+    return env === "fake" ? "fake" : "wiki";
+  }
   if (process.env.KNOWLEDGE_BACKEND?.trim()) {
     return process.env.KNOWLEDGE_BACKEND.trim().toLowerCase();
   }
   const p = profile ?? loadEvolveLoopProfile();
-  return String(p.knowledge.backend ?? "wiki").toLowerCase();
+  return String(p.knowledge.backend ?? "uks").toLowerCase();
 }

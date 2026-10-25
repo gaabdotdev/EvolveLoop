@@ -15,6 +15,7 @@ import type { ProviderRouter } from "../providers/mock-provider.js";
 import { newRunId } from "../ir/validator.js";
 import { buildSchedulingEvidence } from "../evidence/builders.js";
 import type { ContractRegistry } from "../contracts/contract-registry.js";
+import type { KnowledgeBackend } from "../knowledge/backend/types.js";
 
 export class Scheduler {
   private running = new Map<string, RunHandle>();
@@ -27,6 +28,7 @@ export class Scheduler {
     private providerRouter: ProviderRouter,
     private featureId: string,
     private contracts?: ContractRegistry,
+    private knowledgeBackend?: KnowledgeBackend,
   ) {}
 
   readyNodes(graph: GraphStore, policy: ExecutionPolicy): GraphNode[] {
@@ -91,6 +93,38 @@ export class Scheduler {
     );
   }
 
+  async consultKnowledge(node: GraphNode, policy: ExecutionPolicy): Promise<KnowledgeEntry[]> {
+    if (!policy.spec.knowledge?.consult_before_schedule) return [];
+
+    let hits: KnowledgeEntry[] = [];
+    if (this.knowledgeBackend) {
+      try {
+        const result = await this.knowledgeBackend.search(node.capability);
+        if (result.hits && result.hits.length > 0) {
+          hits = result.hits.map((h, i) => ({
+            id: h.chunk_id ?? `uks-${node.capability}-${i}`,
+            kind: "pattern" as const,
+            content: h.excerpt ?? "",
+            capabilities: [node.capability],
+            confidence: h.score ?? 0.8,
+            tags: [h.source, h.retrieval_method].filter((t): t is string => Boolean(t)),
+          }));
+          for (const entry of hits) {
+            this.knowledge.propose(entry);
+          }
+        }
+      } catch {
+        // Fallback to legacy knowledge store
+      }
+    }
+
+    if (hits.length === 0) {
+      hits = this.knowledge.search({ capability: node.capability });
+    }
+
+    return hits;
+  }
+
   schedule(
     node: GraphNode,
     provider: ProviderEntry,
@@ -98,6 +132,7 @@ export class Scheduler {
     graph: GraphStore,
     rejected: Array<{ id: string; reason: string }> = [],
     readyBatch: string[] = [node.id],
+    preloadedKnowledgeHits?: KnowledgeEntry[],
   ): RunHandle {
     const runId = newRunId();
     const contract = this.contracts?.getForCapability(node.capability);
@@ -123,7 +158,11 @@ export class Scheduler {
 
     let knowledgeHits: KnowledgeEntry[] = [];
     if (policy.spec.knowledge?.consult_before_schedule) {
-      knowledgeHits = this.knowledge.search({ capability: node.capability });
+      if (preloadedKnowledgeHits && preloadedKnowledgeHits.length > 0) {
+        knowledgeHits = preloadedKnowledgeHits;
+      } else {
+        knowledgeHits = this.knowledge.search({ capability: node.capability });
+      }
       if (knowledgeHits.length > 0) {
         this.eventBus.emit("KnowledgeHit", this.featureId, "scheduler", {
           query: node.capability,

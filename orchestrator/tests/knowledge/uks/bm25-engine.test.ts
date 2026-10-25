@@ -3,6 +3,7 @@
  * Tests tokenization, chunking, Okapi BM25 scoring, and sub-15ms search latency.
  */
 
+import { describe, it, expect, beforeAll, afterAll } from "vitest";
 import * as fs from "node:fs";
 import * as path from "node:path";
 import {

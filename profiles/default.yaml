@@ -5,7 +5,7 @@ version: "1.0.0"
 
 knowledge:
   # Default KnowledgeBackend implementation
-  backend: wiki
+  backend: uks
 
 memory:
   # Episodic session memory (wiki-mem) — PUBLIC_OPTIONAL / opt-in

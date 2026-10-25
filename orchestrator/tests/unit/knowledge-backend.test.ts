@@ -4,6 +4,7 @@ import { join } from "node:path";
 import {
   FakeKnowledgeBackend,
   WikiKnowledgeBackend,
+  UKSKnowledgeBackend,
   resolveKnowledgeBackend,
   resetKnowledgeBackendCache,
   loadMegaBrainProfile,
@@ -32,9 +33,20 @@ describe("KnowledgeBackend seam", () => {
     resetKnowledgeBackendCache();
   });
 
-  it("defaults to wiki backend", () => {
+  it("defaults to uks backend", () => {
     delete process.env.KNOWLEDGE_BACKEND;
+    delete process.env.EVOLVELOOP_UKS_DISABLED;
     process.env.AGENTS_ROOT = ROOT;
+    const b = resolveKnowledgeBackend();
+    expect(b.id).toBe("uks");
+    expect(b).toBeInstanceOf(UKSKnowledgeBackend);
+  });
+
+  it("falls back to wiki backend when EVOLVELOOP_UKS_DISABLED=1", () => {
+    delete process.env.KNOWLEDGE_BACKEND;
+    process.env.EVOLVELOOP_UKS_DISABLED = "1";
+    process.env.AGENTS_ROOT = ROOT;
+    resetKnowledgeBackendCache();
     const b = resolveKnowledgeBackend();
     expect(b.id).toBe("wiki");
     expect(b).toBeInstanceOf(WikiKnowledgeBackend);
@@ -98,15 +110,17 @@ describe("EvolveLoop profile boundary", () => {
   it("loads profiles/default.yaml when AGENTS_ROOT set", () => {
     process.env.AGENTS_ROOT = ROOT;
     delete process.env.KNOWLEDGE_BACKEND;
+    delete process.env.EVOLVELOOP_UKS_DISABLED;
     const p = loadMegaBrainProfile();
     expect(p.id).toBe("default");
-    expect(p.knowledge.backend).toBe("wiki");
+    expect(p.knowledge.backend).toBe("uks");
     expect(p.memory.enabled).toBe(false);
   });
 
-  it("DEFAULT_PROFILE is wiki without file", () => {
+  it("DEFAULT_PROFILE is uks without file", () => {
     delete process.env.AGENTS_ROOT;
     delete process.env.MEGABRAIN_PROFILE_PATH;
+    delete process.env.EVOLVELOOP_UKS_DISABLED;
     expect(loadMegaBrainProfile().knowledge.backend).toBe(DEFAULT_PROFILE.knowledge.backend);
   });
 

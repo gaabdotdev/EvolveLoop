@@ -4,6 +4,7 @@
  * cryptographic hashing, and .data/ initialization.
  */
 
+import { describe, it, expect, beforeAll, afterAll } from "vitest";
 import * as fs from "node:fs";
 import * as path from "node:path";
 import {

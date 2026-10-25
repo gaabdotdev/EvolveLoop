@@ -1,11 +1,15 @@
 import fs from "node:fs";
 import { fileURLToPath, pathToFileURL } from "node:url";
+import path from "node:path";
+
+const __loaderDir = path.dirname(fileURLToPath(import.meta.url));
+const __workspaceRoot = path.resolve(__loaderDir, "../..");
 
 const YAML_CANDIDATES = [
-  "/home/gaab/orca/workspaces/EvolveLoop/v24-g1-observability/orchestrator/node_modules/yaml/browser/index.js",
-  "/home/gaab/orca/workspaces/EvolveLoop/v.2.5/node_modules/yaml/browser/index.js",
-  "/home/gaab/orca/workspaces/EvolveLoop/v24-g1-observability/orchestrator/node_modules/yaml/dist/index.js",
-  "/home/gaab/orca/workspaces/EvolveLoop/v.2.5/node_modules/yaml/dist/index.js",
+  path.join(__workspaceRoot, "orchestrator/node_modules/yaml/browser/index.js"),
+  path.join(__workspaceRoot, "node_modules/yaml/browser/index.js"),
+  path.join(__workspaceRoot, "orchestrator/node_modules/yaml/dist/index.js"),
+  path.join(__workspaceRoot, "node_modules/yaml/dist/index.js"),
 ];
 
 export async function resolve(specifier, context, nextResolve) {

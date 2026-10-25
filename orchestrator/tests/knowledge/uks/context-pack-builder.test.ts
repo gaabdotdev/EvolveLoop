@@ -4,6 +4,7 @@
  * Hypothesis H-01 token efficiency (>= 60% reduction), and TruthFence authority ranking.
  */
 
+import { describe, it, expect } from "vitest";
 import {
     ContextPackBuilder,
     estimateTokens,

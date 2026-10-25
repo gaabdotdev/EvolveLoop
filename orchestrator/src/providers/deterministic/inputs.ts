@@ -5,7 +5,14 @@ import type { ExecuteRequest, IRInput } from "../../types/index.js";
 export function inputMap(inputs: IRInput[]): Record<string, string> {
   const out: Record<string, string> = {};
   for (const inp of inputs) {
+    const raw = inp as unknown as Record<string, unknown>;
+    for (const [k, v] of Object.entries(raw)) {
+      if (k !== "ref" && (typeof v === "string" || typeof v === "number" || typeof v === "boolean")) {
+        out[k] = String(v);
+      }
+    }
     const ref = inp.ref;
+    if (!ref) continue;
     // ref forms: "path:src/foo.ts" | "query:auth" | "command:ls" | "key=value"
     const colon = ref.indexOf(":");
     if (colon > 0) {

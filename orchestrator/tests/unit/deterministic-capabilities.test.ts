@@ -6,6 +6,7 @@ import { execFileSync } from "node:child_process";
 import { createDeterministicProvider } from "../../src/providers/deterministic/index.js";
 import { filterRegistryByProfile, CAPABILITY_PROFILES } from "../../src/discovery/capability-profiles.js";
 import { PathEscapeError, assertWithinWorkspace } from "../../src/providers/deterministic/paths.js";
+import { resetKnowledgeBackendCache } from "../../src/index.js";
 import type { ExecuteRequest, GraphNode } from "../../src/types/index.js";
 
 function makeRequest(capability: string, inputs: Record<string, unknown> = {}): ExecuteRequest {
@@ -160,9 +161,12 @@ describe("DeterministicProvider", () => {
   it("knowledge.search UNAVAILABLE is distinct from empty hits", async () => {
     const prevRag = process.env.RAG_REPO_ROOT;
     const prevWiki = process.env.WIKI_ROOT;
+    const prevBackend = process.env.KNOWLEDGE_BACKEND;
     const missing = path.join(tmp, "missing-rag-root");
     process.env.WIKI_ROOT = missing;
     process.env.RAG_REPO_ROOT = missing;
+    process.env.KNOWLEDGE_BACKEND = "wiki";
+    resetKnowledgeBackendCache();
     try {
       const p = createDeterministicProvider("knowledge", tmp);
       const res = await p.execute(makeRequest("knowledge.search", { query: "anything" }));
@@ -184,6 +188,9 @@ describe("DeterministicProvider", () => {
       else process.env.RAG_REPO_ROOT = prevRag;
       if (prevWiki === undefined) delete process.env.WIKI_ROOT;
       else process.env.WIKI_ROOT = prevWiki;
+      if (prevBackend === undefined) delete process.env.KNOWLEDGE_BACKEND;
+      else process.env.KNOWLEDGE_BACKEND = prevBackend;
+      resetKnowledgeBackendCache();
     }
   });
 });

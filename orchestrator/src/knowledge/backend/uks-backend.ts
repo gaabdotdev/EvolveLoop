@@ -104,4 +104,14 @@ export class UKSKnowledgeBackend implements KnowledgeBackend {
   public getBuilder(): ContextPackBuilder {
     return this.builder;
   }
+
+  private proposedEntries: any[] = [];
+
+  public propose(entry: any): void {
+    this.proposedEntries.push(entry);
+  }
+
+  public getProposedEntries(): any[] {
+    return [...this.proposedEntries];
+  }
 }

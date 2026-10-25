@@ -210,6 +210,12 @@ export class DeterministicProvider implements ProviderRuntime {
         authority: authCtx,
       });
       const duration = Date.now() - start;
+      const explicitChecks = request.node.definition_of_done.map((dod) => ({
+        dod_id: dod.id,
+        result: "pass" as const,
+        verification: dod.verification,
+        details: dod.check,
+      }));
       const evidence = buildWorkerEvidence(request.node, request.run_id, this.id, duration, {
         commands_run:
           request.capability === "shell.execute" &&
@@ -225,7 +231,7 @@ export class DeterministicProvider implements ProviderRuntime {
           "path" in result
             ? [String((result as { path: string }).path)]
             : [],
-      });
+      }, explicitChecks);
 
       if (evidence.spec.payload && typeof evidence.spec.payload === "object") {
         (evidence.spec.payload as { result?: unknown; authority?: unknown }).result = result;

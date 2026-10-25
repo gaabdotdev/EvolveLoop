@@ -103,6 +103,9 @@ export type {
 export { resolveKnowledgeBackend, resetKnowledgeBackendCache } from "./knowledge/backend/resolve.js";
 export { WikiKnowledgeBackend, resolveWikiRoot, resolveWikiCliModule } from "./knowledge/backend/wiki-backend.js";
 export { FakeKnowledgeBackend } from "./knowledge/backend/fake-backend.js";
+export { UKSKnowledgeBackend, type UKSBackendOptions } from "./knowledge/backend/uks-backend.js";
+export { ShadowKnowledgeBackend, type ShadowComparisonLog } from "./knowledge/backend/shadow-backend.js";
+export * from "./knowledge/uks/index.js";
 export {
   loadMegaBrainProfile,
   loadEvolveLoopProfile,

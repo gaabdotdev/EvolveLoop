@@ -323,7 +323,7 @@ export class ContextPackBuilder {
                     raw_score: rawScore,
                     channel: channel,
                     metadata: {
-                        scope: item.scope,
+                        scope: item.scope === "project:auto" || !item.scope ? projectScopeId : item.scope,
                         tier: item.tier,
                         status: item.status,
                         topic_key: item.topic_key || item.id,
@@ -353,7 +353,8 @@ export class ContextPackBuilder {
 
         for (const fHit of fusionResult.hits) {
             const meta = fHit.metadata || {};
-            const scope = (meta.scope as string) || projectScopeId;
+            const rawScope = (meta.scope as string);
+            const scope = rawScope === "project:auto" || !rawScope ? projectScopeId : rawScope;
             const tier = (meta.tier as KnowledgeTier) || (fHit.file_path.endsWith(".md") ? "ai" : "code");
             const rawStatus = (meta.status as string) || "active";
             const status: EpistemicStatus = rawStatus === "obsolete" || rawStatus === "obsoleto" ? "obsoleto" : rawStatus === "draft" ? "draft" : "active";

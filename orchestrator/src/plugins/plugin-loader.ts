@@ -4,8 +4,9 @@ import type { AuthorityContext } from "../authority/capability-authority.js";
 import { CursorSkillProvider, type SkillExecutor } from "./cursor-skill-provider.js";
 import { MockProvider } from "../providers/mock-provider.js";
 import { DeterministicProvider } from "../providers/deterministic/index.js";
+import { ObservableInferenceProvider } from "../providers/observable-inference-provider.js";
 
-export type PluginType = "cursor-skill" | "shell" | "mock" | "deterministic";
+export type PluginType = "cursor-skill" | "shell" | "mock" | "deterministic" | "observable-inference";
 
 export interface PluginLoaderOptions {
   authorityContext?: AuthorityContext;
@@ -31,6 +32,8 @@ export class PluginLoader {
       }
       case "mock":
         return new MockProvider(manifest.metadata.name);
+      case "observable-inference":
+        return new ObservableInferenceProvider({ id: manifest.metadata.name });
       case "deterministic":
       case "shell":
         return DeterministicProvider.fromManifest(manifest, {

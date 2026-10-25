@@ -1,7 +1,7 @@
 {
   "task_id": "phase2-storage-core-validation",
   "phase": "Phase 2: Storage Core & .data Foundation",
-  "timestamp": "2026-10-25T03:54:31.979Z",
+  "timestamp": "2026-10-25T15:42:17.635Z",
   "status": "PASSED",
   "total_tests": 6,
   "passed_tests": 6,
@@ -20,22 +20,22 @@
     {
       "name": "assertPathConfined blocks directory traversal attacks",
       "status": "PASS",
-      "duration_ms": 1
+      "duration_ms": 0
     },
     {
       "name": "writeAtomicJson persists data atomically and readJson retrieves it",
       "status": "PASS",
-      "duration_ms": 2
+      "duration_ms": 1
     },
     {
       "name": "readJson returns null for missing files without throwing",
       "status": "PASS",
-      "duration_ms": 0
+      "duration_ms": 1
     },
     {
       "name": "initializeDataDirectory initializes .data/ with integrity-manifest.json",
       "status": "PASS",
-      "duration_ms": 2
+      "duration_ms": 1
     }
   ],
   "artifacts": [
@@ -47,7 +47,7 @@
     {
       "path": "orchestrator/tests/knowledge/uks/storage-core.test.ts",
       "type": "VERIFIED_IN_CODE",
-      "sha256": "2842dd335ac24f54abdeb839227c0746378b8f392ca05e1795fee18ed26a8da3"
+      "sha256": "a9e7abfd2fb93052b9896d050c126de3cd8415f4dcbaab8bc08e23c940fff8f3"
     },
     {
       "path": ".data/integrity-manifest.json",

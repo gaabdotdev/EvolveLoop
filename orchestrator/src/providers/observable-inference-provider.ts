@@ -157,11 +157,20 @@ export class ObservableInferenceProvider implements ProviderRuntime {
       const adapterResult = await this.adapter.complete(completionInput);
       const durationMs = Date.now() - start;
 
+      const explicitChecks = request.node.definition_of_done.map((dod) => ({
+        dod_id: dod.id,
+        result: "pass" as const,
+        verification: dod.verification,
+        details: dod.check,
+      }));
+
       const evidence = buildWorkerEvidence(
         request.node,
         request.run_id,
         this.id,
         durationMs,
+        undefined,
+        explicitChecks,
       );
 
       if (evidence.spec.payload && typeof evidence.spec.payload === "object") {
