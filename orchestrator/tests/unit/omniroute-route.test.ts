@@ -130,6 +130,27 @@ describe("OmniRoute response telemetry", () => {
     expect(blocked.error?.code).toBe("ROUTE_BLOCKED");
   });
 
+  it("builds a loopback adapter when the provider owns the gateway call", async () => {
+    process.env.EVOLVELOOP_INFERENCE_GATEWAY = "omniroute";
+    process.env.EVOLVELOOP_OMNIROUTE_API_KEY = "local-test-key";
+    let called = "";
+    const fetchImpl = async (url: string) => {
+      called = url;
+      return new Response(
+        JSON.stringify({ choices: [{ message: { content: "pong" } }], usage: { prompt_tokens: 1, completion_tokens: 1, total_tokens: 2 } }),
+        { status: 200, headers: { "content-type": "application/json", "x-omniroute-provider": "ddgw", "x-omniroute-model": "gpt-5.4-mini", "x-omniroute-version": "3.8.52" } },
+      );
+    };
+    const provider = new ObservableInferenceProvider({
+      id: "route-owned",
+      fetchImpl: fetchImpl as never,
+      memoryRoot: "/tmp/omniroute-route-test",
+    });
+    const ok = await provider.execute(request("simple"));
+    expect(ok.success).toBe(true);
+    expect(called).toContain("http://127.0.0.1:20128/api/v1/chat/completions");
+  });
+
   it("ignores an authorization header", () => {
     const headers = new Headers({
       authorization: "Bearer secret-value",

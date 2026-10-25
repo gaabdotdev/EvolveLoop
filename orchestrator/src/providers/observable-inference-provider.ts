@@ -73,6 +73,8 @@ export interface ObservableInferenceProviderOptions {
 export class ObservableInferenceProvider implements ProviderRuntime {
   readonly id: string;
   private adapter: ObservableLlmProviderAdapter;
+  private readonly fetchImpl?: FetchFn;
+  private readonly useInjectedAdapter: boolean;
   private defaultProvider: string;
   private defaultModel: string;
   private apiKey?: string;
@@ -83,6 +85,8 @@ export class ObservableInferenceProvider implements ProviderRuntime {
 
   constructor(options: ObservableInferenceProviderOptions = {}) {
     this.id = options.id ?? "observable-inference";
+    this.fetchImpl = options.fetchImpl;
+    this.useInjectedAdapter = options.adapter != null;
     this.adapter =
       options.adapter ??
       new ObservableLlmProviderAdapter(options.fetchImpl, {
@@ -177,8 +181,15 @@ export class ObservableInferenceProvider implements ProviderRuntime {
       signal: controller.signal,
     };
 
+    const callAdapter = route.gateway === "omniroute" && !this.useInjectedAdapter
+      ? new ObservableLlmProviderAdapter(this.fetchImpl, {
+          allowLoopback: true,
+          allowedGateways: [route.allowedGatewayHost],
+        })
+      : this.adapter;
+
     try {
-      const adapterResult = await this.adapter.complete(completionInput);
+      const adapterResult = await callAdapter.complete(completionInput);
       const durationMs = Date.now() - start;
 
       const explicitChecks = request.node.definition_of_done.map((dod) => ({
@@ -204,6 +215,7 @@ export class ObservableInferenceProvider implements ProviderRuntime {
           span: adapterResult.span,
           ledger_written: adapterResult.ledgerWritten,
           ledger_path: adapterResult.ledgerPath,
+          ...(adapterResult.omniroute ? { omniroute: adapterResult.omniroute } : {}),
         };
       }
       (evidence.spec as { normalized?: unknown }).normalized = {
