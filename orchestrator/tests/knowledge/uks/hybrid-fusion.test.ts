@@ -4,6 +4,7 @@
  * graceful degradation mode, and overlapping chunk deduplication.
  */
 
+import { describe, it, expect } from "vitest";
 import {
     HybridFusionEngine,
     ChannelHit,

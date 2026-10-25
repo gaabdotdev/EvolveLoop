@@ -1,13 +1,13 @@
 {
   "schema_version": "2.5.0",
-  "indexed_at": "2026-10-25T03:54:32.212Z",
+  "indexed_at": "2026-10-25T16:03:22.516Z",
   "workspace_root": "/home/gaab/orca/workspaces/EvolveLoop/v.2.5",
   "stats": {
     "total_files_scanned": 101,
-    "total_symbols": 551,
-    "total_imports": 370,
-    "duration_ms": 70,
-    "index_size_bytes": 180038
+    "total_symbols": 555,
+    "total_imports": 371,
+    "duration_ms": 54,
+    "index_size_bytes": 181114
   },
   "symbols": {
     "AuthorityDecision": [
@@ -2691,7 +2691,7 @@
         "kind": "class",
         "file_path": "orchestrator/src/executors/smart-mock-executor.ts",
         "start_line": 22,
-        "end_line": 190,
+        "end_line": 195,
         "signature": "export class SmartMockExecutor implements ProviderRuntime",
         "is_exported": true,
         "heritage": {
@@ -2706,8 +2706,8 @@
         "name": "createSmartMockProvider",
         "kind": "function",
         "file_path": "orchestrator/src/executors/smart-mock-executor.ts",
-        "start_line": 192,
-        "end_line": 194,
+        "start_line": 197,
+        "end_line": 199,
         "signature": "export function createSmartMockProvider(id: string, options?: SmartMockOptions): ProviderRuntime",
         "is_exported": true
       }
@@ -4436,15 +4436,38 @@
         "is_exported": true
       }
     ],
+    "cleanup": [
+      {
+        "name": "cleanup",
+        "kind": "function",
+        "file_path": "orchestrator/src/observability/observable-llm-adapter.ts",
+        "start_line": 78,
+        "end_line": 83,
+        "signature": "const cleanup = () => ...",
+        "is_exported": false
+      }
+    ],
     "TargetUrlValidationOptions": [
       {
         "name": "TargetUrlValidationOptions",
         "kind": "interface",
         "file_path": "orchestrator/src/observability/observable-llm-adapter.ts",
-        "start_line": 115,
-        "end_line": 120,
+        "start_line": 157,
+        "end_line": 162,
         "signature": "export interface TargetUrlValidationOptions",
         "is_exported": true,
+        "heritage": {}
+      }
+    ],
+    "CachedDnsRecord": [
+      {
+        "name": "CachedDnsRecord",
+        "kind": "interface",
+        "file_path": "orchestrator/src/observability/observable-llm-adapter.ts",
+        "start_line": 164,
+        "end_line": 167,
+        "signature": "interface CachedDnsRecord",
+        "is_exported": false,
         "heritage": {}
       }
     ],
@@ -4453,8 +4476,8 @@
         "name": "ObservableLlmAdapterResult",
         "kind": "interface",
         "file_path": "orchestrator/src/observability/observable-llm-adapter.ts",
-        "start_line": 131,
-        "end_line": 137,
+        "start_line": 200,
+        "end_line": 206,
         "signature": "export interface ObservableLlmAdapterResult",
         "is_exported": true,
         "heritage": {}
@@ -4465,11 +4488,33 @@
         "name": "ObservableCompletionInput",
         "kind": "interface",
         "file_path": "orchestrator/src/observability/observable-llm-adapter.ts",
-        "start_line": 139,
-        "end_line": 159,
+        "start_line": 208,
+        "end_line": 228,
         "signature": "export interface ObservableCompletionInput",
         "is_exported": true,
         "heritage": {}
+      }
+    ],
+    "parseIpv6ToWords": [
+      {
+        "name": "parseIpv6ToWords",
+        "kind": "function",
+        "file_path": "orchestrator/src/observability/observable-llm-adapter.ts",
+        "start_line": 246,
+        "end_line": 291,
+        "signature": "export function parseIpv6ToWords(rawIpv6: string): number[] | null",
+        "is_exported": true
+      }
+    ],
+    "parseSegment": [
+      {
+        "name": "parseSegment",
+        "kind": "function",
+        "file_path": "orchestrator/src/observability/observable-llm-adapter.ts",
+        "start_line": 259,
+        "end_line": 277,
+        "signature": "function parseSegment(part: string): number[] | null",
+        "is_exported": false
       }
     ],
     "isForbiddenIPv4": [
@@ -4477,8 +4522,8 @@
         "name": "isForbiddenIPv4",
         "kind": "function",
         "file_path": "orchestrator/src/observability/observable-llm-adapter.ts",
-        "start_line": 176,
-        "end_line": 176,
+        "start_line": 297,
+        "end_line": 297,
         "signature": "export function isForbiddenIPv4(octets: number[]):",
         "is_exported": true
       }
@@ -4488,8 +4533,8 @@
         "name": "isForbiddenIPv6",
         "kind": "function",
         "file_path": "orchestrator/src/observability/observable-llm-adapter.ts",
-        "start_line": 220,
-        "end_line": 220,
+        "start_line": 367,
+        "end_line": 367,
         "signature": "export function isForbiddenIPv6(rawIpv6: string):",
         "is_exported": true
       }
@@ -4499,8 +4544,8 @@
         "name": "validateTargetUrl",
         "kind": "function",
         "file_path": "orchestrator/src/observability/observable-llm-adapter.ts",
-        "start_line": 278,
-        "end_line": 358,
+        "start_line": 451,
+        "end_line": 535,
         "signature": "export function validateTargetUrl(",
         "is_exported": true
       }
@@ -4510,8 +4555,8 @@
         "name": "validateTargetUrlAndResolve",
         "kind": "function",
         "file_path": "orchestrator/src/observability/observable-llm-adapter.ts",
-        "start_line": 363,
-        "end_line": 365,
+        "start_line": 541,
+        "end_line": 543,
         "signature": "export async function validateTargetUrlAndResolve(",
         "is_exported": true
       }
@@ -4521,8 +4566,8 @@
         "name": "ObservableLlmProviderAdapterOptions",
         "kind": "interface",
         "file_path": "orchestrator/src/observability/observable-llm-adapter.ts",
-        "start_line": 445,
-        "end_line": 451,
+        "start_line": 629,
+        "end_line": 635,
         "signature": "export interface ObservableLlmProviderAdapterOptions",
         "is_exported": true,
         "heritage": {}
@@ -4533,8 +4578,8 @@
         "name": "isNativeNodeFetch",
         "kind": "function",
         "file_path": "orchestrator/src/observability/observable-llm-adapter.ts",
-        "start_line": 453,
-        "end_line": 457,
+        "start_line": 637,
+        "end_line": 641,
         "signature": "function isNativeNodeFetch(fn: unknown): boolean",
         "is_exported": false
       }
@@ -4544,8 +4589,8 @@
         "name": "ObservableLlmProviderAdapter",
         "kind": "class",
         "file_path": "orchestrator/src/observability/observable-llm-adapter.ts",
-        "start_line": 459,
-        "end_line": 719,
+        "start_line": 643,
+        "end_line": 896,
         "signature": "export class ObservableLlmProviderAdapter",
         "is_exported": true,
         "heritage": {}
@@ -4745,7 +4790,7 @@
         "kind": "function",
         "file_path": "orchestrator/src/policies/policy-engine.ts",
         "start_line": 7,
-        "end_line": 28,
+        "end_line": 27,
         "signature": "export function normalizeRetryCount(raw: unknown): number | undefined",
         "is_exported": true
       }
@@ -4755,9 +4800,9 @@
         "name": "parseTimeoutMs",
         "kind": "function",
         "file_path": "orchestrator/src/policies/policy-engine.ts",
-        "start_line": 30,
+        "start_line": 29,
         "end_line": 55,
-        "signature": "export function parseTimeoutMs(timeout?: string | number): number | undefined",
+        "signature": "export function parseTimeoutMs(timeout?: unknown): number | undefined",
         "is_exported": true
       },
       {
@@ -4785,7 +4830,7 @@
         "kind": "class",
         "file_path": "orchestrator/src/policies/policy-engine.ts",
         "start_line": 137,
-        "end_line": 238,
+        "end_line": 246,
         "signature": "export class PolicyEngine",
         "is_exported": true,
         "heritage": {}
@@ -5285,8 +5330,8 @@
         "name": "extractInputs",
         "kind": "function",
         "file_path": "orchestrator/src/providers/observable-inference-provider.ts",
-        "start_line": 21,
-        "end_line": 50,
+        "start_line": 25,
+        "end_line": 54,
         "signature": "function extractInputs(request: ExecuteRequest): Record<string, string>",
         "is_exported": false
       }
@@ -5296,8 +5341,8 @@
         "name": "ObservableInferenceProviderOptions",
         "kind": "interface",
         "file_path": "orchestrator/src/providers/observable-inference-provider.ts",
-        "start_line": 52,
-        "end_line": 66,
+        "start_line": 56,
+        "end_line": 70,
         "signature": "export interface ObservableInferenceProviderOptions",
         "is_exported": true,
         "heritage": {}
@@ -5308,8 +5353,8 @@
         "name": "ObservableInferenceProvider",
         "kind": "class",
         "file_path": "orchestrator/src/providers/observable-inference-provider.ts",
-        "start_line": 68,
-        "end_line": 220,
+        "start_line": 72,
+        "end_line": 228,
         "signature": "export class ObservableInferenceProvider implements ProviderRuntime",
         "is_exported": true,
         "heritage": {
@@ -5324,8 +5369,8 @@
         "name": "createObservableInferenceProvider",
         "kind": "function",
         "file_path": "orchestrator/src/providers/observable-inference-provider.ts",
-        "start_line": 222,
-        "end_line": 226,
+        "start_line": 230,
+        "end_line": 234,
         "signature": "export function createObservableInferenceProvider(",
         "is_exported": true
       }
@@ -7319,8 +7364,8 @@
       ]
     },
     "orchestrator/src/executors/smart-mock-executor.ts": {
-      "sha256": "dc6e95ade4fa9fe0bdb0c7bbaa0326273d9c6c21b8a525065a103ba5617b1e57",
-      "line_count": 195,
+      "sha256": "1cbe87c761110fca9e4ee362f9187f8290639b7d1c86fcd6779b51ff14d47f6c",
+      "line_count": 200,
       "symbol_names": [
         "SmartMockOptions",
         "SmartMockExecutor",
@@ -7923,17 +7968,21 @@
       ]
     },
     "orchestrator/src/observability/observable-llm-adapter.ts": {
-      "sha256": "bed83a3903502a54effbe1fc385346e724faeb02b4df14da7829b0242e4d1729",
-      "line_count": 720,
+      "sha256": "9ad6f56f25572802113605d8bb3d1bbf59064e152d7d28fb853724ddb8627189",
+      "line_count": 897,
       "symbol_names": [
         "FetchFn",
         "DnsLookupFn",
         "pinnedLookup",
         "PinnedFetchOptions",
         "createPinnedFetch",
+        "cleanup",
         "TargetUrlValidationOptions",
+        "CachedDnsRecord",
         "ObservableLlmAdapterResult",
         "ObservableCompletionInput",
+        "parseIpv6ToWords",
+        "parseSegment",
         "isForbiddenIPv4",
         "isForbiddenIPv6",
         "validateTargetUrl",
@@ -7960,6 +8009,7 @@
         "TargetUrlValidationOptions",
         "ObservableLlmAdapterResult",
         "ObservableCompletionInput",
+        "parseIpv6ToWords",
         "isForbiddenIPv4",
         "isForbiddenIPv6",
         "validateTargetUrl",
@@ -8068,8 +8118,8 @@
       ]
     },
     "orchestrator/src/policies/policy-engine.ts": {
-      "sha256": "274b0041c99e8381c7d64de27344434863692fb3f05fc3fe7cfe22498d80fb8a",
-      "line_count": 239,
+      "sha256": "630f93dc008ba84da9323c31502aad93295a5bf979b2499859ac86e9acd9d941",
+      "line_count": 247,
       "symbol_names": [
         "normalizeRetryCount",
         "parseTimeoutMs",
@@ -8327,8 +8377,8 @@
       ]
     },
     "orchestrator/src/providers/observable-inference-provider.ts": {
-      "sha256": "da934a62f6b7ab24ded7b90b1dcb0da7254ea3aa3bd6cbe4de193bf045bcc979",
-      "line_count": 227,
+      "sha256": "f7214b1c00b138f81fbaf4f5f1aa85263380580c963346637aa64041f90fb0d4",
+      "line_count": 235,
       "symbol_names": [
         "extractInputs",
         "ObservableInferenceProviderOptions",
@@ -8338,6 +8388,7 @@
       "import_modules": [
         "../types/index.js",
         "../evidence/builders.js",
+        "../policies/policy-engine.js",
         "../observability/observable-llm-adapter.ts"
       ],
       "exports": [

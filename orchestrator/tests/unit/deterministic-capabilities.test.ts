@@ -158,6 +158,7 @@ describe("DeterministicProvider", () => {
   });
 
   it("knowledge.search UNAVAILABLE is distinct from empty hits", async () => {
+    process.env.EVOLVELOOP_UKS_DISABLED = "1";
     const prevRag = process.env.RAG_REPO_ROOT;
     const prevWiki = process.env.WIKI_ROOT;
     const missing = path.join(tmp, "missing-rag-root");
@@ -180,6 +181,7 @@ describe("DeterministicProvider", () => {
       // Empty successful retrieval would use null/absent error_code — not this code.
       expect(data?.error_code).not.toBeNull();
     } finally {
+      delete process.env.EVOLVELOOP_UKS_DISABLED;
       if (prevRag === undefined) delete process.env.RAG_REPO_ROOT;
       else process.env.RAG_REPO_ROOT = prevRag;
       if (prevWiki === undefined) delete process.env.WIKI_ROOT;

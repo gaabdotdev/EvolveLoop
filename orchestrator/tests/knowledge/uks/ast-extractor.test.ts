@@ -4,8 +4,10 @@
  * precise line mapping, import/export tracking, and index persistence.
  */
 
+import { describe, it, expect, beforeAll, afterAll } from "vitest";
 import * as fs from "node:fs";
 import * as path from "node:path";
+import { fileURLToPath } from "node:url";
 import {
     scanFile,
     scanDirectory,
@@ -14,6 +16,9 @@ import {
     findImplementations,
     ProjectAstIndex
 } from "../../../src/knowledge/uks/ast-extractor";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 describe("UKS AST Extractor", () => {
     const testSandboxDir = path.resolve(__dirname, "../../../../.test-harness/ast-extractor-unit");

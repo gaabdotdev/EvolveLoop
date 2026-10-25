@@ -9,6 +9,7 @@ mcp/mcp.env
 **/credentials.json
 
 # Dependencies and builds
+node_modules
 node_modules/
 dist/
 build/

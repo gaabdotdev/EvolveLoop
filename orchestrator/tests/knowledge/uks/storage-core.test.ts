@@ -4,8 +4,10 @@
  * cryptographic hashing, and .data/ initialization.
  */
 
+import { describe, it, expect, beforeAll, afterAll } from "vitest";
 import * as fs from "node:fs";
 import * as path from "node:path";
+import { fileURLToPath } from "node:url";
 import {
     computeSha256,
     assertPathConfined,
@@ -14,6 +16,9 @@ import {
     initializeDataDirectory,
     DataManifest
 } from "../../../src/knowledge/uks/storage-core";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 describe("UKS Storage Core", () => {
     const testSandboxDir = path.resolve(__dirname, "../../../../.test-harness/storage-core-unit");
@@ -40,20 +45,20 @@ describe("UKS Storage Core", () => {
 
     describe("assertPathConfined", () => {
         it("should accept valid nested paths within authorized root", () => {
-            const root = "/home/gaab/project";
-            const target = "/home/gaab/project/src/file.ts";
+            const root = path.join(testSandboxDir, "project");
+            const target = path.join(testSandboxDir, "project/src/file.ts");
             const result = assertPathConfined(target, root);
             expect(result).toBe(path.resolve(target));
         });
 
         it("should throw error when directory traversal is attempted", () => {
-            const root = "/home/gaab/project";
-            const rogue = "/home/gaab/project/../../etc/passwd";
+            const root = path.join(testSandboxDir, "project");
+            const rogue = path.join(testSandboxDir, "project/../../etc/passwd");
             expect(() => assertPathConfined(rogue, root)).toThrow("SECURITY_PATH_TRAVERSAL_VIOLATION");
         });
 
         it("should throw error when target is outside root directory entirely", () => {
-            const root = "/home/gaab/project";
+            const root = path.join(testSandboxDir, "project");
             const foreign = "/var/log/syslog";
             expect(() => assertPathConfined(foreign, root)).toThrow("SECURITY_PATH_TRAVERSAL_VIOLATION");
         });

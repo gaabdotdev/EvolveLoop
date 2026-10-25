@@ -3,13 +3,18 @@
  * Tests tokenization, chunking, Okapi BM25 scoring, and sub-15ms search latency.
  */
 
+import { describe, it, expect, beforeAll, afterAll } from "vitest";
 import * as fs from "node:fs";
 import * as path from "node:path";
+import { fileURLToPath } from "node:url";
 import {
     tokenize,
     chunkMarkdownDocument,
     Bm25Engine
 } from "../../../src/knowledge/uks/bm25-engine";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 describe("UKS BM25 Engine", () => {
     const testSandboxDir = path.resolve(__dirname, "../../../../.test-harness/bm25-unit");

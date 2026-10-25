@@ -4,6 +4,7 @@ import { join } from "node:path";
 import {
   FakeKnowledgeBackend,
   WikiKnowledgeBackend,
+  UKSKnowledgeBackend,
   resolveKnowledgeBackend,
   resetKnowledgeBackendCache,
   loadMegaBrainProfile,
@@ -18,7 +19,7 @@ describe("KnowledgeBackend seam", () => {
   const prev: Record<string, string | undefined> = {};
 
   beforeEach(() => {
-    for (const k of ["KNOWLEDGE_BACKEND", "WIKI_ROOT", "RAG_REPO_ROOT", "AGENTS_ROOT", "MEGABRAIN_PROFILE_PATH"]) {
+    for (const k of ["KNOWLEDGE_BACKEND", "WIKI_ROOT", "RAG_REPO_ROOT", "AGENTS_ROOT", "MEGABRAIN_PROFILE_PATH", "EVOLVELOOP_UKS_DISABLED"]) {
       prev[k] = process.env[k];
     }
     resetKnowledgeBackendCache();
@@ -32,9 +33,19 @@ describe("KnowledgeBackend seam", () => {
     resetKnowledgeBackendCache();
   });
 
-  it("defaults to wiki backend", () => {
+  it("defaults to uks backend (V2.5 canonical)", () => {
     delete process.env.KNOWLEDGE_BACKEND;
+    delete process.env.EVOLVELOOP_UKS_DISABLED;
     process.env.AGENTS_ROOT = ROOT;
+    const b = resolveKnowledgeBackend();
+    expect(b.id).toBe("uks");
+    expect(b).toBeInstanceOf(UKSKnowledgeBackend);
+  });
+
+  it("reverts to wiki backend when EVOLVELOOP_UKS_DISABLED=1 (rollback contingency)", () => {
+    process.env.EVOLVELOOP_UKS_DISABLED = "1";
+    delete process.env.KNOWLEDGE_BACKEND;
+    resetKnowledgeBackendCache();
     const b = resolveKnowledgeBackend();
     expect(b.id).toBe("wiki");
     expect(b).toBeInstanceOf(WikiKnowledgeBackend);

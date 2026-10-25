@@ -1,7 +1,7 @@
 {
   "task_id": "phase3-ast-extractor-validation",
   "phase": "Phase 3: Native AST Extractor Absorption (ADR-D02)",
-  "timestamp": "2026-10-25T03:54:32.216Z",
+  "timestamp": "2026-10-25T16:03:22.519Z",
   "status": "PASSED",
   "total_tests": 4,
   "passed_tests": 4,
@@ -10,7 +10,7 @@
     {
       "name": "extracts TypeScript interfaces, classes, types, and functions with precise lines",
       "status": "PASS",
-      "duration_ms": 4
+      "duration_ms": 3
     },
     {
       "name": "extracts Python classes, methods, and functions with indentation block boundaries",
@@ -25,16 +25,16 @@
     {
       "name": "scans orchestrator/src directory, persists .data/project-ast.json, and satisfies SLOs",
       "status": "PASS",
-      "duration_ms": 75
+      "duration_ms": 57
     }
   ],
   "measurements": {
     "total_files_scanned": 101,
-    "total_symbols": 551,
-    "total_imports": 370,
-    "scan_duration_ms": 70,
-    "index_size_bytes": 180038,
-    "index_size_kb": 175.82,
+    "total_symbols": 555,
+    "total_imports": 371,
+    "scan_duration_ms": 54,
+    "index_size_bytes": 181114,
+    "index_size_kb": 176.87,
     "slo_duration_target_ms": 2000,
     "slo_size_target_kb": 500,
     "slo_duration_pass": true,
@@ -49,12 +49,12 @@
     {
       "path": "orchestrator/tests/knowledge/uks/ast-extractor.test.ts",
       "type": "VERIFIED_IN_CODE",
-      "sha256": "769321d11db4acc40894049b79efc6bb012a1d876e6a10b12e4e280957919a2f"
+      "sha256": "eb750bcb29c2de30c91ad743f49a7af896235f3e21793232d01320320b4b3553"
     },
     {
       "path": ".data/project-ast.json",
       "type": "MEASURED",
-      "sha256": "8c4df6b3b79415ed5c594ada8b93bef9758ae3633be95490a10a5e1196ccf1e3"
+      "sha256": "a7d294a7ef5d349f0c0699b3d917ca03bcd372299ee12946965bd67b5ad60cf9"
     }
   ]
 }

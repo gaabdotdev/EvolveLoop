@@ -75,8 +75,8 @@ console.log("===================================================================
 console.log("UKS SCOPE ENFORCER & TRUTHFENCE SUITE (Phase 5: Adversarial Attacks X01 to X06)");
 console.log("================================================================================");
 
-const projectRootA = "/home/gaab/workspaces/project-alpha";
-const projectRootB = "/home/gaab/workspaces/project-beta";
+const projectRootA = "/mock-workspaces/project-alpha";
+const projectRootB = "/mock-workspaces/project-beta";
 const scopeA = resolveProjectScopeId(projectRootA);
 const scopeB = resolveProjectScopeId(projectRootB);
 
@@ -86,8 +86,8 @@ console.log(`       - Project Beta:  ${scopeB} (${projectRootB})`);
 
 // Test 1: Stable Deterministic Scope Resolution
 await test("resolveProjectScopeId generates deterministic 16-hex partition namespaces", async () => {
-    const s1 = resolveProjectScopeId("/home/gaab/workspaces/project-alpha");
-    const s2 = resolveProjectScopeId("/home/gaab/workspaces/project-alpha/");
+    const s1 = resolveProjectScopeId("/mock-workspaces/project-alpha");
+    const s2 = resolveProjectScopeId("/mock-workspaces/project-alpha/");
     assert(s1 === s2, "Trailing slashes should not affect scope hash");
     assert(s1.startsWith("project:"), "Scope prefix must be project:");
     assert(s1 !== scopeB, "Different paths must yield distinct scope IDs");
@@ -187,8 +187,8 @@ await test("X01: Project A attempts to read Project B secret -> 0.00% LEAK", asy
 
 // Adversarial X02: Partial Directory Prefix Collision
 await test("X02: Partial directory prefix collision (/project vs /project-rogue) -> ISOLATED", async () => {
-    const rootTarget = "/home/gaab/project";
-    const rootColliding = "/home/gaab/project-rogue";
+    const rootTarget = "/mock-workspaces/project";
+    const rootColliding = "/mock-workspaces/project-rogue";
 
     const sTarget = resolveProjectScopeId(rootTarget);
     const sColliding = resolveProjectScopeId(rootColliding);

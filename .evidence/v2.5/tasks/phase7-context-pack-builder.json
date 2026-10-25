@@ -1,7 +1,7 @@
 {
   "task_id": "phase7-context-pack-builder-validation",
   "phase": "Phase 7: Context Pack Assembly & ContextBudget Slicing (ADR-D01/D04, Hypothesis H-01)",
-  "timestamp": "2026-10-25T03:54:33.493Z",
+  "timestamp": "2026-10-25T16:03:23.810Z",
   "status": "PASSED",
   "total_tests": 6,
   "passed_tests": 6,
@@ -10,7 +10,7 @@
     {
       "name": "End-to-end 10-step pipeline produces structured UKSQueryResponse",
       "status": "PASS",
-      "duration_ms": 3
+      "duration_ms": 2
     },
     {
       "name": "ContextBudget ceiling is strictly respected; overflow hits discarded gracefully",
@@ -20,7 +20,7 @@
     {
       "name": "Hypothesis H-01 validation: Surgical snippet reduces input tokens by >= 60%",
       "status": "PASS",
-      "duration_ms": 1
+      "duration_ms": 2
     },
     {
       "name": "TruthFence prioritizes Tier 0 Code over Tier 1 Docs and suppresses obsolete items",
@@ -35,7 +35,7 @@
     {
       "name": "Live query against repository AST & BM25 indexes meets sub-50ms latency SLO",
       "status": "PASS",
-      "duration_ms": 181
+      "duration_ms": 133
     }
   ],
   "hypothesis_h01": {
@@ -45,36 +45,36 @@
     "status": "VERIFIED"
   },
   "performance_metrics": {
-    "median_query_latency_ms": 7.98,
-    "p95_query_latency_ms": 9.94,
+    "median_query_latency_ms": 7.04,
+    "p95_query_latency_ms": 9.23,
     "slo_latency_target_ms": 50,
     "slo_latency_pass": true,
     "queries_evaluated": 4,
     "query_telemetry": [
       {
         "query": "writeAtomicJson storage core",
-        "duration_ms": 9.94,
+        "duration_ms": 9.23,
         "hits_count": 14,
         "tokens": 1975,
         "reduction_pct": 89.41
       },
       {
         "query": "ast extractor symbols typescript",
-        "duration_ms": 7.98,
+        "duration_ms": 6.21,
         "hits_count": 15,
         "tokens": 1943,
         "reduction_pct": 94.1
       },
       {
         "query": "bm25 lexical engine tokenization",
-        "duration_ms": 6.74,
+        "duration_ms": 7.04,
         "hits_count": 1,
         "tokens": 1963,
         "reduction_pct": 41.94
       },
       {
         "query": "reciprocal rank fusion hybrid",
-        "duration_ms": 5.29,
+        "duration_ms": 5.89,
         "hits_count": 2,
         "tokens": 1915,
         "reduction_pct": 33.65
@@ -90,7 +90,7 @@
     {
       "path": "orchestrator/tests/knowledge/uks/context-pack-builder.test.ts",
       "type": "VERIFIED_IN_CODE",
-      "sha256": "af1c5c520ff38bff8a4bd33ab6fb56fbf534586f065d1f1fb60d5c84d781e800"
+      "sha256": "2f8d018c15b5ecdfcaccb4d721c27a7e25e2920426d45a7e0f78c6158e8519cb"
     },
     {
       "path": "scripts/v2.5/test-context-pack-builder.mjs",
