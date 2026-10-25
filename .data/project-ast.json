@@ -1,13 +1,13 @@
 {
   "schema_version": "2.5.0",
-  "indexed_at": "2026-10-25T01:50:05.942Z",
+  "indexed_at": "2026-10-25T03:02:39.155Z",
   "workspace_root": "/home/gaab/orca/workspaces/EvolveLoop/v.2.5",
   "stats": {
     "total_files_scanned": 101,
-    "total_symbols": 541,
-    "total_imports": 364,
+    "total_symbols": 546,
+    "total_imports": 367,
     "duration_ms": 41,
-    "index_size_bytes": 176816
+    "index_size_bytes": 178506
   },
   "symbols": {
     "AuthorityDecision": [
@@ -541,7 +541,7 @@
         "kind": "class",
         "file_path": "orchestrator/src/contracts/contract-registry.ts",
         "start_line": 13,
-        "end_line": 81,
+        "end_line": 90,
         "signature": "export class ContractRegistry",
         "is_exported": true,
         "heritage": {}
@@ -552,8 +552,8 @@
         "name": "loadContractsFromDir",
         "kind": "function",
         "file_path": "orchestrator/src/contracts/contract-registry.ts",
-        "start_line": 83,
-        "end_line": 93,
+        "start_line": 92,
+        "end_line": 102,
         "signature": "export function loadContractsFromDir(dir: string): ContractRegistry",
         "is_exported": true
       }
@@ -563,8 +563,8 @@
         "name": "parseContractRef",
         "kind": "function",
         "file_path": "orchestrator/src/contracts/contract-registry.ts",
-        "start_line": 95,
-        "end_line": 95,
+        "start_line": 104,
+        "end_line": 104,
         "signature": "export function parseContractRef(ref: string):",
         "is_exported": true
       }
@@ -788,7 +788,7 @@
         "kind": "interface",
         "file_path": "orchestrator/src/engine/execution-engine.ts",
         "start_line": 45,
-        "end_line": 70,
+        "end_line": 71,
         "signature": "export interface ExecutionEngineOptions",
         "is_exported": true,
         "heritage": {}
@@ -799,8 +799,8 @@
         "name": "ExecutionEngine",
         "kind": "class",
         "file_path": "orchestrator/src/engine/execution-engine.ts",
-        "start_line": 72,
-        "end_line": 671,
+        "start_line": 73,
+        "end_line": 695,
         "signature": "export class ExecutionEngine",
         "is_exported": true,
         "heritage": {}
@@ -811,8 +811,8 @@
         "name": "subscribeMetrics",
         "kind": "function",
         "file_path": "orchestrator/src/engine/execution-engine.ts",
-        "start_line": 192,
-        "end_line": 194,
+        "start_line": 202,
+        "end_line": 204,
         "signature": "const subscribeMetrics = (e: Parameters<EventBus[\"emit\"]>[0]) => ...",
         "is_exported": false
       }
@@ -822,8 +822,8 @@
         "name": "canRetry",
         "kind": "function",
         "file_path": "orchestrator/src/engine/execution-engine.ts",
-        "start_line": 224,
-        "end_line": 224,
+        "start_line": 234,
+        "end_line": 234,
         "signature": "const canRetry = (n: GraphNode) => ...",
         "is_exported": false
       }
@@ -4385,10 +4385,33 @@
         "name": "FetchFn",
         "kind": "type",
         "file_path": "orchestrator/src/observability/observable-llm-adapter.ts",
-        "start_line": 17,
-        "end_line": 17,
+        "start_line": 18,
+        "end_line": 18,
         "signature": "export type FetchFn = typeof fetch;",
         "is_exported": true
+      }
+    ],
+    "DnsLookupFn": [
+      {
+        "name": "DnsLookupFn",
+        "kind": "type",
+        "file_path": "orchestrator/src/observability/observable-llm-adapter.ts",
+        "start_line": 19,
+        "end_line": 19,
+        "signature": "export type DnsLookupFn = (hostname: string) => Promise<Array<{ address: string; family: number }>>;",
+        "is_exported": true
+      }
+    ],
+    "TargetUrlValidationOptions": [
+      {
+        "name": "TargetUrlValidationOptions",
+        "kind": "interface",
+        "file_path": "orchestrator/src/observability/observable-llm-adapter.ts",
+        "start_line": 23,
+        "end_line": 28,
+        "signature": "export interface TargetUrlValidationOptions",
+        "is_exported": true,
+        "heritage": {}
       }
     ],
     "ObservableLlmAdapterResult": [
@@ -4396,8 +4419,8 @@
         "name": "ObservableLlmAdapterResult",
         "kind": "interface",
         "file_path": "orchestrator/src/observability/observable-llm-adapter.ts",
-        "start_line": 19,
-        "end_line": 25,
+        "start_line": 39,
+        "end_line": 45,
         "signature": "export interface ObservableLlmAdapterResult",
         "is_exported": true,
         "heritage": {}
@@ -4408,8 +4431,8 @@
         "name": "ObservableCompletionInput",
         "kind": "interface",
         "file_path": "orchestrator/src/observability/observable-llm-adapter.ts",
-        "start_line": 27,
-        "end_line": 45,
+        "start_line": 47,
+        "end_line": 67,
         "signature": "export interface ObservableCompletionInput",
         "is_exported": true,
         "heritage": {}
@@ -4420,8 +4443,8 @@
         "name": "isForbiddenIPv4",
         "kind": "function",
         "file_path": "orchestrator/src/observability/observable-llm-adapter.ts",
-        "start_line": 62,
-        "end_line": 62,
+        "start_line": 84,
+        "end_line": 84,
         "signature": "export function isForbiddenIPv4(octets: number[]):",
         "is_exported": true
       }
@@ -4431,8 +4454,8 @@
         "name": "isForbiddenIPv6",
         "kind": "function",
         "file_path": "orchestrator/src/observability/observable-llm-adapter.ts",
-        "start_line": 106,
-        "end_line": 106,
+        "start_line": 128,
+        "end_line": 128,
         "signature": "export function isForbiddenIPv6(rawIpv6: string):",
         "is_exported": true
       }
@@ -4442,10 +4465,33 @@
         "name": "validateTargetUrl",
         "kind": "function",
         "file_path": "orchestrator/src/observability/observable-llm-adapter.ts",
-        "start_line": 164,
-        "end_line": 236,
-        "signature": "export function validateTargetUrl(rawUrl: string, allowLoopback = false): URL",
+        "start_line": 186,
+        "end_line": 266,
+        "signature": "export function validateTargetUrl(",
         "is_exported": true
+      }
+    ],
+    "validateTargetUrlAndResolve": [
+      {
+        "name": "validateTargetUrlAndResolve",
+        "kind": "function",
+        "file_path": "orchestrator/src/observability/observable-llm-adapter.ts",
+        "start_line": 271,
+        "end_line": 273,
+        "signature": "export async function validateTargetUrlAndResolve(",
+        "is_exported": true
+      }
+    ],
+    "ObservableLlmProviderAdapterOptions": [
+      {
+        "name": "ObservableLlmProviderAdapterOptions",
+        "kind": "interface",
+        "file_path": "orchestrator/src/observability/observable-llm-adapter.ts",
+        "start_line": 347,
+        "end_line": 353,
+        "signature": "export interface ObservableLlmProviderAdapterOptions",
+        "is_exported": true,
+        "heritage": {}
       }
     ],
     "ObservableLlmProviderAdapter": [
@@ -4453,8 +4499,8 @@
         "name": "ObservableLlmProviderAdapter",
         "kind": "class",
         "file_path": "orchestrator/src/observability/observable-llm-adapter.ts",
-        "start_line": 238,
-        "end_line": 426,
+        "start_line": 355,
+        "end_line": 598,
         "signature": "export class ObservableLlmProviderAdapter",
         "is_exported": true,
         "heritage": {}
@@ -4648,13 +4694,42 @@
         "is_exported": true
       }
     ],
+    "parseTimeoutMs": [
+      {
+        "name": "parseTimeoutMs",
+        "kind": "function",
+        "file_path": "orchestrator/src/policies/policy-engine.ts",
+        "start_line": 5,
+        "end_line": 17,
+        "signature": "export function parseTimeoutMs(timeout?: string): number | undefined",
+        "is_exported": true
+      },
+      {
+        "name": "parseTimeoutMs",
+        "kind": "function",
+        "file_path": "orchestrator/src/providers/deterministic/index.ts",
+        "start_line": 37,
+        "end_line": 46,
+        "signature": "function parseTimeoutMs(timeout?: string): number | undefined",
+        "is_exported": false
+      },
+      {
+        "name": "parseTimeoutMs",
+        "kind": "function",
+        "file_path": "orchestrator/src/scheduler/scheduler.ts",
+        "start_line": 206,
+        "end_line": 214,
+        "signature": "function parseTimeoutMs(timeout?: string): number | undefined",
+        "is_exported": false
+      }
+    ],
     "PolicyEngine": [
       {
         "name": "PolicyEngine",
         "kind": "class",
         "file_path": "orchestrator/src/policies/policy-engine.ts",
-        "start_line": 84,
-        "end_line": 158,
+        "start_line": 99,
+        "end_line": 199,
         "signature": "export class PolicyEngine",
         "is_exported": true,
         "heritage": {}
@@ -4893,26 +4968,6 @@
         "end_line": 34,
         "signature": "export type DeterministicHandler = (",
         "is_exported": true
-      }
-    ],
-    "parseTimeoutMs": [
-      {
-        "name": "parseTimeoutMs",
-        "kind": "function",
-        "file_path": "orchestrator/src/providers/deterministic/index.ts",
-        "start_line": 37,
-        "end_line": 46,
-        "signature": "function parseTimeoutMs(timeout?: string): number | undefined",
-        "is_exported": false
-      },
-      {
-        "name": "parseTimeoutMs",
-        "kind": "function",
-        "file_path": "orchestrator/src/scheduler/scheduler.ts",
-        "start_line": 202,
-        "end_line": 210,
-        "signature": "function parseTimeoutMs(timeout?: string): number | undefined",
-        "is_exported": false
       }
     ],
     "capabilityPermissions": [
@@ -5174,8 +5229,8 @@
         "name": "extractInputs",
         "kind": "function",
         "file_path": "orchestrator/src/providers/observable-inference-provider.ts",
-        "start_line": 20,
-        "end_line": 49,
+        "start_line": 21,
+        "end_line": 50,
         "signature": "function extractInputs(request: ExecuteRequest): Record<string, string>",
         "is_exported": false
       }
@@ -5185,8 +5240,8 @@
         "name": "ObservableInferenceProviderOptions",
         "kind": "interface",
         "file_path": "orchestrator/src/providers/observable-inference-provider.ts",
-        "start_line": 51,
-        "end_line": 61,
+        "start_line": 52,
+        "end_line": 66,
         "signature": "export interface ObservableInferenceProviderOptions",
         "is_exported": true,
         "heritage": {}
@@ -5197,8 +5252,8 @@
         "name": "ObservableInferenceProvider",
         "kind": "class",
         "file_path": "orchestrator/src/providers/observable-inference-provider.ts",
-        "start_line": 63,
-        "end_line": 185,
+        "start_line": 68,
+        "end_line": 220,
         "signature": "export class ObservableInferenceProvider implements ProviderRuntime",
         "is_exported": true,
         "heritage": {
@@ -5213,8 +5268,8 @@
         "name": "createObservableInferenceProvider",
         "kind": "function",
         "file_path": "orchestrator/src/providers/observable-inference-provider.ts",
-        "start_line": 187,
-        "end_line": 191,
+        "start_line": 222,
+        "end_line": 226,
         "signature": "export function createObservableInferenceProvider(",
         "is_exported": true
       }
@@ -5414,8 +5469,8 @@
         "name": "Scheduler",
         "kind": "class",
         "file_path": "orchestrator/src/scheduler/scheduler.ts",
-        "start_line": 18,
-        "end_line": 200,
+        "start_line": 19,
+        "end_line": 204,
         "signature": "export class Scheduler",
         "is_exported": true,
         "heritage": {}
@@ -6366,8 +6421,8 @@
       ]
     },
     "orchestrator/src/contracts/contract-registry.ts": {
-      "sha256": "8a4f2ae3cba467cb280a00f8709c264b778f28490734bcd724bcb686151a62fd",
-      "line_count": 100,
+      "sha256": "723e4bd1cdce05f33d58f7c32de169deaaf2e1403e725a6224ff2652ee84c5e9",
+      "line_count": 109,
       "symbol_names": [
         "ContractRegistry",
         "loadContractsFromDir",
@@ -6467,8 +6522,8 @@
       ]
     },
     "orchestrator/src/engine/execution-engine.ts": {
-      "sha256": "578b2f0bf9452e77796462e0f5f1af46496c2d55d24ed520515593233e3da724",
-      "line_count": 672,
+      "sha256": "9291537ecac01889372c243694854176c63c1a622119ee0529730bb85358460f",
+      "line_count": 696,
       "symbol_names": [
         "ExecutionEngineOptions",
         "ExecutionEngine",
@@ -7812,29 +7867,38 @@
       ]
     },
     "orchestrator/src/observability/observable-llm-adapter.ts": {
-      "sha256": "5bf5b8b7e4f57355f5abb6b08d2c5c2fa52e278309eb5835facec411e46fb8fa",
-      "line_count": 427,
+      "sha256": "3079cc46461793bfa9492c91b8a0b2e204aae87a200d66f9ecf4738aa5ba239a",
+      "line_count": 599,
       "symbol_names": [
         "FetchFn",
+        "DnsLookupFn",
+        "TargetUrlValidationOptions",
         "ObservableLlmAdapterResult",
         "ObservableCompletionInput",
         "isForbiddenIPv4",
         "isForbiddenIPv6",
         "validateTargetUrl",
+        "validateTargetUrlAndResolve",
+        "ObservableLlmProviderAdapterOptions",
         "ObservableLlmProviderAdapter"
       ],
       "import_modules": [
         "node:net",
+        "node:dns/promises",
         "./inference-usage.ts",
         "./inference-ledger.ts"
       ],
       "exports": [
         "FetchFn",
+        "DnsLookupFn",
+        "TargetUrlValidationOptions",
         "ObservableLlmAdapterResult",
         "ObservableCompletionInput",
         "isForbiddenIPv4",
         "isForbiddenIPv6",
         "validateTargetUrl",
+        "validateTargetUrlAndResolve",
+        "ObservableLlmProviderAdapterOptions",
         "ObservableLlmProviderAdapter"
       ]
     },
@@ -7938,16 +8002,19 @@
       ]
     },
     "orchestrator/src/policies/policy-engine.ts": {
-      "sha256": "e20bceb63b6f4e35996e6aa41d96409c136a5015bfafff4284ed89baa5370d53",
-      "line_count": 159,
+      "sha256": "24c07925a5fe29b7566ba0724983a40abb30304573485e009ef337334191c0f1",
+      "line_count": 200,
       "symbol_names": [
+        "parseTimeoutMs",
         "PolicyEngine"
       ],
       "import_modules": [
         "../types/index.js",
-        "../registry/manifest-loader.js"
+        "../registry/manifest-loader.js",
+        "../contracts/contract-types.js"
       ],
       "exports": [
+        "parseTimeoutMs",
         "PolicyEngine"
       ]
     },
@@ -8192,8 +8259,8 @@
       ]
     },
     "orchestrator/src/providers/observable-inference-provider.ts": {
-      "sha256": "02233c5d689e6a5f8622a6c46034d5721144cf50ba26159129bacf9cbdd78d35",
-      "line_count": 192,
+      "sha256": "da934a62f6b7ab24ded7b90b1dcb0da7254ea3aa3bd6cbe4de193bf045bcc979",
+      "line_count": 227,
       "symbol_names": [
         "extractInputs",
         "ObservableInferenceProviderOptions",
@@ -8287,8 +8354,8 @@
       ]
     },
     "orchestrator/src/scheduler/scheduler.ts": {
-      "sha256": "c5a0acf7736afde3135593b524ef1e6eb5283e99dd536d82239677088e566c9e",
-      "line_count": 211,
+      "sha256": "f6db6e4105566986846cf1fb69584888aa8690bb8638aeb6d7b6393dc1d1317b",
+      "line_count": 215,
       "symbol_names": [
         "Scheduler",
         "parseTimeoutMs"
@@ -8301,7 +8368,8 @@
         "../knowledge/knowledge-store.js",
         "../providers/mock-provider.js",
         "../ir/validator.js",
-        "../evidence/builders.js"
+        "../evidence/builders.js",
+        "../contracts/contract-registry.js"
       ],
       "exports": [
         "Scheduler"

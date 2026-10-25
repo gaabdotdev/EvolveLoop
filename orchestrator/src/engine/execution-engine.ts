@@ -48,6 +48,7 @@ export interface ExecutionEngineOptions {
   memory?: MemoryStore;
   providers: ProviderRouter;
   policiesDir?: string;
+  customPolicies?: ExecutionPolicy[];
   dataPaths?: DataPaths;
   persistEvents?: boolean;
   contracts?: ContractRegistry;
@@ -97,7 +98,10 @@ export class ExecutionEngine {
   private nodesExecuted = 0;
 
   constructor(options: ExecutionEngineOptions) {
-    this.policyEngine = new PolicyEngine({ policiesDir: options.policiesDir });
+    this.policyEngine = new PolicyEngine({
+      policiesDir: options.policiesDir,
+      customPolicies: options.customPolicies,
+    });
     this.knowledge = options.knowledge ?? new KnowledgeStore();
     this.memory = options.memory ?? new MemoryStore();
     this.providers = options.providers;
@@ -114,6 +118,11 @@ export class ExecutionEngine {
     this.evolveScope = options.evolveScope;
     this.evolveCoordinator = options.evolveCoordinator;
     this.registry = new RegistryClient(options.registry, this.contracts);
+  }
+
+  private resolveRetries(policy: ExecutionPolicy, node: GraphNode): number {
+    const contract = this.contracts?.getForCapability(node.capability);
+    return this.policyEngine.retriesFor(policy, node, contract);
   }
 
   async run(input: RunInput): Promise<RunResult> {
@@ -162,6 +171,7 @@ export class ExecutionEngine {
       this.knowledge,
       this.providers,
       featureId,
+      this.contracts,
     );
     this.activeScheduler = scheduler;
 
@@ -221,7 +231,7 @@ export class ExecutionEngine {
       }
 
       if (this.orchestratorDecision === "corrigir") {
-        const canRetry = (n: GraphNode) => n.retry_count < this.policyEngine.retriesFor(policy, n);
+        const canRetry = (n: GraphNode) => n.retry_count < this.resolveRetries(policy, n);
         const fixable = graph.getAllNodes().find(
           (n) => (n.status === "failed" || n.status === "blocked") && canRetry(n),
         );
@@ -286,7 +296,7 @@ export class ExecutionEngine {
           break;
         }
 
-        if (graph.hasFailedWithoutRetry((n) => this.policyEngine.retriesFor(policy, n))) {
+        if (graph.hasFailedWithoutRetry((n) => this.resolveRetries(policy, n))) {
           this.blockedReason = "unrecoverable_failure";
           break;
         }
@@ -551,8 +561,15 @@ export class ExecutionEngine {
         attempt: node.retry_count + 1,
       }, run.run_id);
 
+      if (run.error?.code === "CANCELLED") {
+        graph.setNodeStatus(nodeId, "failed");
+        this.registry.recordFailure(run.provider_id, run);
+        this.blockedReason = "cancelled";
+        return;
+      }
+
       graph.incrementRetry(nodeId);
-      const maxRetries = this.policyEngine.retriesFor(policy, node);
+      const maxRetries = this.resolveRetries(policy, node);
 
       if (node.retry_count <= maxRetries) {
         graph.setNodeStatus(nodeId, "pending");
@@ -605,8 +622,15 @@ export class ExecutionEngine {
         return;
       }
 
+      if (run.error?.code === "CANCELLED") {
+        graph.setNodeStatus(nodeId, "failed");
+        this.registry.recordFailure(run.provider_id, run);
+        this.blockedReason = "cancelled";
+        return;
+      }
+
       graph.incrementRetry(nodeId);
-      const maxRetries = this.policyEngine.retriesFor(policy, node);
+      const maxRetries = this.resolveRetries(policy, node);
       if (node.retry_count <= maxRetries && policy.spec.on_evidence_missing === "retry") {
         graph.setNodeStatus(nodeId, "pending");
         eventBus.emit("RetryScheduled", featureId, "scheduler", {

@@ -1,7 +1,7 @@
 {
   "schema_version": "2.5.0",
   "report_id": "EL-V25-UKS-VALIDATION-RESULTS-CANONICAL",
-  "generated_at": "2026-10-25T01:50:16.589Z",
+  "generated_at": "2026-10-25T03:02:44.695Z",
   "evaluation_arms": {
     "b0_grep": {
       "description": "Direct full-file reading / grep without indexing",
@@ -23,13 +23,13 @@
     },
     "b_uks_v25": {
       "description": "Unified Knowledge System (UKS Core V2.5 in-process)",
-      "average_latency_ms": 6.69,
-      "median_latency_ms": 5.38,
-      "p95_latency_ms": 15.53,
+      "average_latency_ms": 7,
+      "median_latency_ms": 5.69,
+      "p95_latency_ms": 16.25,
       "average_recall": 1,
       "average_token_reduction_pct": 88.49,
       "storage_footprint": "218 KB AST + 5.5 MB BM25",
-      "speedup_vs_b1": 243.8
+      "speedup_vs_b1": 233
     }
   },
   "acceptance_criteria_validation": {
@@ -55,7 +55,7 @@
     },
     "AC_05_median_latency": {
       "target": "< 250 ms (target < 100 ms)",
-      "achieved": "5.38 ms",
+      "achieved": "5.69 ms",
       "pass": true
     },
     "AC_06_test_suite_pass_rate": {
@@ -87,7 +87,7 @@
         "recall": 0.8
       },
       "b_uks": {
-        "latency_ms": 15.53,
+        "latency_ms": 16.25,
         "tokens": 1891,
         "reduction_pct": 90.84,
         "recall": 1
@@ -114,7 +114,7 @@
         "recall": 1
       },
       "b_uks": {
-        "latency_ms": 7.2,
+        "latency_ms": 7.07,
         "tokens": 1947,
         "reduction_pct": 94.09,
         "recall": 1
@@ -141,7 +141,7 @@
         "recall": 0.6
       },
       "b_uks": {
-        "latency_ms": 8.42,
+        "latency_ms": 6.65,
         "tokens": 1967,
         "reduction_pct": 41.82,
         "recall": 1
@@ -168,7 +168,7 @@
         "recall": 0.7
       },
       "b_uks": {
-        "latency_ms": 5.11,
+        "latency_ms": 5.69,
         "tokens": 1981,
         "reduction_pct": 46.6,
         "recall": 1
@@ -195,7 +195,7 @@
         "recall": 0.5
       },
       "b_uks": {
-        "latency_ms": 4.78,
+        "latency_ms": 4.59,
         "tokens": 1968,
         "reduction_pct": 90.37,
         "recall": 1
@@ -249,7 +249,7 @@
         "recall": 0
       },
       "b_uks": {
-        "latency_ms": 4.89,
+        "latency_ms": 4.96,
         "tokens": 1911,
         "reduction_pct": 90,
         "recall": 1
@@ -276,7 +276,7 @@
         "recall": 0.6
       },
       "b_uks": {
-        "latency_ms": 4.6,
+        "latency_ms": 4.67,
         "tokens": 266,
         "reduction_pct": 89.36,
         "recall": 1
@@ -303,7 +303,7 @@
         "recall": 0.7
       },
       "b_uks": {
-        "latency_ms": 2.23,
+        "latency_ms": 2.83,
         "tokens": 359,
         "reduction_pct": 68.15,
         "recall": 1
@@ -357,7 +357,7 @@
         "recall": 0.8
       },
       "b_uks": {
-        "latency_ms": 5.38,
+        "latency_ms": 4.9,
         "tokens": 1930,
         "reduction_pct": 91.79,
         "recall": 1
@@ -384,7 +384,7 @@
         "recall": 0.8
       },
       "b_uks": {
-        "latency_ms": 5.94,
+        "latency_ms": 6.07,
         "tokens": 1975,
         "reduction_pct": 89.41,
         "recall": 1
@@ -411,7 +411,7 @@
         "recall": 0.8
       },
       "b_uks": {
-        "latency_ms": 9.15,
+        "latency_ms": 8.64,
         "tokens": 1996,
         "reduction_pct": 90.85,
         "recall": 1
@@ -438,7 +438,7 @@
         "recall": 0.9
       },
       "b_uks": {
-        "latency_ms": 11.52,
+        "latency_ms": 11.2,
         "tokens": 1880,
         "reduction_pct": 95.92,
         "recall": 1
@@ -465,7 +465,7 @@
         "recall": 0.85
       },
       "b_uks": {
-        "latency_ms": 11.17,
+        "latency_ms": 11.57,
         "tokens": 1935,
         "reduction_pct": 93.91,
         "recall": 1
@@ -492,7 +492,7 @@
         "recall": 0.8
       },
       "b_uks": {
-        "latency_ms": 11.41,
+        "latency_ms": 12.18,
         "tokens": 1903,
         "reduction_pct": 93.93,
         "recall": 1
@@ -519,7 +519,7 @@
         "recall": 0.85
       },
       "b_uks": {
-        "latency_ms": 7.37,
+        "latency_ms": 7.95,
         "tokens": 1971,
         "reduction_pct": 89.56,
         "recall": 1
@@ -546,7 +546,7 @@
         "recall": 0.9
       },
       "b_uks": {
-        "latency_ms": 8.77,
+        "latency_ms": 6.2,
         "tokens": 1946,
         "reduction_pct": 90.91,
         "recall": 1
@@ -574,7 +574,7 @@
         "blocked": false
       },
       "b_uks": {
-        "latency_ms": 3.01,
+        "latency_ms": 2.78,
         "tokens": 0,
         "reduction_pct": 100,
         "leak_rate": 0,
@@ -603,7 +603,7 @@
         "blocked": false
       },
       "b_uks": {
-        "latency_ms": 3.15,
+        "latency_ms": 2.99,
         "tokens": 1860,
         "reduction_pct": 95.86,
         "leak_rate": 0,
@@ -632,7 +632,7 @@
         "blocked": false
       },
       "b_uks": {
-        "latency_ms": 0.07,
+        "latency_ms": 0.06,
         "tokens": 0,
         "reduction_pct": 100,
         "leak_rate": 0,
@@ -661,7 +661,7 @@
         "blocked": false
       },
       "b_uks": {
-        "latency_ms": 4.81,
+        "latency_ms": 4.42,
         "tokens": 1988,
         "reduction_pct": 95.18,
         "leak_rate": 0,
@@ -719,7 +719,7 @@
         "recall": 0.4
       },
       "b_uks": {
-        "latency_ms": 25.9,
+        "latency_ms": 36.22,
         "tokens": 1407,
         "reduction_pct": 95.31,
         "leak_rate": 0,

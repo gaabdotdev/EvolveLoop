@@ -78,6 +78,15 @@ export class ContractRegistry {
   list(): ContractDocument[] {
     return [...this.contracts.values()];
   }
+
+  getForCapability(capability: string): ContractDocument | undefined {
+    for (const doc of this.contracts.values()) {
+      if (doc.spec?.capability === capability || doc.metadata?.id === capability) {
+        return doc;
+      }
+    }
+    return undefined;
+  }
 }
 
 export function loadContractsFromDir(dir: string): ContractRegistry {

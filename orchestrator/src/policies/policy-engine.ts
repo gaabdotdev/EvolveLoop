@@ -1,5 +1,20 @@
 import type { ExecutionPolicy, ExecutionPolicySpec, GraphNode } from "../types/index.js";
 import { loadPoliciesFromDir } from "../registry/manifest-loader.js";
+import type { ContractDocument } from "../contracts/contract-types.js";
+
+export function parseTimeoutMs(timeout?: string): number | undefined {
+  if (!timeout) return undefined;
+  const m = String(timeout).trim().match(/^(\d+)(ms|s|m|h)?$/);
+  if (!m) return undefined;
+  const val = Number(m[1]);
+  if (!Number.isFinite(val) || val < 0) return undefined;
+  const unit = m[2];
+  if (unit === "ms") return val;
+  if (unit === "s") return val * 1000;
+  if (unit === "m") return val * 60 * 1000;
+  if (unit === "h") return val * 60 * 60 * 1000;
+  return val;
+}
 
 const BUILTIN_POLICIES: Record<string, ExecutionPolicy> = {
   "high-reliability": {
@@ -131,13 +146,39 @@ export class PolicyEngine {
     return allGates.has(capability);
   }
 
-  retriesFor(policy: ExecutionPolicy, node: GraphNode): number {
+  retriesFor(policy: ExecutionPolicy, node: GraphNode, contract?: ContractDocument): number {
     const { retries } = policy.spec;
-    return (
+    const policyRetriesRaw =
       retries.by_capability?.[node.capability] ??
       retries.by_type?.[node.type] ??
-      retries.default
-    );
+      retries.default ??
+      0;
+    const policyRetries = Math.max(0, Number.isFinite(policyRetriesRaw) ? Math.floor(policyRetriesRaw) : 0);
+
+    const contractMaxRaw = contract?.spec?.retry_policy?.max;
+    if (typeof contractMaxRaw === "number" && Number.isFinite(contractMaxRaw)) {
+      const contractMax = Math.max(0, Math.floor(contractMaxRaw));
+      // Precedence: effective retries is constrained by both the operational policy ceiling
+      // and the contract capability tolerance ceiling. Neither can silently override the tighter limit.
+      return Math.min(policyRetries, contractMax);
+    }
+
+    return policyRetries;
+  }
+
+  resolveTimeoutMs(policy: ExecutionPolicy, node: GraphNode, contract?: ContractDocument): number | undefined {
+    const policyTimeoutStr = policy.spec.timeouts?.step_timeout;
+    const contractTimeoutStr = contract?.spec?.timeout;
+
+    const policyTimeoutMs = parseTimeoutMs(policyTimeoutStr);
+    const contractTimeoutMs = parseTimeoutMs(contractTimeoutStr);
+
+    if (policyTimeoutMs !== undefined && contractTimeoutMs !== undefined) {
+      // Both defined: take the tighter bound to respect both operational budget and capability constraints
+      return Math.min(policyTimeoutMs, contractTimeoutMs);
+    }
+
+    return policyTimeoutMs ?? contractTimeoutMs;
   }
 
   maxParallel(policy: ExecutionPolicy): number {

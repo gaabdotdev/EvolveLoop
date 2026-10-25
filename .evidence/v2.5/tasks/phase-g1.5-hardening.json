@@ -1,0 +1,75 @@
+{
+  "timestamp": "2026-10-25T03:02:26.267Z",
+  "phase": "G1.5",
+  "total_tests": 13,
+  "passed": 13,
+  "failed": 0,
+  "verdict": "APROVADO",
+  "test_results": [
+    {
+      "name": "G1.5-A: parseTimeoutMs accurately converts units (ms, s, m, h) and handles invalid formats",
+      "status": "PASS",
+      "durationMs": 0.18
+    },
+    {
+      "name": "G1.5-A: PolicyEngine retriesFor respects tighter ceiling between policy and contract (Math.min)",
+      "status": "PASS",
+      "durationMs": 0.28
+    },
+    {
+      "name": "G1.5-A: PolicyEngine resolveTimeoutMs takes the tighter bound between policy step_timeout and contract timeout",
+      "status": "PASS",
+      "durationMs": 0.2
+    },
+    {
+      "name": "G1.5-A: ExecutionEngine enforces contract retry ceiling in actual DAG execution with persistent failure",
+      "status": "PASS",
+      "durationMs": 23.9
+    },
+    {
+      "name": "G1.5-B: Timeout cancels underlying HTTP transport via AbortSignal and records error span",
+      "status": "PASS",
+      "durationMs": 50.61
+    },
+    {
+      "name": "G1.5-B: External cancellation via provider.cancel(runId) aborts in-flight HTTP request",
+      "status": "PASS",
+      "durationMs": 31.6
+    },
+    {
+      "name": "G1.5-B: Timeout recovery on retry: attempt 1 times out, attempt 2 responds in time",
+      "status": "PASS",
+      "durationMs": 52.94
+    },
+    {
+      "name": "G1.5-C: Approved provider endpoints in DEFAULT_ALLOWLIST are accepted",
+      "status": "PASS",
+      "durationMs": 0.09
+    },
+    {
+      "name": "G1.5-C: Unapproved custom gateway is rejected by default (Default-Closed allowlist)",
+      "status": "PASS",
+      "durationMs": 0.24
+    },
+    {
+      "name": "G1.5-C: Custom gateway with allowCustomGateway: true checks DNS and rejects private IPv4 (RFC 1918 / Loopback)",
+      "status": "PASS",
+      "durationMs": 0.22
+    },
+    {
+      "name": "G1.5-C: DNS resolution returning cloud metadata IP (169.254.169.254) is rejected even with allowLoopback: true",
+      "status": "PASS",
+      "durationMs": 0.09
+    },
+    {
+      "name": "G1.5-C: Custom gateway with allowCustomGateway: true and public IP is accepted",
+      "status": "PASS",
+      "durationMs": 0.06
+    },
+    {
+      "name": "G1.5-C: DNS resolution failure throws explicit SSRF violation",
+      "status": "PASS",
+      "durationMs": 0.08
+    }
+  ]
+}

@@ -6,6 +6,7 @@
  */
 
 import net from "node:net";
+import dns from "node:dns/promises";
 import {
   classifyHttpInferenceUsage,
   type InferenceSpanRecord,
@@ -15,6 +16,25 @@ import {
 } from "./inference-ledger.ts";
 
 export type FetchFn = typeof fetch;
+export type DnsLookupFn = (hostname: string) => Promise<Array<{ address: string; family: number }>>;
+
+export const DEFAULT_ALLOWLIST = new Set(["api.anthropic.com", "api.openai.com"]);
+
+export interface TargetUrlValidationOptions {
+  allowLoopback?: boolean;
+  allowCustomGateway?: boolean;
+  allowedGateways?: string[];
+  dnsLookup?: DnsLookupFn;
+}
+
+export const defaultDnsLookup: DnsLookupFn = async (hostname: string) => {
+  try {
+    const res = await dns.lookup(hostname, { all: true });
+    return Array.isArray(res) ? res : [res];
+  } catch (err: unknown) {
+    throw new Error(`[-] SECURITY_SSRF_VIOLATION: DNS resolution failed for '${hostname}': ${(err as Error).message}`);
+  }
+};
 
 export interface ObservableLlmAdapterResult {
   text: string;
@@ -42,6 +62,8 @@ export interface ObservableCompletionInput {
   phase?: string;
   retryIndex?: number;
   gatewayUrl?: string;
+  timeoutMs?: number;
+  signal?: AbortSignal;
 }
 
 const ALLOWED_PROVIDERS = new Set(["anthropic", "openai"]);
@@ -161,7 +183,15 @@ export function isForbiddenIPv6(rawIpv6: string): { forbidden: boolean; reason?:
 /**
  * Validates target endpoint against SSRF and unauthorized network destinations.
  */
-export function validateTargetUrl(rawUrl: string, allowLoopback = false): URL {
+export function validateTargetUrl(
+  rawUrl: string,
+  optionsOrAllowLoopback: boolean | TargetUrlValidationOptions = false,
+): URL {
+  const allowLoopback =
+    typeof optionsOrAllowLoopback === "boolean"
+      ? optionsOrAllowLoopback
+      : (optionsOrAllowLoopback?.allowLoopback ?? false);
+
   let parsed: URL;
   try {
     parsed = new URL(rawUrl);
@@ -235,13 +265,111 @@ export function validateTargetUrl(rawUrl: string, allowLoopback = false): URL {
   return parsed;
 }
 
+/**
+ * Performs full validation including async DNS resolution for custom gateways to prevent DNS rebinding.
+ */
+export async function validateTargetUrlAndResolve(
+  rawUrl: string,
+  options: TargetUrlValidationOptions = {},
+): Promise<URL> {
+  const parsed = validateTargetUrl(rawUrl, options);
+  let hostname = parsed.hostname.toLowerCase();
+  if (hostname.endsWith(".")) {
+    hostname = hostname.slice(0, -1);
+  }
+
+  const isV6Bracket = hostname.startsWith("[") && hostname.endsWith("]");
+  const rawIpCandidate = isV6Bracket ? hostname.slice(1, -1) : hostname;
+
+  // If already an IP address literal, no DNS lookup needed or possible
+  if (net.isIP(rawIpCandidate)) {
+    return parsed;
+  }
+
+  const allowLoopback = options.allowLoopback ?? false;
+  const allowCustomGateway = options.allowCustomGateway ?? false;
+  const allowedGateways = options.allowedGateways ?? [];
+  const isAllowlisted = DEFAULT_ALLOWLIST.has(hostname) || allowedGateways.includes(hostname);
+
+  if (!isAllowlisted && !allowCustomGateway) {
+    throw new Error(
+      `[-] SECURITY_SSRF_VIOLATION: Custom gateway host '${hostname}' is not in the approved endpoint allowlist. Custom gateways must be explicitly authorized.`,
+    );
+  }
+
+  // For custom gateways (or non-default endpoints), resolve DNS to ensure resolved IPs are not in forbidden ranges
+  if (!isAllowlisted || allowCustomGateway) {
+    const lookupFn = options.dnsLookup ?? defaultDnsLookup;
+    let records: { address: string; family: number }[];
+    try {
+      records = await lookupFn(hostname);
+    } catch (dnsErr: any) {
+      throw new Error(
+        `[-] SECURITY_SSRF_VIOLATION: DNS resolution failed for '${hostname}': ${dnsErr?.message ?? dnsErr}`,
+      );
+    }
+    if (!records || records.length === 0) {
+      throw new Error(`[-] SECURITY_SSRF_VIOLATION: DNS resolution returned no records for '${hostname}'.`);
+    }
+
+    for (const record of records) {
+      const addr = record.address;
+      if (net.isIPv4(addr)) {
+        const octets = addr.split(".").map(Number);
+        const check = isForbiddenIPv4(octets);
+        if (check.forbidden) {
+          if (check.reason?.includes("Loopback") && allowLoopback) {
+            // authorized loopback in dev/test
+          } else {
+            throw new Error(
+              `[-] SECURITY_SSRF_VIOLATION: DNS resolution for '${hostname}' returned forbidden IP '${addr}': ${check.reason}`,
+            );
+          }
+        }
+      } else if (net.isIPv6(addr)) {
+        const check = isForbiddenIPv6(addr);
+        if (check.forbidden) {
+          if (check.reason?.includes("Loopback") && allowLoopback) {
+            // authorized loopback in dev/test
+          } else {
+            throw new Error(
+              `[-] SECURITY_SSRF_VIOLATION: DNS resolution for '${hostname}' returned forbidden IPv6 '${addr}': ${check.reason}`,
+            );
+          }
+        }
+      }
+    }
+  }
+
+  return parsed;
+}
+
+export interface ObservableLlmProviderAdapterOptions {
+  allowLoopback?: boolean;
+  allowCustomGateway?: boolean;
+  allowedGateways?: string[];
+  dnsLookup?: DnsLookupFn;
+  defaultTimeoutMs?: number;
+}
+
 export class ObservableLlmProviderAdapter {
   private readonly fetchImpl: FetchFn;
   private readonly allowLoopback: boolean;
+  private readonly allowCustomGateway: boolean;
+  private readonly allowedGateways: string[];
+  private readonly dnsLookup?: DnsLookupFn;
+  private readonly defaultTimeoutMs?: number;
 
-  constructor(fetchImpl: FetchFn = fetch, options: { allowLoopback?: boolean } = {}) {
+  constructor(
+    fetchImpl: FetchFn = fetch,
+    options: ObservableLlmProviderAdapterOptions | { allowLoopback?: boolean } = {},
+  ) {
     this.fetchImpl = fetchImpl;
     this.allowLoopback = options.allowLoopback ?? false;
+    this.allowCustomGateway = (options as ObservableLlmProviderAdapterOptions).allowCustomGateway ?? false;
+    this.allowedGateways = (options as ObservableLlmProviderAdapterOptions).allowedGateways ?? [];
+    this.dnsLookup = (options as ObservableLlmProviderAdapterOptions).dnsLookup;
+    this.defaultTimeoutMs = (options as ObservableLlmProviderAdapterOptions).defaultTimeoutMs;
   }
 
   async complete(input: ObservableCompletionInput): Promise<ObservableLlmAdapterResult> {
@@ -268,7 +396,13 @@ export class ObservableLlmProviderAdapter {
     }
 
     const rawTargetUrl = input.gatewayUrl || DEFAULT_ENDPOINTS[provider];
-    const validatedUrl = validateTargetUrl(rawTargetUrl, this.allowLoopback);
+    const validationOpts: TargetUrlValidationOptions = {
+      allowLoopback: this.allowLoopback,
+      allowCustomGateway: this.allowCustomGateway,
+      allowedGateways: this.allowedGateways,
+      dnsLookup: this.dnsLookup,
+    };
+    const validatedUrl = await validateTargetUrlAndResolve(rawTargetUrl, validationOpts);
     const targetUrl = validatedUrl.toString();
 
     // Resolving API credentials safely from parameter or environment
@@ -317,6 +451,18 @@ export class ObservableLlmProviderAdapter {
       };
     }
 
+    // Configure timeout and cancellation abort signal
+    const timeoutMs = input.timeoutMs ?? this.defaultTimeoutMs;
+    const signals: AbortSignal[] = [];
+    if (input.signal) {
+      signals.push(input.signal);
+    }
+    if (typeof timeoutMs === "number" && timeoutMs > 0 && Number.isFinite(timeoutMs)) {
+      signals.push(AbortSignal.timeout(timeoutMs));
+    }
+    const combinedSignal =
+      signals.length === 1 ? signals[0] : signals.length > 1 ? AbortSignal.any(signals) : undefined;
+
     let res: Response;
     let durationMs: number;
 
@@ -326,12 +472,29 @@ export class ObservableLlmProviderAdapter {
         headers,
         body: JSON.stringify(bodyPayload),
         redirect: "error",
+        signal: combinedSignal,
       });
       durationMs = Number((performance.now() - startTime).toFixed(2));
     } catch (fetchErr: unknown) {
       durationMs = Number((performance.now() - startTime).toFixed(2));
-      let ledgerWritten = false;
-      let ledgerPath: string | undefined;
+      let isTimeout = false;
+      let isCancelled = false;
+
+      const errObj = fetchErr as { name?: string; message?: string; code?: string };
+      if (
+        errObj?.name === "TimeoutError" ||
+        combinedSignal?.reason?.name === "TimeoutError" ||
+        errObj?.message?.toLowerCase().includes("timeout") ||
+        errObj?.code === "ETIMEDOUT"
+      ) {
+        isTimeout = true;
+      } else if (
+        errObj?.name === "AbortError" ||
+        errObj?.message?.toLowerCase().includes("abort") ||
+        input.signal?.aborted
+      ) {
+        isCancelled = true;
+      }
 
       if (input.memoryRoot && input.featureId) {
         const failureSpan = classifyHttpInferenceUsage({
@@ -346,9 +509,18 @@ export class ObservableLlmProviderAdapter {
           durationMs,
           outcome: "error",
         });
-        const ledgerResult = appendInferenceSpan(input.memoryRoot, input.featureId, failureSpan);
-        ledgerWritten = ledgerResult.ok;
-        ledgerPath = ledgerResult.path;
+        appendInferenceSpan(input.memoryRoot, input.featureId, failureSpan);
+      }
+
+      if (isTimeout) {
+        const timeoutError = new Error(`Inference request timed out after ${timeoutMs}ms`);
+        (timeoutError as any).code = "TIMEOUT";
+        throw timeoutError;
+      }
+      if (isCancelled) {
+        const cancelError = new Error("Inference request was cancelled");
+        (cancelError as any).code = "CANCELLED";
+        throw cancelError;
       }
       throw fetchErr;
     }

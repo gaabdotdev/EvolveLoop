@@ -14,6 +14,7 @@ import { buildWorkerEvidence } from "../evidence/builders.js";
 import {
   ObservableLlmProviderAdapter,
   type FetchFn,
+  type DnsLookupFn,
   type ObservableCompletionInput,
 } from "../observability/observable-llm-adapter.ts";
 
@@ -58,6 +59,10 @@ export interface ObservableInferenceProviderOptions {
   gatewayUrl?: string;
   memoryRoot?: string;
   allowLoopback?: boolean;
+  allowCustomGateway?: boolean;
+  allowedGateways?: string[];
+  dnsLookup?: DnsLookupFn;
+  defaultTimeoutMs?: number;
 }
 
 export class ObservableInferenceProvider implements ProviderRuntime {
@@ -69,6 +74,7 @@ export class ObservableInferenceProvider implements ProviderRuntime {
   private gatewayUrl?: string;
   private memoryRoot?: string;
   private cancelled = new Set<string>();
+  private activeControllers = new Map<string, AbortController>();
 
   constructor(options: ObservableInferenceProviderOptions = {}) {
     this.id = options.id ?? "observable-inference";
@@ -76,6 +82,10 @@ export class ObservableInferenceProvider implements ProviderRuntime {
       options.adapter ??
       new ObservableLlmProviderAdapter(options.fetchImpl, {
         allowLoopback: options.allowLoopback ?? false,
+        allowCustomGateway: options.allowCustomGateway ?? false,
+        allowedGateways: options.allowedGateways,
+        dnsLookup: options.dnsLookup,
+        defaultTimeoutMs: options.defaultTimeoutMs,
       });
     this.defaultProvider = options.defaultProvider ?? "anthropic";
     this.defaultModel = options.defaultModel ?? "claude-3-5-sonnet";
@@ -90,6 +100,10 @@ export class ObservableInferenceProvider implements ProviderRuntime {
 
   async cancel(runId: string): Promise<void> {
     this.cancelled.add(runId);
+    const controller = this.activeControllers.get(runId);
+    if (controller) {
+      controller.abort("CANCELLED");
+    }
   }
 
   async execute(request: ExecuteRequest): Promise<ExecuteResult> {
@@ -105,6 +119,9 @@ export class ObservableInferenceProvider implements ProviderRuntime {
       };
     }
 
+    const controller = new AbortController();
+    this.activeControllers.set(request.run_id, controller);
+
     const inputs = extractInputs(request);
     const prompt = inputs.prompt ?? inputs.query ?? inputs.briefing ?? request.briefing;
     const provider = inputs.provider ?? this.defaultProvider;
@@ -113,6 +130,10 @@ export class ObservableInferenceProvider implements ProviderRuntime {
     const gatewayUrl = inputs.gatewayUrl ?? inputs.gateway_url ?? this.gatewayUrl;
     const memoryRoot = inputs.memoryRoot ?? inputs.memory_root ?? this.memoryRoot ?? process.cwd();
     const featureId = request.memory_scope || request.node_id;
+
+    const timeoutMs =
+      (typeof inputs.timeoutMs === "number" ? inputs.timeoutMs : undefined) ??
+      request.policy?.timeout_ms;
 
     const completionInput: ObservableCompletionInput = {
       provider,
@@ -127,6 +148,8 @@ export class ObservableInferenceProvider implements ProviderRuntime {
       taskId: request.node_id,
       phase: request.node.type,
       retryIndex: request.node.retry_count,
+      timeoutMs,
+      signal: controller.signal,
     };
 
     try {
@@ -164,22 +187,34 @@ export class ObservableInferenceProvider implements ProviderRuntime {
       };
     } catch (err: unknown) {
       const durationMs = Date.now() - start;
-      const code =
-        err && typeof err === "object" && "code" in err
-          ? String((err as { code: string }).code)
-          : "INFERENCE_ERROR";
+      let code = "INFERENCE_ERROR";
+      let message = err instanceof Error ? err.message : String(err);
+
+      if (err && typeof err === "object" && "code" in err) {
+        code = String((err as { code: string }).code);
+      } else if (err instanceof Error && err.name === "TimeoutError") {
+        code = "TIMEOUT";
+        message = "inference_timeout";
+      } else if (this.cancelled.has(request.run_id) || (err instanceof Error && err.name === "AbortError")) {
+        code = "CANCELLED";
+        message = "Run cancelled";
+      } else if (message.includes("SECURITY_SSRF_VIOLATION")) {
+        code = "SSRF_VIOLATION";
+      }
 
       return {
         run_id: request.run_id,
         success: false,
         error: {
           code,
-          message: err instanceof Error ? err.message : String(err),
+          message,
         },
         duration_ms: durationMs,
         provider_id: this.id,
         executor_id: "observable-inference",
       };
+    } finally {
+      this.activeControllers.delete(request.run_id);
     }
   }
 }

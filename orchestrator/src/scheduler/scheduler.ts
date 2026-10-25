@@ -14,6 +14,7 @@ import type { KnowledgeStore } from "../knowledge/knowledge-store.js";
 import type { ProviderRouter } from "../providers/mock-provider.js";
 import { newRunId } from "../ir/validator.js";
 import { buildSchedulingEvidence } from "../evidence/builders.js";
+import type { ContractRegistry } from "../contracts/contract-registry.js";
 
 export class Scheduler {
   private running = new Map<string, RunHandle>();
@@ -25,6 +26,7 @@ export class Scheduler {
     private knowledge: KnowledgeStore,
     private providerRouter: ProviderRouter,
     private featureId: string,
+    private contracts?: ContractRegistry,
   ) {}
 
   readyNodes(graph: GraphStore, policy: ExecutionPolicy): GraphNode[] {
@@ -98,7 +100,9 @@ export class Scheduler {
     readyBatch: string[] = [node.id],
   ): RunHandle {
     const runId = newRunId();
-    const maxRetries = this.policyEngine.retriesFor(policy, node);
+    const contract = this.contracts?.getForCapability(node.capability);
+    const maxRetries = this.policyEngine.retriesFor(policy, node, contract);
+    const timeoutMs = this.policyEngine.resolveTimeoutMs(policy, node, contract);
 
     graph.setNodeStatus(node.id, "running");
     graph.setProvider(node.id, provider.id, runId);
@@ -136,7 +140,7 @@ export class Scheduler {
       definition_of_done: node.definition_of_done,
       policy: {
         retries_remaining: maxRetries - node.retry_count,
-        timeout_ms: parseTimeoutMs(policy.spec.timeouts?.step_timeout),
+        timeout_ms: timeoutMs,
       },
       provider_id: provider.id,
       executor_type: provider.plugin,
