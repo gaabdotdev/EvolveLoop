@@ -133,7 +133,8 @@ export class ObservableInferenceProvider implements ProviderRuntime {
 
     const timeoutMs =
       (typeof inputs.timeoutMs === "number" ? inputs.timeoutMs : undefined) ??
-      request.policy?.timeout_ms;
+      request.policy?.timeout_ms ??
+      60000;
 
     const completionInput: ObservableCompletionInput = {
       provider,

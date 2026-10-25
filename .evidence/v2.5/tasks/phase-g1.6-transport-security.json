@@ -1,0 +1,85 @@
+{
+  "timestamp": "2026-10-25T03:54:21.879Z",
+  "phase": "G1.6",
+  "total_tests": 15,
+  "passed": 15,
+  "failed": 0,
+  "verdict": "APROVADO",
+  "test_results": [
+    {
+      "name": "G1.6-A: validateTargetUrlAndResolve attaches pinnedIp and pinnedFamily to URL",
+      "status": "PASS",
+      "durationMs": 5.19
+    },
+    {
+      "name": "G1.6-A: pinnedLookup binds socket resolution strictly to pinned IP without re-querying",
+      "status": "PASS",
+      "durationMs": 0.14
+    },
+    {
+      "name": "G1.6-A: Pinned fetch connects directly to pinned IP and preserves Host header and SNI",
+      "status": "PASS",
+      "durationMs": 16.91
+    },
+    {
+      "name": "G1.6-A: Dynamic DNS Rebinding Attack is neutralized by transport-level IP pinning",
+      "status": "PASS",
+      "durationMs": 1.85
+    },
+    {
+      "name": "G1.6-A: DNS resolution returning Cloud Metadata (169.254.169.254) is blocked immediately",
+      "status": "PASS",
+      "durationMs": 0.13
+    },
+    {
+      "name": "G1.6-A: Mixed DNS response (public IP + forbidden private IP) is strictly rejected fail-closed",
+      "status": "PASS",
+      "durationMs": 0.1
+    },
+    {
+      "name": "G1.6-A: DNS resolution returning empty records or ENOTFOUND throws explicit SSRF violation",
+      "status": "PASS",
+      "durationMs": 0.22
+    },
+    {
+      "name": "G1.6-A: HTTP 3xx redirect is rejected by transport without opening second connection",
+      "status": "PASS",
+      "durationMs": 2.92
+    },
+    {
+      "name": "G1.6-A: IPv4-mapped IPv6 and link-local representations are rejected",
+      "status": "PASS",
+      "durationMs": 0.24
+    },
+    {
+      "name": "G1.6-B: PolicyEngine resolveTimeoutMs defaults to DEFAULT_INFERENCE_TIMEOUT_MS (60,000ms)",
+      "status": "PASS",
+      "durationMs": 0.24
+    },
+    {
+      "name": "G1.6-B: parseTimeoutMs handles 0, negative and invalid values by returning undefined (triggering fallback)",
+      "status": "PASS",
+      "durationMs": 0.12
+    },
+    {
+      "name": "G1.6-B: ObservableLlmProviderAdapter enforces defaultTimeoutMs when input.timeoutMs is omitted",
+      "status": "PASS",
+      "durationMs": 0.5
+    },
+    {
+      "name": "G1.6-C: normalizeRetryCount parses valid numeric strings, numbers, and clamps negatives",
+      "status": "PASS",
+      "durationMs": 0.15
+    },
+    {
+      "name": "G1.6-C: PolicyEngine retriesFor respects numeric string in contract YAML",
+      "status": "PASS",
+      "durationMs": 0.15
+    },
+    {
+      "name": "G1.6-C: ExecutionEngine enforces string retry ceiling in DAG execution under persistent failure",
+      "status": "PASS",
+      "durationMs": 17.46
+    }
+  ]
+}

@@ -2,18 +2,56 @@ import type { ExecutionPolicy, ExecutionPolicySpec, GraphNode } from "../types/i
 import { loadPoliciesFromDir } from "../registry/manifest-loader.js";
 import type { ContractDocument } from "../contracts/contract-types.js";
 
-export function parseTimeoutMs(timeout?: string): number | undefined {
-  if (!timeout) return undefined;
-  const m = String(timeout).trim().match(/^(\d+)(ms|s|m|h)?$/);
+export const DEFAULT_INFERENCE_TIMEOUT_MS = 60000; // 60s fallback
+
+export function normalizeRetryCount(raw: unknown): number | undefined {
+  if (raw === undefined || raw === null) return undefined;
+  if (typeof raw === "number") {
+    if (!Number.isFinite(raw) || Number.isNaN(raw)) return undefined;
+    const floor = Math.floor(raw);
+    if (floor < 0) return 0;
+    if (floor > 10) return 10;
+    return floor;
+  }
+  if (typeof raw === "string") {
+    const trimmed = raw.trim();
+    if (/^-?\d+$/.test(trimmed)) {
+      const val = parseInt(trimmed, 10);
+      if (!Number.isFinite(val)) return undefined;
+      if (val < 0) return 0;
+      if (val > 10) return 10;
+      return val;
+    }
+    return undefined;
+  }
+  return undefined;
+}
+
+export function parseTimeoutMs(timeout?: string | number): number | undefined {
+  if (timeout === undefined || timeout === null) return undefined;
+  if (typeof timeout === "number") {
+    if (!Number.isFinite(timeout) || timeout <= 0) return undefined;
+    return Math.floor(timeout);
+  }
+  const str = String(timeout).trim();
+  if (str === "" || str === "0" || str === "0ms" || str === "0s") return undefined;
+  const m = str.match(/^(\d+)(ms|s|m|h)?$/i);
   if (!m) return undefined;
   const val = Number(m[1]);
-  if (!Number.isFinite(val) || val < 0) return undefined;
-  const unit = m[2];
-  if (unit === "ms") return val;
-  if (unit === "s") return val * 1000;
-  if (unit === "m") return val * 60 * 1000;
-  if (unit === "h") return val * 60 * 60 * 1000;
-  return val;
+  if (!Number.isFinite(val) || val <= 0) return undefined;
+  const unit = (m[2] || "ms").toLowerCase();
+  switch (unit) {
+    case "ms":
+      return val;
+    case "s":
+      return val * 1000;
+    case "m":
+      return val * 60 * 1000;
+    case "h":
+      return val * 60 * 60 * 1000;
+    default:
+      return val;
+  }
 }
 
 const BUILTIN_POLICIES: Record<string, ExecutionPolicy> = {
@@ -153,11 +191,12 @@ export class PolicyEngine {
       retries.by_type?.[node.type] ??
       retries.default ??
       0;
-    const policyRetries = Math.max(0, Number.isFinite(policyRetriesRaw) ? Math.floor(policyRetriesRaw) : 0);
+    const policyRetries = normalizeRetryCount(policyRetriesRaw) ?? 0;
 
     const contractMaxRaw = contract?.spec?.retry_policy?.max;
-    if (typeof contractMaxRaw === "number" && Number.isFinite(contractMaxRaw)) {
-      const contractMax = Math.max(0, Math.floor(contractMaxRaw));
+    const contractMax = normalizeRetryCount(contractMaxRaw);
+
+    if (contractMax !== undefined) {
       // Precedence: effective retries is constrained by both the operational policy ceiling
       // and the contract capability tolerance ceiling. Neither can silently override the tighter limit.
       return Math.min(policyRetries, contractMax);
@@ -166,7 +205,7 @@ export class PolicyEngine {
     return policyRetries;
   }
 
-  resolveTimeoutMs(policy: ExecutionPolicy, node: GraphNode, contract?: ContractDocument): number | undefined {
+  resolveTimeoutMs(policy: ExecutionPolicy, node: GraphNode, contract?: ContractDocument): number {
     const policyTimeoutStr = policy.spec.timeouts?.step_timeout;
     const contractTimeoutStr = contract?.spec?.timeout;
 
@@ -178,7 +217,7 @@ export class PolicyEngine {
       return Math.min(policyTimeoutMs, contractTimeoutMs);
     }
 
-    return policyTimeoutMs ?? contractTimeoutMs;
+    return policyTimeoutMs ?? contractTimeoutMs ?? DEFAULT_INFERENCE_TIMEOUT_MS;
   }
 
   maxParallel(policy: ExecutionPolicy): number {

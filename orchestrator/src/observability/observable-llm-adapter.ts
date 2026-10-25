@@ -7,6 +7,9 @@
 
 import net from "node:net";
 import dns from "node:dns/promises";
+import http from "node:http";
+import https from "node:https";
+import { Readable } from "node:stream";
 import {
   classifyHttpInferenceUsage,
   type InferenceSpanRecord,
@@ -19,6 +22,95 @@ export type FetchFn = typeof fetch;
 export type DnsLookupFn = (hostname: string) => Promise<Array<{ address: string; family: number }>>;
 
 export const DEFAULT_ALLOWLIST = new Set(["api.anthropic.com", "api.openai.com"]);
+export const DEFAULT_INFERENCE_TIMEOUT_MS = 60000; // 60s fallback
+
+export function pinnedLookup(pinnedIp: string, pinnedFamily = 4) {
+  return function lookup(
+    hostname: string,
+    options: any,
+    callback: (err: Error | null, address: any, family?: number) => void,
+  ) {
+    const cb = typeof options === "function" ? options : callback;
+    const opts = typeof options === "object" ? options : {};
+    if (opts.all) {
+      cb(null, [{ address: pinnedIp, family: pinnedFamily }]);
+    } else {
+      cb(null, pinnedIp, pinnedFamily);
+    }
+  };
+}
+
+export interface PinnedFetchOptions {
+  defaultTimeoutMs?: number;
+}
+
+export function createPinnedFetch(options: PinnedFetchOptions = {}): FetchFn {
+  return async function pinnedFetch(
+    input: string | URL | Request,
+    init?: RequestInit & { pinnedIp?: string; pinnedFamily?: number },
+  ): Promise<Response> {
+    const rawUrl = typeof input === "object" && "url" in input ? input.url : String(input);
+    const url = new URL(rawUrl);
+    const isHttps = url.protocol === "https:";
+    const client = isHttps ? https : http;
+    const pinnedIp = init?.pinnedIp;
+    const pinnedFamily = init?.pinnedFamily || 4;
+
+    return new Promise<Response>((resolve, reject) => {
+      const headers = new Headers(init?.headers);
+      if (!headers.has("host")) {
+        headers.set("host", url.host);
+      }
+      const reqHeaders: Record<string, string> = {};
+      headers.forEach((val, key) => {
+        reqHeaders[key] = val;
+      });
+
+      const reqOpts: https.RequestOptions = {
+        protocol: url.protocol,
+        hostname: url.hostname,
+        port: url.port ? Number(url.port) : isHttps ? 443 : 80,
+        path: url.pathname + url.search,
+        method: init?.method || "POST",
+        headers: reqHeaders,
+        servername: url.hostname, // Preserves SNI and certificate validation!
+        signal: init?.signal,
+      };
+
+      if (pinnedIp) {
+        reqOpts.lookup = pinnedLookup(pinnedIp, pinnedFamily);
+      }
+
+      const req = client.request(reqOpts, (res) => {
+        if (init?.redirect === "error" && res.statusCode && res.statusCode >= 300 && res.statusCode < 400) {
+          req.destroy();
+          return reject(new Error("[-] SECURITY_SSRF_VIOLATION: HTTP redirects are strictly forbidden."));
+        }
+
+        const webStream = Readable.toWeb(res) as ReadableStream;
+        const response = new Response(webStream, {
+          status: res.statusCode,
+          statusText: res.statusMessage,
+          headers: res.headers as HeadersInit,
+        });
+        resolve(response);
+      });
+
+      req.on("error", (err: any) => {
+        reject(err);
+      });
+
+      if (init?.body) {
+        if (typeof init.body === "string" || Buffer.isBuffer(init.body)) {
+          req.write(init.body);
+        } else {
+          req.write(String(init.body));
+        }
+      }
+      req.end();
+    });
+  };
+}
 
 export interface TargetUrlValidationOptions {
   allowLoopback?: boolean;
@@ -283,6 +375,8 @@ export async function validateTargetUrlAndResolve(
 
   // If already an IP address literal, no DNS lookup needed or possible
   if (net.isIP(rawIpCandidate)) {
+    (parsed as any).pinnedIp = rawIpCandidate;
+    (parsed as any).pinnedFamily = net.isIPv4(rawIpCandidate) ? 4 : 6;
     return parsed;
   }
 
@@ -339,6 +433,10 @@ export async function validateTargetUrlAndResolve(
         }
       }
     }
+
+    const pinnedRecord = records.find((r) => r.family === 4) || records[0];
+    (parsed as any).pinnedIp = pinnedRecord.address;
+    (parsed as any).pinnedFamily = pinnedRecord.family;
   }
 
   return parsed;
@@ -352,24 +450,37 @@ export interface ObservableLlmProviderAdapterOptions {
   defaultTimeoutMs?: number;
 }
 
+function isNativeNodeFetch(fn: unknown): boolean {
+  if (typeof fn !== "function") return false;
+  const str = Function.prototype.toString.call(fn);
+  return str.includes("[native code]") || str.includes("internal/deps/undici/undici");
+}
+
 export class ObservableLlmProviderAdapter {
   private readonly fetchImpl: FetchFn;
   private readonly allowLoopback: boolean;
   private readonly allowCustomGateway: boolean;
   private readonly allowedGateways: string[];
   private readonly dnsLookup?: DnsLookupFn;
-  private readonly defaultTimeoutMs?: number;
+  private readonly defaultTimeoutMs: number;
 
   constructor(
-    fetchImpl: FetchFn = fetch,
+    fetchImpl?: FetchFn,
     options: ObservableLlmProviderAdapterOptions | { allowLoopback?: boolean } = {},
   ) {
-    this.fetchImpl = fetchImpl;
-    this.allowLoopback = options.allowLoopback ?? false;
-    this.allowCustomGateway = (options as ObservableLlmProviderAdapterOptions).allowCustomGateway ?? false;
-    this.allowedGateways = (options as ObservableLlmProviderAdapterOptions).allowedGateways ?? [];
-    this.dnsLookup = (options as ObservableLlmProviderAdapterOptions).dnsLookup;
-    this.defaultTimeoutMs = (options as ObservableLlmProviderAdapterOptions).defaultTimeoutMs;
+    const opts = (options || {}) as ObservableLlmProviderAdapterOptions;
+    this.allowLoopback = opts.allowLoopback ?? false;
+    this.allowCustomGateway = opts.allowCustomGateway ?? false;
+    this.allowedGateways = opts.allowedGateways ?? [];
+    this.dnsLookup = opts.dnsLookup;
+    this.defaultTimeoutMs = opts.defaultTimeoutMs ?? DEFAULT_INFERENCE_TIMEOUT_MS;
+
+    const candidateFetch = fetchImpl ?? (globalThis as any).fetch;
+    if (candidateFetch && !isNativeNodeFetch(candidateFetch)) {
+      this.fetchImpl = candidateFetch;
+    } else {
+      this.fetchImpl = createPinnedFetch({ defaultTimeoutMs: this.defaultTimeoutMs });
+    }
   }
 
   async complete(input: ObservableCompletionInput): Promise<ObservableLlmAdapterResult> {
@@ -452,7 +563,12 @@ export class ObservableLlmProviderAdapter {
     }
 
     // Configure timeout and cancellation abort signal
-    const timeoutMs = input.timeoutMs ?? this.defaultTimeoutMs;
+    const rawTimeoutMs = input.timeoutMs ?? this.defaultTimeoutMs;
+    const timeoutMs =
+      typeof rawTimeoutMs === "number" && rawTimeoutMs > 0 && Number.isFinite(rawTimeoutMs)
+        ? rawTimeoutMs
+        : this.defaultTimeoutMs;
+
     const signals: AbortSignal[] = [];
     if (input.signal) {
       signals.push(input.signal);
@@ -462,6 +578,9 @@ export class ObservableLlmProviderAdapter {
     }
     const combinedSignal =
       signals.length === 1 ? signals[0] : signals.length > 1 ? AbortSignal.any(signals) : undefined;
+
+    const pinnedIp = (validatedUrl as any).pinnedIp;
+    const pinnedFamily = (validatedUrl as any).pinnedFamily;
 
     let res: Response;
     let durationMs: number;
@@ -473,7 +592,9 @@ export class ObservableLlmProviderAdapter {
         body: JSON.stringify(bodyPayload),
         redirect: "error",
         signal: combinedSignal,
-      });
+        pinnedIp,
+        pinnedFamily,
+      } as any);
       durationMs = Number((performance.now() - startTime).toFixed(2));
     } catch (fetchErr: unknown) {
       durationMs = Number((performance.now() - startTime).toFixed(2));

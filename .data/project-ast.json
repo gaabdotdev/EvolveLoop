@@ -1,13 +1,13 @@
 {
   "schema_version": "2.5.0",
-  "indexed_at": "2026-10-25T03:02:39.155Z",
+  "indexed_at": "2026-10-25T03:54:32.212Z",
   "workspace_root": "/home/gaab/orca/workspaces/EvolveLoop/v.2.5",
   "stats": {
     "total_files_scanned": 101,
-    "total_symbols": 546,
-    "total_imports": 367,
-    "duration_ms": 41,
-    "index_size_bytes": 178506
+    "total_symbols": 551,
+    "total_imports": 370,
+    "duration_ms": 70,
+    "index_size_bytes": 180038
   },
   "symbols": {
     "AuthorityDecision": [
@@ -4385,8 +4385,8 @@
         "name": "FetchFn",
         "kind": "type",
         "file_path": "orchestrator/src/observability/observable-llm-adapter.ts",
-        "start_line": 18,
-        "end_line": 18,
+        "start_line": 21,
+        "end_line": 21,
         "signature": "export type FetchFn = typeof fetch;",
         "is_exported": true
       }
@@ -4396,9 +4396,43 @@
         "name": "DnsLookupFn",
         "kind": "type",
         "file_path": "orchestrator/src/observability/observable-llm-adapter.ts",
-        "start_line": 19,
-        "end_line": 19,
+        "start_line": 22,
+        "end_line": 22,
         "signature": "export type DnsLookupFn = (hostname: string) => Promise<Array<{ address: string; family: number }>>;",
+        "is_exported": true
+      }
+    ],
+    "pinnedLookup": [
+      {
+        "name": "pinnedLookup",
+        "kind": "function",
+        "file_path": "orchestrator/src/observability/observable-llm-adapter.ts",
+        "start_line": 27,
+        "end_line": 41,
+        "signature": "export function pinnedLookup(pinnedIp: string, pinnedFamily = 4)",
+        "is_exported": true
+      }
+    ],
+    "PinnedFetchOptions": [
+      {
+        "name": "PinnedFetchOptions",
+        "kind": "interface",
+        "file_path": "orchestrator/src/observability/observable-llm-adapter.ts",
+        "start_line": 43,
+        "end_line": 45,
+        "signature": "export interface PinnedFetchOptions",
+        "is_exported": true,
+        "heritage": {}
+      }
+    ],
+    "createPinnedFetch": [
+      {
+        "name": "createPinnedFetch",
+        "kind": "function",
+        "file_path": "orchestrator/src/observability/observable-llm-adapter.ts",
+        "start_line": 47,
+        "end_line": 47,
+        "signature": "export function createPinnedFetch(options: PinnedFetchOptions =",
         "is_exported": true
       }
     ],
@@ -4407,8 +4441,8 @@
         "name": "TargetUrlValidationOptions",
         "kind": "interface",
         "file_path": "orchestrator/src/observability/observable-llm-adapter.ts",
-        "start_line": 23,
-        "end_line": 28,
+        "start_line": 115,
+        "end_line": 120,
         "signature": "export interface TargetUrlValidationOptions",
         "is_exported": true,
         "heritage": {}
@@ -4419,8 +4453,8 @@
         "name": "ObservableLlmAdapterResult",
         "kind": "interface",
         "file_path": "orchestrator/src/observability/observable-llm-adapter.ts",
-        "start_line": 39,
-        "end_line": 45,
+        "start_line": 131,
+        "end_line": 137,
         "signature": "export interface ObservableLlmAdapterResult",
         "is_exported": true,
         "heritage": {}
@@ -4431,8 +4465,8 @@
         "name": "ObservableCompletionInput",
         "kind": "interface",
         "file_path": "orchestrator/src/observability/observable-llm-adapter.ts",
-        "start_line": 47,
-        "end_line": 67,
+        "start_line": 139,
+        "end_line": 159,
         "signature": "export interface ObservableCompletionInput",
         "is_exported": true,
         "heritage": {}
@@ -4443,8 +4477,8 @@
         "name": "isForbiddenIPv4",
         "kind": "function",
         "file_path": "orchestrator/src/observability/observable-llm-adapter.ts",
-        "start_line": 84,
-        "end_line": 84,
+        "start_line": 176,
+        "end_line": 176,
         "signature": "export function isForbiddenIPv4(octets: number[]):",
         "is_exported": true
       }
@@ -4454,8 +4488,8 @@
         "name": "isForbiddenIPv6",
         "kind": "function",
         "file_path": "orchestrator/src/observability/observable-llm-adapter.ts",
-        "start_line": 128,
-        "end_line": 128,
+        "start_line": 220,
+        "end_line": 220,
         "signature": "export function isForbiddenIPv6(rawIpv6: string):",
         "is_exported": true
       }
@@ -4465,8 +4499,8 @@
         "name": "validateTargetUrl",
         "kind": "function",
         "file_path": "orchestrator/src/observability/observable-llm-adapter.ts",
-        "start_line": 186,
-        "end_line": 266,
+        "start_line": 278,
+        "end_line": 358,
         "signature": "export function validateTargetUrl(",
         "is_exported": true
       }
@@ -4476,8 +4510,8 @@
         "name": "validateTargetUrlAndResolve",
         "kind": "function",
         "file_path": "orchestrator/src/observability/observable-llm-adapter.ts",
-        "start_line": 271,
-        "end_line": 273,
+        "start_line": 363,
+        "end_line": 365,
         "signature": "export async function validateTargetUrlAndResolve(",
         "is_exported": true
       }
@@ -4487,11 +4521,22 @@
         "name": "ObservableLlmProviderAdapterOptions",
         "kind": "interface",
         "file_path": "orchestrator/src/observability/observable-llm-adapter.ts",
-        "start_line": 347,
-        "end_line": 353,
+        "start_line": 445,
+        "end_line": 451,
         "signature": "export interface ObservableLlmProviderAdapterOptions",
         "is_exported": true,
         "heritage": {}
+      }
+    ],
+    "isNativeNodeFetch": [
+      {
+        "name": "isNativeNodeFetch",
+        "kind": "function",
+        "file_path": "orchestrator/src/observability/observable-llm-adapter.ts",
+        "start_line": 453,
+        "end_line": 457,
+        "signature": "function isNativeNodeFetch(fn: unknown): boolean",
+        "is_exported": false
       }
     ],
     "ObservableLlmProviderAdapter": [
@@ -4499,8 +4544,8 @@
         "name": "ObservableLlmProviderAdapter",
         "kind": "class",
         "file_path": "orchestrator/src/observability/observable-llm-adapter.ts",
-        "start_line": 355,
-        "end_line": 598,
+        "start_line": 459,
+        "end_line": 719,
         "signature": "export class ObservableLlmProviderAdapter",
         "is_exported": true,
         "heritage": {}
@@ -4694,14 +4739,25 @@
         "is_exported": true
       }
     ],
+    "normalizeRetryCount": [
+      {
+        "name": "normalizeRetryCount",
+        "kind": "function",
+        "file_path": "orchestrator/src/policies/policy-engine.ts",
+        "start_line": 7,
+        "end_line": 28,
+        "signature": "export function normalizeRetryCount(raw: unknown): number | undefined",
+        "is_exported": true
+      }
+    ],
     "parseTimeoutMs": [
       {
         "name": "parseTimeoutMs",
         "kind": "function",
         "file_path": "orchestrator/src/policies/policy-engine.ts",
-        "start_line": 5,
-        "end_line": 17,
-        "signature": "export function parseTimeoutMs(timeout?: string): number | undefined",
+        "start_line": 30,
+        "end_line": 55,
+        "signature": "export function parseTimeoutMs(timeout?: string | number): number | undefined",
         "is_exported": true
       },
       {
@@ -4728,8 +4784,8 @@
         "name": "PolicyEngine",
         "kind": "class",
         "file_path": "orchestrator/src/policies/policy-engine.ts",
-        "start_line": 99,
-        "end_line": 199,
+        "start_line": 137,
+        "end_line": 238,
         "signature": "export class PolicyEngine",
         "is_exported": true,
         "heritage": {}
@@ -7867,11 +7923,14 @@
       ]
     },
     "orchestrator/src/observability/observable-llm-adapter.ts": {
-      "sha256": "3079cc46461793bfa9492c91b8a0b2e204aae87a200d66f9ecf4738aa5ba239a",
-      "line_count": 599,
+      "sha256": "bed83a3903502a54effbe1fc385346e724faeb02b4df14da7829b0242e4d1729",
+      "line_count": 720,
       "symbol_names": [
         "FetchFn",
         "DnsLookupFn",
+        "pinnedLookup",
+        "PinnedFetchOptions",
+        "createPinnedFetch",
         "TargetUrlValidationOptions",
         "ObservableLlmAdapterResult",
         "ObservableCompletionInput",
@@ -7880,17 +7939,24 @@
         "validateTargetUrl",
         "validateTargetUrlAndResolve",
         "ObservableLlmProviderAdapterOptions",
+        "isNativeNodeFetch",
         "ObservableLlmProviderAdapter"
       ],
       "import_modules": [
         "node:net",
         "node:dns/promises",
+        "node:http",
+        "node:https",
+        "node:stream",
         "./inference-usage.ts",
         "./inference-ledger.ts"
       ],
       "exports": [
         "FetchFn",
         "DnsLookupFn",
+        "pinnedLookup",
+        "PinnedFetchOptions",
+        "createPinnedFetch",
         "TargetUrlValidationOptions",
         "ObservableLlmAdapterResult",
         "ObservableCompletionInput",
@@ -8002,9 +8068,10 @@
       ]
     },
     "orchestrator/src/policies/policy-engine.ts": {
-      "sha256": "24c07925a5fe29b7566ba0724983a40abb30304573485e009ef337334191c0f1",
-      "line_count": 200,
+      "sha256": "274b0041c99e8381c7d64de27344434863692fb3f05fc3fe7cfe22498d80fb8a",
+      "line_count": 239,
       "symbol_names": [
+        "normalizeRetryCount",
         "parseTimeoutMs",
         "PolicyEngine"
       ],
@@ -8014,6 +8081,7 @@
         "../contracts/contract-types.js"
       ],
       "exports": [
+        "normalizeRetryCount",
         "parseTimeoutMs",
         "PolicyEngine"
       ]

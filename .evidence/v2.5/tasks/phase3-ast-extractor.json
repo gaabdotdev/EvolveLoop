@@ -1,7 +1,7 @@
 {
   "task_id": "phase3-ast-extractor-validation",
   "phase": "Phase 3: Native AST Extractor Absorption (ADR-D02)",
-  "timestamp": "2026-10-25T03:02:39.158Z",
+  "timestamp": "2026-10-25T03:54:32.216Z",
   "status": "PASSED",
   "total_tests": 4,
   "passed_tests": 4,
@@ -10,12 +10,12 @@
     {
       "name": "extracts TypeScript interfaces, classes, types, and functions with precise lines",
       "status": "PASS",
-      "duration_ms": 2
+      "duration_ms": 4
     },
     {
       "name": "extracts Python classes, methods, and functions with indentation block boundaries",
       "status": "PASS",
-      "duration_ms": 1
+      "duration_ms": 2
     },
     {
       "name": "findSymbol and findImplementations query extracted symbols correctly",
@@ -25,16 +25,16 @@
     {
       "name": "scans orchestrator/src directory, persists .data/project-ast.json, and satisfies SLOs",
       "status": "PASS",
-      "duration_ms": 45
+      "duration_ms": 75
     }
   ],
   "measurements": {
     "total_files_scanned": 101,
-    "total_symbols": 546,
-    "total_imports": 367,
-    "scan_duration_ms": 41,
-    "index_size_bytes": 178506,
-    "index_size_kb": 174.32,
+    "total_symbols": 551,
+    "total_imports": 370,
+    "scan_duration_ms": 70,
+    "index_size_bytes": 180038,
+    "index_size_kb": 175.82,
     "slo_duration_target_ms": 2000,
     "slo_size_target_kb": 500,
     "slo_duration_pass": true,
@@ -54,7 +54,7 @@
     {
       "path": ".data/project-ast.json",
       "type": "MEASURED",
-      "sha256": "3823f1eb122cee08044afb03dacd5378ff2ec8a7088dc32bfc014f7f13d6a869"
+      "sha256": "8c4df6b3b79415ed5c594ada8b93bef9758ae3633be95490a10a5e1196ccf1e3"
     }
   ]
 }
