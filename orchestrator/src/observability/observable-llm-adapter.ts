@@ -1,7 +1,7 @@
 /**
  * EvolveLoop V2.5 - Observable LLM Provider Adapter
  * Directly connects G1 Inference Ledger and classification to LLM completions in V2.5.
- * Strictly decoupled from OmniRoute (runs with direct provider fallback).
+ * Direct provider calls remain the default. OmniRoute is opt-in via route policy.
  * Enforces SSRF prevention, allowlisted providers, and rigorous input validation.
  */
 
@@ -146,12 +146,59 @@ export const defaultDnsLookup: DnsLookupFn = async (hostname: string) => {
   }
 };
 
+export interface OmniRouteCallTelemetry {
+  gateway: "omniroute";
+  measurement: "response-header";
+  version?: string;
+  provider?: string;
+  model?: string;
+  tokensIn?: number;
+  tokensOut?: number;
+  costUsd?: string;
+  latencyMs?: number;
+  decision?: string;
+  requestId?: string;
+  fallbackAttempts?: number;
+  cacheHit?: boolean;
+}
+
 export interface ObservableLlmAdapterResult {
   text: string;
   raw: unknown;
   span?: InferenceSpanRecord;
   ledgerWritten: boolean;
   ledgerPath?: string;
+  omniroute?: OmniRouteCallTelemetry;
+}
+
+export function readOmniRouteTelemetry(headers: Headers): OmniRouteCallTelemetry | undefined {
+  const version = headers.get("x-omniroute-version");
+  const provider = headers.get("x-omniroute-provider");
+  const model = headers.get("x-omniroute-model");
+  if (!version && !provider && !model) return undefined;
+  const numeric = (name: string): number | undefined => {
+    const raw = headers.get(name);
+    if (raw == null || raw.trim() === "") return undefined;
+    const value = Number(raw);
+    return Number.isFinite(value) ? value : undefined;
+  };
+  return {
+    gateway: "omniroute",
+    measurement: "response-header",
+    version: version ?? undefined,
+    provider: provider ?? undefined,
+    model: model ?? undefined,
+    tokensIn: numeric("x-omniroute-tokens-in"),
+    tokensOut: numeric("x-omniroute-tokens-out"),
+    costUsd: headers.get("x-omniroute-response-cost") ?? undefined,
+    latencyMs: numeric("x-omniroute-latency-ms"),
+    decision: headers.get("x-omniroute-decision") ?? undefined,
+    requestId: headers.get("x-omniroute-request-id") ?? undefined,
+    fallbackAttempts: numeric("x-omniroute-fallback-attempts"),
+    cacheHit: headers.get("x-omniroute-cache-hit") === null
+      ? undefined
+      : headers.get("x-omniroute-cache-hit") === "true",
+  };
 }
 
 export interface ObservableCompletionInput {
@@ -884,6 +931,7 @@ export class ObservableLlmProviderAdapter {
       span,
       ledgerWritten,
       ledgerPath,
+      omniroute: readOmniRouteTelemetry(res.headers),
     };
   }
 }
