@@ -430,6 +430,8 @@ export interface ExecuteRequest {
 export interface ExecuteResult {
   run_id: string;
   success: boolean;
+  status?: string;
+  verdict?: string;
   evidence?: Evidence;
   error?: { code: string; message: string };
   contextual_learnings?: MemoryEntry[];
