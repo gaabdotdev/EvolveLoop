@@ -13,10 +13,10 @@ import { Readable } from "node:stream";
 import {
   classifyHttpInferenceUsage,
   type InferenceSpanRecord,
-} from "./inference-usage.ts";
+} from "./inference-usage.js";
 import {
   appendInferenceSpan,
-} from "./inference-ledger.ts";
+} from "./inference-ledger.js";
 
 export type FetchFn = typeof fetch;
 export type DnsLookupFn = (hostname: string) => Promise<Array<{ address: string; family: number }>>;
@@ -66,6 +66,16 @@ export function createPinnedFetch(options: PinnedFetchOptions = {}): FetchFn {
         reqHeaders[key] = val;
       });
 
+      let effectiveSignal = init?.signal;
+      if (
+        !effectiveSignal &&
+        typeof options.defaultTimeoutMs === "number" &&
+        options.defaultTimeoutMs > 0 &&
+        Number.isFinite(options.defaultTimeoutMs)
+      ) {
+        effectiveSignal = AbortSignal.timeout(options.defaultTimeoutMs);
+      }
+
       const reqOpts: https.RequestOptions = {
         protocol: url.protocol,
         hostname: url.hostname,
@@ -74,7 +84,7 @@ export function createPinnedFetch(options: PinnedFetchOptions = {}): FetchFn {
         method: init?.method || "POST",
         headers: reqHeaders,
         servername: url.hostname, // Preserves SNI and certificate validation!
-        signal: init?.signal,
+        signal: effectiveSignal,
       };
 
       if (pinnedIp) {
@@ -215,57 +225,168 @@ export function isForbiddenIPv4(octets: number[]): { forbidden: boolean; reason?
 }
 
 /**
- * Checks whether an IPv6 address string belongs to a forbidden range.
+ * Parses any standard, compressed, bracketed, or transition IPv6 address into a 16-byte array.
+ * Strips zone identifiers (%...) and expands embedded IPv4 dotted quads.
  */
-export function isForbiddenIPv6(rawIpv6: string): { forbidden: boolean; reason?: string } {
+export function parseIPv6Bytes(rawIpv6: string): Uint8Array | null {
   let ip = rawIpv6.startsWith("[") && rawIpv6.endsWith("]") ? rawIpv6.slice(1, -1) : rawIpv6;
   ip = ip.toLowerCase();
 
-  // Loopback (::1)
-  if (ip === "::1" || ip === "0:0:0:0:0:0:0:1") {
+  const zoneIndex = ip.indexOf("%");
+  if (zoneIndex !== -1) {
+    ip = ip.slice(0, zoneIndex);
+  }
+
+  // Handle embedded IPv4 dotted quad at the end (e.g. ::169.254.169.254, 64:ff9b::169.254.169.254, ::ffff:192.168.1.1)
+  if (ip.includes(".")) {
+    const lastColon = ip.lastIndexOf(":");
+    if (lastColon === -1) return null;
+    const v4Str = ip.slice(lastColon + 1);
+    const octets = v4Str.split(".").map(Number);
+    if (octets.length !== 4 || octets.some((o) => isNaN(o) || o < 0 || o > 255)) {
+      return null;
+    }
+    const hex1 = ((octets[0] << 8) | octets[1]).toString(16);
+    const hex2 = ((octets[2] << 8) | octets[3]).toString(16);
+    ip = ip.slice(0, lastColon + 1) + hex1 + ":" + hex2;
+  }
+
+  const parts = ip.split("::");
+  if (parts.length > 2) return null;
+
+  let words: number[] = [];
+  if (parts.length === 2) {
+    const left = parts[0] ? parts[0].split(":") : [];
+    const right = parts[1] ? parts[1].split(":") : [];
+    if (left.length + right.length > 7) return null;
+    const fillZeros = 8 - (left.length + right.length);
+    const leftWords = left.map((h) => parseInt(h, 16));
+    const rightWords = right.map((h) => parseInt(h, 16));
+    if (leftWords.some((n) => isNaN(n) || n < 0 || n > 0xffff)) return null;
+    if (rightWords.some((n) => isNaN(n) || n < 0 || n > 0xffff)) return null;
+    words = [...leftWords, ...new Array(fillZeros).fill(0), ...rightWords];
+  } else {
+    const pieces = ip.split(":");
+    if (pieces.length !== 8) return null;
+    words = pieces.map((h) => parseInt(h, 16));
+    if (words.some((n) => isNaN(n) || n < 0 || n > 0xffff)) return null;
+  }
+
+  const bytes = new Uint8Array(16);
+  for (let i = 0; i < 8; i++) {
+    bytes[i * 2] = (words[i] >> 8) & 0xff;
+    bytes[i * 2 + 1] = words[i] & 0xff;
+  }
+  return bytes;
+}
+
+/**
+ * Checks whether an IPv6 address string belongs to a forbidden range.
+ * Normalizes to 128-bit binary representation to prevent representation bypasses.
+ */
+export function isForbiddenIPv6(rawIpv6: string): { forbidden: boolean; reason?: string } {
+  const bytes = parseIPv6Bytes(rawIpv6);
+  if (!bytes) {
+    return { forbidden: true, reason: "Invalid IPv6 address format" };
+  }
+
+  // Loopback (::1, 0:0:0:0:0:0:0:1)
+  const isAllZeroExceptLast = bytes.slice(0, 15).every((b) => b === 0);
+  if (isAllZeroExceptLast && bytes[15] === 1) {
     return { forbidden: true, reason: "IPv6 Loopback (::1)" };
   }
 
   // Unspecified (::)
-  if (ip === "::" || ip === "0:0:0:0:0:0:0:0") {
+  if (bytes.every((b) => b === 0)) {
     return { forbidden: true, reason: "IPv6 Unspecified (::)" };
   }
 
-  // IPv4-mapped IPv6 (::ffff:x.x.x.x or hex)
-  if (ip.startsWith("::ffff:") || ip.includes(":ffff:")) {
-    const lastColon = ip.lastIndexOf(":");
-    const lastPart = ip.slice(lastColon + 1);
-    if (net.isIPv4(lastPart)) {
-      const octets = lastPart.split(".").map(Number);
-      const res = isForbiddenIPv4(octets);
-      if (res.forbidden) {
-        return { forbidden: true, reason: `IPv4-mapped IPv6 -> ${res.reason}` };
-      }
-    } else {
-      // Hex representation like ::ffff:a9fe:a9fe (169.254.169.254) or ::ffff:7f00:1 (127.0.0.1)
-      const parts = ip.split(":").filter(Boolean);
-      if (parts.length >= 2 && parts[parts.length - 2] === "ffff") {
-        const hexVal = parts[parts.length - 1];
-        if (hexVal === "a9fe" || hexVal.startsWith("7f") || hexVal === "0") {
-          return { forbidden: true, reason: "IPv4-mapped IPv6 metadata/loopback address" };
-        }
-      }
-      return { forbidden: true, reason: "IPv4-mapped IPv6 address" };
-    }
+  // IPv4-compatible IPv6 (::/96)
+  if (bytes.slice(0, 12).every((b) => b === 0)) {
+    const v4 = [bytes[12], bytes[13], bytes[14], bytes[15]];
+    const res = isForbiddenIPv4(v4);
+    return {
+      forbidden: true,
+      reason: res.forbidden
+        ? `IPv4-compatible IPv6 -> ${res.reason}`
+        : "IPv4-compatible IPv6 (deprecated ::/96)",
+    };
   }
 
-  // fe80::/10 (Link-Local)
-  if (/^fe[89ab][0-9a-f]:/i.test(ip) || ip.startsWith("fe80:")) {
+  // IPv4-mapped IPv6 (::ffff:0:0/96)
+  if (bytes.slice(0, 10).every((b) => b === 0) && bytes[10] === 0xff && bytes[11] === 0xff) {
+    const v4 = [bytes[12], bytes[13], bytes[14], bytes[15]];
+    const res = isForbiddenIPv4(v4);
+    return {
+      forbidden: true,
+      reason: res.forbidden
+        ? `IPv4-mapped IPv6 -> ${res.reason}`
+        : "IPv4-mapped IPv6 address",
+    };
+  }
+
+  // NAT64 well-known prefix (64:ff9b::/96, RFC 6052)
+  if (
+    bytes[0] === 0x00 &&
+    bytes[1] === 0x64 &&
+    bytes[2] === 0xff &&
+    bytes[3] === 0x9b &&
+    bytes.slice(4, 12).every((b) => b === 0)
+  ) {
+    const v4 = [bytes[12], bytes[13], bytes[14], bytes[15]];
+    const res = isForbiddenIPv4(v4);
+    return {
+      forbidden: true,
+      reason: res.forbidden
+        ? `IPv6 NAT64 -> ${res.reason}`
+        : "IPv6 NAT64 well-known prefix (64:ff9b::/96)",
+    };
+  }
+
+  // 6to4 prefix (2002::/16, RFC 3056) - IPv4 in bytes 2..5
+  if (bytes[0] === 0x20 && bytes[1] === 0x02) {
+    const v4 = [bytes[2], bytes[3], bytes[4], bytes[5]];
+    const res = isForbiddenIPv4(v4);
+    return {
+      forbidden: true,
+      reason: res.forbidden
+        ? `IPv6 6to4 -> ${res.reason}`
+        : "IPv6 6to4 (2002::/16)",
+    };
+  }
+
+  // Teredo prefix (2001:0000::/32, RFC 4380)
+  if (bytes[0] === 0x20 && bytes[1] === 0x01 && bytes[2] === 0x00 && bytes[3] === 0x00) {
+    const serverV4 = [bytes[4], bytes[5], bytes[6], bytes[7]];
+    const clientV4 = [bytes[12] ^ 0xff, bytes[13] ^ 0xff, bytes[14] ^ 0xff, bytes[15] ^ 0xff];
+    const sRes = isForbiddenIPv4(serverV4);
+    const cRes = isForbiddenIPv4(clientV4);
+    if (sRes.forbidden) {
+      return { forbidden: true, reason: `IPv6 Teredo server -> ${sRes.reason}` };
+    }
+    if (cRes.forbidden) {
+      return { forbidden: true, reason: `IPv6 Teredo client -> ${cRes.reason}` };
+    }
+    return { forbidden: true, reason: "IPv6 Teredo (2001:0000::/32)" };
+  }
+
+  // Documentation (2001:db8::/32, RFC 3849)
+  if (bytes[0] === 0x20 && bytes[1] === 0x01 && bytes[2] === 0x0d && bytes[3] === 0xb8) {
+    return { forbidden: true, reason: "IPv6 Documentation (2001:db8::/32)" };
+  }
+
+  // Link-Local (fe80::/10)
+  if (bytes[0] === 0xfe && (bytes[1] & 0xc0) === 0x80) {
     return { forbidden: true, reason: "IPv6 Link-Local (fe80::/10)" };
   }
 
-  // fc00::/7 (Unique Local Address, RFC 4193)
-  if (/^f[cd][0-9a-f]{2}:/i.test(ip) || ip.startsWith("fc") || ip.startsWith("fd")) {
+  // Unique Local Address (fc00::/7, RFC 4193)
+  if ((bytes[0] & 0xfe) === 0xfc) {
     return { forbidden: true, reason: "IPv6 Unique Local (fc00::/7)" };
   }
 
-  // ff00::/8 (Multicast)
-  if (/^ff[0-9a-f]{2}:/i.test(ip) || ip.startsWith("ff")) {
+  // Multicast (ff00::/8)
+  if (bytes[0] === 0xff) {
     return { forbidden: true, reason: "IPv6 Multicast (ff00::/8)" };
   }
 
@@ -373,17 +494,14 @@ export async function validateTargetUrlAndResolve(
   const isV6Bracket = hostname.startsWith("[") && hostname.endsWith("]");
   const rawIpCandidate = isV6Bracket ? hostname.slice(1, -1) : hostname;
 
-  // If already an IP address literal, no DNS lookup needed or possible
-  if (net.isIP(rawIpCandidate)) {
-    (parsed as any).pinnedIp = rawIpCandidate;
-    (parsed as any).pinnedFamily = net.isIPv4(rawIpCandidate) ? 4 : 6;
-    return parsed;
-  }
-
   const allowLoopback = options.allowLoopback ?? false;
   const allowCustomGateway = options.allowCustomGateway ?? false;
   const allowedGateways = options.allowedGateways ?? [];
-  const isAllowlisted = DEFAULT_ALLOWLIST.has(hostname) || allowedGateways.includes(hostname);
+  const isAllowlisted =
+    DEFAULT_ALLOWLIST.has(hostname) ||
+    allowedGateways.includes(hostname) ||
+    DEFAULT_ALLOWLIST.has(rawIpCandidate) ||
+    allowedGateways.includes(rawIpCandidate);
 
   if (!isAllowlisted && !allowCustomGateway) {
     throw new Error(
@@ -391,53 +509,58 @@ export async function validateTargetUrlAndResolve(
     );
   }
 
-  // For custom gateways (or non-default endpoints), resolve DNS to ensure resolved IPs are not in forbidden ranges
-  if (!isAllowlisted || allowCustomGateway) {
-    const lookupFn = options.dnsLookup ?? defaultDnsLookup;
-    let records: { address: string; family: number }[];
-    try {
-      records = await lookupFn(hostname);
-    } catch (dnsErr: any) {
-      throw new Error(
-        `[-] SECURITY_SSRF_VIOLATION: DNS resolution failed for '${hostname}': ${dnsErr?.message ?? dnsErr}`,
-      );
-    }
-    if (!records || records.length === 0) {
-      throw new Error(`[-] SECURITY_SSRF_VIOLATION: DNS resolution returned no records for '${hostname}'.`);
-    }
+  // If already an IP address literal and authorized, no DNS lookup needed or possible
+  if (net.isIP(rawIpCandidate)) {
+    (parsed as any).pinnedIp = rawIpCandidate;
+    (parsed as any).pinnedFamily = net.isIPv4(rawIpCandidate) ? 4 : 6;
+    return parsed;
+  }
 
-    for (const record of records) {
-      const addr = record.address;
-      if (net.isIPv4(addr)) {
-        const octets = addr.split(".").map(Number);
-        const check = isForbiddenIPv4(octets);
-        if (check.forbidden) {
-          if (check.reason?.includes("Loopback") && allowLoopback) {
-            // authorized loopback in dev/test
-          } else {
-            throw new Error(
-              `[-] SECURITY_SSRF_VIOLATION: DNS resolution for '${hostname}' returned forbidden IP '${addr}': ${check.reason}`,
-            );
-          }
+  // ALL domain names (even allowlisted ones) MUST resolve DNS securely and enforce IP pinning
+  const lookupFn = options.dnsLookup ?? defaultDnsLookup;
+  let records: { address: string; family: number }[];
+  try {
+    records = await lookupFn(hostname);
+  } catch (dnsErr: any) {
+    throw new Error(
+      `[-] SECURITY_SSRF_VIOLATION: DNS resolution failed for '${hostname}': ${dnsErr?.message ?? dnsErr}`,
+    );
+  }
+  if (!records || records.length === 0) {
+    throw new Error(`[-] SECURITY_SSRF_VIOLATION: DNS resolution returned no records for '${hostname}'.`);
+  }
+
+  for (const record of records) {
+    const addr = record.address;
+    if (net.isIPv4(addr)) {
+      const octets = addr.split(".").map(Number);
+      const check = isForbiddenIPv4(octets);
+      if (check.forbidden) {
+        if (check.reason?.includes("Loopback") && allowLoopback) {
+          // authorized loopback in dev/test
+        } else {
+          throw new Error(
+            `[-] SECURITY_SSRF_VIOLATION: DNS resolution for '${hostname}' returned forbidden IP '${addr}': ${check.reason}`,
+          );
         }
-      } else if (net.isIPv6(addr)) {
-        const check = isForbiddenIPv6(addr);
-        if (check.forbidden) {
-          if (check.reason?.includes("Loopback") && allowLoopback) {
-            // authorized loopback in dev/test
-          } else {
-            throw new Error(
-              `[-] SECURITY_SSRF_VIOLATION: DNS resolution for '${hostname}' returned forbidden IPv6 '${addr}': ${check.reason}`,
-            );
-          }
+      }
+    } else if (net.isIPv6(addr) || addr.includes(":")) {
+      const check = isForbiddenIPv6(addr);
+      if (check.forbidden) {
+        if (check.reason?.includes("Loopback") && allowLoopback) {
+          // authorized loopback in dev/test
+        } else {
+          throw new Error(
+            `[-] SECURITY_SSRF_VIOLATION: DNS resolution for '${hostname}' returned forbidden IPv6 '${addr}': ${check.reason}`,
+          );
         }
       }
     }
-
-    const pinnedRecord = records.find((r) => r.family === 4) || records[0];
-    (parsed as any).pinnedIp = pinnedRecord.address;
-    (parsed as any).pinnedFamily = pinnedRecord.family;
   }
+
+  const pinnedRecord = records.find((r) => r.family === 4) || records[0];
+  (parsed as any).pinnedIp = pinnedRecord.address;
+  (parsed as any).pinnedFamily = pinnedRecord.family;
 
   return parsed;
 }
