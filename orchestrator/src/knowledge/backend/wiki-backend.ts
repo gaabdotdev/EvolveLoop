@@ -7,13 +7,13 @@
 
 import { spawn } from "node:child_process";
 import { existsSync } from "node:fs";
-import type { EvidenceSet, KnowledgeHit } from "../../capabilities/results.ts";
-import { cleanOutput } from "../../capabilities/results.ts";
+import type { EvidenceSet, KnowledgeHit } from "../../capabilities/results.js";
+import { cleanOutput } from "../../capabilities/results.js";
 import type {
   KnowledgeBackend,
   KnowledgeHealth,
   KnowledgeInspectResult,
-} from "./types.ts";
+} from "./types.js";
 
 /**
  * Wiki corpus root — portable.

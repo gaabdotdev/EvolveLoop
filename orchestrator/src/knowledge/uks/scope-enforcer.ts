@@ -10,7 +10,7 @@
 
 import * as crypto from "node:crypto";
 import * as path from "node:path";
-import { assertPathConfined } from "./storage-core.ts";
+
 
 export type TruthSourceTier = "code" | "ai" | "vault" | "inferred";
 
@@ -241,7 +241,7 @@ export class ScopeEnforcer {
         const allowGlobal = options.allowGlobal ?? false;
 
         // Step 1: Pre-filter by scope (Default-Closed)
-        const { accepted: scopeFiltered, discardedCount } = preFilterByScope(
+        const { accepted: scopeFiltered } = preFilterByScope(
             items,
             this.projectScopeId,
             allowGlobal

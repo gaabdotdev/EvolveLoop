@@ -8,6 +8,7 @@ export {
   buildSchedulingEvidence,
   buildSelectionEvidence,
   buildWorkerEvidence,
+  unverifiedDodChecks,
   buildGateEvidence,
   buildExecutionEvidence,
   validateEvidenceV21,
@@ -133,7 +134,7 @@ export {
   type SkillTelemetryRecord,
   type SkillTelemetryEventType,
   type SkillUsageAggregate,
-  type ObservationWindow,
+  type ObservationWindow as SkillObservationWindow,
 } from "./telemetry/skill-telemetry.js";
 export {
   evaluateGrillMeRequired,
@@ -193,7 +194,17 @@ export * from "./capabilities/results.js";
 export { JobStore, type SkillJob, type SkillJobResult } from "./jobs/job-store.js";
 export { invokePickup, buildPickupPrompt, type PickupPlan } from "./jobs/job-pickup.js";
 export { jobResultToExecuteResult, loadEvidenceFile } from "./jobs/job-resume.js";
-export { saveCheckpoint, loadCheckpoint, clearCheckpoint, type EngineCheckpoint } from "./jobs/checkpoint.js";
+export {
+  saveCheckpoint,
+  loadCheckpoint,
+  clearCheckpoint,
+  checkpointPath,
+  assertFeatureIdConfined,
+  CheckpointError,
+  type EngineCheckpoint,
+  type EngineCheckpointEnvelope,
+  type CheckpointLoadOptions,
+} from "./jobs/checkpoint.js";
 
 // Observability G1 exports (V2.5 Integration)
 export * from "./observability/index.js";

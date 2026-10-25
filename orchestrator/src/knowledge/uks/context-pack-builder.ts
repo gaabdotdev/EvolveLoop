@@ -18,30 +18,27 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
 import * as crypto from "node:crypto";
-import { computeSha256, readJson, assertPathConfined } from "./storage-core.ts";
+import { computeSha256, readJson } from "./storage-core.js";
 import {
     resolveProjectScopeId,
     normalizeProjectRoot,
-    isScopeAllowed,
     preFilterByScope,
     assertZeroCanaryLeak,
     applyTruthFence,
     TRUTH_TIER_RANK,
     type TruthSourceTier,
     type ScopedKnowledgeItem
-} from "./scope-enforcer.ts";
-import { Bm25Engine, tokenize, type Bm25IndexData, type Bm25SearchHit } from "./bm25-engine.ts";
-import { findSymbol, type ProjectAstIndex, type SymbolDefinition } from "./ast-extractor.ts";
+} from "./scope-enforcer.js";
+import { Bm25Engine, tokenize } from "./bm25-engine.js";
+import { findSymbol, type ProjectAstIndex } from "./ast-extractor.js";
 import {
     HybridFusionEngine,
-    DEFAULT_RRF_K,
-    DEFAULT_CHANNEL_WEIGHTS,
     type ChannelHit,
     type FusedHit,
     type FusionChannel
-} from "./hybrid-fusion.ts";
+} from "./hybrid-fusion.js";
 
-export type EpistemicStatus = "active" | "obsoleto" | "draft" | "review_required";
+export type EpistemicStatus = "active" | "obsoleto" | "draft";
 export type KnowledgeTier = TruthSourceTier; // "code" | "ai" | "vault" | "inferred" (Tiers 0 a 3)
 
 export interface UKSKnowledgeItem {
@@ -358,7 +355,8 @@ export class ContextPackBuilder {
             const meta = fHit.metadata || {};
             const scope = (meta.scope as string) || projectScopeId;
             const tier = (meta.tier as KnowledgeTier) || (fHit.file_path.endsWith(".md") ? "ai" : "code");
-            const status = (meta.status as EpistemicStatus) || "active";
+            const rawStatus = (meta.status as string) || "active";
+            const status: EpistemicStatus = rawStatus === "obsolete" || rawStatus === "obsoleto" ? "obsoleto" : rawStatus === "draft" ? "draft" : "active";
             const topicKey = (meta.topic_key as string) || fHit.file_path;
 
             candidateItems.push({

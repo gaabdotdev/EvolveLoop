@@ -3,12 +3,12 @@
  * NOT for production. Selected only when KNOWLEDGE_BACKEND=fake.
  */
 
-import type { EvidenceSet } from "../../capabilities/results.ts";
+import type { EvidenceSet } from "../../capabilities/results.js";
 import type {
   KnowledgeBackend,
   KnowledgeHealth,
   KnowledgeInspectResult,
-} from "./types.ts";
+} from "./types.js";
 
 export class FakeKnowledgeBackend implements KnowledgeBackend {
   readonly id = "fake" as const;

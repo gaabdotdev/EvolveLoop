@@ -16,7 +16,7 @@ import {
   type FetchFn,
   type DnsLookupFn,
   type ObservableCompletionInput,
-} from "../observability/observable-llm-adapter.ts";
+} from "../observability/observable-llm-adapter.js";
 
 function extractInputs(request: ExecuteRequest): Record<string, string> {
   const out: Record<string, string> = {};

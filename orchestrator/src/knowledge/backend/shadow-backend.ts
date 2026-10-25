@@ -6,15 +6,15 @@
  * to ensure zero behavioral impact on active cycles.
  */
 
-import type { EvidenceSet } from "../../capabilities/results.ts";
+import type { EvidenceSet } from "../../capabilities/results.js";
 import type {
   KnowledgeBackend,
   KnowledgeHealth,
   KnowledgeInspectResult,
   KnowledgeBackendId
-} from "./types.ts";
-import { UKSKnowledgeBackend } from "./uks-backend.ts";
-import { FakeKnowledgeBackend } from "./fake-backend.ts";
+} from "./types.js";
+import { UKSKnowledgeBackend } from "./uks-backend.js";
+import { FakeKnowledgeBackend } from "./fake-backend.js";
 
 export interface ShadowComparisonLog {
   query: string;
@@ -107,7 +107,7 @@ export class ShadowKnowledgeBackend implements KnowledgeBackend {
   }
 
   public async inspect(query = ""): Promise<KnowledgeInspectResult> {
-    const [primaryInsp, shadowInsp] = await Promise.all([
+    const [primaryInsp] = await Promise.all([
       this.primary.inspect(query),
       this.shadow.inspect(query).catch(() => null)
     ]);
@@ -121,7 +121,7 @@ export class ShadowKnowledgeBackend implements KnowledgeBackend {
   public async health(): Promise<KnowledgeHealth> {
     const [primaryHealth, shadowHealth] = await Promise.all([
       this.primary.health(),
-      this.shadow.health().catch(() => ({ available: false, backend: "uks" as const, error_code: "shadow_health_failed" }))
+      this.shadow.health().catch((): KnowledgeHealth => ({ available: false, backend: "uks", error_code: "shadow_health_failed" }))
     ]);
 
     return {

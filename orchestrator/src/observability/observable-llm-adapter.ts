@@ -26,7 +26,7 @@ export const DEFAULT_INFERENCE_TIMEOUT_MS = 60000; // 60s fallback
 
 export function pinnedLookup(pinnedIp: string, pinnedFamily = 4) {
   return function lookup(
-    hostname: string,
+    _hostname: string,
     options: any,
     callback: (err: Error | null, address: any, family?: number) => void,
   ) {
@@ -84,7 +84,7 @@ export function createPinnedFetch(options: PinnedFetchOptions = {}): FetchFn {
         method: init?.method || "POST",
         headers: reqHeaders,
         servername: url.hostname, // Preserves SNI and certificate validation!
-        signal: effectiveSignal,
+        signal: (effectiveSignal ?? undefined) as AbortSignal | undefined,
       };
 
       if (pinnedIp) {
@@ -101,7 +101,7 @@ export function createPinnedFetch(options: PinnedFetchOptions = {}): FetchFn {
         const response = new Response(webStream, {
           status: res.statusCode,
           statusText: res.statusMessage,
-          headers: res.headers as HeadersInit,
+          headers: res.headers as any,
         });
         resolve(response);
       });
@@ -184,7 +184,7 @@ const DEFAULT_MODELS: Record<string, string> = {
  * Checks whether an IPv4 address belongs to a forbidden/private/internal range.
  */
 export function isForbiddenIPv4(octets: number[]): { forbidden: boolean; reason?: string } {
-  const [a, b, c, d] = octets;
+  const [a, b] = octets;
 
   // 0.0.0.0/8 (Current network)
   if (a === 0) return { forbidden: true, reason: "Current network (0.0.0.0/8)" };
@@ -770,9 +770,6 @@ export class ObservableLlmProviderAdapter {
     }
 
     if (!res.ok) {
-      let ledgerWritten = false;
-      let ledgerPath: string | undefined;
-
       if (input.memoryRoot && input.featureId) {
         const failureSpan = classifyHttpInferenceUsage({
           httpOk: false,
@@ -786,9 +783,7 @@ export class ObservableLlmProviderAdapter {
           durationMs,
           outcome: "error",
         });
-        const ledgerResult = appendInferenceSpan(input.memoryRoot, input.featureId, failureSpan);
-        ledgerWritten = ledgerResult.ok;
-        ledgerPath = ledgerResult.path;
+        appendInferenceSpan(input.memoryRoot, input.featureId, failureSpan);
       }
       throw new Error(`${provider}_http_${res.status}`);
     }

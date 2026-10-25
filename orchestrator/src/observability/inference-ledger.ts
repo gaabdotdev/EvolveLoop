@@ -6,8 +6,8 @@
 
 import { appendFileSync, existsSync, mkdirSync, readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
-import { assertPathConfined } from "../knowledge/uks/storage-core.ts";
-import type { InferenceSpanRecord } from "./inference-usage.ts";
+import { assertPathConfined } from "../knowledge/uks/storage-core.js";
+import type { InferenceSpanRecord } from "./inference-usage.js";
 
 export class PathEscapeError extends Error {
   readonly code = "PATH_ESCAPE_DENIED";

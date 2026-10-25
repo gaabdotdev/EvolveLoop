@@ -202,13 +202,3 @@ export class Scheduler {
     return affected;
   }
 }
-
-function parseTimeoutMs(timeout?: string): number | undefined {
-  if (!timeout) return undefined;
-  const m = timeout.match(/^(\d+)(m|h|s)$/);
-  if (!m) return undefined;
-  const n = parseInt(m[1], 10);
-  if (m[2] === "h") return n * 3600_000;
-  if (m[2] === "m") return n * 60_000;
-  return n * 1000;
-}
