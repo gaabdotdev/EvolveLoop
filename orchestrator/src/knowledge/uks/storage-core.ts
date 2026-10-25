@@ -28,20 +28,58 @@ export function computeSha256(content: string | Buffer): string {
 }
 
 /**
+ * Safely resolves symlinks for existing path or closest existing ancestor directory.
+ */
+export function realpathDeepSafe(p: string): string {
+    const abs = path.resolve(p);
+    let current = abs;
+    const parts: string[] = [];
+
+    while (current && !fs.existsSync(current)) {
+        const parent = path.dirname(current);
+        if (parent === current) break;
+        parts.unshift(path.basename(current));
+        current = parent;
+    }
+
+    try {
+        if (fs.existsSync(current)) {
+            const realCurrent = fs.realpathSync(current);
+            return parts.length > 0 ? path.resolve(realCurrent, ...parts) : realCurrent;
+        }
+    } catch {
+        // fallback
+    }
+
+    return abs;
+}
+
+/**
  * Asserts that a target file path remains strictly confined within an authorized root directory.
+ * Resolves symlinks via realpathDeepSafe to prevent workspace escape via symlinks.
  * Throws an Error if directory traversal is detected.
  * Returns the normalized absolute path.
  */
 export function assertPathConfined(filePath: string, rootDir: string): string {
     const resolvedRoot = path.resolve(rootDir);
-    const resolvedTarget = path.resolve(filePath);
+    const resolvedTarget = path.isAbsolute(filePath) ? path.resolve(filePath) : path.resolve(resolvedRoot, filePath);
 
-    // Ensure root ends with separator for boundary matching (unless target equals root)
+    // 1. Lexical boundary check
     const rootPrefix = resolvedRoot.endsWith(path.sep) ? resolvedRoot : `${resolvedRoot}${path.sep}`;
-
     if (resolvedTarget !== resolvedRoot && !resolvedTarget.startsWith(rootPrefix)) {
         throw new Error(
             `[-] SECURITY_PATH_TRAVERSAL_VIOLATION: Path '${resolvedTarget}' escapes authorized root '${resolvedRoot}'.`
+        );
+    }
+
+    // 2. Canonical / symlink realpath check
+    const realRoot = realpathDeepSafe(resolvedRoot);
+    const realTarget = realpathDeepSafe(resolvedTarget);
+    const realPrefix = realRoot.endsWith(path.sep) ? realRoot : `${realRoot}${path.sep}`;
+
+    if (realTarget !== realRoot && !realTarget.startsWith(realPrefix)) {
+        throw new Error(
+            `[-] SECURITY_PATH_TRAVERSAL_VIOLATION: Path '${resolvedTarget}' (canonical '${realTarget}') escapes authorized root '${realRoot}'.`
         );
     }
 

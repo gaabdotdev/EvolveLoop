@@ -10,11 +10,11 @@
  * - KNOWLEDGE_BACKEND=wiki: Explicit legacy wiki selection.
  */
 
-import { FakeKnowledgeBackend } from "./fake-backend.ts";
-import { WikiKnowledgeBackend } from "./wiki-backend.ts";
-import { UKSKnowledgeBackend } from "./uks-backend.ts";
-import { ShadowKnowledgeBackend } from "./shadow-backend.ts";
-import type { KnowledgeBackend, KnowledgeBackendId } from "./types.ts";
+import { FakeKnowledgeBackend } from "./fake-backend.js";
+import { WikiKnowledgeBackend } from "./wiki-backend.js";
+import { UKSKnowledgeBackend } from "./uks-backend.js";
+import { ShadowKnowledgeBackend } from "./shadow-backend.js";
+import type { KnowledgeBackend } from "./types.js";
 
 let cached: KnowledgeBackend | null = null;
 let cachedKey: string | null = null;

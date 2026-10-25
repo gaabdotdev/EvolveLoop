@@ -10,7 +10,7 @@
 
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { writeAtomicJson, computeSha256, assertPathConfined } from "./storage-core.ts";
+import { writeAtomicJson, computeSha256, assertPathConfined } from "./storage-core.js";
 
 export type SymbolKind = "class" | "interface" | "type" | "enum" | "function" | "method";
 

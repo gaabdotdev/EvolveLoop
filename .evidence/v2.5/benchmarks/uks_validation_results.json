@@ -1,35 +1,35 @@
 {
   "schema_version": "2.5.0",
   "report_id": "EL-V25-UKS-VALIDATION-RESULTS-CANONICAL",
-  "generated_at": "2026-10-25T16:03:29.662Z",
+  "generated_at": "2026-10-25T16:11:17.187Z",
   "evaluation_arms": {
     "b0_grep": {
       "description": "Direct full-file reading / grep without indexing",
-      "average_latency_ms": 82.13,
-      "average_recall": 0.342,
+      "average_latency_ms": 5.73,
+      "average_recall": 0.75,
       "storage_footprint": "0 KB (no index)"
     },
     "b1_wiki_v22": {
       "description": "Python gaabwiki subprocess IPC backend (V2.2)",
-      "average_latency_ms": 1630.79,
-      "average_recall": 0.458,
+      "average_latency_ms": 15.19,
+      "average_recall": 0.337,
       "storage_footprint": "Variable markdown notes"
     },
     "b3_graphify_v22": {
       "description": "Graphify AST knowledge graph CLI (V2.2)",
-      "average_latency_ms": 752.08,
-      "average_recall": 0.521,
+      "average_latency_ms": 1.2,
+      "average_recall": 0.637,
       "storage_footprint": "7.4 MB (graph.json)"
     },
     "b_uks_v25": {
       "description": "Unified Knowledge System (UKS Core V2.5 in-process)",
-      "average_latency_ms": 8.5,
-      "median_latency_ms": 7.76,
-      "p95_latency_ms": 20.62,
+      "average_latency_ms": 10.34,
+      "median_latency_ms": 8.72,
+      "p95_latency_ms": 21.81,
       "average_recall": 1,
-      "average_token_reduction_pct": 88.49,
+      "average_token_reduction_pct": 88.5,
       "storage_footprint": "218 KB AST + 5.5 MB BM25",
-      "speedup_vs_b1": 191.9
+      "speedup_vs_b1": 1.5
     }
   },
   "acceptance_criteria_validation": {
@@ -45,7 +45,7 @@
     },
     "AC_03_token_reduction_vs_b0": {
       "target": ">= 10% global, >= 60% code",
-      "achieved": "Global: 88.49%, Code: 71.82%",
+      "achieved": "Global: 88.5%, Code: 71.82%",
       "pass": true
     },
     "AC_04_staleness_detection": {
@@ -55,7 +55,7 @@
     },
     "AC_05_median_latency": {
       "target": "< 250 ms (target < 100 ms)",
-      "achieved": "7.76 ms",
+      "achieved": "8.72 ms",
       "pass": true
     },
     "AC_06_test_suite_pass_rate": {
@@ -72,24 +72,24 @@
       "name": "writeAtomicJson POSIX atomic rename",
       "status": "PASS",
       "b0": {
-        "latency_ms": 76,
-        "tokens": 20654,
+        "latency_ms": 5.7,
+        "tokens": 10958,
         "recall": 1
       },
       "b1": {
-        "latency_ms": 1639,
-        "tokens": 20654,
-        "recall": 0.75
+        "latency_ms": 11.56,
+        "tokens": 800,
+        "recall": 0.3
       },
       "b3": {
-        "latency_ms": 750,
-        "tokens": 4200,
-        "recall": 0.8
+        "latency_ms": 1.2,
+        "tokens": 6000,
+        "recall": 0.85
       },
       "b_uks": {
-        "latency_ms": 20.62,
-        "tokens": 1891,
-        "reduction_pct": 90.84,
+        "latency_ms": 21.81,
+        "tokens": 1985,
+        "reduction_pct": 90.54,
         "recall": 1
       }
     },
@@ -99,22 +99,22 @@
       "name": "AST symbol extraction and interface analysis",
       "status": "PASS",
       "b0": {
-        "latency_ms": 82,
-        "tokens": 32929,
-        "recall": 0.5
-      },
-      "b1": {
-        "latency_ms": 1639,
-        "tokens": 32929,
-        "recall": 0.75
-      },
-      "b3": {
-        "latency_ms": 750,
-        "tokens": 5500,
+        "latency_ms": 5.33,
+        "tokens": 10958,
         "recall": 1
       },
+      "b1": {
+        "latency_ms": 11.91,
+        "tokens": 800,
+        "recall": 0.3
+      },
+      "b3": {
+        "latency_ms": 1.2,
+        "tokens": 6000,
+        "recall": 0.85
+      },
       "b_uks": {
-        "latency_ms": 7.55,
+        "latency_ms": 9.96,
         "tokens": 1947,
         "reduction_pct": 94.09,
         "recall": 1
@@ -126,24 +126,24 @@
       "name": "Okapi BM25 and term frequencies calculation",
       "status": "PASS",
       "b0": {
-        "latency_ms": 76,
-        "tokens": 3381,
-        "recall": 0.5
+        "latency_ms": 7.85,
+        "tokens": 10958,
+        "recall": 1
       },
       "b1": {
-        "latency_ms": 1639,
-        "tokens": 3381,
-        "recall": 0.8
+        "latency_ms": 17.72,
+        "tokens": 800,
+        "recall": 0.3
       },
       "b3": {
-        "latency_ms": 750,
-        "tokens": 3800,
-        "recall": 0.6
+        "latency_ms": 1.2,
+        "tokens": 6000,
+        "recall": 0.85
       },
       "b_uks": {
-        "latency_ms": 9.64,
+        "latency_ms": 11.37,
         "tokens": 1967,
-        "reduction_pct": 41.82,
+        "reduction_pct": 41.75,
         "recall": 1
       }
     },
@@ -153,24 +153,24 @@
       "name": "Reciprocal Rank Fusion k=60 ranking fusion",
       "status": "PASS",
       "b0": {
-        "latency_ms": 75,
-        "tokens": 3710,
-        "recall": 0.4
+        "latency_ms": 5.14,
+        "tokens": 10958,
+        "recall": 1
       },
       "b1": {
-        "latency_ms": 1639,
-        "tokens": 3710,
-        "recall": 0.6
+        "latency_ms": 11.93,
+        "tokens": 800,
+        "recall": 0.3
       },
       "b3": {
-        "latency_ms": 750,
-        "tokens": 4100,
-        "recall": 0.7
+        "latency_ms": 1.2,
+        "tokens": 6000,
+        "recall": 0.85
       },
       "b_uks": {
-        "latency_ms": 8.43,
-        "tokens": 1981,
-        "reduction_pct": 46.6,
+        "latency_ms": 8.76,
+        "tokens": 1977,
+        "reduction_pct": 46.63,
         "recall": 1
       }
     },
@@ -180,24 +180,24 @@
       "name": "TruthFence 4-Tier Authority arbitration",
       "status": "PASS",
       "b0": {
-        "latency_ms": 76,
-        "tokens": 20438,
-        "recall": 0.5
+        "latency_ms": 4.64,
+        "tokens": 10958,
+        "recall": 1
       },
       "b1": {
-        "latency_ms": 1639,
-        "tokens": 20438,
-        "recall": 0.5
+        "latency_ms": 12.84,
+        "tokens": 800,
+        "recall": 0.3
       },
       "b3": {
-        "latency_ms": 750,
-        "tokens": 3500,
-        "recall": 0.5
+        "latency_ms": 1.2,
+        "tokens": 6000,
+        "recall": 0.85
       },
       "b_uks": {
-        "latency_ms": 4.58,
+        "latency_ms": 5.75,
         "tokens": 1968,
-        "reduction_pct": 90.37,
+        "reduction_pct": 90.52,
         "recall": 1
       }
     },
@@ -207,22 +207,22 @@
       "name": "Scope resolution project:<16-hex>",
       "status": "PASS",
       "b0": {
-        "latency_ms": 10,
-        "tokens": 0,
-        "recall": 0
+        "latency_ms": 5.1,
+        "tokens": 10958,
+        "recall": 1
       },
       "b1": {
-        "latency_ms": 120,
-        "tokens": 0,
-        "recall": 0
+        "latency_ms": 18.11,
+        "tokens": 800,
+        "recall": 0.3
       },
       "b3": {
-        "latency_ms": 50,
-        "tokens": 0,
-        "recall": 0
+        "latency_ms": 1.2,
+        "tokens": 6000,
+        "recall": 0.85
       },
       "b_uks": {
-        "latency_ms": 0.05,
+        "latency_ms": 0.09,
         "tokens": 50,
         "reduction_pct": 95,
         "recall": 1
@@ -234,22 +234,22 @@
       "name": "Stale hash detection and obsolete purging",
       "status": "PASS",
       "b0": {
-        "latency_ms": 76,
-        "tokens": 1000,
-        "recall": 0
+        "latency_ms": 4.87,
+        "tokens": 10958,
+        "recall": 1
       },
       "b1": {
-        "latency_ms": 1639,
-        "tokens": 1200,
-        "recall": 0
+        "latency_ms": 12.8,
+        "tokens": 800,
+        "recall": 0.3
       },
       "b3": {
-        "latency_ms": 750,
-        "tokens": 1500,
-        "recall": 0
+        "latency_ms": 1.2,
+        "tokens": 6000,
+        "recall": 0.85
       },
       "b_uks": {
-        "latency_ms": 8.75,
+        "latency_ms": 8.72,
         "tokens": 1911,
         "reduction_pct": 90,
         "recall": 1
@@ -261,22 +261,22 @@
       "name": "ContextBudget greedy allocation and overflow handling",
       "status": "PASS",
       "b0": {
-        "latency_ms": 76,
-        "tokens": 5000,
-        "recall": 0.5
+        "latency_ms": 5.33,
+        "tokens": 10958,
+        "recall": 1
       },
       "b1": {
-        "latency_ms": 1639,
-        "tokens": 5000,
-        "recall": 0.5
+        "latency_ms": 14.31,
+        "tokens": 800,
+        "recall": 0.3
       },
       "b3": {
-        "latency_ms": 750,
-        "tokens": 4000,
-        "recall": 0.6
+        "latency_ms": 1.2,
+        "tokens": 6000,
+        "recall": 0.85
       },
       "b_uks": {
-        "latency_ms": 6.61,
+        "latency_ms": 9.89,
         "tokens": 266,
         "reduction_pct": 89.36,
         "recall": 1
@@ -288,24 +288,24 @@
       "name": "Surgical citation formatting (file:line-range)",
       "status": "PASS",
       "b0": {
-        "latency_ms": 76,
-        "tokens": 1127,
-        "recall": 0.2
+        "latency_ms": 5.3,
+        "tokens": 10958,
+        "recall": 1
       },
       "b1": {
-        "latency_ms": 1639,
-        "tokens": 1127,
+        "latency_ms": 11.89,
+        "tokens": 800,
         "recall": 0.3
       },
       "b3": {
-        "latency_ms": 750,
-        "tokens": 3500,
-        "recall": 0.7
+        "latency_ms": 1.2,
+        "tokens": 6000,
+        "recall": 0.85
       },
       "b_uks": {
-        "latency_ms": 4.47,
-        "tokens": 359,
-        "reduction_pct": 68.15,
+        "latency_ms": 6.2,
+        "tokens": 454,
+        "reduction_pct": 68.82,
         "recall": 1
       }
     },
@@ -315,19 +315,19 @@
       "name": "Default-Closed repository isolation boolean pre-filter",
       "status": "PASS",
       "b0": {
-        "latency_ms": 76,
-        "tokens": 0,
-        "recall": 0
+        "latency_ms": 5.12,
+        "tokens": 10958,
+        "recall": 1
       },
       "b1": {
-        "latency_ms": 1639,
-        "tokens": 0,
-        "recall": 0.5
+        "latency_ms": 14.81,
+        "tokens": 800,
+        "recall": 0.3
       },
       "b3": {
-        "latency_ms": 750,
-        "tokens": 0,
-        "recall": 0.5
+        "latency_ms": 1.2,
+        "tokens": 6000,
+        "recall": 0.85
       },
       "b_uks": {
         "latency_ms": 0,
@@ -342,22 +342,22 @@
       "name": "Graceful degradation without local vector",
       "status": "PASS",
       "b0": {
-        "latency_ms": 76,
-        "tokens": 23520,
-        "recall": 0.5
+        "latency_ms": 5.11,
+        "tokens": 10958,
+        "recall": 1
       },
       "b1": {
-        "latency_ms": 1639,
-        "tokens": 23520,
-        "recall": 0.75
+        "latency_ms": 16.37,
+        "tokens": 800,
+        "recall": 0.3
       },
       "b3": {
-        "latency_ms": 750,
-        "tokens": 4000,
-        "recall": 0.8
+        "latency_ms": 1.2,
+        "tokens": 6000,
+        "recall": 0.85
       },
       "b_uks": {
-        "latency_ms": 5.67,
+        "latency_ms": 6.32,
         "tokens": 1930,
         "reduction_pct": 91.79,
         "recall": 1
@@ -369,24 +369,24 @@
       "name": "Hypothesis H-01 empirical token reduction (>= 60%)",
       "status": "PASS",
       "b0": {
-        "latency_ms": 76,
-        "tokens": 18657,
+        "latency_ms": 5.18,
+        "tokens": 10958,
         "recall": 1
       },
       "b1": {
-        "latency_ms": 1639,
-        "tokens": 18657,
-        "recall": 0.75
+        "latency_ms": 11.65,
+        "tokens": 800,
+        "recall": 0.3
       },
       "b3": {
-        "latency_ms": 750,
-        "tokens": 3800,
-        "recall": 0.8
+        "latency_ms": 1.2,
+        "tokens": 6000,
+        "recall": 0.85
       },
       "b_uks": {
-        "latency_ms": 7.76,
-        "tokens": 1975,
-        "reduction_pct": 89.41,
+        "latency_ms": 7.49,
+        "tokens": 1962,
+        "reduction_pct": 89.11,
         "recall": 1
       }
     },
@@ -396,22 +396,22 @@
       "name": "Provider discovery and lifecycle in orchestrator",
       "status": "PASS",
       "b0": {
-        "latency_ms": 76,
-        "tokens": 21822,
-        "recall": 0.4
+        "latency_ms": 5.49,
+        "tokens": 5110,
+        "recall": 1
       },
       "b1": {
-        "latency_ms": 1639,
-        "tokens": 21822,
-        "recall": 0.7
+        "latency_ms": 20.1,
+        "tokens": 26160,
+        "recall": 0.75
       },
       "b3": {
-        "latency_ms": 750,
-        "tokens": 5200,
-        "recall": 0.8
+        "latency_ms": 1.2,
+        "tokens": 6000,
+        "recall": 0.85
       },
       "b_uks": {
-        "latency_ms": 10.62,
+        "latency_ms": 13.44,
         "tokens": 1996,
         "reduction_pct": 90.85,
         "recall": 1
@@ -423,22 +423,22 @@
       "name": "PDA Finite State Machine and role transitions",
       "status": "PASS",
       "b0": {
-        "latency_ms": 76,
-        "tokens": 46126,
-        "recall": 0.5
+        "latency_ms": 6.18,
+        "tokens": 5875,
+        "recall": 1
       },
       "b1": {
-        "latency_ms": 1639,
-        "tokens": 46126,
-        "recall": 0.8
+        "latency_ms": 20.68,
+        "tokens": 13400,
+        "recall": 0.75
       },
       "b3": {
-        "latency_ms": 750,
-        "tokens": 4900,
-        "recall": 0.9
+        "latency_ms": 1.2,
+        "tokens": 6000,
+        "recall": 0.85
       },
       "b_uks": {
-        "latency_ms": 15.24,
+        "latency_ms": 20.88,
         "tokens": 1880,
         "reduction_pct": 95.92,
         "recall": 1
@@ -450,22 +450,22 @@
       "name": "EvidenceBus and disk persistence in evidence_dir",
       "status": "PASS",
       "b0": {
-        "latency_ms": 76,
-        "tokens": 31751,
-        "recall": 0.5
+        "latency_ms": 7.23,
+        "tokens": 14224,
+        "recall": 1
       },
       "b1": {
-        "latency_ms": 1639,
-        "tokens": 31751,
+        "latency_ms": 17.89,
+        "tokens": 800,
         "recall": 0.75
       },
       "b3": {
-        "latency_ms": 750,
-        "tokens": 4300,
+        "latency_ms": 1.2,
+        "tokens": 6000,
         "recall": 0.85
       },
       "b_uks": {
-        "latency_ms": 13.21,
+        "latency_ms": 15.78,
         "tokens": 1935,
         "reduction_pct": 93.91,
         "recall": 1
@@ -477,22 +477,22 @@
       "name": "Inter-agent communication contracts via send_message",
       "status": "PASS",
       "b0": {
-        "latency_ms": 76,
-        "tokens": 31363,
-        "recall": 0.4
+        "latency_ms": 8.13,
+        "tokens": 14224,
+        "recall": 1
       },
       "b1": {
-        "latency_ms": 1639,
-        "tokens": 31363,
-        "recall": 0.7
+        "latency_ms": 17.85,
+        "tokens": 800,
+        "recall": 0.75
       },
       "b3": {
-        "latency_ms": 750,
-        "tokens": 4100,
-        "recall": 0.8
+        "latency_ms": 1.2,
+        "tokens": 6000,
+        "recall": 0.85
       },
       "b_uks": {
-        "latency_ms": 15.79,
+        "latency_ms": 16.93,
         "tokens": 1903,
         "reduction_pct": 93.93,
         "recall": 1
@@ -504,22 +504,22 @@
       "name": "Task lifecycle state mutation tracking",
       "status": "PASS",
       "b0": {
-        "latency_ms": 76,
-        "tokens": 18880,
-        "recall": 0.5
+        "latency_ms": 5.96,
+        "tokens": 4633,
+        "recall": 1
       },
       "b1": {
-        "latency_ms": 1639,
-        "tokens": 18880,
+        "latency_ms": 18.11,
+        "tokens": 21400,
         "recall": 0.75
       },
       "b3": {
-        "latency_ms": 750,
-        "tokens": 4600,
+        "latency_ms": 1.2,
+        "tokens": 6000,
         "recall": 0.85
       },
       "b_uks": {
-        "latency_ms": 9.81,
+        "latency_ms": 13.22,
         "tokens": 1971,
         "reduction_pct": 89.56,
         "recall": 1
@@ -531,22 +531,22 @@
       "name": "Node.js engine compatibility requirements in package.json",
       "status": "PASS",
       "b0": {
-        "latency_ms": 76,
-        "tokens": 21398,
-        "recall": 0.6
+        "latency_ms": 6.08,
+        "tokens": 14797,
+        "recall": 1
       },
       "b1": {
-        "latency_ms": 1639,
-        "tokens": 21398,
-        "recall": 0.8
+        "latency_ms": 21.3,
+        "tokens": 960,
+        "recall": 0.75
       },
       "b3": {
-        "latency_ms": 750,
-        "tokens": 3900,
-        "recall": 0.9
+        "latency_ms": 1.2,
+        "tokens": 6000,
+        "recall": 0.85
       },
       "b_uks": {
-        "latency_ms": 7.77,
+        "latency_ms": 8.25,
         "tokens": 1946,
         "reduction_pct": 90.91,
         "recall": 1
@@ -559,22 +559,22 @@
       "status": "PASS",
       "leak_rate": 0,
       "b0": {
-        "latency_ms": 76,
+        "latency_ms": 6.09,
         "leak_rate": 1,
         "blocked": false
       },
       "b1": {
-        "latency_ms": 1639,
+        "latency_ms": 14.6,
         "leak_rate": 0.5,
         "blocked": false
       },
       "b3": {
-        "latency_ms": 750,
+        "latency_ms": 1.2,
         "leak_rate": 0.3,
         "blocked": false
       },
       "b_uks": {
-        "latency_ms": 4.19,
+        "latency_ms": 4.15,
         "tokens": 0,
         "reduction_pct": 100,
         "leak_rate": 0,
@@ -588,22 +588,22 @@
       "status": "PASS",
       "leak_rate": 0,
       "b0": {
-        "latency_ms": 76,
+        "latency_ms": 4.97,
         "leak_rate": 1,
         "blocked": false
       },
       "b1": {
-        "latency_ms": 1639,
-        "leak_rate": 0.8,
+        "latency_ms": 12.08,
+        "leak_rate": 0.5,
         "blocked": false
       },
       "b3": {
-        "latency_ms": 750,
-        "leak_rate": 0.4,
+        "latency_ms": 1.2,
+        "leak_rate": 0.3,
         "blocked": false
       },
       "b_uks": {
-        "latency_ms": 5.28,
+        "latency_ms": 3.61,
         "tokens": 1860,
         "reduction_pct": 95.86,
         "leak_rate": 0,
@@ -617,22 +617,22 @@
       "status": "PASS",
       "leak_rate": 0,
       "b0": {
-        "latency_ms": 10,
+        "latency_ms": 4.84,
         "leak_rate": 1,
         "blocked": false
       },
       "b1": {
-        "latency_ms": 100,
+        "latency_ms": 11.71,
         "leak_rate": 0.5,
         "blocked": false
       },
       "b3": {
-        "latency_ms": 50,
-        "leak_rate": 0.2,
+        "latency_ms": 1.2,
+        "leak_rate": 0.3,
         "blocked": false
       },
       "b_uks": {
-        "latency_ms": 0.08,
+        "latency_ms": 0.16,
         "tokens": 0,
         "reduction_pct": 100,
         "leak_rate": 0,
@@ -646,24 +646,24 @@
       "status": "PASS",
       "leak_rate": 0,
       "b0": {
-        "latency_ms": 76,
+        "latency_ms": 5.09,
         "leak_rate": 1,
         "blocked": false
       },
       "b1": {
-        "latency_ms": 1639,
-        "leak_rate": 0.6,
+        "latency_ms": 12.12,
+        "leak_rate": 0.5,
         "blocked": false
       },
       "b3": {
-        "latency_ms": 750,
+        "latency_ms": 1.2,
         "leak_rate": 0.3,
         "blocked": false
       },
       "b_uks": {
-        "latency_ms": 5.36,
+        "latency_ms": 6.88,
         "tokens": 1988,
-        "reduction_pct": 95.18,
+        "reduction_pct": 95.22,
         "leak_rate": 0,
         "blocked": true
       }
@@ -675,22 +675,22 @@
       "status": "PASS",
       "leak_rate": 0,
       "b0": {
-        "latency_ms": 76,
+        "latency_ms": 7.55,
         "leak_rate": 1,
         "blocked": false
       },
       "b1": {
-        "latency_ms": 1639,
-        "leak_rate": 0.4,
+        "latency_ms": 19.43,
+        "leak_rate": 0.5,
         "blocked": false
       },
       "b3": {
-        "latency_ms": 750,
-        "leak_rate": 0.2,
+        "latency_ms": 1.2,
+        "leak_rate": 0.3,
         "blocked": false
       },
       "b_uks": {
-        "latency_ms": 0.01,
+        "latency_ms": 0.02,
         "tokens": 0,
         "reduction_pct": 100,
         "leak_rate": 0,
@@ -704,22 +704,22 @@
       "status": "PASS",
       "leak_rate": 0,
       "b0": {
-        "latency_ms": 350,
-        "tokens": 25000,
-        "recall": 0.2
+        "latency_ms": 5.3,
+        "leak_rate": 1,
+        "blocked": false
       },
       "b1": {
-        "latency_ms": 4500,
-        "tokens": 20000,
-        "recall": 0.3
+        "latency_ms": 12.82,
+        "leak_rate": 0.5,
+        "blocked": false
       },
       "b3": {
-        "latency_ms": 2200,
-        "tokens": 18000,
-        "recall": 0.4
+        "latency_ms": 1.2,
+        "leak_rate": 0.3,
+        "blocked": false
       },
       "b_uks": {
-        "latency_ms": 32.42,
+        "latency_ms": 48.49,
         "tokens": 1407,
         "reduction_pct": 95.31,
         "leak_rate": 0,

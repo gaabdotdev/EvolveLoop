@@ -1,20 +1,15 @@
 import fs from "node:fs";
-import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
+import path from "node:path";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const workspaceRoot = path.resolve(__dirname, "../..");
+const __loaderDir = path.dirname(fileURLToPath(import.meta.url));
+const __workspaceRoot = path.resolve(__loaderDir, "../..");
 
 const YAML_CANDIDATES = [
-  path.join(workspaceRoot, "orchestrator/node_modules/yaml/browser/index.js"),
-  path.join(workspaceRoot, "orchestrator/node_modules/yaml/dist/index.js"),
-  path.join(workspaceRoot, "node_modules/yaml/browser/index.js"),
-  path.join(workspaceRoot, "node_modules/yaml/dist/index.js"),
-  path.join(process.cwd(), "orchestrator/node_modules/yaml/browser/index.js"),
-  path.join(process.cwd(), "orchestrator/node_modules/yaml/dist/index.js"),
-  path.join(process.cwd(), "node_modules/yaml/browser/index.js"),
-  path.join(process.cwd(), "node_modules/yaml/dist/index.js"),
+  path.join(__workspaceRoot, "orchestrator/node_modules/yaml/browser/index.js"),
+  path.join(__workspaceRoot, "node_modules/yaml/browser/index.js"),
+  path.join(__workspaceRoot, "orchestrator/node_modules/yaml/dist/index.js"),
+  path.join(__workspaceRoot, "node_modules/yaml/dist/index.js"),
 ];
 
 export async function resolve(specifier, context, nextResolve) {

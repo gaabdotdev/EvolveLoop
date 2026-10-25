@@ -11,17 +11,22 @@ import * as path from "node:path";
 import * as url from "node:url";
 import * as cp from "node:child_process";
 
-// If executed by plain 'node' without strip-types support, re-spawn with --experimental-strip-types
-if (!process.execArgv.includes("--experimental-strip-types")) {
-    const child = cp.spawnSync(process.execPath, ["--experimental-strip-types", ...process.argv.slice(1)], {
+const __dirname = path.dirname(url.fileURLToPath(import.meta.url));
+const workspaceRoot = path.resolve(__dirname, "../..");
+const loaderPath = path.join(__dirname, "ts-loader.mjs");
+
+// If executed by plain 'node' without strip-types support, re-spawn with --experimental-strip-types and ts-loader
+if (!process.execArgv.includes("--experimental-strip-types") || !process.execArgv.includes(loaderPath)) {
+    const child = cp.spawnSync(process.execPath, [
+        "--experimental-strip-types",
+        "--loader", loaderPath,
+        ...process.argv.slice(1)
+    ], {
         stdio: "inherit",
         env: process.env
     });
     process.exit(child.status ?? 0);
 }
-
-const __dirname = path.dirname(url.fileURLToPath(import.meta.url));
-const workspaceRoot = path.resolve(__dirname, "../..");
 const builderModule = path.join(workspaceRoot, "orchestrator/src/knowledge/uks/context-pack-builder.ts");
 const storageCoreModule = path.join(workspaceRoot, "orchestrator/src/knowledge/uks/storage-core.ts");
 const scopeEnforcerModule = path.join(workspaceRoot, "orchestrator/src/knowledge/uks/scope-enforcer.ts");

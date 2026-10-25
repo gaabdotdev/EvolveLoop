@@ -19,7 +19,8 @@ import { MetricsAccumulator } from "../telemetry/metrics-accumulator.js";
 import { Orchestrator } from "../orchestrator/orchestrator.js";
 import { Scheduler } from "../scheduler/scheduler.js";
 import { ProviderRouter } from "../providers/mock-provider.js";
-import { ObservableInferenceProvider } from "../providers/observable-inference-provider.js";
+import type { KnowledgeBackend } from "../knowledge/backend/types.js";
+import { resolveKnowledgeBackend } from "../knowledge/backend/resolve.js";
 import { validateEvidence } from "../evidence/validator.js";
 import type { ContractRegistry } from "../contracts/contract-registry.js";
 import { loadContractsFromDir } from "../contracts/contract-registry.js";
@@ -32,7 +33,7 @@ import {
 import { validateIR } from "../ir/validator.js";
 import { deriveRunState } from "../state/run-state.js";
 import { PatternAggregator } from "../learning/pattern-aggregator.js";
-import type { Evidence, FeatureRunState } from "../types/index.js";
+import type { Evidence, FeatureRunState, ExecutionPolicy } from "../types/index.js";
 import { JobStore } from "../jobs/job-store.js";
 import { jobResultToExecuteResult } from "../jobs/job-resume.js";
 import { saveCheckpoint, loadCheckpoint, clearCheckpoint } from "../jobs/checkpoint.js";
@@ -45,6 +46,7 @@ import type { LiveAnalysisCoordinator } from "../evolveloop/live/live-coordinato
 export interface ExecutionEngineOptions {
   registry: CapabilityRegistry;
   knowledge?: KnowledgeStore;
+  knowledgeBackend?: KnowledgeBackend;
   memory?: MemoryStore;
   providers: ProviderRouter;
   policiesDir?: string;
@@ -75,6 +77,7 @@ export class ExecutionEngine {
   private orchestrator = new Orchestrator();
   private registry: RegistryClient;
   private knowledge: KnowledgeStore;
+  private knowledgeBackend: KnowledgeBackend;
   private memory: MemoryStore;
   private providers: ProviderRouter;
   private dataPaths?: DataPaths;
@@ -90,6 +93,7 @@ export class ExecutionEngine {
 
   private orchestratorDecision: OrchestratorDecision | null = null;
   private blockedReason: string | null = null;
+  private reconciliationRequired = false;
   private replanIr: CapabilityIR | null = null;
   private runState: FeatureRunState = "created";
   private paused = false;
@@ -103,6 +107,11 @@ export class ExecutionEngine {
       customPolicies: options.customPolicies,
     });
     this.knowledge = options.knowledge ?? new KnowledgeStore();
+    this.knowledgeBackend =
+      options.knowledgeBackend ??
+      resolveKnowledgeBackend({
+        workspaceRoot: options.agentsRoot,
+      });
     this.memory = options.memory ?? new MemoryStore();
     this.providers = options.providers;
     this.dataPaths = options.dataPaths;
@@ -172,14 +181,31 @@ export class ExecutionEngine {
       this.providers,
       featureId,
       this.contracts,
+      this.knowledgeBackend,
     );
     this.activeScheduler = scheduler;
+    this.reconciliationRequired = false;
 
     let graph: GraphStore;
     if (input.resume && this.jobsDir) {
-      const checkpoint = loadCheckpoint(this.jobsDir, featureId);
+      const checkpoint = loadCheckpoint(this.jobsDir, featureId, {
+        ir_id: input.ir.metadata.id,
+        policy_id: policy.metadata.id,
+      });
       if (checkpoint) {
         graph = GraphStore.fromSnapshot(checkpoint.graph);
+        for (const node of graph.getAllNodes()) {
+          const interrupted = node.metadata?.reconciliation === "interrupted_running";
+          if (node.status !== "running" && !interrupted) continue;
+          if (node.status === "running") {
+            graph.setNodeStatus(node.id, "blocked");
+            const current = graph.getNode(node.id);
+            if (current) {
+              current.metadata = { ...(current.metadata ?? {}), reconciliation: "interrupted_running" };
+            }
+          }
+          this.reconciliationRequired = true;
+        }
         this.blockedReason = null;
       } else {
         graph = new GraphStore(input.ir);
@@ -199,17 +225,8 @@ export class ExecutionEngine {
       policy_id: policy.metadata.id,
     });
 
-    const subscribeMetrics = (e: Parameters<EventBus["emit"]>[0]) => {
-      void e;
-    };
-    void subscribeMetrics;
-
     for (const event of eventBus.getEvents()) metrics.recordEvent(event);
-
-    eventBus.subscribe("ProviderSelected", (e) => metrics.recordEvent(e));
-    eventBus.subscribe("RetryScheduled", (e) => metrics.recordEvent(e));
-    eventBus.subscribe("SubgraphInvalidated", (e) => metrics.recordEvent(e));
-    eventBus.subscribe("PlannerReplan", (e) => metrics.recordEvent(e));
+    eventBus.onEvent((e) => metrics.recordEvent(e));
 
     const maxIterations = 500;
     let iterations = 0;
@@ -307,11 +324,22 @@ export class ExecutionEngine {
 
       const batch = ready.slice(0, this.policyEngine.maxParallel(policy));
       const batchIds = batch.map((n) => n.id);
-      const handles = batch.map((node) => {
+      const preloadedHitsList = await Promise.all(
+        batch.map((node) => scheduler.consultKnowledge(node, policy)),
+      );
+      const handles = batch.map((node, i) => {
         metrics.recordCapability(node.capability);
         const selection = this.selectProvider(node, policy, eventBus, featureId);
         this.allEvidence.push(selection.evidence);
-        return scheduler.schedule(node, selection.provider, policy, graph, selection.rejected, batchIds);
+        return scheduler.schedule(
+          node,
+          selection.provider,
+          policy,
+          graph,
+          selection.rejected,
+          batchIds,
+          preloadedHitsList[i],
+        );
       });
 
       const results = await Promise.all(handles.map((h) => h.promise));
@@ -340,7 +368,10 @@ export class ExecutionEngine {
     const failurePatterns = patternAggregator.snapshot();
 
     if (!graph.isFinished() && !this.blockedReason) {
-      if (graph.getAllNodes().some((n) => n.status === "waiting")) {
+      const hasWaiting = graph.getAllNodes().some((n) => n.status === "waiting");
+      if (this.reconciliationRequired && !hasWaiting) {
+        this.blockedReason = "reconciliation_required";
+      } else if (hasWaiting) {
         this.blockedReason = "awaiting_external_jobs";
       } else if (iterations >= maxIterations) {
         this.blockedReason = "max_iterations";
@@ -395,6 +426,10 @@ export class ExecutionEngine {
         /* detach must not throw */
       }
     }
+  }
+
+  getKnowledgeBackend(): KnowledgeBackend {
+    return this.knowledgeBackend;
   }
 
   pause(_featureId: string): void {
@@ -488,20 +523,18 @@ export class ExecutionEngine {
       const manifest = discoverManifestForCapability(node.capability, this.discovery);
       if (!manifest) throw err;
 
-      if (manifest.spec.plugin?.type === "observable-inference") {
-        const runtime = new ObservableInferenceProvider({ id: manifest.metadata.name });
-        this.providers.register(runtime);
-        this.registry.registerFromManifest(manifest);
-      } else {
-        if (!this.agentsRoot) throw err;
-        const loader = new PluginLoader(this.agentsRoot);
-        const executor = this.jobsDir ? new JobFileExecutor(this.jobsDir) : undefined;
-        if (!executor) throw err;
+      const pluginType = manifest.spec.plugin?.type;
+      const workspaceRoot = this.agentsRoot ?? this.discovery.agentsRoot ?? process.cwd();
+      const loader = new PluginLoader(workspaceRoot);
+      const executor = this.jobsDir ? new JobFileExecutor(this.jobsDir) : undefined;
 
-        const runtime = loader.load(manifest, executor);
-        this.providers.register(runtime);
-        this.registry.registerFromManifest(manifest);
+      if (pluginType === "cursor-skill" && !executor) {
+        throw err;
       }
+
+      const runtime = loader.load(manifest, executor);
+      this.providers.register(runtime);
+      this.registry.registerFromManifest(manifest);
 
       eventBus.emit("ProviderDiscoveryCompleted", featureId, "engine", {
         capability: node.capability,
@@ -578,14 +611,6 @@ export class ExecutionEngine {
           attempt: node.retry_count,
           max_retries: maxRetries,
         });
-        metrics.recordEvent({
-          event_id: "",
-          type: "RetryScheduled",
-          timestamp: "",
-          feature_id: featureId,
-          source: "scheduler",
-          payload: { node_id: nodeId },
-        });
         this.registry.recordFailure(run.provider_id, run);
         return;
       }
@@ -648,6 +673,7 @@ export class ExecutionEngine {
     graph.setNodeStatus(nodeId, "satisfied");
     graph.setNodeEvidence(nodeId, run.evidence);
     this.registry.recordSuccess(run.provider_id, run);
+    metrics.recordCapability(node.capability);
 
     eventBus.emit("NodeCompleted", featureId, "scheduler", {
       run_id: run.run_id,
@@ -677,6 +703,13 @@ export class ExecutionEngine {
     if (run.durable_learnings?.length) {
       for (const proposal of run.durable_learnings) {
         const entry = this.knowledge.propose({ ...proposal, source_node: nodeId });
+        if ("propose" in this.knowledgeBackend && typeof (this.knowledgeBackend as any).propose === "function") {
+          try {
+            (this.knowledgeBackend as any).propose({ ...proposal, source_node: nodeId });
+          } catch {
+            // best effort
+          }
+        }
         eventBus.emit("KnowledgeProposed", featureId, "scheduler", {
           entry,
           source_node: nodeId,

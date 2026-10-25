@@ -1,4 +1,4 @@
-import { describe, it } from "node:test";
+import { describe, it } from "vitest";
 import assert from "node:assert/strict";
 import * as fs from "node:fs";
 import * as os from "node:os";
@@ -8,16 +8,16 @@ import {
   assertSameMeasurementClass,
   type InferenceSpanRecord,
   NOT_MEASURED,
-} from "../../src/observability/inference-usage.ts";
+} from "../../src/observability/inference-usage.js";
 import {
   appendInferenceSpan,
   readInferenceSpans,
   resolveInferenceSpansPath,
   sanitizeSpanRecord,
-} from "../../src/observability/inference-ledger.ts";
+} from "../../src/observability/inference-ledger.js";
 import {
   ObservableLlmProviderAdapter,
-} from "../../src/observability/observable-llm-adapter.ts";
+} from "../../src/observability/observable-llm-adapter.js";
 
 describe("UKS G1 Observability & Inference Ledger Suite", () => {
   it("usage ausente não produz 0", () => {
@@ -190,10 +190,17 @@ describe("UKS G1 Observability & Inference Ledger Suite", () => {
   });
 
   it("best-effort: falha de I/O no appendInferenceSpan não quebra a execução", () => {
-    // Escrita em caminho protegido/inválido
-    const res = appendInferenceSpan("/proc/invalid_non_existent_mount", "feat", { input_tokens: 1 });
-    assert.equal(res.ok, false);
-    assert.ok(res.error);
+    // Escrita em caminho protegido/inválido via arquivo bloqueante em tmpDir (evita loop recursivo em /proc)
+    const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "uks-io-fail-test-"));
+    const blockedRoot = path.join(tmpDir, "blocked_file");
+    fs.writeFileSync(blockedRoot, "block");
+    try {
+      const res = appendInferenceSpan(blockedRoot, "feat", { input_tokens: 1 });
+      assert.equal(res.ok, false);
+      assert.ok(res.error);
+    } finally {
+      fs.rmSync(tmpDir, { recursive: true, force: true });
+    }
   });
 
   it("ObservableLlmProviderAdapter executa completion e emite span gravado em disco", async () => {

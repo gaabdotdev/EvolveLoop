@@ -61,7 +61,7 @@ export function summarizeExecutionTrace(input: ExecutionTraceInput): ExecutionTr
     event_counts[e.type] = (event_counts[e.type] ?? 0) + 1;
   }
 
-  const capability_calls: CapabilityCallSummary[] = [];
+  const callMap = new Map<string, CapabilityCallSummary>();
   const policy_authority_decisions: AuthorityDecisionSummary[] = [];
   const errors: ExecutionErrorSummary[] = [];
 
@@ -91,7 +91,8 @@ export function summarizeExecutionTrace(input: ExecutionTraceInput): ExecutionTr
     }
 
     if (payload?.type === "worker" || (ev.spec as { normalized?: unknown }).normalized !== undefined) {
-      capability_calls.push({
+      const callKey = `${node_id ?? ""}:${meta.run_id ?? ""}:${capability}`;
+      callMap.set(callKey, {
         capability,
         node_id,
         provider_id: meta.provider_id,
@@ -128,26 +129,77 @@ export function summarizeExecutionTrace(input: ExecutionTraceInput): ExecutionTr
     const p = event.payload;
     if (event.type === "ProviderSelected" || event.type === "NodeStarted" || event.type === "NodeCompleted") {
       const cap = typeof p.capability === "string" ? p.capability : undefined;
+      const nodeId = typeof p.node_id === "string" ? p.node_id : undefined;
+      const runId = typeof p.run_id === "string" ? p.run_id : (typeof event.correlation_id === "string" ? event.correlation_id : undefined);
+
       if (cap) {
-        capability_calls.push({
-          capability: cap,
-          node_id: typeof p.node_id === "string" ? p.node_id : undefined,
-          provider_id: typeof p.provider_id === "string" ? p.provider_id : undefined,
-          status: event.type,
-          duration_ms: typeof p.duration_ms === "number" ? p.duration_ms : undefined,
-        });
+        const exactKey = `${nodeId ?? ""}:${runId ?? ""}:${cap}`;
+        const nodeOnlyKey = `${nodeId ?? ""}:${cap}`;
+        let existingKey: string | undefined;
+
+        if (callMap.has(exactKey)) {
+          existingKey = exactKey;
+        } else if (nodeId && callMap.has(nodeOnlyKey)) {
+          existingKey = nodeOnlyKey;
+        } else {
+          for (const k of callMap.keys()) {
+            if (nodeId && k.startsWith(`${nodeId}:`)) {
+              existingKey = k;
+              break;
+            }
+          }
+        }
+
+        if (existingKey) {
+          const entry = callMap.get(existingKey)!;
+          if (typeof p.provider_id === "string" && !entry.provider_id) {
+            entry.provider_id = p.provider_id;
+          }
+          if (event.type === "NodeCompleted") {
+            entry.status = "completed";
+          }
+          if (typeof p.duration_ms === "number" && !entry.duration_ms) {
+            entry.duration_ms = p.duration_ms;
+          }
+        } else {
+          const key = exactKey || nodeOnlyKey || `call-${callMap.size}`;
+          callMap.set(key, {
+            capability: cap,
+            node_id: nodeId,
+            provider_id: typeof p.provider_id === "string" ? p.provider_id : undefined,
+            status: event.type === "NodeCompleted" ? "completed" : event.type,
+            duration_ms: typeof p.duration_ms === "number" ? p.duration_ms : undefined,
+          });
+        }
       }
     }
     if (event.type === "NodeFailed") {
+      let errCode = typeof p.error_code === "string" ? p.error_code : undefined;
+      let errMsg = typeof p.message === "string" ? p.message : undefined;
+
+      if (typeof p.error === "string") {
+        if (!errMsg) errMsg = p.error;
+      } else if (p.error && typeof p.error === "object") {
+        const errObj = p.error as { code?: unknown; message?: unknown };
+        if (!errMsg && typeof errObj.message === "string") {
+          errMsg = errObj.message;
+        }
+        if (!errCode && typeof errObj.code === "string") {
+          errCode = errObj.code;
+        }
+      }
+
       errors.push({
-        code: typeof p.error_code === "string" ? p.error_code : "NODE_FAILED",
-        message: typeof p.error === "string" ? p.error : typeof p.message === "string" ? p.message : undefined,
+        code: errCode ?? "NODE_FAILED",
+        message: errMsg,
         node_id: typeof p.node_id === "string" ? p.node_id : undefined,
         capability: typeof p.capability === "string" ? p.capability : undefined,
         source: "event",
       });
     }
   }
+
+  const capability_calls = Array.from(callMap.values());
 
   const execution_id =
     input.execution_id ??

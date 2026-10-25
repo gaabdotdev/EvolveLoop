@@ -1,7 +1,7 @@
 {
   "task_id": "phase10-cutover-completion",
   "phase": "Phase 10: Definitive Cutover & Legacy Silo Deprecation (UKS Core V2.5)",
-  "timestamp": "2026-10-25T15:58:26.704Z",
+  "timestamp": "2026-10-25T16:06:41.930Z",
   "status": "PASSED",
   "total_tests": 7,
   "passed_tests": 7,
@@ -14,7 +14,7 @@
     "contingency_env_var": "EVOLVELOOP_UKS_DISABLED=1",
     "shadow_mode_supported": true,
     "shadow_env_var": "EVOLVELOOP_UKS_SHADOW=1",
-    "measured_search_latency_ms": 16.99,
+    "measured_search_latency_ms": 18.52,
     "slo_target_ms": 50,
     "slo_pass": true
   },
@@ -27,27 +27,27 @@
     {
       "path": "orchestrator/src/knowledge/backend/resolve.ts",
       "type": "VERIFIED_IN_CODE",
-      "sha256": "8038d5899cb25a9db2b29da09108b7ead91c53f1e630523a5f4fb290ab70b306"
+      "sha256": "9d18104ab4a03ecb27c86c3974c77c0be98cc359c49b322978daea06b3074a88"
     },
     {
       "path": "orchestrator/src/knowledge/backend/uks-backend.ts",
       "type": "VERIFIED_IN_CODE",
-      "sha256": "484b7c8fbeeb896638c535dffd376e9b61b2ec6085d4a22f7ad0869dc2c3d9d5"
+      "sha256": "a5b79d842bdd86722dcb76eda8cfed6a48f79d6c4911618c2d54aed1488c4a69"
     },
     {
       "path": "orchestrator/src/knowledge/backend/wiki-backend.ts",
       "type": "VERIFIED_IN_CODE",
-      "sha256": "cdb9436241b102f4c593cf9fdde76ac52a92f782f23eac3dfc735f43f78dde1c"
+      "sha256": "4a48a21f6532951d4e5819517389cfc92b458a51338440939bb146fe52bef750"
     },
     {
       "path": "orchestrator/src/knowledge/filesystem-knowledge-store.ts",
       "type": "VERIFIED_IN_CODE",
-      "sha256": "b3e6ba1bc1aaec20c6e80878fe1cc8f3fcd7c590e1db9135c805bf35effe2647"
+      "sha256": "42dcab9b1b25240514e505a555029ced9dacccb45bde1e2fec01c6f28bb170c6"
     },
     {
       "path": "scripts/v2.5/test-cutover-verification.mjs",
       "type": "VERIFIED_IN_CODE",
-      "sha256": "d4f9f5ae7029e9784526e7fe2a659c491349191e2e5d9b648d87b1f55e5a6bf9"
+      "sha256": "c0a1008297407ad414c169a17b06e6fcb6ce8064461e2e981e104ebe4acd815a"
     }
   ]
 }

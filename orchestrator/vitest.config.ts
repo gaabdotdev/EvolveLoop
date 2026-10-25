@@ -6,5 +6,6 @@ export default defineConfig({
     exclude: ["**/node_modules/**", "**/dist/**", "tests/observability/**"],
     globals: false,
     testTimeout: 30000,
+    setupFiles: ["tests/setup-checkpoint-key.ts"],
   },
 });

@@ -15,12 +15,11 @@ import {
   ExecutionEngine,
   ProviderRouter,
   createMockProvider,
-  ObservableInferenceProvider,
   loadYamlFile,
   buildRegistryFromManifestFiles,
   PluginLoader,
   JobFileExecutor,
-  FilesystemKnowledgeStore,
+  resolveKnowledgeBackend,
   FilesystemMemoryStore,
   resolveDataPaths,
   LongitudinalEvolveLoop,
@@ -137,10 +136,12 @@ function setupProviders(
 
   for (const id of ids) {
     const manifest = manifestByName.get(id);
-    if (manifest?.spec.plugin?.type === "cursor-skill" && executor) {
-      router.register(loader.load(manifest, executor));
-    } else if (manifest?.spec.plugin?.type === "observable-inference") {
-      router.register(new ObservableInferenceProvider({ id: manifest.metadata.name }));
+    if (manifest) {
+      if (manifest.spec.plugin?.type === "cursor-skill" && !executor) {
+        router.register(createMockProvider(id));
+      } else {
+        router.register(loader.load(manifest, executor));
+      }
     } else {
       router.register(createMockProvider(id));
     }
@@ -201,7 +202,9 @@ async function main() {
   let registry = enableDiscovery
     ? buildRegistryFromManifestFiles([])
     : buildRegistryFromManifestFiles(manifests);
-  registry = jobsDir ? supplementRegistry(registry, ir) : registryForMockRun(registry, ir);
+  if (!enableDiscovery) {
+    registry = jobsDir ? supplementRegistry(registry, ir) : registryForMockRun(registry, ir);
+  }
   const providers = setupProviders(registry, agentsRoot, jobsDir);
 
   const dataDir = args["data-dir"] ? resolve(args["data-dir"]) : undefined;
@@ -247,7 +250,7 @@ async function main() {
     discovery: enableDiscovery
       ? { agentsRoot, orchestratorProvidersDir: providersDir }
       : undefined,
-    knowledge: dataPaths ? new FilesystemKnowledgeStore(dataPaths.knowledgeDir) : undefined,
+    knowledgeBackend: resolveKnowledgeBackend({ workspaceRoot: agentsRoot }),
     memory: dataPaths ? new FilesystemMemoryStore(dataPaths.memoryDir) : undefined,
     evolveLoop,
     evolveScope: evolveScope ?? undefined,

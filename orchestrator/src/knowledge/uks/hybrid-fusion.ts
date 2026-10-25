@@ -11,7 +11,7 @@
  * Includes graceful degradation (degraded_mode: true) and snippet deduplication.
  */
 
-import { computeSha256 } from "./storage-core.ts";
+// storage-core imports omitted (not needed)
 
 export type FusionChannel = "bm25" | "ast" | "vector";
 
@@ -151,7 +151,7 @@ export class HybridFusionEngine {
                     // Check for overlapping chunks in the same file if deduplication is enabled
                     let merged = false;
                     if (deduplicate) {
-                        for (const [existingKey, existing] of candidatesMap.entries()) {
+                        for (const existing of candidatesMap.values()) {
                             if (existing.file_path === hit.file_path) {
                                 // Check overlap: start <= existing.end && end >= existing.start
                                 const overlaps = (hit.start_line <= existing.end_line + 2) && (hit.end_line >= existing.start_line - 2);

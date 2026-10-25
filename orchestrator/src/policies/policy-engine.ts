@@ -206,7 +206,7 @@ export class PolicyEngine {
     return policyRetries;
   }
 
-  resolveTimeoutMs(policy: ExecutionPolicy, node: GraphNode, contract?: ContractDocument): number {
+  resolveTimeoutMs(policy: ExecutionPolicy, _node: GraphNode, contract?: ContractDocument): number {
     const policyTimeoutStr = policy.spec.timeouts?.step_timeout;
     const policyTimeoutMs = parseTimeoutMs(policyTimeoutStr);
     const contractTimeoutRaw = contract?.spec?.timeout;

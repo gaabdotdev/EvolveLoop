@@ -3,6 +3,7 @@
 import type {
   DoDCheck,
   Evidence,
+  EvidenceCheck,
   EvidenceEmitter,
   EvidencePayload,
   GraphNode,
@@ -45,7 +46,7 @@ export function buildPlanningEvidence(
       assumptions,
       known_gaps: payload.unresolved_dependencies.map((d) => ({
         id: `dep-${d}`,
-        severity: "info" as const,
+        severity: "minor" as const,
         description: `Unresolved dependency: ${d}`,
       })),
       checks: [],
@@ -96,19 +97,27 @@ export function buildSelectionEvidence(
   };
 }
 
+export function unverifiedDodChecks(definitionOfDone: DoDCheck[]): EvidenceCheck[] {
+  return definitionOfDone.map((dod) => ({
+    dod_id: dod.id,
+    result: dod.verification === "manual" ? "manual" : "skip",
+    verification: dod.verification,
+    details: dod.verification === "manual" ? "manual_not_observed" : "not_observed",
+  }));
+}
+
 export function buildWorkerEvidence(
   node: GraphNode,
   runId: string,
   providerId: string,
   durationMs: number,
   sideEffects?: { files_created?: string[]; files_modified?: string[]; commands_run?: string[] },
+  explicitChecks?: EvidenceCheck[],
 ): Evidence {
-  const checks = node.definition_of_done.map((dod) => ({
-    dod_id: dod.id,
-    result: "pass" as const,
-    verification: dod.verification,
-    details: dod.check,
-  }));
+  const checks = explicitChecks ?? unverifiedDodChecks(node.definition_of_done);
+  const allPassed =
+    checks.length === 0 || checks.every((c) => c.result === "pass" || c.result === "manual");
+  const observed = explicitChecks !== undefined ? allPassed : node.definition_of_done.length === 0;
 
   const payload: Extract<EvidencePayload, { type: "worker" }> = {
     type: "worker",
@@ -126,9 +135,9 @@ export function buildWorkerEvidence(
     kind: "Evidence",
     metadata: baseEvidence(node.id, runId, "worker", node.capability, providerId),
     spec: {
-      status: "complete",
-      confidence: 0.9,
-      coverage: 1,
+      status: observed ? "complete" : "partial",
+      confidence: observed ? 0.9 : 0.2,
+      coverage: observed ? 1 : 0,
       assumptions: [],
       known_gaps: [],
       verdict: null,

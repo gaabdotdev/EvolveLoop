@@ -1,5 +1,6 @@
 import type { ExecuteRequest, ExecuteResult, ProviderRuntime } from "../types/index.js";
 import { buildSuccessEvidence } from "../evidence/validator.js";
+import { buildWorkerEvidence } from "../evidence/builders.js";
 import { newRunId } from "../ir/validator.js";
 
 export type MockBehavior =
@@ -76,7 +77,23 @@ export class MockProvider implements ProviderRuntime {
       };
     }
 
-    const evidence = buildSuccessEvidence(request.node, request.run_id, this.id, Date.now() - start);
+    const explicitChecks = request.node.definition_of_done.map((dod) => ({
+      dod_id: dod.id,
+      result: "pass" as const,
+      verification: dod.verification,
+      details: dod.check,
+    }));
+    const evidence =
+      request.node.type === "gate"
+        ? buildSuccessEvidence(request.node, request.run_id, this.id, Date.now() - start)
+        : buildWorkerEvidence(
+            request.node,
+            request.run_id,
+            this.id,
+            Date.now() - start,
+            undefined,
+            explicitChecks,
+          );
 
     return {
       run_id: request.run_id,

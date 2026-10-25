@@ -13,10 +13,10 @@ import { Readable } from "node:stream";
 import {
   classifyHttpInferenceUsage,
   type InferenceSpanRecord,
-} from "./inference-usage.ts";
+} from "./inference-usage.js";
 import {
   appendInferenceSpan,
-} from "./inference-ledger.ts";
+} from "./inference-ledger.js";
 
 export type FetchFn = typeof fetch;
 export type DnsLookupFn = (hostname: string) => Promise<Array<{ address: string; family: number }>>;
@@ -26,7 +26,7 @@ export const DEFAULT_INFERENCE_TIMEOUT_MS = 60000; // 60s fallback
 
 export function pinnedLookup(pinnedIp: string, pinnedFamily = 4) {
   return function lookup(
-    hostname: string,
+    _hostname: string,
     options: any,
     callback: (err: Error | null, address: any, family?: number) => void,
   ) {
@@ -56,32 +56,7 @@ export function createPinnedFetch(options: PinnedFetchOptions = {}): FetchFn {
     const pinnedIp = init?.pinnedIp;
     const pinnedFamily = init?.pinnedFamily || 4;
 
-    // Timeout fallback when init.signal is not provided
-    let fallbackTimeoutSignal: AbortSignal | undefined;
-    let fallbackTimer: NodeJS.Timeout | undefined;
-    if (!init?.signal && options.defaultTimeoutMs && options.defaultTimeoutMs > 0) {
-      const ctrl = new AbortController();
-      fallbackTimer = setTimeout(() => {
-        const timeoutErr = new Error(`Request timed out after ${options.defaultTimeoutMs}ms`);
-        (timeoutErr as any).code = "TIMEOUT";
-        ctrl.abort(timeoutErr);
-      }, options.defaultTimeoutMs);
-      fallbackTimeoutSignal = ctrl.signal;
-    }
-
-    const effectiveSignal = init?.signal
-      ? (fallbackTimeoutSignal ? AbortSignal.any([init.signal, fallbackTimeoutSignal]) : init.signal)
-      : fallbackTimeoutSignal;
-
     return new Promise<Response>((resolve, reject) => {
-      let isSettled = false;
-      const cleanup = () => {
-        if (fallbackTimer) {
-          clearTimeout(fallbackTimer);
-          fallbackTimer = undefined;
-        }
-      };
-
       const headers = new Headers(init?.headers);
       if (!headers.has("host")) {
         headers.set("host", url.host);
@@ -91,20 +66,25 @@ export function createPinnedFetch(options: PinnedFetchOptions = {}): FetchFn {
         reqHeaders[key] = val;
       });
 
-      let sanitizedHostname = url.hostname;
-      while (sanitizedHostname.endsWith(".")) {
-        sanitizedHostname = sanitizedHostname.slice(0, -1);
+      let effectiveSignal = init?.signal;
+      if (
+        !effectiveSignal &&
+        typeof options.defaultTimeoutMs === "number" &&
+        options.defaultTimeoutMs > 0 &&
+        Number.isFinite(options.defaultTimeoutMs)
+      ) {
+        effectiveSignal = AbortSignal.timeout(options.defaultTimeoutMs);
       }
 
       const reqOpts: https.RequestOptions = {
         protocol: url.protocol,
-        hostname: sanitizedHostname,
+        hostname: url.hostname,
         port: url.port ? Number(url.port) : isHttps ? 443 : 80,
         path: url.pathname + url.search,
         method: init?.method || "POST",
         headers: reqHeaders,
-        servername: sanitizedHostname, // Preserves SNI and certificate validation!
-        signal: effectiveSignal,
+        servername: url.hostname, // Preserves SNI and certificate validation!
+        signal: (effectiveSignal ?? undefined) as AbortSignal | undefined,
       };
 
       if (pinnedIp) {
@@ -113,34 +93,22 @@ export function createPinnedFetch(options: PinnedFetchOptions = {}): FetchFn {
 
       const req = client.request(reqOpts, (res) => {
         if (init?.redirect === "error" && res.statusCode && res.statusCode >= 300 && res.statusCode < 400) {
-          cleanup();
           req.destroy();
-          isSettled = true;
           return reject(new Error("[-] SECURITY_SSRF_VIOLATION: HTTP redirects are strictly forbidden."));
         }
-
-        res.on("close", cleanup);
-        res.on("error", cleanup);
 
         const webStream = Readable.toWeb(res) as ReadableStream;
         const response = new Response(webStream, {
           status: res.statusCode,
           statusText: res.statusMessage,
-          headers: res.headers as HeadersInit,
+          headers: res.headers as any,
         });
-        isSettled = true;
         resolve(response);
       });
 
       req.on("error", (err: any) => {
-        cleanup();
-        if (!isSettled) {
-          isSettled = true;
-          reject(err);
-        }
+        reject(err);
       });
-
-      req.on("close", cleanup);
 
       if (init?.body) {
         if (typeof init.body === "string" || Buffer.isBuffer(init.body)) {
@@ -161,37 +129,10 @@ export interface TargetUrlValidationOptions {
   dnsLookup?: DnsLookupFn;
 }
 
-interface CachedDnsRecord {
-  records: Array<{ address: string; family: number }>;
-  expiresAt: number;
-}
-
-const DNS_CACHE = new Map<string, CachedDnsRecord>();
-
-// Pre-seed official endpoints with validated public IP records to prevent cold-start network latency
-DNS_CACHE.set("api.anthropic.com", {
-  records: [{ address: "160.79.104.10", family: 4 }],
-  expiresAt: Date.now() + 300_000,
-});
-DNS_CACHE.set("api.openai.com", {
-  records: [{ address: "162.159.140.245", family: 4 }],
-  expiresAt: Date.now() + 300_000,
-});
-
 export const defaultDnsLookup: DnsLookupFn = async (hostname: string) => {
-  const now = Date.now();
-  const cached = DNS_CACHE.get(hostname);
-  if (cached && cached.expiresAt > now) {
-    return cached.records;
-  }
-
   try {
     const res = await dns.lookup(hostname, { all: true });
-    const records = Array.isArray(res) ? res : [res];
-    if (records.length > 0) {
-      DNS_CACHE.set(hostname, { records, expiresAt: now + 30_000 });
-    }
-    return records;
+    return Array.isArray(res) ? res : [res];
   } catch (err: unknown) {
     throw new Error(`[-] SECURITY_SSRF_VIOLATION: DNS resolution failed for '${hostname}': ${(err as Error).message}`);
   }
@@ -240,62 +181,10 @@ const DEFAULT_MODELS: Record<string, string> = {
 };
 
 /**
- * Safely parses an IPv6 address string (including brackets, zone index, double-colons,
- * leading zeros, and embedded IPv4) into exactly 8 16-bit integers.
- */
-export function parseIpv6ToWords(rawIpv6: string): number[] | null {
-  let ip = rawIpv6.startsWith("[") && rawIpv6.endsWith("]") ? rawIpv6.slice(1, -1) : rawIpv6;
-  ip = ip.split("%")[0].toLowerCase();
-
-  let left = ip;
-  let right = "";
-  if (ip.includes("::")) {
-    const doubleColon = ip.indexOf("::");
-    if (ip.indexOf("::", doubleColon + 2) !== -1) return null;
-    left = ip.slice(0, doubleColon);
-    right = ip.slice(doubleColon + 2);
-  }
-
-  function parseSegment(part: string): number[] | null {
-    if (!part) return [];
-    const tokens = part.split(":");
-    const words: number[] = [];
-    for (const t of tokens) {
-      if (t.includes(".")) {
-        const octets = t.split(".").map(Number);
-        if (octets.length !== 4 || octets.some((o) => isNaN(o) || o < 0 || o > 255 || !Number.isInteger(o))) return null;
-        words.push((octets[0] << 8) | octets[1]);
-        words.push((octets[2] << 8) | octets[3]);
-      } else {
-        if (t.length === 0 || t.length > 4) return null;
-        const val = parseInt(t, 16);
-        if (isNaN(val) || val < 0 || val > 0xffff) return null;
-        words.push(val);
-      }
-    }
-    return words;
-  }
-
-  const leftWords = parseSegment(left);
-  const rightWords = parseSegment(right);
-  if (!leftWords || !rightWords) return null;
-
-  if (!ip.includes("::")) {
-    return leftWords.length === 8 ? leftWords : null;
-  }
-
-  const missing = 8 - (leftWords.length + rightWords.length);
-  if (missing < 0) return null;
-  const middle = new Array(missing).fill(0);
-  return [...leftWords, ...middle, ...rightWords];
-}
-
-/**
  * Checks whether an IPv4 address belongs to a forbidden/private/internal range.
- * Fully incorporates RFC 6890, RFC 5737, and RFC 2544 allocations.
  */
 export function isForbiddenIPv4(octets: number[]): { forbidden: boolean; reason?: string } {
-  const [a, b, c, d] = octets;
+  const [a, b] = octets;
 
   // 0.0.0.0/8 (Current network)
   if (a === 0) return { forbidden: true, reason: "Current network (0.0.0.0/8)" };
@@ -326,31 +215,6 @@ export function isForbiddenIPv4(octets: number[]): { forbidden: boolean; reason?
     return { forbidden: true, reason: "Carrier-Grade NAT (100.64.0.0/10)" };
   }
 
-  // 192.0.0.0/24 (IETF Protocol Assignments, RFC 6890)
-  if (a === 192 && b === 0 && c === 0) {
-    return { forbidden: true, reason: "IETF Protocol Assignments (192.0.0.0/24)" };
-  }
-
-  // 192.0.2.0/24 (TEST-NET-1 Documentation, RFC 5737)
-  if (a === 192 && b === 0 && c === 2) {
-    return { forbidden: true, reason: "TEST-NET-1 (192.0.2.0/24)" };
-  }
-
-  // 198.18.0.0/15 (Network Benchmark Testing, RFC 2544 / RFC 6890)
-  if (a === 198 && (b === 18 || b === 19)) {
-    return { forbidden: true, reason: "Network Benchmark Testing (198.18.0.0/15)" };
-  }
-
-  // 198.51.100.0/24 (TEST-NET-2 Documentation, RFC 5737)
-  if (a === 198 && b === 51 && c === 100) {
-    return { forbidden: true, reason: "TEST-NET-2 (198.51.100.0/24)" };
-  }
-
-  // 203.0.113.0/24 (TEST-NET-3 Documentation, RFC 5737)
-  if (a === 203 && b === 0 && c === 113) {
-    return { forbidden: true, reason: "TEST-NET-3 (203.0.113.0/24)" };
-  }
-
   // 224.0.0.0/4 (Multicast)
   if (a >= 224 && a <= 239) return { forbidden: true, reason: "Multicast (224.0.0.0/4)" };
 
@@ -361,85 +225,169 @@ export function isForbiddenIPv4(octets: number[]): { forbidden: boolean; reason?
 }
 
 /**
+ * Parses any standard, compressed, bracketed, or transition IPv6 address into a 16-byte array.
+ * Strips zone identifiers (%...) and expands embedded IPv4 dotted quads.
+ */
+export function parseIPv6Bytes(rawIpv6: string): Uint8Array | null {
+  let ip = rawIpv6.startsWith("[") && rawIpv6.endsWith("]") ? rawIpv6.slice(1, -1) : rawIpv6;
+  ip = ip.toLowerCase();
+
+  const zoneIndex = ip.indexOf("%");
+  if (zoneIndex !== -1) {
+    ip = ip.slice(0, zoneIndex);
+  }
+
+  // Handle embedded IPv4 dotted quad at the end (e.g. ::169.254.169.254, 64:ff9b::169.254.169.254, ::ffff:192.168.1.1)
+  if (ip.includes(".")) {
+    const lastColon = ip.lastIndexOf(":");
+    if (lastColon === -1) return null;
+    const v4Str = ip.slice(lastColon + 1);
+    const octets = v4Str.split(".").map(Number);
+    if (octets.length !== 4 || octets.some((o) => isNaN(o) || o < 0 || o > 255)) {
+      return null;
+    }
+    const hex1 = ((octets[0] << 8) | octets[1]).toString(16);
+    const hex2 = ((octets[2] << 8) | octets[3]).toString(16);
+    ip = ip.slice(0, lastColon + 1) + hex1 + ":" + hex2;
+  }
+
+  const parts = ip.split("::");
+  if (parts.length > 2) return null;
+
+  let words: number[] = [];
+  if (parts.length === 2) {
+    const left = parts[0] ? parts[0].split(":") : [];
+    const right = parts[1] ? parts[1].split(":") : [];
+    if (left.length + right.length > 7) return null;
+    const fillZeros = 8 - (left.length + right.length);
+    const leftWords = left.map((h) => parseInt(h, 16));
+    const rightWords = right.map((h) => parseInt(h, 16));
+    if (leftWords.some((n) => isNaN(n) || n < 0 || n > 0xffff)) return null;
+    if (rightWords.some((n) => isNaN(n) || n < 0 || n > 0xffff)) return null;
+    words = [...leftWords, ...new Array(fillZeros).fill(0), ...rightWords];
+  } else {
+    const pieces = ip.split(":");
+    if (pieces.length !== 8) return null;
+    words = pieces.map((h) => parseInt(h, 16));
+    if (words.some((n) => isNaN(n) || n < 0 || n > 0xffff)) return null;
+  }
+
+  const bytes = new Uint8Array(16);
+  for (let i = 0; i < 8; i++) {
+    bytes[i * 2] = (words[i] >> 8) & 0xff;
+    bytes[i * 2 + 1] = words[i] & 0xff;
+  }
+  return bytes;
+}
+
+/**
  * Checks whether an IPv6 address string belongs to a forbidden range.
- * Uses semantic 16-bit word decomposition (parseIpv6ToWords) covering all standard and evasion encodings.
+ * Normalizes to 128-bit binary representation to prevent representation bypasses.
  */
 export function isForbiddenIPv6(rawIpv6: string): { forbidden: boolean; reason?: string } {
-  const words = parseIpv6ToWords(rawIpv6);
-  if (!words) {
-    return { forbidden: true, reason: "Malformed IPv6 address" };
-  }
-  const [w0, w1, w2, w3, w4, w5, w6, w7] = words;
-
-  // Unspecified (::)
-  if (words.every((w) => w === 0)) {
-    return { forbidden: true, reason: "IPv6 Unspecified (::)" };
+  const bytes = parseIPv6Bytes(rawIpv6);
+  if (!bytes) {
+    return { forbidden: true, reason: "Invalid IPv6 address format" };
   }
 
-  // Loopback (::1, 0:0:0:0:0:0:0:0001, ::1%lo, etc.)
-  if (w0 === 0 && w1 === 0 && w2 === 0 && w3 === 0 && w4 === 0 && w5 === 0 && w6 === 0 && w7 === 1) {
+  // Loopback (::1, 0:0:0:0:0:0:0:1)
+  const isAllZeroExceptLast = bytes.slice(0, 15).every((b) => b === 0);
+  if (isAllZeroExceptLast && bytes[15] === 1) {
     return { forbidden: true, reason: "IPv6 Loopback (::1)" };
   }
 
-  // IPv4-mapped (::ffff:x.x.x.x) or IPv4-compatible (::x.x.x.x)
-  const isV4Mapped = w0 === 0 && w1 === 0 && w2 === 0 && w3 === 0 && w4 === 0 && w5 === 0xffff;
-  const isV4Compatible = w0 === 0 && w1 === 0 && w2 === 0 && w3 === 0 && w4 === 0 && w5 === 0;
+  // Unspecified (::)
+  if (bytes.every((b) => b === 0)) {
+    return { forbidden: true, reason: "IPv6 Unspecified (::)" };
+  }
 
-  if (isV4Mapped || isV4Compatible) {
-    const embeddedOctets = [(w6 >> 8) & 0xff, w6 & 0xff, (w7 >> 8) & 0xff, w7 & 0xff];
-    const v4Check = isForbiddenIPv4(embeddedOctets);
-    if (v4Check.forbidden) {
-      return { forbidden: true, reason: `${isV4Mapped ? "IPv4-mapped" : "IPv4-compatible"} IPv6 -> ${v4Check.reason}` };
+  // IPv4-compatible IPv6 (::/96)
+  if (bytes.slice(0, 12).every((b) => b === 0)) {
+    const v4 = [bytes[12], bytes[13], bytes[14], bytes[15]];
+    const res = isForbiddenIPv4(v4);
+    return {
+      forbidden: true,
+      reason: res.forbidden
+        ? `IPv4-compatible IPv6 -> ${res.reason}`
+        : "IPv4-compatible IPv6 (deprecated ::/96)",
+    };
+  }
+
+  // IPv4-mapped IPv6 (::ffff:0:0/96)
+  if (bytes.slice(0, 10).every((b) => b === 0) && bytes[10] === 0xff && bytes[11] === 0xff) {
+    const v4 = [bytes[12], bytes[13], bytes[14], bytes[15]];
+    const res = isForbiddenIPv4(v4);
+    return {
+      forbidden: true,
+      reason: res.forbidden
+        ? `IPv4-mapped IPv6 -> ${res.reason}`
+        : "IPv4-mapped IPv6 address",
+    };
+  }
+
+  // NAT64 well-known prefix (64:ff9b::/96, RFC 6052)
+  if (
+    bytes[0] === 0x00 &&
+    bytes[1] === 0x64 &&
+    bytes[2] === 0xff &&
+    bytes[3] === 0x9b &&
+    bytes.slice(4, 12).every((b) => b === 0)
+  ) {
+    const v4 = [bytes[12], bytes[13], bytes[14], bytes[15]];
+    const res = isForbiddenIPv4(v4);
+    return {
+      forbidden: true,
+      reason: res.forbidden
+        ? `IPv6 NAT64 -> ${res.reason}`
+        : "IPv6 NAT64 well-known prefix (64:ff9b::/96)",
+    };
+  }
+
+  // 6to4 prefix (2002::/16, RFC 3056) - IPv4 in bytes 2..5
+  if (bytes[0] === 0x20 && bytes[1] === 0x02) {
+    const v4 = [bytes[2], bytes[3], bytes[4], bytes[5]];
+    const res = isForbiddenIPv4(v4);
+    return {
+      forbidden: true,
+      reason: res.forbidden
+        ? `IPv6 6to4 -> ${res.reason}`
+        : "IPv6 6to4 (2002::/16)",
+    };
+  }
+
+  // Teredo prefix (2001:0000::/32, RFC 4380)
+  if (bytes[0] === 0x20 && bytes[1] === 0x01 && bytes[2] === 0x00 && bytes[3] === 0x00) {
+    const serverV4 = [bytes[4], bytes[5], bytes[6], bytes[7]];
+    const clientV4 = [bytes[12] ^ 0xff, bytes[13] ^ 0xff, bytes[14] ^ 0xff, bytes[15] ^ 0xff];
+    const sRes = isForbiddenIPv4(serverV4);
+    const cRes = isForbiddenIPv4(clientV4);
+    if (sRes.forbidden) {
+      return { forbidden: true, reason: `IPv6 Teredo server -> ${sRes.reason}` };
     }
-    if (isV4Compatible) {
-      return { forbidden: true, reason: "IPv4-compatible IPv6 (deprecated RFC 4291)" };
+    if (cRes.forbidden) {
+      return { forbidden: true, reason: `IPv6 Teredo client -> ${cRes.reason}` };
     }
-    return { forbidden: true, reason: "IPv4-mapped IPv6 address" };
+    return { forbidden: true, reason: "IPv6 Teredo (2001:0000::/32)" };
   }
 
-  // NAT64 Well-Known Prefix 64:ff9b::/96 (RFC 6052) and Local-Use 64:ff9b:1::/48 (RFC 8215)
-  if (w0 === 0x0064 && w1 === 0xff9b) {
-    const embeddedOctets = [(w6 >> 8) & 0xff, w6 & 0xff, (w7 >> 8) & 0xff, w7 & 0xff];
-    const v4Check = isForbiddenIPv4(embeddedOctets);
-    if (v4Check.forbidden) {
-      return { forbidden: true, reason: `NAT64 IPv6 -> ${v4Check.reason}` };
-    }
-    return { forbidden: true, reason: "NAT64 translation prefix (RFC 6052 / RFC 8215)" };
-  }
-
-  // 6to4 Prefix 2002::/16 (RFC 3056, deprecated RFC 7526)
-  if (w0 === 0x2002) {
-    const embeddedOctets = [(w1 >> 8) & 0xff, w1 & 0xff, (w2 >> 8) & 0xff, w2 & 0xff];
-    const v4Check = isForbiddenIPv4(embeddedOctets);
-    if (v4Check.forbidden) {
-      return { forbidden: true, reason: `6to4 IPv6 -> ${v4Check.reason}` };
-    }
-    return { forbidden: true, reason: "6to4 relay prefix (RFC 3056 / RFC 7526)" };
-  }
-
-  // fe80::/10 (Link-Local)
-  if ((w0 & 0xffc0) === 0xfe80) {
-    return { forbidden: true, reason: "IPv6 Link-Local (fe80::/10)" };
-  }
-
-  // fc00::/7 (Unique Local Address, RFC 4193)
-  if ((w0 & 0xfe00) === 0xfc00) {
-    return { forbidden: true, reason: "IPv6 Unique Local (fc00::/7)" };
-  }
-
-  // ff00::/8 (Multicast)
-  if ((w0 & 0xff00) === 0xff00) {
-    return { forbidden: true, reason: "IPv6 Multicast (ff00::/8)" };
-  }
-
-  // 2001:db8::/32 (Documentation)
-  if (w0 === 0x2001 && w1 === 0x0db8) {
+  // Documentation (2001:db8::/32, RFC 3849)
+  if (bytes[0] === 0x20 && bytes[1] === 0x01 && bytes[2] === 0x0d && bytes[3] === 0xb8) {
     return { forbidden: true, reason: "IPv6 Documentation (2001:db8::/32)" };
   }
 
-  // 100::/64 (Discard-Only)
-  if (w0 === 0x0100 && w1 === 0 && w2 === 0 && w3 === 0) {
-    return { forbidden: true, reason: "IPv6 Discard-Only (100::/64)" };
+  // Link-Local (fe80::/10)
+  if (bytes[0] === 0xfe && (bytes[1] & 0xc0) === 0x80) {
+    return { forbidden: true, reason: "IPv6 Link-Local (fe80::/10)" };
+  }
+
+  // Unique Local Address (fc00::/7, RFC 4193)
+  if ((bytes[0] & 0xfe) === 0xfc) {
+    return { forbidden: true, reason: "IPv6 Unique Local (fc00::/7)" };
+  }
+
+  // Multicast (ff00::/8)
+  if (bytes[0] === 0xff) {
+    return { forbidden: true, reason: "IPv6 Multicast (ff00::/8)" };
   }
 
   return { forbidden: false };
@@ -475,13 +423,9 @@ export function validateTargetUrl(
   }
 
   let hostname = parsed.hostname.toLowerCase();
-  while (hostname.endsWith(".")) {
+  if (hostname.endsWith(".")) {
     hostname = hostname.slice(0, -1);
   }
-  if (!hostname) {
-    throw new Error("[-] SECURITY_SSRF_VIOLATION: Hostname cannot be empty.");
-  }
-  parsed.hostname = hostname;
 
   // Cloud metadata endpoint protection (DNS / hostnames)
   if (
@@ -535,8 +479,7 @@ export function validateTargetUrl(
 }
 
 /**
- * Performs full validation including async DNS resolution for all domains to prevent DNS rebinding.
- * Strict fail-closed allowlist is enforced before accepting IP literals.
+ * Performs full validation including async DNS resolution for custom gateways to prevent DNS rebinding.
  */
 export async function validateTargetUrlAndResolve(
   rawUrl: string,
@@ -544,10 +487,9 @@ export async function validateTargetUrlAndResolve(
 ): Promise<URL> {
   const parsed = validateTargetUrl(rawUrl, options);
   let hostname = parsed.hostname.toLowerCase();
-  while (hostname.endsWith(".")) {
+  if (hostname.endsWith(".")) {
     hostname = hostname.slice(0, -1);
   }
-  parsed.hostname = hostname;
 
   const isV6Bracket = hostname.startsWith("[") && hostname.endsWith("]");
   const rawIpCandidate = isV6Bracket ? hostname.slice(1, -1) : hostname;
@@ -558,24 +500,23 @@ export async function validateTargetUrlAndResolve(
   const isAllowlisted =
     DEFAULT_ALLOWLIST.has(hostname) ||
     allowedGateways.includes(hostname) ||
-    (allowLoopback && (hostname === "localhost" || hostname === "127.0.0.1" || hostname === "::1" || hostname === "[::1]"));
+    DEFAULT_ALLOWLIST.has(rawIpCandidate) ||
+    allowedGateways.includes(rawIpCandidate);
 
-  // 1. Strict allowlist check applies to BOTH hostnames AND IP literals!
   if (!isAllowlisted && !allowCustomGateway) {
     throw new Error(
       `[-] SECURITY_SSRF_VIOLATION: Custom gateway host '${hostname}' is not in the approved endpoint allowlist. Custom gateways must be explicitly authorized.`,
     );
   }
 
-  // 2. IP literals (already verified not forbidden by validateTargetUrl and authorized by allowlist/custom):
-  // Set pinnedIp directly without DNS lookup
+  // If already an IP address literal and authorized, no DNS lookup needed or possible
   if (net.isIP(rawIpCandidate)) {
     (parsed as any).pinnedIp = rawIpCandidate;
     (parsed as any).pinnedFamily = net.isIPv4(rawIpCandidate) ? 4 : 6;
     return parsed;
   }
 
-  // 3. Mandatory DNS resolution for ALL hostnames (DEFAULT_ALLOWLIST, allowedGateways, and custom gateways)
+  // ALL domain names (even allowlisted ones) MUST resolve DNS securely and enforce IP pinning
   const lookupFn = options.dnsLookup ?? defaultDnsLookup;
   let records: { address: string; family: number }[];
   try {
@@ -603,7 +544,7 @@ export async function validateTargetUrlAndResolve(
           );
         }
       }
-    } else if (net.isIPv6(addr)) {
+    } else if (net.isIPv6(addr) || addr.includes(":")) {
       const check = isForbiddenIPv6(addr);
       if (check.forbidden) {
         if (check.reason?.includes("Loopback") && allowLoopback) {
@@ -614,8 +555,6 @@ export async function validateTargetUrlAndResolve(
           );
         }
       }
-    } else {
-      throw new Error(`[-] SECURITY_SSRF_VIOLATION: DNS resolution for '${hostname}' returned invalid IP '${addr}'.`);
     }
   }
 
@@ -768,7 +707,6 @@ export class ObservableLlmProviderAdapter {
 
     let res: Response;
     let durationMs: number;
-    let raw: unknown;
 
     try {
       res = await this.fetchImpl(targetUrl, {
@@ -780,12 +718,6 @@ export class ObservableLlmProviderAdapter {
         pinnedIp,
         pinnedFamily,
       } as any);
-
-      if (!res.ok) {
-        throw new Error(`${provider}_http_${res.status}`);
-      }
-
-      raw = (await res.json()) as unknown;
       durationMs = Number((performance.now() - startTime).toFixed(2));
     } catch (fetchErr: unknown) {
       durationMs = Number((performance.now() - startTime).toFixed(2));
@@ -793,28 +725,17 @@ export class ObservableLlmProviderAdapter {
       let isCancelled = false;
 
       const errObj = fetchErr as { name?: string; message?: string; code?: string };
-
-      const isSocketNetworkError =
-        errObj?.code === "ECONNABORTED" ||
-        errObj?.code === "ECONNRESET" ||
-        errObj?.code === "ECONNREFUSED" ||
-        errObj?.code === "EPIPE";
-
       if (
         errObj?.name === "TimeoutError" ||
         combinedSignal?.reason?.name === "TimeoutError" ||
-        (combinedSignal?.reason as any)?.code === "TIMEOUT" ||
-        errObj?.code === "TIMEOUT" ||
-        errObj?.code === "ETIMEDOUT" ||
-        errObj?.message?.toLowerCase().includes("timed out") ||
-        errObj?.message?.toLowerCase().includes("timeout")
+        errObj?.message?.toLowerCase().includes("timeout") ||
+        errObj?.code === "ETIMEDOUT"
       ) {
         isTimeout = true;
       } else if (
-        input.signal?.aborted ||
-        (!isSocketNetworkError &&
-          (errObj?.name === "AbortError" ||
-            (errObj?.message?.toLowerCase().includes("abort") && !errObj?.message?.includes("ECONNABORTED"))))
+        errObj?.name === "AbortError" ||
+        errObj?.message?.toLowerCase().includes("abort") ||
+        input.signal?.aborted
       ) {
         isCancelled = true;
       }
@@ -848,6 +769,26 @@ export class ObservableLlmProviderAdapter {
       throw fetchErr;
     }
 
+    if (!res.ok) {
+      if (input.memoryRoot && input.featureId) {
+        const failureSpan = classifyHttpInferenceUsage({
+          httpOk: false,
+          runId: input.runId,
+          taskId: input.taskId,
+          agentId: input.agentId,
+          phase: input.phase,
+          provider,
+          model,
+          retryIndex: input.retryIndex,
+          durationMs,
+          outcome: "error",
+        });
+        appendInferenceSpan(input.memoryRoot, input.featureId, failureSpan);
+      }
+      throw new Error(`${provider}_http_${res.status}`);
+    }
+
+    const raw = (await res.json()) as unknown;
     let span: InferenceSpanRecord | undefined;
     let ledgerWritten = false;
     let ledgerPath: string | undefined;

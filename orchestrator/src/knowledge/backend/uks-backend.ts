@@ -5,14 +5,14 @@
  */
 
 import * as path from "node:path";
-import type { EvidenceSet, KnowledgeHit } from "../../capabilities/results.ts";
+import type { EvidenceSet, KnowledgeHit } from "../../capabilities/results.js";
 import type {
   KnowledgeBackend,
   KnowledgeHealth,
   KnowledgeInspectResult,
   KnowledgeBackendId
-} from "./types.ts";
-import { ContextPackBuilder } from "../uks/context-pack-builder.ts";
+} from "./types.js";
+import { ContextPackBuilder } from "../uks/context-pack-builder.js";
 
 export interface UKSBackendOptions {
   workspaceRoot?: string;
@@ -103,5 +103,15 @@ export class UKSKnowledgeBackend implements KnowledgeBackend {
 
   public getBuilder(): ContextPackBuilder {
     return this.builder;
+  }
+
+  private proposedEntries: any[] = [];
+
+  public propose(entry: any): void {
+    this.proposedEntries.push(entry);
+  }
+
+  public getProposedEntries(): any[] {
+    return [...this.proposedEntries];
   }
 }

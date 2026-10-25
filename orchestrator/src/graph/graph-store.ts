@@ -25,7 +25,7 @@ export class GraphStore {
 
   static fromSnapshot(snapshot: GraphSnapshot): GraphStore {
     const store = Object.create(GraphStore.prototype) as GraphStore;
-    store.featureId = snapshot.feature_id;
+    (store as { featureId: string }).featureId = snapshot.feature_id;
     store.nodes = new Map(snapshot.nodes.map((n) => [n.id, structuredClone(n)]));
     return store;
   }

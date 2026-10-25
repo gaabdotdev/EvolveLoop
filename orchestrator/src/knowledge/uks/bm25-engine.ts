@@ -9,7 +9,7 @@
 
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { writeAtomicJson, readJson, computeSha256, assertPathConfined } from "./storage-core.ts";
+import { writeAtomicJson, readJson, assertPathConfined } from "./storage-core.js";
 
 export interface Bm25Chunk {
     chunk_id: string;

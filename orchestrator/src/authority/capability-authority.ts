@@ -3,7 +3,8 @@
  * Distinct from PolicyEngine (retries, gates, provider strategy).
  */
 
-import { resolve } from "node:path";
+import { resolve, dirname, basename, sep } from "node:path";
+import * as fs from "node:fs";
 
 export type AuthorityDecision = "allow" | "deny" | "confirm";
 
@@ -25,7 +26,9 @@ export interface AuthorityRequest {
   side_effects?: boolean;
   deterministic?: boolean;
   requires_confirmation?: boolean;
-  targetPath?: string;
+  targetPath?: string | string[];
+  targetPaths?: string[];
+  cwd?: string;
   context?: AuthorityContext;
 }
 
@@ -48,14 +51,57 @@ export interface AuthorityResult {
   };
 }
 
+export function realpathDeepSafe(p: string): string {
+  const abs = resolve(p);
+  let current = abs;
+  const parts: string[] = [];
+
+  while (current && !fs.existsSync(current)) {
+    const parent = dirname(current);
+    if (parent === current) break;
+    parts.unshift(basename(current));
+    current = parent;
+  }
+
+  try {
+    if (fs.existsSync(current)) {
+      const realCurrent = fs.realpathSync(current);
+      return parts.length > 0 ? resolve(realCurrent, ...parts) : realCurrent;
+    }
+  } catch {
+    // fallback
+  }
+
+  return abs;
+}
+
 export function pathEscapesWorkspace(
-  targetPath: string | undefined,
+  targetPath: string | string[] | undefined,
   workspaceRoot: string | undefined,
 ): boolean {
   if (!targetPath || !workspaceRoot) return false;
-  const root = resolve(workspaceRoot);
-  const resolved = resolve(root, targetPath);
-  return !(resolved === root || resolved.startsWith(root + "/"));
+  const pathsToCheck = Array.isArray(targetPath) ? targetPath : [targetPath];
+  const realRoot = realpathDeepSafe(workspaceRoot);
+  const rootPrefix = realRoot.endsWith(sep) ? realRoot : `${realRoot}${sep}`;
+
+  for (const p of pathsToCheck) {
+    if (!p) continue;
+    // Lexical check first
+    const lexicalTarget = resolve(resolve(workspaceRoot), p);
+    const lexicalRoot = resolve(workspaceRoot);
+    const lexicalPrefix = lexicalRoot.endsWith(sep) ? lexicalRoot : `${lexicalRoot}${sep}`;
+    if (lexicalTarget !== lexicalRoot && !lexicalTarget.startsWith(lexicalPrefix)) {
+      return true;
+    }
+
+    // Physical symlink check
+    const realTarget = realpathDeepSafe(lexicalTarget);
+    if (realTarget !== realRoot && !realTarget.startsWith(rootPrefix)) {
+      return true;
+    }
+  }
+
+  return false;
 }
 
 function isShell(req: AuthorityRequest): boolean {
@@ -106,7 +152,20 @@ export function authorize(request: AuthorityRequest): AuthorityResult {
     },
   });
 
-  if (pathEscapesWorkspace(request.targetPath, ctx.workspaceRoot)) {
+  const candidatePaths: string[] = [];
+  if (Array.isArray(request.targetPaths)) {
+    for (const p of request.targetPaths) if (typeof p === "string" && p) candidatePaths.push(p);
+  }
+  if (Array.isArray(request.targetPath)) {
+    for (const p of request.targetPath) if (typeof p === "string" && p) candidatePaths.push(p);
+  } else if (typeof request.targetPath === "string" && request.targetPath) {
+    candidatePaths.push(request.targetPath);
+  }
+  if (typeof request.cwd === "string" && request.cwd) {
+    candidatePaths.push(request.cwd);
+  }
+
+  if (candidatePaths.length > 0 && pathEscapesWorkspace(candidatePaths, ctx.workspaceRoot)) {
     return build("deny", "path_escape_denied");
   }
 

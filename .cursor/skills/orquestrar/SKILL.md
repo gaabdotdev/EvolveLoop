@@ -66,6 +66,12 @@ Sem excepções por provider/subagente (salvo `skipped_trivial` documentado). Ru
 
 Sem excepções por fase, provider ou subagente.
 
+## HARD-GATE — Graphify e Análise Sintática (ADR-D02)
+
+Conforme **ADR-D02** (`memory/v25-uks-decisions/adr/ADR-D02-graphify.md`), o binário externo do Graphify (anteriormente em `/tmp/graphify-skill-hardgate-venv/bin/graphify`) e o arquivo estático `graphify-out/graph.json` foram **descontinuados** na V2.5 e substituídos pelo extrator sintático AST leve integrado ao UKS Core (`orchestrator/src/uks/`).
+- Quando o cabeçalho `GATE_BUNDLE` contiver `graphify_skill_status: blocked`, este estado é o **padrão legítimo documentado** na ausência do binário legado em `/tmp/`.
+- Não constitui falha fatal e não bloqueia a execução da cadeia. Subagentes devem prosseguir normalmente utilizando o analisador AST nativo do repositório ou ferramentas de código integradas.
+
 **Contratos v2.1:** [references/ARCHITECTURAL-PRINCIPLES.md](references/ARCHITECTURAL-PRINCIPLES.md) · [references/contracts/README.md](references/contracts/README.md)
 
 ## Ponte Execution Engine (quando `ORCHESTRATOR_ROOT` definido)

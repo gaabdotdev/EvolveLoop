@@ -1,7 +1,7 @@
 {
   "task_id": "phase5-scope-enforcer-validation",
   "phase": "Phase 5: TruthFence & Scope Isolation Integration (ADR-D03)",
-  "timestamp": "2026-10-25T16:15:16.130Z",
+  "timestamp": "2026-10-25T16:06:42.107Z",
   "status": "PASSED",
   "total_tests": 9,
   "passed_tests": 9,
@@ -45,7 +45,7 @@
     {
       "name": "X05: Foreign Canary token in payload -> SECURITY_LEAK_PREVENTED EXCEPTION",
       "status": "PASS",
-      "duration_ms": 0
+      "duration_ms": 1
     },
     {
       "name": "X06: Query to global scope retrieves public packs without exposing private items",
@@ -114,12 +114,12 @@
     {
       "path": "orchestrator/src/knowledge/uks/scope-enforcer.ts",
       "type": "VERIFIED_IN_CODE",
-      "sha256": "9fde05b69297ae22397edd75d402d665c51493edb0a55862edf9636288e3e7d9"
+      "sha256": "5e0a448c88463e243509362e933e1e3847e35ca8c95efa1d56c44545e853172c"
     },
     {
       "path": "orchestrator/tests/knowledge/uks/scope-enforcer.test.ts",
       "type": "VERIFIED_IN_CODE",
-      "sha256": "ad7eccaf7e20686a28425dd639372acde907c298569611f8833989c216284c13"
+      "sha256": "2e36594a1a6b4423017c5c4afcc8987cf61882a8e8a221a3e79d0cc5836d6dbb"
     }
   ]
 }
