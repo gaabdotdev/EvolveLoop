@@ -9,6 +9,7 @@ import * as fs from "node:fs";
 import * as path from "node:path";
 import * as url from "node:url";
 import * as cp from "node:child_process";
+import { register } from "node:module";
 import assert from "node:assert/strict";
 
 if (!process.execArgv.includes("--experimental-strip-types")) {
@@ -21,6 +22,7 @@ if (!process.execArgv.includes("--experimental-strip-types")) {
 
 const __dirname = path.dirname(url.fileURLToPath(import.meta.url));
 const workspaceRoot = path.resolve(__dirname, "../..");
+register(path.join(__dirname, "ts-loader.mjs"), import.meta.url);
 const usageModule = path.join(workspaceRoot, "orchestrator/src/observability/inference-usage.ts");
 const ledgerModule = path.join(workspaceRoot, "orchestrator/src/observability/inference-ledger.ts");
 const adapterModule = path.join(workspaceRoot, "orchestrator/src/observability/observable-llm-adapter.ts");

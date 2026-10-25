@@ -11,6 +11,7 @@ import * as fs from "node:fs";
 import * as path from "node:path";
 import * as url from "node:url";
 import * as cp from "node:child_process";
+import { register } from "node:module";
 
 // If executed by plain 'node' without strip-types support, re-spawn with --experimental-strip-types
 if (!process.execArgv.includes("--experimental-strip-types")) {
@@ -23,6 +24,7 @@ if (!process.execArgv.includes("--experimental-strip-types")) {
 
 const __dirname = path.dirname(url.fileURLToPath(import.meta.url));
 const workspaceRoot = path.resolve(__dirname, "../..");
+register(path.join(__dirname, "ts-loader.mjs"), import.meta.url);
 
 const resolveModule = path.join(workspaceRoot, "orchestrator/src/knowledge/backend/resolve.ts");
 const shadowBackendModule = path.join(workspaceRoot, "orchestrator/src/knowledge/backend/shadow-backend.ts");

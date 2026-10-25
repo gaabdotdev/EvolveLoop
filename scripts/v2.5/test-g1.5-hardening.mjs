@@ -294,17 +294,19 @@ await runTest("G1.5-B: Timeout cancels underlying HTTP transport via AbortSignal
     signalReceived = init?.signal;
     return new Promise((resolve, reject) => {
       const timer = setTimeout(() => {}, 2000);
-      // If signal aborts, reject immediately
-      if (init?.signal) {
-        init.signal.addEventListener("abort", () => {
-          clearTimeout(timer);
-          signalAbortedOnExit = true;
-          const err = new Error("The operation was aborted due to timeout");
-          err.name = "TimeoutError";
-          reject(err);
-        });
+      const fail = () => {
+        clearTimeout(timer);
+        signalAbortedOnExit = true;
+        const err = new Error("The operation was aborted due to timeout");
+        err.name = "TimeoutError";
+        reject(err);
+      };
+      // Fetch rejects immediately when the signal is already aborted.
+      if (init?.signal?.aborted) {
+        fail();
+        return;
       }
-      // Otherwise simulate hanging server
+      init?.signal?.addEventListener("abort", fail, { once: true });
     });
   };
 
@@ -365,12 +367,18 @@ await runTest("G1.5-B: External cancellation via provider.cancel(runId) aborts i
   let abortedByExternal = false;
   const longFetch = async (url, init) => {
     return new Promise((resolve, reject) => {
-      init?.signal?.addEventListener("abort", () => {
+      const fail = () => {
         abortedByExternal = true;
         const err = new Error("This operation was aborted");
         err.name = "AbortError";
         reject(err);
-      });
+      };
+      // Cancel can win during DNS, before this mock subscribes.
+      if (init?.signal?.aborted) {
+        fail();
+        return;
+      }
+      init?.signal?.addEventListener("abort", fail, { once: true });
     });
   };
 
@@ -425,12 +433,17 @@ await runTest("G1.5-B: Timeout recovery on retry: attempt 1 times out, attempt 2
     if (calls === 1) {
       return new Promise((resolve, reject) => {
         const timer = setTimeout(() => {}, 2000);
-        init?.signal?.addEventListener("abort", () => {
+        const fail = () => {
           clearTimeout(timer);
           const err = new Error("TimeoutError");
           err.name = "TimeoutError";
           reject(err);
-        });
+        };
+        if (init?.signal?.aborted) {
+          fail();
+          return;
+        }
+        init?.signal?.addEventListener("abort", fail, { once: true });
       });
     }
     // Attempt 2 succeeds quickly
