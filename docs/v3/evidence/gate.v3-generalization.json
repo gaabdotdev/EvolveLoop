@@ -1,8 +1,8 @@
 {
   "kind": "gate.v3-generalization",
-  "at": "2026-11-11T22:36:56.006Z",
-  "commit": "a92a839ea3c6075837751d2570272cccbe06e26a",
-  "battery_run_id": "battery-8c58379b",
+  "at": "2026-11-11T22:37:16.451Z",
+  "commit": "06842669293a5edcb6b0eee25f1631287d233e2d",
+  "battery_run_id": "battery-9941c809",
   "repo_count": 3,
   "task_count": 10,
   "multi_file_tasks": 10,

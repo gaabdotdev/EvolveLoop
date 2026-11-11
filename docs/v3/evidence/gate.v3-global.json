@@ -1,7 +1,7 @@
 {
   "kind": "gate.v3-global",
-  "at": "2026-11-11T22:36:56.006Z",
-  "commit": "a92a839ea3c6075837751d2570272cccbe06e26a",
+  "at": "2026-11-11T22:37:16.451Z",
+  "commit": "06842669293a5edcb6b0eee25f1631287d233e2d",
   "version_target": "V3",
   "based_on": {
     "v33_freeze": "v3.3-freeze",
@@ -62,18 +62,19 @@
   },
   "global_status": "V3_COMPLETE",
   "artifact_hashes": {
-    "gate.v3-generalization.json": "735bad69ddda22a38e3c1ea16bd5479a4b53d6fb0a20f9c140dd75a44158ed1c",
-    "gate.v3-reliability.json": "5ac00f2c175260c4ae7b6f1977fd2e7155ef12cfb33bf2b88a734ca2efd1479c",
-    "gate.v3-evaluator.json": "8d105019b7dd9f23ab51bb2d4c22657deb07bfda8346fc3f5c2b439a11c79d68",
-    "gate.v3-harnesses.json": "a8e90deafab59b446b468533ead6439b2a3b460b2face8c217b7f44399983ce1",
-    "gate.v3-benchmarks.json": "0fc3d00314c8601b32341eca522cd7264b1ca4ce5f950ee73e9ea3a085317160"
+    "gate.v3-generalization.json": "94b20401f1295ee539dc1813ddccebd5831d52bb1a3f60df7117d8dd5d7f0430",
+    "gate.v3-reliability.json": "3ecc7f7543dfc2dc11cd3ad252107b612dc67dddb1f44deb199f58dbe0d97532",
+    "gate.v3-evaluator.json": "c50ff1d4ea91477b25d8525b991b7b687102937e25b39b400fab46b316d4d633",
+    "gate.v3-harnesses.json": "1211747b5714607c686da0e55890191af4e480f725f2299dfe9977d0d603e361",
+    "gate.v3-benchmarks.json": "875cc48e9befd0cbd7be45694fb942ec99f3f321747546dd7771b68ac37c30d2"
   },
   "limitations": [
-    "Solvers are DETERMINISTIC_SOLVER (not LLM) — proves Core generalization/orchestration path",
+    "Solvers are DETERMINISTIC_SOLVER (not LLM) \u2014 proves Core generalization/orchestration path",
     "Token/cost figures are deterministic proxies unless live provider metering is attached",
     "Fixtures are curated multi-module repos, not proprietary third-party codebases",
-    "ephemeral workspaces under /tmp/evolveloop-v3-eval-battery-8c58379b may be removed by OS",
+    "ephemeral workspaces under /tmp/evolveloop-v3-eval-battery-9941c809 may be removed by OS",
     "Live multi-harness LLM sessions not required for V3_COMPLETE when Cursor Core path is real and others honestly DRY_RUN/PROBE_ONLY/BLOCKED",
     "Token/cost metrics are proxies unless provider metering is attached"
-  ]
+  ],
+  "freeze_note": "Tag v3-complete points at the commit that includes this evidence file; battery code tip is parent freeze commit when they differ."
 }

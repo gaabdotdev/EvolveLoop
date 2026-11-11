@@ -1,7 +1,7 @@
 {
   "kind": "gate.v3-reliability",
-  "at": "2026-11-11T22:36:56.006Z",
-  "commit": "a92a839ea3c6075837751d2570272cccbe06e26a",
+  "at": "2026-11-11T22:37:16.451Z",
+  "commit": "06842669293a5edcb6b0eee25f1631287d233e2d",
   "engineering_failure_battery": {
     "kind": "EngineeringFailureBatteryReport",
     "scenarios": [
@@ -27,25 +27,25 @@
         "id": "provider_unavailable_handoff",
         "stage": "IMPLEMENT",
         "passed": true,
-        "detail": "status=applied to=w-fail-prov-cbd051-w-sub-ho-bde97"
+        "detail": "status=applied to=w-fail-prov-365dd6-w-sub-ho-98cba"
       },
       {
         "id": "test_fail_no_true_full_pass",
         "stage": "TEST",
         "passed": true,
-        "detail": "test_exit_nonzero:ev-5f00932b-1aab-4109-b7ef-6feddd3cdbaa,missing_valid_test_evidence"
+        "detail": "test_exit_nonzero:ev-c085be80-989e-4310-874e-5e94b3e63217,missing_valid_test_evidence"
       },
       {
         "id": "stale_test_before_mutation",
         "stage": "TEST",
         "passed": true,
-        "detail": "tests_before_last_mutation:ev-6a79489c-2626-4111-bea5-e9fb9fa39075"
+        "detail": "tests_before_last_mutation:ev-2f9567df-cc36-4cb3-9744-12ac24f2ece3"
       },
       {
         "id": "self_review_rejected",
         "stage": "REVIEW",
         "passed": true,
-        "detail": "review_not_independent:ev-f4f6cb37-2f50-4222-992a-78357900f02a"
+        "detail": "review_not_independent:ev-aaee418b-4630-4778-ae10-bfdf621dbb93"
       },
       {
         "id": "missing_evidence_rejected",
