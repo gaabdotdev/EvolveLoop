@@ -1,7 +1,7 @@
 {
   "kind": "gate.v3-global",
   "at": "2026-11-11T22:37:16.451Z",
-  "commit": "06842669293a5edcb6b0eee25f1631287d233e2d",
+  "commit": "731971e4b0569083bc3b9a1acba67f886104b60b",
   "version_target": "V3",
   "based_on": {
     "v33_freeze": "v3.3-freeze",
@@ -76,5 +76,7 @@
     "Live multi-harness LLM sessions not required for V3_COMPLETE when Cursor Core path is real and others honestly DRY_RUN/PROBE_ONLY/BLOCKED",
     "Token/cost metrics are proxies unless provider metering is attached"
   ],
-  "freeze_note": "Tag v3-complete points at the commit that includes this evidence file; battery code tip is parent freeze commit when they differ."
+  "freeze_note": "Tag v3-complete points at the commit that includes this evidence file; battery code tip is parent freeze commit when they differ.",
+  "tag": "v3-complete",
+  "tag_commit": "731971e4b0569083bc3b9a1acba67f886104b60b"
 }
