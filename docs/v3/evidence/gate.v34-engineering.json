@@ -1,0 +1,38 @@
+{
+  "kind": "v34_engineering_gate",
+  "at": "2026-11-11T22:21:00Z",
+  "based_on_v33_freeze": {
+    "commit": "422132dee88e41bbeacf882fd00198582c1b01fc",
+    "tag": "v3.3-freeze"
+  },
+  "commands": [
+    "npx tsc",
+    "npx vitest run tests/unit/engineering-loop.test.ts → 2/2",
+    "npx vitest run tests/integration/v34-engineering-loop.integration.test.ts → 1/1"
+  ],
+  "demonstrated": [
+    "Goal Contract with mandatory criteria",
+    "TaskGraph + hierarchy PLAN_APPROVED",
+    "Real workspace file create/modify (src/solution.js)",
+    "Failing tests then replan/fix",
+    "Independent reviewer agent ≠ worker",
+    "Evidence-bound criteria",
+    "Deterministic TRUE_FULL_PASS via evaluator",
+    "Harness matrix without false SUPPORTED"
+  ],
+  "mocks_vs_real": {
+    "real": [
+      "filesystem writes in workspace",
+      "node --test execution",
+      "Goal/TaskGraph/Agent Registry persistence",
+      "criterion evaluation"
+    ],
+    "deterministic_not_llm": [
+      "implement/fix/review content generation"
+    ],
+    "dry_run_or_blocked": [
+      "Claude/Codex/Antigravity live harness sessions"
+    ]
+  },
+  "status": "PASS"
+}

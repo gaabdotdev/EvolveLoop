@@ -40,6 +40,8 @@
 | **Hierarchical budgets** | Subtree consumption rollup vs parent max_* | `orchestrator/src/v3/budget/hierarchical.ts` | Agent Registry delegations | Telemetry invention |
 | **CLI harness drivers** | Probe/spawn external CLIs with dry-run default | `orchestrator/src/v3/adapters/drivers/cli-*.ts` | process-sessions under `--data-dir` | IDE-attached session control |
 | **Cross-provider apply** | Continuity apply + provider rebind + optional driver invoke | `AdapterHandoffBridge.applyCrossProvider` | Continuity + Agent Registry | Silent auto_swap without Core ownership transfer |
+| **Engineering Loop** | Stage machine for contract→plan→implement→test→review→replan→verify | `orchestrator/src/v3/engineering/` | Goal Contract + TaskGraph + Agent Registry + workspace | LLM authorship of code (deterministic workers in Core gate) |
+| **Harness matrix** | Honest capability classification per adapter | `engineering/harness-matrix.ts` | Adapter catalog + CLI probe | Claiming SUPPORTED for dry-run |
 | **Work Ledger** | Versioned shared operational state + event history for a work_id | `orchestrator/src/v3/work-ledger/` (JSONL + meta snapshot) | `--data-dir/work-ledger/` | Preference memory |
 | **Delegation Contract** | Scoped authority transfer parent→child | Contract records (TBD) | IR DoD / manifests are not substitutes | Global policy definition |
 | **CapabilityAuthority** | allow/deny/confirm for operations | Policy flags + workspace root | `authority/capability-authority.ts` | Retry/gate strategy (PolicyEngine) |

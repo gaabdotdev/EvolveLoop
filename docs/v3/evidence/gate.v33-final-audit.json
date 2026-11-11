@@ -6,8 +6,8 @@
   "v3_content_fingerprint_sha256": "3cc883f2b28ed1cbdd5609f5dac2cb1bbb20739c37afdf46532ac6d7d9a8f2b1",
   "commands": [
     "npx tsc --noEmit (exit 0)",
-    "npx vitest run [13 files v33-related] → 35/35 pass",
-    "evolve battery run → passed=true (5/5 scenarios)"
+    "npx vitest run [13 files v33-related] \u2192 35/35 pass",
+    "evolve battery run \u2192 passed=true (5/5 scenarios)"
   ],
   "suite": {
     "files": 13,
@@ -15,7 +15,10 @@
     "tests_failed": 0,
     "skipped": 0
   },
-  "battery": { "passed": true, "log": "/tmp/v33-battery.json" },
+  "battery": {
+    "passed": true,
+    "log": "/tmp/v33-battery.json"
+  },
   "audit_findings_fixed": [
     "adapters-catalog expected execution_bridge none; updated to cli_process for claude-code",
     "applyCrossProvider now releases source locks and issues substitute fencing token",
@@ -36,5 +39,7 @@
     "real harness spawn requires EVOLVELOOP_HARNESS_CONSENT=true + provider_mode=real",
     "E2E uses Core coordination + dry-run harness; not live paid Claude/Codex sessions"
   ],
-  "status": "PASS"
+  "status": "PASS",
+  "freeze_commit": "422132dee88e41bbeacf882fd00198582c1b01fc",
+  "freeze_tag": "v3.3-freeze"
 }

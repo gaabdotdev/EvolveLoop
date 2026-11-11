@@ -51,6 +51,7 @@ import {
 } from "../v3/adapters/drivers/cli-process.js";
 import { triggerLimitHandoff, classifyLimitSignal } from "../v3/limits/index.js";
 import { evaluateHierarchicalBudgets } from "../v3/budget/hierarchical.js";
+import { EngineeringLoopService, buildHarnessMatrix } from "../v3/engineering/index.js";
 import { buildStatusBoard, renderStatusBoardText } from "../v3/tui/status-board.js";
 import { runInteractiveTui } from "../v3/tui/interactive.js";
 import { ModelCatalogStore } from "../v3/model-catalog/store.js";
@@ -153,6 +154,8 @@ function usage() {
       cancel: ["apply"],
       parallel: ["schedule", "ready"],
       battery: ["run"],
+      engineering: ["run", "show"],
+      harness: ["matrix"],
     },
     notes: [
       "Closing this CLI does not erase --data-dir state.",
@@ -171,6 +174,8 @@ function usage() {
       "cancel applies to Core coordination state; use --idempotency-key for safe retries.",
       "parallel schedule advances TaskGraph READY→IN_PROGRESS up to --max-in-progress (no harness spawn).",
       "battery run exercises V3.3 failure/handoff/lock/cancel/parallel scenarios in-process.",
+      "engineering run executes V3.4 Engineering Loop against a real --workspace (deterministic workers).",
+      "harness matrix classifies adapters as SUPPORTED|PARTIAL|DRY_RUN|PROBE_ONLY|BLOCKED|UNSUPPORTED.",
     ],
   });
 }
@@ -1238,6 +1243,43 @@ async function main() {
       }
       if (args.command === "run") {
         print(runFailureBattery(paths, args["work-id"]));
+        return;
+      }
+    }
+
+    if (args.group === "engineering") {
+      const paths = requireDataDir(args);
+      if (args.command === "run") {
+        if (!args["work-id"] || !args.workspace) {
+          console.error("Required: --data-dir --work-id --workspace [--objective]");
+          process.exit(1);
+        }
+        const svc = new EngineeringLoopService(paths);
+        print(
+          svc.run({
+            work_id: args["work-id"],
+            workspace_root: resolve(args.workspace),
+            objective: args.objective,
+            goal_contract_id: args["goal-id"],
+            domain: args.domain,
+            max_replans: args["max-replans"] ? parseInt(args["max-replans"], 10) : undefined,
+          }),
+        );
+        return;
+      }
+      if (args.command === "show") {
+        if (!args["run-id"]) {
+          console.error("Required: --run-id");
+          process.exit(1);
+        }
+        print(new EngineeringLoopService(paths).load(args["run-id"]));
+        return;
+      }
+    }
+
+    if (args.group === "harness") {
+      if (args.command === "matrix") {
+        print({ kind: "HarnessMatrix", adapters: buildHarnessMatrix() });
         return;
       }
     }

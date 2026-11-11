@@ -172,6 +172,18 @@ Uncommitted / untracked at audit start include orchestrator job integrity work, 
 
 ---
 
-## 5. Post-V3.3 (not claimed done)
+## 5. V3.4 Engineering Loop
 
-V3.4 engineering loop, held-out benchmarks, OmniRoute product default, LICENSE change, OS sandbox — remain separate milestones.
+| Capability | Status |
+|------------|--------|
+| Engineering Loop service (stages + run snapshot) | `VERIFIED` (`evolve engineering run`) |
+| Confined workspace mutations | `VERIFIED` (realpath; not OS sandbox) |
+| Deterministic implement→fail→replan→fix→review | `VERIFIED` |
+| Independent reviewer ≠ worker | `VERIFIED` |
+| TRUE_FULL_PASS via Goal Contract evaluator + evidence | `VERIFIED` |
+| Harness capability matrix | `VERIFIED` (`evolve harness matrix`; no false SUPPORTED) |
+| E2E CLI engineering | `VERIFIED` (`v34-engineering-loop.integration.test.ts`) |
+| Held-out LLM quality benchmarks | `NOT_IMPLEMENTED` (optional; not gate-blocking) |
+| OmniRoute product default / LICENSE change / OS sandbox | unchanged holds |
+
+Evidence: `docs/v3/evidence/gate.v34-engineering.json` · ADR-V3-0009

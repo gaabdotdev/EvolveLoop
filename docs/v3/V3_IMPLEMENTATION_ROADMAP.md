@@ -84,8 +84,10 @@ Deliveries:
 - Investigation→spec→implement→test→review→security→replan
 - Deterministic `TRUE_FULL_PASS` evaluator
 - Held-out benchmarks + independent evidence
+- Harness capability matrix (honest classes)
+- CLI: `evolve engineering run`, `evolve harness matrix`
 
-**Gate:** Master launch criteria; no known critical gate failures.
+**Gate:** Engineering Loop E2E with real workspace mutations + independent review + evaluator `TRUE_FULL_PASS` — **met** (`engineering-loop` unit + `v34-engineering-loop` integration + `docs/v3/evidence/gate.v34-engineering.json`). Live LLM harness quality benchmarks remain optional follow-up (not falsely claimed).
 
 ---
 
