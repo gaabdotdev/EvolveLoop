@@ -4,6 +4,8 @@
 **North star:** lowest reasonable cost per verified task toward `TRUE_FULL_PASS`, without sacrificing security or evidence quality.  
 **Rule:** a milestone is done only when gates pass with real behavior + tests + documented limitations — not when code compiles.
 
+> **Freeze note:** V3 gates A–F returned `V3_COMPLETE` (`docs/v3/evidence/gate.v3-global.json`). This roadmap is historical. **Do not open V3.5 from residual items** — any later version needs a new charter after the `v3-complete` tag.
+
 ---
 
 ## Phase Zero — Baseline & critical hardening (NOW)

@@ -1,11 +1,12 @@
 # EvolveLoop V3 — Implementation Status
 
+**Finalization:** `V3_COMPLETE` — see `docs/v3/V3-COMPLETE.md` and `docs/v3/evidence/gate.v3-global.json`.  
+**Acceptance matrix:** `docs/v3/V3_ACCEPTANCE_MATRIX.md`.
+
 **Snapshot date:** 2026-11-11  
 **Git branch:** `release/v2.1-freeze-preparation`  
-**HEAD:** `51e5bed67a96d8b10597602f938c74df9a6fe75c`  
-**Remote:** `origin` → `https://github.com/GaabDevWeb/EvolveLoop.git`  
 **Master reference:** `docs/v3/EVOLVELOOP_V3_MASTER_DOCUMENT_v0.6.md`  
-**Working tree:** dirty (local uncommitted V2.3/graphify/orchestrator changes preserved; not discarded)
+**Working tree:** may contain unrelated local WIP outside the V3 freeze set — freeze is defined by tag + evidence, not by a clean tree of every path.
 
 Status vocabulary (mandatory):
 

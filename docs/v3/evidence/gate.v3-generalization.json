@@ -1,0 +1,137 @@
+{
+  "kind": "gate.v3-generalization",
+  "at": "2026-11-11T22:35:52.548Z",
+  "commit": "9fe0c1408e227133edf5ef38d273a540ca13303e",
+  "battery_run_id": "battery-f8578b37",
+  "repo_count": 3,
+  "task_count": 10,
+  "multi_file_tasks": 10,
+  "verified_completion_rate": 1,
+  "results": [
+    {
+      "task_id": "T01",
+      "repo": "alpha-lib",
+      "split": "development",
+      "files_changed": [
+        "src/math.js",
+        "test/clamp-lower.test.js"
+      ],
+      "true_full_pass": true,
+      "baseline_tests_pass": true,
+      "recovery_used": false
+    },
+    {
+      "task_id": "T02",
+      "repo": "alpha-lib",
+      "split": "development",
+      "files_changed": [
+        "src/index.js",
+        "src/math.js",
+        "test/sub.test.js"
+      ],
+      "true_full_pass": true,
+      "baseline_tests_pass": true,
+      "recovery_used": false
+    },
+    {
+      "task_id": "T03",
+      "repo": "alpha-lib",
+      "split": "development",
+      "files_changed": [
+        "src/index.js",
+        "test/format.test.js"
+      ],
+      "true_full_pass": true,
+      "baseline_tests_pass": true,
+      "recovery_used": false
+    },
+    {
+      "task_id": "T04",
+      "repo": "beta-app",
+      "split": "development",
+      "files_changed": [
+        ".evolveloop/partial-marker.txt",
+        "lib/store.js",
+        "src/cart.js",
+        "test/remove-zero.test.js"
+      ],
+      "true_full_pass": true,
+      "baseline_tests_pass": true,
+      "recovery_used": true
+    },
+    {
+      "task_id": "T05",
+      "repo": "beta-app",
+      "split": "development",
+      "files_changed": [
+        "src/checkout.js",
+        "test/discount.test.js"
+      ],
+      "true_full_pass": true,
+      "baseline_tests_pass": true,
+      "recovery_used": false
+    },
+    {
+      "task_id": "T06",
+      "repo": "beta-app",
+      "split": "development",
+      "files_changed": [
+        "lib/store.js",
+        "src/cart.js"
+      ],
+      "true_full_pass": true,
+      "baseline_tests_pass": true,
+      "recovery_used": false
+    },
+    {
+      "task_id": "T07",
+      "repo": "gamma-service",
+      "split": "development",
+      "files_changed": [
+        "src/router.js",
+        "test/echo.test.js"
+      ],
+      "true_full_pass": true,
+      "baseline_tests_pass": true,
+      "recovery_used": false
+    },
+    {
+      "task_id": "T08",
+      "repo": "gamma-service",
+      "split": "development",
+      "files_changed": [
+        "src/auth.js",
+        "test/auth-cache.test.js"
+      ],
+      "true_full_pass": true,
+      "baseline_tests_pass": true,
+      "recovery_used": false
+    },
+    {
+      "task_id": "T09",
+      "repo": "gamma-service",
+      "split": "held_out",
+      "files_changed": [
+        "config.json",
+        "test/router.test.js",
+        "test/version-bump.test.js"
+      ],
+      "true_full_pass": true,
+      "baseline_tests_pass": true,
+      "recovery_used": false
+    },
+    {
+      "task_id": "T10",
+      "repo": "beta-app",
+      "split": "held_out",
+      "files_changed": [
+        "src/checkout.js",
+        "test/shipping-nonneg.test.js"
+      ],
+      "true_full_pass": true,
+      "baseline_tests_pass": true,
+      "recovery_used": false
+    }
+  ],
+  "status": "PASS"
+}

@@ -52,6 +52,7 @@ import {
 import { triggerLimitHandoff, classifyLimitSignal } from "../v3/limits/index.js";
 import { evaluateHierarchicalBudgets } from "../v3/budget/hierarchical.js";
 import { EngineeringLoopService, buildHarnessMatrix } from "../v3/engineering/index.js";
+import { runEvaluationBattery } from "../v3/evaluation/index.js";
 import { buildStatusBoard, renderStatusBoardText } from "../v3/tui/status-board.js";
 import { runInteractiveTui } from "../v3/tui/interactive.js";
 import { ModelCatalogStore } from "../v3/model-catalog/store.js";
@@ -76,7 +77,7 @@ import type { RecoveryAction } from "../v3/recovery/subtree.js";
 import { WorktreeManager } from "../v3/worktrees/index.js";
 import { cancelWorkSlice } from "../v3/cancel/index.js";
 import { scheduleReadyTasks, listReadyTasks } from "../v3/parallel/index.js";
-import { runFailureBattery } from "../v3/failure-injection/index.js";
+import { runFailureBattery, runEngineeringFailureBattery } from "../v3/failure-injection/index.js";
 import type { ProviderMode } from "./provider-bootstrap.js";
 
 function parseArgs(argv: string[]) {
@@ -153,9 +154,10 @@ function usage() {
       worktree: ["create", "list", "remove"],
       cancel: ["apply"],
       parallel: ["schedule", "ready"],
-      battery: ["run"],
+      battery: ["run", "engineering", "eval"],
       engineering: ["run", "show"],
       harness: ["matrix"],
+      eval: ["battery"],
     },
     notes: [
       "Closing this CLI does not erase --data-dir state.",
@@ -174,6 +176,8 @@ function usage() {
       "cancel applies to Core coordination state; use --idempotency-key for safe retries.",
       "parallel schedule advances TaskGraph READY→IN_PROGRESS up to --max-in-progress (no harness spawn).",
       "battery run exercises V3.3 failure/handoff/lock/cancel/parallel scenarios in-process.",
+      "battery engineering injects eng-stage failures + adversarial evaluator checks.",
+      "battery eval / eval battery runs ≥10 multi-repo engineering tasks (deterministic solvers).",
       "engineering run executes V3.4 Engineering Loop against a real --workspace (deterministic workers).",
       "harness matrix classifies adapters as SUPPORTED|PARTIAL|DRY_RUN|PROBE_ONLY|BLOCKED|UNSUPPORTED.",
     ],
@@ -1237,12 +1241,51 @@ async function main() {
 
     if (args.group === "battery") {
       const paths = requireDataDir(args);
-      if (!args["work-id"]) {
-        console.error("Required: --work-id");
-        process.exit(1);
-      }
       if (args.command === "run") {
+        if (!args["work-id"]) {
+          console.error("Required: --work-id");
+          process.exit(1);
+        }
         print(runFailureBattery(paths, args["work-id"]));
+        return;
+      }
+      if (args.command === "engineering") {
+        const ws = args.workspace
+          ? resolve(args.workspace)
+          : resolve(paths.root, "eng-failure-ws");
+        print(runEngineeringFailureBattery(paths, ws));
+        return;
+      }
+      if (args.command === "eval") {
+        const repoRoot = args["repo-root"]
+          ? resolve(args["repo-root"])
+          : resolve(process.cwd(), "..");
+        print(
+          runEvaluationBattery({
+            repoRoot,
+            paths,
+            recovery_task_id: args["recovery-task"] ?? "T01",
+            keep_workspaces: args["keep-workspaces"] === "true",
+          }),
+        );
+        return;
+      }
+    }
+
+    if (args.group === "eval") {
+      const paths = requireDataDir(args);
+      if (args.command === "battery") {
+        const repoRoot = args["repo-root"]
+          ? resolve(args["repo-root"])
+          : resolve(process.cwd(), "..");
+        print(
+          runEvaluationBattery({
+            repoRoot,
+            paths,
+            recovery_task_id: args["recovery-task"] ?? "T01",
+            keep_workspaces: args["keep-workspaces"] === "true",
+          }),
+        );
         return;
       }
     }
