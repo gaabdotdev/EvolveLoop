@@ -1,0 +1,32 @@
+{
+  "cycle_id": "v3-phase0-2026-11-11",
+  "head": "51e5bed67a96d8b10597602f938c74df9a6fe75c",
+  "branch": "release/v2.1-freeze-preparation",
+  "readiness": { "state": "pronto", "writes_config": false },
+  "graphify_skill_status": "blocked",
+  "knowledge_grounding": {
+    "status": "applied_with_gap",
+    "vault": "/home/gaab/Documentos/gitHub/karpathyWiki",
+    "retrieve": "ground.sh scout+search + vault EvolveLoop/log.md",
+    "gaps": ["RAG no_hits for EvolveLoop queries", "WIKI_ROOT unset at session start"]
+  },
+  "build": { "command": "npm run build", "exit": 0 },
+  "unit_baseline": { "passed": 273, "failed": 4, "total": 277, "note": "tiktoken missing" },
+  "integration_baseline": { "passed": 20, "failed": 1, "total": 21, "note": "session-continuity integrity envelope" },
+  "hardening_tests": {
+    "files": [
+      "tests/unit/provider-bootstrap.test.ts",
+      "tests/unit/authority.test.ts",
+      "tests/unit/shell-env.test.ts",
+      "tests/unit/deterministic-capabilities.test.ts",
+      "tests/unit/goal-contract.test.ts"
+    ],
+    "result": "22+ related passed in focused runs; 41 in det+authority suite"
+  },
+  "adrs": [
+    "docs/v3/adr/ADR-V3-0001-provider-execution-modes.md",
+    "docs/v3/adr/ADR-V3-0002-authority-workspace-shell-hardening.md",
+    "docs/v3/adr/ADR-V3-0003-state-ownership-freeze.md",
+    "docs/v3/adr/ADR-V3-0004-license-hold.md"
+  ]
+}

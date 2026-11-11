@@ -1,5 +1,11 @@
-import { describe, it, expect } from "vitest";
-import { CapabilityAuthority } from "../../src/authority/capability-authority.js";
+import { describe, it, expect, beforeEach, afterEach } from "vitest";
+import fs from "node:fs/promises";
+import os from "node:os";
+import path from "node:path";
+import {
+  CapabilityAuthority,
+  pathEscapesWorkspace,
+} from "../../src/authority/capability-authority.js";
 
 describe("CapabilityAuthority", () => {
   const authority = new CapabilityAuthority();
@@ -54,5 +60,46 @@ describe("CapabilityAuthority", () => {
 
   it("allows git.inspect", () => {
     expect(authority.authorize({ capability: "git.inspect" }).decision).toBe("allow");
+  });
+
+  it("denies unknown capabilities (fail-closed)", () => {
+    const r = authority.authorize({ capability: "backend-implementation" });
+    expect(r.decision).toBe("deny");
+    expect(r.reason).toBe("unknown_capability_denied");
+  });
+
+  it("denies targetPath without workspaceRoot", () => {
+    const r = authority.authorize({
+      capability: "filesystem.read",
+      targetPath: "a.txt",
+    });
+    expect(r.decision).toBe("deny");
+    expect(r.reason).toBe("workspace_root_required");
+  });
+});
+
+describe("pathEscapesWorkspace symlink-safe (ADR-V3-0002)", () => {
+  let tmp: string;
+  let outside: string;
+
+  beforeEach(async () => {
+    tmp = await fs.mkdtemp(path.join(os.tmpdir(), "orch-ws-"));
+    outside = await fs.mkdtemp(path.join(os.tmpdir(), "orch-out-"));
+    await fs.writeFile(path.join(outside, "secret.txt"), "secret");
+    await fs.symlink(path.join(outside, "secret.txt"), path.join(tmp, "leak.txt"));
+  });
+
+  afterEach(async () => {
+    await fs.rm(tmp, { recursive: true, force: true });
+    await fs.rm(outside, { recursive: true, force: true });
+  });
+
+  it("treats symlink pointing outside workspace as escape", () => {
+    expect(pathEscapesWorkspace("leak.txt", tmp)).toBe(true);
+  });
+
+  it("allows normal in-workspace file", async () => {
+    await fs.writeFile(path.join(tmp, "ok.txt"), "ok");
+    expect(pathEscapesWorkspace("ok.txt", tmp)).toBe(false);
   });
 });

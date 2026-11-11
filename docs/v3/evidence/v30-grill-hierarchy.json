@@ -1,0 +1,18 @@
+{
+  "cycle_id": "v3-phase0-c3",
+  "commands": [
+    "evolve grill apply --result-json ... --id ... --objective ...",
+    "evolve hierarchy spawn --domains backend,frontend",
+    "evolve hierarchy approve --domain backend",
+    "scripts/v3/coordinator-supervise.sh start|stop|status"
+  ],
+  "tests": [
+    "tests/unit/grill-me-intake.test.ts",
+    "tests/unit/hierarchy-spawn.test.ts"
+  ],
+  "limitations": [
+    "no LLM grill interviewer in Core",
+    "hierarchy spawn does not invoke provider agents",
+    "supervise script is shell loop not systemd unit"
+  ]
+}

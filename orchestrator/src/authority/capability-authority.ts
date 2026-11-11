@@ -1,9 +1,11 @@
 /**
  * CapabilityAuthority — allow | deny | confirm for operational capabilities.
  * Distinct from PolicyEngine (retries, gates, provider strategy).
+ * ADR-V3-0002: fail-closed unknowns; symlink-aware workspace confinement.
  */
 
-import { resolve } from "node:path";
+import { existsSync, realpathSync } from "node:fs";
+import { dirname, resolve, sep } from "node:path";
 
 export type AuthorityDecision = "allow" | "deny" | "confirm";
 
@@ -70,14 +72,76 @@ export interface AuthorityResult {
   };
 }
 
+/** Deterministic inspect/read capabilities that are baseline-allow without write/shell grants. */
+export const READ_ONLY_CAPABILITY_ALLOWLIST = new Set<string>([
+  "filesystem.read",
+  "filesystem.list",
+  "filesystem.search",
+  "git.status",
+  "git.diff",
+  "git.log",
+  "git.inspect",
+  "repository.inspect",
+  "project.inspect",
+]);
+
+function safeRealpath(path: string): string | undefined {
+  try {
+    if (!existsSync(path)) return undefined;
+    return realpathSync(path);
+  } catch {
+    return undefined;
+  }
+}
+
+function isInside(child: string, root: string): boolean {
+  return child === root || child.startsWith(root + sep);
+}
+
+/**
+ * Returns true when the path escapes the workspace (or cannot be verified).
+ * Symlink-aware: existing paths are compared via realpath.
+ * Missing workspaceRoot while targetPath is set → escape (fail-closed).
+ */
 export function pathEscapesWorkspace(
   targetPath: string | undefined,
   workspaceRoot: string | undefined,
 ): boolean {
-  if (!targetPath || !workspaceRoot) return false;
-  const root = resolve(workspaceRoot);
-  const resolved = resolve(root, targetPath);
-  return !(resolved === root || resolved.startsWith(root + "/"));
+  if (!targetPath) return false;
+  if (!workspaceRoot) return true;
+
+  const rootResolved = resolve(workspaceRoot);
+  const rootReal = safeRealpath(rootResolved) ?? rootResolved;
+  const abs = resolve(rootReal, targetPath);
+
+  // Lexical guard first (handles non-existent workspace roots used in unit tests).
+  if (!isInside(abs, rootReal) && !isInside(abs, rootResolved)) return true;
+
+  // Walk up only while remaining under the workspace root.
+  let existing = abs;
+  while (!existsSync(existing)) {
+    if (existing === rootReal || existing === rootResolved) break;
+    const parent = dirname(existing);
+    if (parent === existing) break;
+    if (!isInside(parent, rootReal) && !isInside(parent, rootResolved)) break;
+    existing = parent;
+  }
+
+  if (existsSync(existing)) {
+    const existingReal = safeRealpath(existing);
+    if (!existingReal || (!isInside(existingReal, rootReal) && !isInside(existingReal, rootResolved))) {
+      return true;
+    }
+  }
+
+  if (existsSync(abs)) {
+    const absReal = safeRealpath(abs);
+    if (!absReal || (!isInside(absReal, rootReal) && !isInside(absReal, rootResolved))) {
+      return true;
+    }
+  }
+
+  return false;
 }
 
 function isShell(req: AuthorityRequest): boolean {
@@ -101,7 +165,7 @@ function isHostInspect(req: AuthorityRequest): boolean {
   return req.capability.startsWith("system.") || req.capability.startsWith("knowledge.");
 }
 
-function isReadOnly(req: AuthorityRequest): boolean {
+function isReadOnlyShape(req: AuthorityRequest): boolean {
   if (isShell(req) || isWrite(req) || isNetwork(req)) return false;
   if (req.side_effects) return false;
   const fs = req.permissions?.filesystem ?? "read";
@@ -133,6 +197,10 @@ export function authorize(request: AuthorityRequest): AuthorityResult {
     },
   });
 
+  if (request.targetPath && !ctx.workspaceRoot) {
+    return build("deny", "workspace_root_required");
+  }
+
   if (pathEscapesWorkspace(request.targetPath, ctx.workspaceRoot)) {
     return build("deny", "path_escape_denied");
   }
@@ -161,7 +229,7 @@ export function authorize(request: AuthorityRequest): AuthorityResult {
     return build("allow", "host_inspect_allowed_by_context");
   }
 
-  if (isReadOnly(request)) {
+  if (READ_ONLY_CAPABILITY_ALLOWLIST.has(request.capability) && isReadOnlyShape(request)) {
     return build("allow", "deterministic_read_only");
   }
 
@@ -170,7 +238,7 @@ export function authorize(request: AuthorityRequest): AuthorityResult {
     return build("allow", "side_effects_allowed_by_context");
   }
 
-  return build("allow", "default_allow");
+  return build("deny", "unknown_capability_denied");
 }
 
 export class CapabilityAuthority {

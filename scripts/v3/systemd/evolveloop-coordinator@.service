@@ -1,0 +1,45 @@
+# EvolveLoop V3 — optional user systemd unit for supervised coordinator ticks.
+#
+# This is an OPERATOR TEMPLATE, not an installed product daemon.
+# It does NOT claim execution while the machine is powered off.
+# After reboot, systemd may restart the unit; logout may still stop user units
+# unless lingering is enabled (`loginctl enable-linger`).
+#
+# Install (example — adjust paths):
+#   mkdir -p ~/.config/systemd/user
+#   cp scripts/v3/systemd/evolveloop-coordinator@.service ~/.config/systemd/user/
+#   # Instance name = work-id, e.g. w1
+#   systemctl --user enable --now evolveloop-coordinator@w1.service
+#
+# Requires environment file or drop-in with:
+#   EVOLVELOOP_ROOT=/absolute/path/to/EvolveLoop
+#   EVOLVELOOP_DATA_DIR=/absolute/path/to/v3-data
+#   EVOLVELOOP_INTERVAL=30
+#
+# Example drop-in:
+#   mkdir -p ~/.config/systemd/user/evolveloop-coordinator@w1.service.d
+#   cat > ~/.config/systemd/user/evolveloop-coordinator@w1.service.d/override.conf <<'EOF'
+#   [Service]
+#   Environment=EVOLVELOOP_ROOT=/home/YOU/EvolveLoop
+#   Environment=EVOLVELOOP_DATA_DIR=/home/YOU/EvolveLoop/orchestrator/v3-data
+#   Environment=EVOLVELOOP_INTERVAL=30
+#   EOF
+#   systemctl --user daemon-reload
+#   systemctl --user restart evolveloop-coordinator@w1.service
+
+[Unit]
+Description=EvolveLoop V3 coordinator supervise (%i)
+Documentation=file://%h/EvolveLoop/docs/v3/COORDINATOR_SUPERVISION.md
+After=default.target
+
+[Service]
+Type=simple
+# %i = work-id
+Environment=EVOLVELOOP_INTERVAL=30
+ExecStart=/bin/bash -lc '"${EVOLVELOOP_ROOT}/scripts/v3/coordinator-supervise.sh" start --data-dir "${EVOLVELOOP_DATA_DIR}" --work-id "%i" --interval "${EVOLVELOOP_INTERVAL}" && exec tail -F "${EVOLVELOOP_DATA_DIR}/coordinator/supervise/supervise.log"'
+ExecStop=/bin/bash -lc '"${EVOLVELOOP_ROOT}/scripts/v3/coordinator-supervise.sh" stop --data-dir "${EVOLVELOOP_DATA_DIR}"'
+Restart=on-failure
+RestartSec=10
+
+[Install]
+WantedBy=default.target

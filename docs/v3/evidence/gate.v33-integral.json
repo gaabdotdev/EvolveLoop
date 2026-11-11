@@ -1,0 +1,7 @@
+{
+  "kind": "v33_integral_gate",
+  "at": "2026-11-11T21:47:03Z",
+  "suite": "v33-resilience + v33-integral + adapter-drivers + continuity + subtree + locks + budget + tui + evolve-cli + v33-multiagent-resilience",
+  "result": "31/31 pass",
+  "status": "VERIFIED"
+}
