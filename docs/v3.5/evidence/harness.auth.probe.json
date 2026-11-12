@@ -1,0 +1,8 @@
+{
+  "kind": "HarnessAuthProbe",
+  "checked_at": "2026-11-12T22:24:48.138Z",
+  "claude_logged_in": false,
+  "cursor_api_key_set": false,
+  "verdict": "BLOCKED_AUTH",
+  "note": "Gate H real LLM requires claude /login or CURSOR_API_KEY"
+}

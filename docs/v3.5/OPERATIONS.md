@@ -39,3 +39,22 @@ evolve workspace inspect --id <ws> --data-dir ./v35-data
 ```
 
 Closing CLI/TUI does not stop `service start` daemon.
+
+## Operational validation
+
+```bash
+cd orchestrator
+npm run build
+npm test -- --run tests/unit/v35-*.test.ts tests/integration/v35-op-*.test.ts
+evolve runtime doctor --data-dir ./v35-data
+```
+
+For Gate H live LLM (optional, external):
+
+```bash
+claude /login   # or export CURSOR_API_KEY=…
+export EVOLVELOOP_HARNESS_CONSENT=true
+# keep consent scoped to this shell only
+```
+
+See `OPERATIONAL-VALIDATION.md` and `OPERATIONAL-ACCEPTANCE-MATRIX.md`.

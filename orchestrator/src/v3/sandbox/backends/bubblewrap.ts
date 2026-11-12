@@ -3,9 +3,9 @@
  * Uses established kernel primitives via bwrap — not a custom kernel sandbox.
  */
 
-import { existsSync, realpathSync, statSync } from "node:fs";
+import { existsSync, lstatSync, realpathSync, statSync } from "node:fs";
 import { spawn } from "node:child_process";
-import { resolve } from "node:path";
+import { resolve, sep } from "node:path";
 import { which } from "../which.js";
 import type {
   SandboxAvailability,
@@ -35,28 +35,62 @@ function isDir(p: string): boolean {
   }
 }
 
+function isSymlink(p: string): boolean {
+  try {
+    return lstatSync(p).isSymbolicLink();
+  } catch {
+    return false;
+  }
+}
+
 function buildBwrapArgs(req: SandboxExecRequest, bwrapPath: string): { args: string[]; env: Record<string, string> } {
   const profile = req.profile;
+  if (!existsSync(profile.filesystem.workspace_rw)) {
+    throw new Error(`SANDBOX_WORKSPACE_MISSING: ${profile.filesystem.workspace_rw}`);
+  }
   const workspace = safeRealpath(profile.filesystem.workspace_rw);
   const args: string[] = [
     bwrapPath,
     "--die-with-parent",
-    "--new-session",
   ];
 
   if (profile.network.mode === "deny") {
     args.push("--unshare-net");
   }
 
-  // Minimal host read-only mounts for a usable userspace.
-  const roRoots = ["/usr", "/bin", "/lib", "/lib64", "/sbin", "/etc"];
-  for (const root of roRoots) {
-    if (isDir(root)) {
-      args.push("--ro-bind", root, root);
+  // Debian/Ubuntu merged-/usr: bind /usr then recreate /bin,/lib,/lib64,/sbin as symlinks.
+  // Binding /bin as a directory when it is a symlink breaks the dynamic linker.
+  if (!isDir("/usr")) {
+    throw new Error("SANDBOX_USR_MISSING");
+  }
+  args.push("--ro-bind", "/usr", "/usr");
+  for (const [link, target] of [
+    ["/bin", "usr/bin"],
+    ["/sbin", "usr/sbin"],
+    ["/lib", "usr/lib"],
+    ["/lib64", "usr/lib64"],
+  ] as const) {
+    if (existsSync(link) || isSymlink(link) || existsSync(`/${target}`)) {
+      args.push("--symlink", target, link);
+    }
+  }
+
+  // Selective /etc (avoid mounting entire home via accidental paths)
+  for (const etc of ["/etc/passwd", "/etc/group", "/etc/nsswitch.conf", "/etc/resolv.conf", "/etc/ssl", "/etc/ld.so.cache"]) {
+    if (existsSync(etc)) {
+      args.push("--ro-bind", etc, etc);
     }
   }
   for (const p of profile.filesystem.read_only_paths) {
-    if (existsSync(p) && !roRoots.some((r) => p === r || p.startsWith(r + "/"))) {
+    if (
+      existsSync(p) &&
+      p !== "/usr" &&
+      !p.startsWith("/usr/") &&
+      p !== "/bin" &&
+      p !== "/lib" &&
+      p !== "/lib64" &&
+      p !== "/sbin"
+    ) {
       args.push("--ro-bind", p, p);
     }
   }
@@ -76,7 +110,7 @@ function buildBwrapArgs(req: SandboxExecRequest, bwrapPath: string): { args: str
   }
 
   const cwd = safeRealpath(req.cwd ?? workspace);
-  if (!cwd.startsWith(workspace)) {
+  if (cwd !== workspace && !cwd.startsWith(workspace + sep)) {
     throw new Error(`SANDBOX_CWD_ESCAPE: ${cwd}`);
   }
   args.push("--chdir", cwd);
@@ -112,6 +146,25 @@ function buildBwrapArgs(req: SandboxExecRequest, bwrapPath: string): { args: str
   if (!req.argv.length) throw new Error("SANDBOX_EMPTY_ARGV");
   args.push("--", ...req.argv);
 
+  // Optional resource limits via prlimit (RLIMIT_*) when binary available.
+  // Honest: not cgroup v2. NEVER map max_pids → RLIMIT_NPROC: that limit is
+  // user-wide and causes "namespace failed: Resource temporarily unavailable"
+  // when the operator already has many processes.
+  const prlimit = which("prlimit");
+  if (prlimit) {
+    const wrap: string[] = [prlimit];
+    if (profile.process.memory_bytes != null) {
+      wrap.push(`--as=${profile.process.memory_bytes}`);
+    }
+    if (profile.process.cpu_seconds != null) {
+      wrap.push(`--cpu=${profile.process.cpu_seconds}`);
+    }
+    if (wrap.length > 1) {
+      wrap.push("--");
+      return { args: [...wrap, ...args], env };
+    }
+  }
+
   return { args, env };
 }
 
@@ -135,6 +188,9 @@ export class BubblewrapBackend implements SandboxBackend {
       notes: [
         "Rootless bubblewrap — namespaces via bwrap",
         "Network deny uses --unshare-net",
+        which("prlimit")
+          ? "Resource caps via prlimit RLIMIT_AS/CPU when profile sets them; max_pids not mapped to RLIMIT_NPROC (user-wide hazard)"
+          : "prlimit absent — timeout/output limits only",
         "Not a claim of perfect kernel isolation against privileged attackers",
       ],
     };

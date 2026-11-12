@@ -58,14 +58,16 @@ See `ARCHITECTURE.md`. Core V3 contracts reused; new runtime layers: security pr
 
 See `ACCEPTANCE-MATRIX.md` — gates S/H/C/W/A/O/E2E/R = PASS (pre-tag).
 
-## 10. Real vs mock
+## 10. Real vs mock (updated after operational validation)
 
-| Real | Simulated / dry-run |
+| Real | Simulated / blocked |
 |------|---------------------|
-| bubblewrap exec | LLM harness task body |
-| daemon IPC | git worktree ≈ temp dirs in E2E |
-| approvals persist | post-merge test = `node -e exit 0` |
-| ownership conflicts | |
+| bubblewrap exec (Debian mounts fixed) | LLM harness task body — **BLOCKED** (auth) |
+| daemon IPC + SIGKILL recovery | — |
+| git worktree create/merge/rollback | — |
+| post-merge npm test/build discovery | — |
+| approvals concurrency + restart | — |
+| E2E engineering stack | shout() patch deterministic when LLM blocked |
 
 ## 11. Remaining limitations
 

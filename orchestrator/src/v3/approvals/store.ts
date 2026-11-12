@@ -1,4 +1,12 @@
-import { existsSync, mkdirSync, readdirSync, readFileSync, renameSync, writeFileSync } from "node:fs";
+import {
+  existsSync,
+  mkdirSync,
+  readdirSync,
+  readFileSync,
+  renameSync,
+  unlinkSync,
+  writeFileSync,
+} from "node:fs";
 import { join } from "node:path";
 import { randomUUID } from "node:crypto";
 import type { ApprovalCreateInput, ApprovalRequest, ApprovalState } from "./types.js";
@@ -126,6 +134,51 @@ export class ApprovalStore {
 
   reject(approvalId: string, actor: string, note?: string): ApprovalRequest {
     return this.transition(approvalId, "REJECTED", actor, note);
+  }
+
+  /**
+   * Compare-and-swap decision for concurrent approve/reject races.
+   * Reloads from disk under exclusive rename; only first writer wins.
+   */
+  decideOnce(
+    approvalId: string,
+    to: "APPROVED" | "REJECTED",
+    actor: string,
+    note?: string,
+  ): { won: true; approval: ApprovalRequest } | { won: false; approval: ApprovalRequest; reason: string } {
+    const path = this.pathFor(approvalId);
+    const rec = this.get(approvalId);
+    if (!rec) throw new Error(`APPROVAL_NOT_FOUND:${approvalId}`);
+    this.expireIfNeeded(rec);
+    const fresh = this.get(approvalId)!;
+    if (fresh.state !== "PENDING") {
+      return { won: false, approval: fresh, reason: `already_${fresh.state}` };
+    }
+    // Write to exclusive temp then rename — loser sees non-PENDING on reload.
+    const stamp = `${process.pid}.${Date.now()}.${Math.random().toString(16).slice(2)}`;
+    const claimPath = `${path}.claim.${stamp}`;
+    try {
+      writeFileSync(claimPath, "claim", { flag: "wx" });
+    } catch {
+      const again = this.get(approvalId)!;
+      return { won: false, approval: again, reason: "lost_claim_race" };
+    }
+    try {
+      const again = this.get(approvalId)!;
+      this.expireIfNeeded(again);
+      const latest = this.get(approvalId)!;
+      if (latest.state !== "PENDING") {
+        return { won: false, approval: latest, reason: `already_${latest.state}` };
+      }
+      const decided = this.transition(approvalId, to, actor, note);
+      return { won: true, approval: decided };
+    } finally {
+      try {
+        unlinkSync(claimPath);
+      } catch {
+        /* */
+      }
+    }
   }
 
   cancel(approvalId: string, actor: string, note?: string): ApprovalRequest {

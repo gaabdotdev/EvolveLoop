@@ -1,0 +1,67 @@
+{
+  "kind": "V35_OP_E2E_Evidence",
+  "work_id": "work-eng",
+  "goal_id": "gc-eng",
+  "worktree_id": "wt-work-eng-1794522273305",
+  "branch": "evolveloop/work-eng/wt-work-eng-1794522273305",
+  "sandbox_os_applied": true,
+  "approval_id": "apr-41df8b5d-64af-4380-a9af-f87b4217230d",
+  "integrated_commit": "3e0d8dbb060787cb9eb240010ed490781da22f9e",
+  "post_merge": {
+    "kind": "PostMergeResult",
+    "repo": "/tmp/el-e2e-eng-e03Vsi",
+    "checks": [
+      {
+        "id": "npm_run_build",
+        "argv": [
+          "npm",
+          "run",
+          "build",
+          "--silent"
+        ],
+        "required": true,
+        "present": true,
+        "ran": true,
+        "exit_code": 0,
+        "stdout_tail": "",
+        "stderr_tail": "",
+        "duration_ms": 106
+      },
+      {
+        "id": "npm_run_test",
+        "argv": [
+          "npm",
+          "run",
+          "test",
+          "--silent"
+        ],
+        "required": true,
+        "present": true,
+        "ran": true,
+        "exit_code": 0,
+        "stdout_tail": "TAP version 13\n# Subtest: greet\nok 1 - greet\n  ---\n  duration_ms: 0.558471\n  type: 'test'\n  ...\n# Subtest: shout\nok 2 - shout\n  ---\n  duration_ms: 0.584271\n  type: 'test'\n  ...\n1..2\n# tests 2\n# suites 0\n# pass 2\n# fail 0\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 47.870701\n",
+        "stderr_tail": "",
+        "duration_ms": 159
+      }
+    ],
+    "overall": "PASS",
+    "notes": []
+  },
+  "human_dirty_preserved": true,
+  "harness_llm": {
+    "status": "BLOCKED_AUTH",
+    "claude_execution_path": "real_eligible",
+    "note": "File edits performed under sandbox/worktree; LLM body not forged"
+  },
+  "real": [
+    "CoordinatorDaemon IPC",
+    "git worktree create/commit/merge",
+    "post-merge npm test/build discovery",
+    "bubblewrap write confinement",
+    "approval persist/approve/consume",
+    "restart reconcile"
+  ],
+  "simulated": [
+    "LLM code generation (auth blocked) — deterministic shout patch used"
+  ]
+}

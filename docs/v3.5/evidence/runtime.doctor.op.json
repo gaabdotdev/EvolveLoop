@@ -1,0 +1,224 @@
+{
+  "kind": "RuntimeDoctorReport",
+  "checked_at": "2026-11-12T22:24:46.827Z",
+  "checks": [
+    {
+      "id": "platform_linux",
+      "status": "PASS",
+      "detail": "linux",
+      "required": true
+    },
+    {
+      "id": "sandbox_bubblewrap",
+      "status": "PASS",
+      "detail": "live bwrap exec OK",
+      "required": true
+    },
+    {
+      "id": "prlimit",
+      "status": "PASS",
+      "detail": "available for RLIMIT caps",
+      "required": false
+    },
+    {
+      "id": "cgroup_v2",
+      "status": "PASS",
+      "detail": "present for future controllers; not required for bubblewrap path",
+      "required": false
+    },
+    {
+      "id": "coordinator_ipc",
+      "status": "UNAVAILABLE",
+      "detail": "daemon not running (optional until service start)",
+      "required": false
+    },
+    {
+      "id": "leader_lock_file",
+      "status": "PASS",
+      "detail": "no leader.lock",
+      "required": false
+    },
+    {
+      "id": "harness_cli_claude",
+      "status": "PASS",
+      "detail": "/home/gaab/.local/bin/claude",
+      "required": false
+    },
+    {
+      "id": "harness_cli_codex",
+      "status": "UNAVAILABLE",
+      "detail": "not_on_path",
+      "required": false
+    },
+    {
+      "id": "harness_cli_antigravity",
+      "status": "PASS",
+      "detail": "/home/gaab/.local/bin/agent",
+      "required": false
+    },
+    {
+      "id": "harness_cli_cursor-agent",
+      "status": "PASS",
+      "detail": "/home/gaab/.local/bin/agent",
+      "required": false
+    },
+    {
+      "id": "harness_claude_auth",
+      "status": "BLOCKED",
+      "detail": "not_logged_in — run claude /login for Gate H real LLM",
+      "required": false
+    },
+    {
+      "id": "harness_cursor_api_key",
+      "status": "BLOCKED",
+      "detail": "CURSOR_API_KEY unset — agent real path blocked",
+      "required": false
+    },
+    {
+      "id": "consent_flag",
+      "status": "WARNING",
+      "detail": "consent enabled in this process — keep scoped to validation",
+      "required": false
+    },
+    {
+      "id": "git",
+      "status": "PASS",
+      "detail": "git version 2.47.3",
+      "required": true
+    },
+    {
+      "id": "approvals_dir",
+      "status": "PASS",
+      "detail": "/tmp/tmp.qss7HrQeAR/approvals",
+      "required": false
+    },
+    {
+      "id": "orphan_process_sessions",
+      "status": "PASS",
+      "detail": "stale_running_records=0",
+      "required": false
+    },
+    {
+      "id": "harness_contract_claude",
+      "status": "PASS",
+      "detail": "contract inspect OK",
+      "required": false
+    }
+  ],
+  "summary": {
+    "pass": 12,
+    "fail": 0,
+    "warning": 1,
+    "blocked": 2,
+    "unavailable": 2
+  },
+  "raw": {
+    "sandbox_status": {
+      "preferred": {
+        "available": true,
+        "backend_id": "bubblewrap",
+        "version_hint": "/usr/bin/bwrap",
+        "notes": [
+          "Rootless bubblewrap — namespaces via bwrap",
+          "Network deny uses --unshare-net",
+          "Resource caps via prlimit RLIMIT_AS/CPU when profile sets them; max_pids not mapped to RLIMIT_NPROC (user-wide hazard)",
+          "Not a claim of perfect kernel isolation against privileged attackers"
+        ]
+      },
+      "backends": [
+        {
+          "available": true,
+          "backend_id": "bubblewrap",
+          "version_hint": "/usr/bin/bwrap",
+          "notes": [
+            "Rootless bubblewrap — namespaces via bwrap",
+            "Network deny uses --unshare-net",
+            "Resource caps via prlimit RLIMIT_AS/CPU when profile sets them; max_pids not mapped to RLIMIT_NPROC (user-wide hazard)",
+            "Not a claim of perfect kernel isolation against privileged attackers"
+          ]
+        },
+        {
+          "available": false,
+          "backend_id": "unavailable",
+          "reason": "no_os_sandbox_backend",
+          "notes": [
+            "Silent host fallback is forbidden when require_os_sandbox=true"
+          ]
+        }
+      ],
+      "os": "linux"
+    },
+    "harness": {
+      "adapters": [
+        {
+          "adapter_id": "cursor",
+          "can_invoke": true,
+          "notes": [
+            "invokes ExecutionBridge (PLAN_APPROVED gated)",
+            "cursor-skill providers use JobStore pickup — not a live IDE agent API",
+            "host-internal tools remain incompletely mediated"
+          ]
+        },
+        {
+          "adapter_id": "claude-code",
+          "can_invoke": true,
+          "notes": [
+            "Claude Code CLI bridge (print mode)",
+            "Does not claim IDE session injection or full permission mediation",
+            "Cancel only for Core-owned spawned PIDs (process-sessions)",
+            "cli=/home/gaab/.local/bin/claude version_hint=2.1.302 (Claude Code)",
+            "real spawn requires provider_mode=real + EVOLVELOOP_HARNESS_CONSENT=true",
+            "dry-run writes prompt package under --data-dir/harness-prompts without calling network"
+          ]
+        },
+        {
+          "adapter_id": "codex",
+          "can_invoke": false,
+          "notes": [
+            "codex CLI not on PATH",
+            "invoke() always returns blocked — fail-closed",
+            "operator may export Handoff Package for manual resume outside Core"
+          ]
+        },
+        {
+          "adapter_id": "antigravity",
+          "can_invoke": true,
+          "notes": [
+            "Antigravity CLI bridge — experimental argv; validate locally",
+            "Cancel only for Core-owned spawned PIDs",
+            "cli=/home/gaab/.local/bin/agent version_hint=2026.11.11-043ef28",
+            "real spawn requires provider_mode=real + EVOLVELOOP_HARNESS_CONSENT=true",
+            "dry-run writes prompt package under --data-dir/harness-prompts without calling network"
+          ]
+        }
+      ],
+      "cli_probes": [
+        {
+          "cli_id": "claude",
+          "available": true,
+          "path": "/home/gaab/.local/bin/claude",
+          "version_hint": "2.1.302 (Claude Code)"
+        },
+        {
+          "cli_id": "codex",
+          "available": false,
+          "error": "not_on_path"
+        },
+        {
+          "cli_id": "antigravity",
+          "available": true,
+          "path": "/home/gaab/.local/bin/agent",
+          "version_hint": "2026.11.11-043ef28"
+        }
+      ],
+      "consent": true,
+      "notes": [
+        "Real spawn requires consent env + available CLI",
+        "Cursor Jobs uses ExecutionBridge — not full IDE session control"
+      ]
+    },
+    "node": "v22.15.0",
+    "data_dir": "/tmp/tmp.qss7HrQeAR",
+    "systemd_user_cli": true
+  }
+}

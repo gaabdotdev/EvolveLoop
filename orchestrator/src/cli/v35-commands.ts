@@ -165,7 +165,7 @@ WantedBy=default.target
       return true;
     }
     if (command === "doctor") {
-      print(runtimeDoctor(paths.root));
+      print(await runtimeDoctor(paths.root));
       return true;
     }
     if (command === "recover") {

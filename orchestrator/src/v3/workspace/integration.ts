@@ -7,6 +7,7 @@ import { execFileSync, spawnSync } from "node:child_process";
 import { existsSync, mkdirSync, readFileSync, renameSync, writeFileSync, rmSync } from "node:fs";
 import { join } from "node:path";
 import { OwnershipLedger } from "./ownership.js";
+import { runPostMergeValidation, type PostMergeResult } from "./post-merge.js";
 
 export type IntegrationState =
   | "pending"
@@ -28,6 +29,7 @@ export interface WorkspaceIntegrationRecord {
   state: IntegrationState;
   conflict_files: string[];
   test_exit_code?: number | null;
+  post_merge?: PostMergeResult;
   integrated_commit?: string;
   checkpoint_ref?: string;
   notes: string[];
@@ -131,6 +133,8 @@ export class IntegrationCoordinator {
     workspace_id: string;
     primary_repo: string;
     test_argv?: string[];
+    /** When true (default), discover and run real post-merge checks; never node -e exit 0. */
+    run_post_merge?: boolean;
   }): WorkspaceIntegrationRecord {
     const rec = this.get(opts.workspace_id);
     if (!rec) throw new Error(`WORKSPACE_NOT_FOUND:${opts.workspace_id}`);
@@ -152,8 +156,8 @@ export class IntegrationCoordinator {
     }
 
     if (!rec.branch) {
-      // Patch-style: copy is caller's responsibility; mark validated if clean.
-      rec.state = "validated";
+      rec.state = "failed";
+      rec.notes.push("integration_requires_git_branch_not_directory_copy");
       rec.updated_at = nowIso();
       this.save(rec);
       return rec;
@@ -171,6 +175,7 @@ export class IntegrationCoordinator {
       return rec;
     }
 
+    // Explicit argv overrides discovery when provided.
     if (opts.test_argv?.length) {
       rec.state = "testing";
       this.save(rec);
@@ -187,9 +192,38 @@ export class IntegrationCoordinator {
         this.save(rec);
         return rec;
       }
+    } else if (opts.run_post_merge !== false) {
+      rec.state = "testing";
+      this.save(rec);
+      const pm = runPostMergeValidation(opts.primary_repo);
+      rec.post_merge = pm;
+      rec.test_exit_code = pm.overall === "PASS" ? 0 : 1;
+      if (pm.overall === "FAIL") {
+        git(opts.primary_repo, ["merge", "--abort"]);
+        rec.state = "failed";
+        rec.notes.push("post_merge_validation_failed");
+        rec.updated_at = nowIso();
+        this.save(rec);
+        return rec;
+      }
+      if (pm.overall === "NO_CHECKS" || pm.overall === "BLOCKED") {
+        rec.notes.push(`post_merge_${pm.overall.toLowerCase()}`);
+        // Do not auto-PASS: leave merge staged but require explicit continue?
+        // Policy: abort — absence of tests is not approval.
+        git(opts.primary_repo, ["merge", "--abort"]);
+        rec.state = "failed";
+        rec.notes.push("refused_integrate_without_applicable_required_checks");
+        rec.updated_at = nowIso();
+        this.save(rec);
+        return rec;
+      }
     }
 
-    const commit = git(opts.primary_repo, ["commit", "-m", `integrate(${rec.workspace_id}): agent ${rec.agent_id}`]);
+    const commit = git(opts.primary_repo, [
+      "commit",
+      "-m",
+      `integrate(${rec.workspace_id}): agent ${rec.agent_id}`,
+    ]);
     if (commit.status !== 0 && !git(opts.primary_repo, ["status", "--porcelain"]).stdout.trim()) {
       // nothing to commit — already applied
     }

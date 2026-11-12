@@ -48,7 +48,7 @@ describe("V3.5 sandbox", () => {
     const res = await new SandboxManager().exec({
       argv: ["/bin/cat", join(ws, "marker.txt")],
       profile,
-      env: { PATH: "/bin:/usr/bin" },
+      env: { PATH: "/usr/bin:/bin" },
     });
     expect(res.blocked).not.toBe(true);
     expect(res.exit_code).toBe(0);
@@ -58,11 +58,10 @@ describe("V3.5 sandbox", () => {
   it.runIf(hasBwrap)("denies network with unshare-net", async () => {
     const ws = mkdtempSync(join(tmpdir(), "el-sb-net-"));
     const profile = agentWorkspaceProfile(ws);
-    // /bin/sh trying to use /dev/tcp should fail under unshare-net, or getent may fail.
     const res = await new SandboxManager().exec({
       argv: ["/bin/sh", "-c", "getent hosts example.com || true; echo NETDONE"],
       profile,
-      env: { PATH: "/bin:/usr/bin" },
+      env: { PATH: "/usr/bin:/bin" },
     });
     expect(res.blocked).not.toBe(true);
     expect(res.stdout).toContain("NETDONE");
