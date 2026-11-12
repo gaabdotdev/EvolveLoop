@@ -1,0 +1,49 @@
+{
+  "suite_id": "engineering-v1",
+  "name": "EvolveLoop Engineering Bench Obs Suite",
+  "version": "1.0.0",
+  "objective": "Initial gate suite: multi-repo engineering + orchestration observability",
+  "cases": [
+    "BO-T01",
+    "BO-T02",
+    "BO-T03",
+    "BO-T04",
+    "BO-T05",
+    "BO-T06",
+    "BO-T07",
+    "BO-T08",
+    "BO-T09",
+    "BO-T10",
+    "BO-ORCH-01",
+    "BO-ORCH-02",
+    "BO-ORCH-03",
+    "BO-ORCH-04",
+    "BO-ORCH-05",
+    "BO-TEL-01"
+  ],
+  "default_criteria": ["tests_pass", "files_changed"],
+  "environment": {
+    "runtime": "node>=20",
+    "mode": "local-first"
+  },
+  "allowed_providers": ["mock"],
+  "budgets": {
+    "max_duration_ms": 120000,
+    "max_cost_usd": 5
+  },
+  "repetitions": {
+    "smoke": 1,
+    "exploratory": 3,
+    "final": 5
+  },
+  "strategies": [
+    "A_single_agent",
+    "B_evolveloop_no_delegation",
+    "C_evolveloop_adaptive"
+  ],
+  "evaluators": ["deterministic", "test", "hash"],
+  "privacy": {
+    "content_capture": "off",
+    "retention_days": 30
+  }
+}

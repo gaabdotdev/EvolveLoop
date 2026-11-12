@@ -17,7 +17,7 @@
  *   evolve tui status|run --data-dir ./v3-data [--work-id w1] [--format text|json]
  *   evolve models seed|list|show|enable --data-dir ./v3-data ...
  */
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { resolveV3DataPaths } from "../v3/paths.js";
 import { GoalContractStore } from "../v3/goal-contract/store.js";
@@ -81,6 +81,13 @@ import { runFailureBattery, runEngineeringFailureBattery } from "../v3/failure-i
 import type { ProviderMode } from "./provider-bootstrap.js";
 import { handleV35Command, V35_USAGE_GROUPS } from "./v35-commands.js";
 import { handleV36Command, V36_USAGE_GROUPS } from "./v36-commands.js";
+import {
+  handleBenchmarkCommand,
+  handleTelemetryCommand,
+  recordEngineeringLoopObservation,
+  resolveMeasurementPaths,
+} from "../telemetry/measurement-plane/index.js";
+import { probeLiveLlmReadiness, runLiveValidationSuite } from "../v3/evaluation/live/index.js";
 
 function parseArgs(argv: string[]) {
   const group = argv[2] ?? "help";
@@ -89,7 +96,17 @@ function parseArgs(argv: string[]) {
   }
   const command = argv[3] && !argv[3].startsWith("--") ? argv[3] : "help";
   const args: Record<string, string> = { group, command };
-  const start = argv[3] && !argv[3].startsWith("--") ? 4 : 3;
+  let start = argv[3] && !argv[3].startsWith("--") ? 4 : 3;
+  // Optional positional subcommand / id (e.g. evolve benchmark suite list)
+  if (argv[start] && !argv[start].startsWith("--")) {
+    args._sub = argv[start];
+    args._ = argv[start];
+    start += 1;
+    if (argv[start] && !argv[start].startsWith("--")) {
+      args.id = argv[start];
+      start += 1;
+    }
+  }
   for (let i = start; i < argv.length; i++) {
     const key = argv[i];
     if (key.startsWith("--")) {
@@ -161,7 +178,24 @@ function usage() {
       battery: ["run", "engineering", "eval"],
       engineering: ["run", "show"],
       harness: ["matrix", "list", "inspect", "sessions"],
-      eval: ["battery"],
+      eval: ["battery", "live-readiness", "live-suite"],
+      telemetry: ["status", "inspect", "events", "trace", "agents", "usage", "export", "metrics"],
+      benchmark: [
+        "suite",
+        "case",
+        "experiment",
+        "run",
+        "status",
+        "cancel",
+        "report",
+        "compare",
+        "metrics",
+        "regressions",
+        "export",
+        "validate-suite",
+        "validate-evidence",
+        "doctor",
+      ],
     },
     notes: [
       "Closing this CLI does not erase --data-dir state.",
@@ -185,6 +219,9 @@ function usage() {
       "battery eval / eval battery runs ≥10 multi-repo engineering tasks (deterministic solvers).",
       "engineering run executes V3.4 Engineering Loop against a real --workspace (deterministic workers).",
       "harness matrix classifies adapters as SUPPORTED|PARTIAL|DRY_RUN|PROBE_ONLY|BLOCKED|UNSUPPORTED.",
+      "telemetry/benchmark are the Measurement Plane CLIs (local-first; never invent tokens).",
+      "benchmark strategies: A_single_agent | B_evolveloop_no_delegation | C_evolveloop_adaptive.",
+      "eval live-suite exercises LLM path when EVOLVELOOP_HARNESS_CONSENT=true + provider auth; else BLOCKED dry plumbing.",
     ],
   });
 }
@@ -1324,6 +1361,17 @@ async function main() {
         );
         return;
       }
+      if (args.command === "live-readiness") {
+        print(probeLiveLlmReadiness());
+        return;
+      }
+      if (args.command === "live-suite") {
+        const repoRoot = args["repo-root"]
+          ? resolve(args["repo-root"])
+          : resolve(process.cwd(), "..");
+        print(runLiveValidationSuite({ repoRoot, paths }));
+        return;
+      }
     }
 
     if (args.group === "engineering") {
@@ -1334,16 +1382,21 @@ async function main() {
           process.exit(1);
         }
         const svc = new EngineeringLoopService(paths);
-        print(
-          svc.run({
-            work_id: args["work-id"],
-            workspace_root: resolve(args.workspace),
-            objective: args.objective,
-            goal_contract_id: args["goal-id"],
-            domain: args.domain,
-            max_replans: args["max-replans"] ? parseInt(args["max-replans"], 10) : undefined,
-          }),
-        );
+        const engResult = svc.run({
+          work_id: args["work-id"],
+          workspace_root: resolve(args.workspace),
+          objective: args.objective,
+          goal_contract_id: args["goal-id"],
+          domain: args.domain,
+          max_replans: args["max-replans"] ? parseInt(args["max-replans"], 10) : undefined,
+        });
+        try {
+          const mp = resolveMeasurementPaths(paths.root);
+          const obs = recordEngineeringLoopObservation(mp, engResult);
+          print({ ...engResult, measurement_observation: obs });
+        } catch {
+          print(engResult);
+        }
         return;
       }
       if (args.command === "show") {
@@ -1361,6 +1414,25 @@ async function main() {
         print({ kind: "HarnessMatrix", adapters: buildHarnessMatrix() });
         return;
       }
+    }
+
+    if (args.group === "telemetry") {
+      const repoRoot = resolve(process.env.AGENTS_ROOT ?? process.cwd());
+      void repoRoot;
+      const result = handleTelemetryCommand(args.command, args);
+      print(result.payload);
+      process.exit(result.code);
+    }
+
+    if (args.group === "benchmark") {
+      const repoRoot = resolve(process.env.AGENTS_ROOT ?? resolve(process.cwd(), ".."));
+      // When invoked from orchestrator/, parent is repo root; allow override.
+      const root = existsSync(resolve(repoRoot, "benchmarks/bench-obs"))
+        ? repoRoot
+        : resolve(process.cwd(), "..");
+      const result = handleBenchmarkCommand(args.command, args, root);
+      print(result.payload);
+      process.exit(result.code);
     }
 
     console.error(`Unknown command: evolve ${args.group} ${args.command}`);

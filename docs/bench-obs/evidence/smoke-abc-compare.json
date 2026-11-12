@@ -1,0 +1,1910 @@
+{
+  "experiment_id": "exp_9cd9ff2c5025",
+  "results": [
+    {
+      "run_id": "run_f08eac73bb2f4857",
+      "case_id": "BO-ORCH-01",
+      "strategy": "A_single_agent",
+      "repetition": 1,
+      "validity": "valid",
+      "invalid_reasons": [],
+      "true_full_pass": true,
+      "metrics": {
+        "hierarchy": {
+          "agent_count_requested": 1,
+          "agent_count_created": 1,
+          "agent_count_started": 1,
+          "agent_count_completed": 1,
+          "agent_count_failed": 0,
+          "agent_count_cancelled": 0,
+          "agent_count_blocked": 0,
+          "subagent_count": 0,
+          "delegation_depth": 0,
+          "fan_out_max": 0,
+          "fan_out_mean": 0,
+          "fan_out_median": 0,
+          "delegation_requested": 0,
+          "delegation_accepted": 0,
+          "delegation_rejected": 0,
+          "delegation_acceptance_rate": null,
+          "delegated_task_share": 0,
+          "delegation_rework_rate": null,
+          "root_direct_engineering_share": 0.5,
+          "root_coordination_share": 0.5,
+          "delegated_engineering_share": 0,
+          "unattributed_work_share": 0
+        },
+        "usage": {
+          "input_tokens": {
+            "metric": "input_tokens",
+            "value": null,
+            "unit": "tokens",
+            "provenance": "UNAVAILABLE"
+          },
+          "output_tokens": {
+            "metric": "output_tokens",
+            "value": null,
+            "unit": "tokens",
+            "provenance": "UNAVAILABLE"
+          },
+          "cached_input_tokens": {
+            "metric": "cached_input_tokens",
+            "value": null,
+            "unit": "tokens",
+            "provenance": "UNAVAILABLE"
+          },
+          "cache_creation_tokens": {
+            "metric": "cache_creation_tokens",
+            "value": null,
+            "unit": "tokens",
+            "provenance": "UNAVAILABLE"
+          },
+          "reasoning_tokens": {
+            "metric": "reasoning_tokens",
+            "value": null,
+            "unit": "tokens",
+            "provenance": "UNAVAILABLE"
+          },
+          "total_reported": {
+            "metric": "total_reported",
+            "value": null,
+            "unit": "tokens",
+            "provenance": "UNAVAILABLE"
+          },
+          "total_estimated": {
+            "metric": "total_estimated",
+            "value": null,
+            "unit": "tokens",
+            "provenance": "UNAVAILABLE"
+          },
+          "cost_usd_reported": {
+            "metric": "cost_usd_reported",
+            "value": null,
+            "unit": "USD",
+            "provenance": "UNAVAILABLE"
+          },
+          "cost_usd_calculated": {
+            "metric": "cost_usd_calculated",
+            "value": null,
+            "unit": "USD",
+            "provenance": "UNAVAILABLE"
+          },
+          "cost_usd_estimated": {
+            "metric": "cost_usd_estimated",
+            "value": null,
+            "unit": "USD",
+            "provenance": "UNAVAILABLE"
+          },
+          "request_count": 0,
+          "deduped_request_count": 0
+        },
+        "timing": {
+          "end_to_end_duration_ms": 4,
+          "time_to_first_useful_action_ms": 3,
+          "active_engineering_time_ms": 20,
+          "wall_clock_duration_ms": 4,
+          "provider_request_latency": {
+            "sample_size": 0,
+            "mean_ms": null,
+            "median_ms": null,
+            "p50_ms": null,
+            "p90_ms": null,
+            "p95_ms": null,
+            "min_ms": null,
+            "max_ms": null,
+            "reliability": "insufficient_sample"
+          },
+          "tool_duration": {
+            "sample_size": 1,
+            "mean_ms": 12,
+            "median_ms": 12,
+            "p50_ms": 12,
+            "p90_ms": null,
+            "p95_ms": null,
+            "min_ms": 12,
+            "max_ms": 12,
+            "reliability": "insufficient_sample"
+          },
+          "provenance": "OBSERVED"
+        },
+        "event_counts": {
+          "experiment.started": 1,
+          "benchmark.case_started": 1,
+          "run.started": 1,
+          "agent.spawn_requested": 1,
+          "agent.spawned": 1,
+          "agent.started": 1,
+          "plan.created": 1,
+          "task.assigned": 1,
+          "filesystem.write": 1,
+          "tool.completed": 1,
+          "test.started": 1,
+          "test.completed": 1,
+          "evaluation.started": 1,
+          "criterion.passed": 2,
+          "true_full_pass.granted": 1,
+          "evaluation.completed": 1,
+          "agent.completed": 1,
+          "run.completed": 1,
+          "benchmark.case_completed": 1
+        },
+        "coverage_gaps": []
+      },
+      "evaluation": {
+        "run_id": "run_f08eac73bb2f4857",
+        "case_id": "BO-ORCH-01",
+        "criteria": [
+          {
+            "id": "c1",
+            "description": "completed by root",
+            "mandatory": true,
+            "evaluator": "diff",
+            "state": "PASS",
+            "evidence_ids": [
+              "ev_run_f08eac73bb2f4857_0"
+            ],
+            "evaluated_at": "2026-11-11T23:07:05.530Z"
+          },
+          {
+            "id": "c2",
+            "description": "tests pass",
+            "mandatory": true,
+            "evaluator": "test",
+            "state": "PASS",
+            "evidence_ids": [
+              "ev_run_f08eac73bb2f4857_1"
+            ],
+            "evaluated_at": "2026-11-11T23:07:05.530Z"
+          }
+        ],
+        "true_full_pass": true,
+        "true_full_pass_reason": "all_mandatory_criteria_verified",
+        "evidence_validity_rate": 1,
+        "false_positive_checks": []
+      },
+      "workspace": "/tmp/tmp.9R5KLPBYVo/measurement/workspaces/run_f08eac73bb2f4857"
+    },
+    {
+      "run_id": "run_ce4d442432394d12",
+      "case_id": "BO-ORCH-02",
+      "strategy": "A_single_agent",
+      "repetition": 1,
+      "validity": "valid",
+      "invalid_reasons": [],
+      "true_full_pass": true,
+      "metrics": {
+        "hierarchy": {
+          "agent_count_requested": 1,
+          "agent_count_created": 1,
+          "agent_count_started": 1,
+          "agent_count_completed": 1,
+          "agent_count_failed": 0,
+          "agent_count_cancelled": 0,
+          "agent_count_blocked": 0,
+          "subagent_count": 0,
+          "delegation_depth": 0,
+          "fan_out_max": 0,
+          "fan_out_mean": 0,
+          "fan_out_median": 0,
+          "delegation_requested": 0,
+          "delegation_accepted": 0,
+          "delegation_rejected": 0,
+          "delegation_acceptance_rate": null,
+          "delegated_task_share": 0,
+          "delegation_rework_rate": null,
+          "root_direct_engineering_share": 0.5,
+          "root_coordination_share": 0.5,
+          "delegated_engineering_share": 0,
+          "unattributed_work_share": 0
+        },
+        "usage": {
+          "input_tokens": {
+            "metric": "input_tokens",
+            "value": null,
+            "unit": "tokens",
+            "provenance": "UNAVAILABLE"
+          },
+          "output_tokens": {
+            "metric": "output_tokens",
+            "value": null,
+            "unit": "tokens",
+            "provenance": "UNAVAILABLE"
+          },
+          "cached_input_tokens": {
+            "metric": "cached_input_tokens",
+            "value": null,
+            "unit": "tokens",
+            "provenance": "UNAVAILABLE"
+          },
+          "cache_creation_tokens": {
+            "metric": "cache_creation_tokens",
+            "value": null,
+            "unit": "tokens",
+            "provenance": "UNAVAILABLE"
+          },
+          "reasoning_tokens": {
+            "metric": "reasoning_tokens",
+            "value": null,
+            "unit": "tokens",
+            "provenance": "UNAVAILABLE"
+          },
+          "total_reported": {
+            "metric": "total_reported",
+            "value": null,
+            "unit": "tokens",
+            "provenance": "UNAVAILABLE"
+          },
+          "total_estimated": {
+            "metric": "total_estimated",
+            "value": null,
+            "unit": "tokens",
+            "provenance": "UNAVAILABLE"
+          },
+          "cost_usd_reported": {
+            "metric": "cost_usd_reported",
+            "value": null,
+            "unit": "USD",
+            "provenance": "UNAVAILABLE"
+          },
+          "cost_usd_calculated": {
+            "metric": "cost_usd_calculated",
+            "value": null,
+            "unit": "USD",
+            "provenance": "UNAVAILABLE"
+          },
+          "cost_usd_estimated": {
+            "metric": "cost_usd_estimated",
+            "value": null,
+            "unit": "USD",
+            "provenance": "UNAVAILABLE"
+          },
+          "request_count": 0,
+          "deduped_request_count": 0
+        },
+        "timing": {
+          "end_to_end_duration_ms": 3,
+          "time_to_first_useful_action_ms": 1,
+          "active_engineering_time_ms": 21,
+          "wall_clock_duration_ms": 3,
+          "provider_request_latency": {
+            "sample_size": 0,
+            "mean_ms": null,
+            "median_ms": null,
+            "p50_ms": null,
+            "p90_ms": null,
+            "p95_ms": null,
+            "min_ms": null,
+            "max_ms": null,
+            "reliability": "insufficient_sample"
+          },
+          "tool_duration": {
+            "sample_size": 1,
+            "mean_ms": 12,
+            "median_ms": 12,
+            "p50_ms": 12,
+            "p90_ms": null,
+            "p95_ms": null,
+            "min_ms": 12,
+            "max_ms": 12,
+            "reliability": "insufficient_sample"
+          },
+          "provenance": "OBSERVED"
+        },
+        "event_counts": {
+          "experiment.started": 1,
+          "benchmark.case_started": 1,
+          "run.started": 1,
+          "agent.spawn_requested": 1,
+          "agent.spawned": 1,
+          "agent.started": 1,
+          "plan.created": 1,
+          "task.assigned": 1,
+          "filesystem.write": 1,
+          "tool.completed": 1,
+          "test.started": 1,
+          "test.completed": 1,
+          "evaluation.started": 1,
+          "criterion.passed": 2,
+          "true_full_pass.granted": 1,
+          "evaluation.completed": 1,
+          "agent.completed": 1,
+          "run.completed": 1,
+          "benchmark.case_completed": 1
+        },
+        "coverage_gaps": []
+      },
+      "evaluation": {
+        "run_id": "run_ce4d442432394d12",
+        "case_id": "BO-ORCH-02",
+        "criteria": [
+          {
+            "id": "c1",
+            "description": "work completed",
+            "mandatory": true,
+            "evaluator": "test",
+            "state": "PASS",
+            "evidence_ids": [
+              "ev_run_ce4d442432394d12_0"
+            ],
+            "evaluated_at": "2026-11-11T23:07:05.536Z"
+          },
+          {
+            "id": "c2",
+            "description": "diff present",
+            "mandatory": true,
+            "evaluator": "diff",
+            "state": "PASS",
+            "evidence_ids": [
+              "ev_run_ce4d442432394d12_1"
+            ],
+            "evaluated_at": "2026-11-11T23:07:05.536Z"
+          }
+        ],
+        "true_full_pass": true,
+        "true_full_pass_reason": "all_mandatory_criteria_verified",
+        "evidence_validity_rate": 1,
+        "false_positive_checks": []
+      },
+      "workspace": "/tmp/tmp.9R5KLPBYVo/measurement/workspaces/run_ce4d442432394d12"
+    },
+    {
+      "run_id": "run_5e1247fa82ae4524",
+      "case_id": "BO-TEL-01",
+      "strategy": "A_single_agent",
+      "repetition": 1,
+      "validity": "valid",
+      "invalid_reasons": [],
+      "true_full_pass": true,
+      "metrics": {
+        "hierarchy": {
+          "agent_count_requested": 1,
+          "agent_count_created": 1,
+          "agent_count_started": 1,
+          "agent_count_completed": 1,
+          "agent_count_failed": 0,
+          "agent_count_cancelled": 0,
+          "agent_count_blocked": 0,
+          "subagent_count": 0,
+          "delegation_depth": 0,
+          "fan_out_max": 0,
+          "fan_out_mean": 0,
+          "fan_out_median": 0,
+          "delegation_requested": 0,
+          "delegation_accepted": 0,
+          "delegation_rejected": 0,
+          "delegation_acceptance_rate": null,
+          "delegated_task_share": 0,
+          "delegation_rework_rate": null,
+          "root_direct_engineering_share": 0.5,
+          "root_coordination_share": 0.5,
+          "delegated_engineering_share": 0,
+          "unattributed_work_share": 0
+        },
+        "usage": {
+          "input_tokens": {
+            "metric": "input_tokens",
+            "value": null,
+            "unit": "tokens",
+            "provenance": "UNAVAILABLE"
+          },
+          "output_tokens": {
+            "metric": "output_tokens",
+            "value": null,
+            "unit": "tokens",
+            "provenance": "UNAVAILABLE"
+          },
+          "cached_input_tokens": {
+            "metric": "cached_input_tokens",
+            "value": null,
+            "unit": "tokens",
+            "provenance": "UNAVAILABLE"
+          },
+          "cache_creation_tokens": {
+            "metric": "cache_creation_tokens",
+            "value": null,
+            "unit": "tokens",
+            "provenance": "UNAVAILABLE"
+          },
+          "reasoning_tokens": {
+            "metric": "reasoning_tokens",
+            "value": null,
+            "unit": "tokens",
+            "provenance": "UNAVAILABLE"
+          },
+          "total_reported": {
+            "metric": "total_reported",
+            "value": null,
+            "unit": "tokens",
+            "provenance": "UNAVAILABLE"
+          },
+          "total_estimated": {
+            "metric": "total_estimated",
+            "value": null,
+            "unit": "tokens",
+            "provenance": "UNAVAILABLE"
+          },
+          "cost_usd_reported": {
+            "metric": "cost_usd_reported",
+            "value": null,
+            "unit": "USD",
+            "provenance": "UNAVAILABLE"
+          },
+          "cost_usd_calculated": {
+            "metric": "cost_usd_calculated",
+            "value": null,
+            "unit": "USD",
+            "provenance": "UNAVAILABLE"
+          },
+          "cost_usd_estimated": {
+            "metric": "cost_usd_estimated",
+            "value": null,
+            "unit": "USD",
+            "provenance": "UNAVAILABLE"
+          },
+          "request_count": 0,
+          "deduped_request_count": 0
+        },
+        "timing": {
+          "end_to_end_duration_ms": 2,
+          "time_to_first_useful_action_ms": 1,
+          "active_engineering_time_ms": 20,
+          "wall_clock_duration_ms": 2,
+          "provider_request_latency": {
+            "sample_size": 0,
+            "mean_ms": null,
+            "median_ms": null,
+            "p50_ms": null,
+            "p90_ms": null,
+            "p95_ms": null,
+            "min_ms": null,
+            "max_ms": null,
+            "reliability": "insufficient_sample"
+          },
+          "tool_duration": {
+            "sample_size": 1,
+            "mean_ms": 12,
+            "median_ms": 12,
+            "p50_ms": 12,
+            "p90_ms": null,
+            "p95_ms": null,
+            "min_ms": 12,
+            "max_ms": 12,
+            "reliability": "insufficient_sample"
+          },
+          "provenance": "OBSERVED"
+        },
+        "event_counts": {
+          "experiment.started": 1,
+          "benchmark.case_started": 1,
+          "run.started": 1,
+          "agent.spawn_requested": 1,
+          "agent.spawned": 1,
+          "agent.started": 1,
+          "plan.created": 1,
+          "task.assigned": 1,
+          "filesystem.write": 1,
+          "tool.completed": 1,
+          "test.started": 1,
+          "test.completed": 1,
+          "evaluation.started": 1,
+          "criterion.passed": 2,
+          "true_full_pass.granted": 1,
+          "evaluation.completed": 1,
+          "agent.completed": 1,
+          "run.completed": 1,
+          "benchmark.case_completed": 1
+        },
+        "coverage_gaps": []
+      },
+      "evaluation": {
+        "run_id": "run_5e1247fa82ae4524",
+        "case_id": "BO-TEL-01",
+        "criteria": [
+          {
+            "id": "c1",
+            "description": "run reconstructable",
+            "mandatory": true,
+            "evaluator": "hash",
+            "state": "PASS",
+            "evidence_ids": [
+              "ev_run_5e1247fa82ae4524_0"
+            ],
+            "evaluated_at": "2026-11-11T23:07:05.539Z"
+          },
+          {
+            "id": "c2",
+            "description": "tests pass",
+            "mandatory": true,
+            "evaluator": "test",
+            "state": "PASS",
+            "evidence_ids": [
+              "ev_run_5e1247fa82ae4524_1"
+            ],
+            "evaluated_at": "2026-11-11T23:07:05.539Z"
+          }
+        ],
+        "true_full_pass": true,
+        "true_full_pass_reason": "all_mandatory_criteria_verified",
+        "evidence_validity_rate": 1,
+        "false_positive_checks": []
+      },
+      "workspace": "/tmp/tmp.9R5KLPBYVo/measurement/workspaces/run_5e1247fa82ae4524"
+    },
+    {
+      "run_id": "run_baaa6810f8394f18",
+      "case_id": "BO-ORCH-01",
+      "strategy": "B_evolveloop_no_delegation",
+      "repetition": 1,
+      "validity": "valid",
+      "invalid_reasons": [],
+      "true_full_pass": true,
+      "metrics": {
+        "hierarchy": {
+          "agent_count_requested": 1,
+          "agent_count_created": 1,
+          "agent_count_started": 1,
+          "agent_count_completed": 1,
+          "agent_count_failed": 0,
+          "agent_count_cancelled": 0,
+          "agent_count_blocked": 0,
+          "subagent_count": 0,
+          "delegation_depth": 0,
+          "fan_out_max": 0,
+          "fan_out_mean": 0,
+          "fan_out_median": 0,
+          "delegation_requested": 0,
+          "delegation_accepted": 0,
+          "delegation_rejected": 0,
+          "delegation_acceptance_rate": null,
+          "delegated_task_share": 0,
+          "delegation_rework_rate": null,
+          "root_direct_engineering_share": 0.5,
+          "root_coordination_share": 0.5,
+          "delegated_engineering_share": 0,
+          "unattributed_work_share": 0
+        },
+        "usage": {
+          "input_tokens": {
+            "metric": "input_tokens",
+            "value": null,
+            "unit": "tokens",
+            "provenance": "UNAVAILABLE"
+          },
+          "output_tokens": {
+            "metric": "output_tokens",
+            "value": null,
+            "unit": "tokens",
+            "provenance": "UNAVAILABLE"
+          },
+          "cached_input_tokens": {
+            "metric": "cached_input_tokens",
+            "value": null,
+            "unit": "tokens",
+            "provenance": "UNAVAILABLE"
+          },
+          "cache_creation_tokens": {
+            "metric": "cache_creation_tokens",
+            "value": null,
+            "unit": "tokens",
+            "provenance": "UNAVAILABLE"
+          },
+          "reasoning_tokens": {
+            "metric": "reasoning_tokens",
+            "value": null,
+            "unit": "tokens",
+            "provenance": "UNAVAILABLE"
+          },
+          "total_reported": {
+            "metric": "total_reported",
+            "value": null,
+            "unit": "tokens",
+            "provenance": "UNAVAILABLE"
+          },
+          "total_estimated": {
+            "metric": "total_estimated",
+            "value": null,
+            "unit": "tokens",
+            "provenance": "UNAVAILABLE"
+          },
+          "cost_usd_reported": {
+            "metric": "cost_usd_reported",
+            "value": null,
+            "unit": "USD",
+            "provenance": "UNAVAILABLE"
+          },
+          "cost_usd_calculated": {
+            "metric": "cost_usd_calculated",
+            "value": null,
+            "unit": "USD",
+            "provenance": "UNAVAILABLE"
+          },
+          "cost_usd_estimated": {
+            "metric": "cost_usd_estimated",
+            "value": null,
+            "unit": "USD",
+            "provenance": "UNAVAILABLE"
+          },
+          "request_count": 0,
+          "deduped_request_count": 0
+        },
+        "timing": {
+          "end_to_end_duration_ms": 1,
+          "time_to_first_useful_action_ms": 0,
+          "active_engineering_time_ms": 20,
+          "wall_clock_duration_ms": 1,
+          "provider_request_latency": {
+            "sample_size": 0,
+            "mean_ms": null,
+            "median_ms": null,
+            "p50_ms": null,
+            "p90_ms": null,
+            "p95_ms": null,
+            "min_ms": null,
+            "max_ms": null,
+            "reliability": "insufficient_sample"
+          },
+          "tool_duration": {
+            "sample_size": 1,
+            "mean_ms": 12,
+            "median_ms": 12,
+            "p50_ms": 12,
+            "p90_ms": null,
+            "p95_ms": null,
+            "min_ms": 12,
+            "max_ms": 12,
+            "reliability": "insufficient_sample"
+          },
+          "provenance": "OBSERVED"
+        },
+        "event_counts": {
+          "experiment.started": 1,
+          "benchmark.case_started": 1,
+          "run.started": 1,
+          "agent.spawn_requested": 1,
+          "agent.spawned": 1,
+          "agent.started": 1,
+          "plan.created": 1,
+          "task.assigned": 1,
+          "filesystem.write": 1,
+          "tool.completed": 1,
+          "test.started": 1,
+          "test.completed": 1,
+          "evaluation.started": 1,
+          "criterion.passed": 2,
+          "true_full_pass.granted": 1,
+          "evaluation.completed": 1,
+          "agent.completed": 1,
+          "run.completed": 1,
+          "benchmark.case_completed": 1
+        },
+        "coverage_gaps": []
+      },
+      "evaluation": {
+        "run_id": "run_baaa6810f8394f18",
+        "case_id": "BO-ORCH-01",
+        "criteria": [
+          {
+            "id": "c1",
+            "description": "completed by root",
+            "mandatory": true,
+            "evaluator": "diff",
+            "state": "PASS",
+            "evidence_ids": [
+              "ev_run_baaa6810f8394f18_0"
+            ],
+            "evaluated_at": "2026-11-11T23:07:05.541Z"
+          },
+          {
+            "id": "c2",
+            "description": "tests pass",
+            "mandatory": true,
+            "evaluator": "test",
+            "state": "PASS",
+            "evidence_ids": [
+              "ev_run_baaa6810f8394f18_1"
+            ],
+            "evaluated_at": "2026-11-11T23:07:05.541Z"
+          }
+        ],
+        "true_full_pass": true,
+        "true_full_pass_reason": "all_mandatory_criteria_verified",
+        "evidence_validity_rate": 1,
+        "false_positive_checks": []
+      },
+      "workspace": "/tmp/tmp.9R5KLPBYVo/measurement/workspaces/run_baaa6810f8394f18"
+    },
+    {
+      "run_id": "run_1fd440f68a5344ff",
+      "case_id": "BO-ORCH-02",
+      "strategy": "B_evolveloop_no_delegation",
+      "repetition": 1,
+      "validity": "valid",
+      "invalid_reasons": [],
+      "true_full_pass": true,
+      "metrics": {
+        "hierarchy": {
+          "agent_count_requested": 1,
+          "agent_count_created": 1,
+          "agent_count_started": 1,
+          "agent_count_completed": 1,
+          "agent_count_failed": 0,
+          "agent_count_cancelled": 0,
+          "agent_count_blocked": 0,
+          "subagent_count": 0,
+          "delegation_depth": 0,
+          "fan_out_max": 0,
+          "fan_out_mean": 0,
+          "fan_out_median": 0,
+          "delegation_requested": 0,
+          "delegation_accepted": 0,
+          "delegation_rejected": 0,
+          "delegation_acceptance_rate": null,
+          "delegated_task_share": 0,
+          "delegation_rework_rate": null,
+          "root_direct_engineering_share": 0.5,
+          "root_coordination_share": 0.5,
+          "delegated_engineering_share": 0,
+          "unattributed_work_share": 0
+        },
+        "usage": {
+          "input_tokens": {
+            "metric": "input_tokens",
+            "value": null,
+            "unit": "tokens",
+            "provenance": "UNAVAILABLE"
+          },
+          "output_tokens": {
+            "metric": "output_tokens",
+            "value": null,
+            "unit": "tokens",
+            "provenance": "UNAVAILABLE"
+          },
+          "cached_input_tokens": {
+            "metric": "cached_input_tokens",
+            "value": null,
+            "unit": "tokens",
+            "provenance": "UNAVAILABLE"
+          },
+          "cache_creation_tokens": {
+            "metric": "cache_creation_tokens",
+            "value": null,
+            "unit": "tokens",
+            "provenance": "UNAVAILABLE"
+          },
+          "reasoning_tokens": {
+            "metric": "reasoning_tokens",
+            "value": null,
+            "unit": "tokens",
+            "provenance": "UNAVAILABLE"
+          },
+          "total_reported": {
+            "metric": "total_reported",
+            "value": null,
+            "unit": "tokens",
+            "provenance": "UNAVAILABLE"
+          },
+          "total_estimated": {
+            "metric": "total_estimated",
+            "value": null,
+            "unit": "tokens",
+            "provenance": "UNAVAILABLE"
+          },
+          "cost_usd_reported": {
+            "metric": "cost_usd_reported",
+            "value": null,
+            "unit": "USD",
+            "provenance": "UNAVAILABLE"
+          },
+          "cost_usd_calculated": {
+            "metric": "cost_usd_calculated",
+            "value": null,
+            "unit": "USD",
+            "provenance": "UNAVAILABLE"
+          },
+          "cost_usd_estimated": {
+            "metric": "cost_usd_estimated",
+            "value": null,
+            "unit": "USD",
+            "provenance": "UNAVAILABLE"
+          },
+          "request_count": 0,
+          "deduped_request_count": 0
+        },
+        "timing": {
+          "end_to_end_duration_ms": 2,
+          "time_to_first_useful_action_ms": 1,
+          "active_engineering_time_ms": 20,
+          "wall_clock_duration_ms": 2,
+          "provider_request_latency": {
+            "sample_size": 0,
+            "mean_ms": null,
+            "median_ms": null,
+            "p50_ms": null,
+            "p90_ms": null,
+            "p95_ms": null,
+            "min_ms": null,
+            "max_ms": null,
+            "reliability": "insufficient_sample"
+          },
+          "tool_duration": {
+            "sample_size": 1,
+            "mean_ms": 12,
+            "median_ms": 12,
+            "p50_ms": 12,
+            "p90_ms": null,
+            "p95_ms": null,
+            "min_ms": 12,
+            "max_ms": 12,
+            "reliability": "insufficient_sample"
+          },
+          "provenance": "OBSERVED"
+        },
+        "event_counts": {
+          "experiment.started": 1,
+          "benchmark.case_started": 1,
+          "run.started": 1,
+          "agent.spawn_requested": 1,
+          "agent.spawned": 1,
+          "agent.started": 1,
+          "plan.created": 1,
+          "task.assigned": 1,
+          "filesystem.write": 1,
+          "tool.completed": 1,
+          "test.started": 1,
+          "test.completed": 1,
+          "evaluation.started": 1,
+          "criterion.passed": 2,
+          "true_full_pass.granted": 1,
+          "evaluation.completed": 1,
+          "agent.completed": 1,
+          "run.completed": 1,
+          "benchmark.case_completed": 1
+        },
+        "coverage_gaps": []
+      },
+      "evaluation": {
+        "run_id": "run_1fd440f68a5344ff",
+        "case_id": "BO-ORCH-02",
+        "criteria": [
+          {
+            "id": "c1",
+            "description": "work completed",
+            "mandatory": true,
+            "evaluator": "test",
+            "state": "PASS",
+            "evidence_ids": [
+              "ev_run_1fd440f68a5344ff_0"
+            ],
+            "evaluated_at": "2026-11-11T23:07:05.542Z"
+          },
+          {
+            "id": "c2",
+            "description": "diff present",
+            "mandatory": true,
+            "evaluator": "diff",
+            "state": "PASS",
+            "evidence_ids": [
+              "ev_run_1fd440f68a5344ff_1"
+            ],
+            "evaluated_at": "2026-11-11T23:07:05.542Z"
+          }
+        ],
+        "true_full_pass": true,
+        "true_full_pass_reason": "all_mandatory_criteria_verified",
+        "evidence_validity_rate": 1,
+        "false_positive_checks": []
+      },
+      "workspace": "/tmp/tmp.9R5KLPBYVo/measurement/workspaces/run_1fd440f68a5344ff"
+    },
+    {
+      "run_id": "run_6fd4cbbd3efe455a",
+      "case_id": "BO-TEL-01",
+      "strategy": "B_evolveloop_no_delegation",
+      "repetition": 1,
+      "validity": "valid",
+      "invalid_reasons": [],
+      "true_full_pass": true,
+      "metrics": {
+        "hierarchy": {
+          "agent_count_requested": 1,
+          "agent_count_created": 1,
+          "agent_count_started": 1,
+          "agent_count_completed": 1,
+          "agent_count_failed": 0,
+          "agent_count_cancelled": 0,
+          "agent_count_blocked": 0,
+          "subagent_count": 0,
+          "delegation_depth": 0,
+          "fan_out_max": 0,
+          "fan_out_mean": 0,
+          "fan_out_median": 0,
+          "delegation_requested": 0,
+          "delegation_accepted": 0,
+          "delegation_rejected": 0,
+          "delegation_acceptance_rate": null,
+          "delegated_task_share": 0,
+          "delegation_rework_rate": null,
+          "root_direct_engineering_share": 0.5,
+          "root_coordination_share": 0.5,
+          "delegated_engineering_share": 0,
+          "unattributed_work_share": 0
+        },
+        "usage": {
+          "input_tokens": {
+            "metric": "input_tokens",
+            "value": null,
+            "unit": "tokens",
+            "provenance": "UNAVAILABLE"
+          },
+          "output_tokens": {
+            "metric": "output_tokens",
+            "value": null,
+            "unit": "tokens",
+            "provenance": "UNAVAILABLE"
+          },
+          "cached_input_tokens": {
+            "metric": "cached_input_tokens",
+            "value": null,
+            "unit": "tokens",
+            "provenance": "UNAVAILABLE"
+          },
+          "cache_creation_tokens": {
+            "metric": "cache_creation_tokens",
+            "value": null,
+            "unit": "tokens",
+            "provenance": "UNAVAILABLE"
+          },
+          "reasoning_tokens": {
+            "metric": "reasoning_tokens",
+            "value": null,
+            "unit": "tokens",
+            "provenance": "UNAVAILABLE"
+          },
+          "total_reported": {
+            "metric": "total_reported",
+            "value": null,
+            "unit": "tokens",
+            "provenance": "UNAVAILABLE"
+          },
+          "total_estimated": {
+            "metric": "total_estimated",
+            "value": null,
+            "unit": "tokens",
+            "provenance": "UNAVAILABLE"
+          },
+          "cost_usd_reported": {
+            "metric": "cost_usd_reported",
+            "value": null,
+            "unit": "USD",
+            "provenance": "UNAVAILABLE"
+          },
+          "cost_usd_calculated": {
+            "metric": "cost_usd_calculated",
+            "value": null,
+            "unit": "USD",
+            "provenance": "UNAVAILABLE"
+          },
+          "cost_usd_estimated": {
+            "metric": "cost_usd_estimated",
+            "value": null,
+            "unit": "USD",
+            "provenance": "UNAVAILABLE"
+          },
+          "request_count": 0,
+          "deduped_request_count": 0
+        },
+        "timing": {
+          "end_to_end_duration_ms": 1,
+          "time_to_first_useful_action_ms": 1,
+          "active_engineering_time_ms": 20,
+          "wall_clock_duration_ms": 1,
+          "provider_request_latency": {
+            "sample_size": 0,
+            "mean_ms": null,
+            "median_ms": null,
+            "p50_ms": null,
+            "p90_ms": null,
+            "p95_ms": null,
+            "min_ms": null,
+            "max_ms": null,
+            "reliability": "insufficient_sample"
+          },
+          "tool_duration": {
+            "sample_size": 1,
+            "mean_ms": 12,
+            "median_ms": 12,
+            "p50_ms": 12,
+            "p90_ms": null,
+            "p95_ms": null,
+            "min_ms": 12,
+            "max_ms": 12,
+            "reliability": "insufficient_sample"
+          },
+          "provenance": "OBSERVED"
+        },
+        "event_counts": {
+          "experiment.started": 1,
+          "benchmark.case_started": 1,
+          "run.started": 1,
+          "agent.spawn_requested": 1,
+          "agent.spawned": 1,
+          "agent.started": 1,
+          "plan.created": 1,
+          "task.assigned": 1,
+          "filesystem.write": 1,
+          "tool.completed": 1,
+          "test.started": 1,
+          "test.completed": 1,
+          "evaluation.started": 1,
+          "criterion.passed": 2,
+          "true_full_pass.granted": 1,
+          "evaluation.completed": 1,
+          "agent.completed": 1,
+          "run.completed": 1,
+          "benchmark.case_completed": 1
+        },
+        "coverage_gaps": []
+      },
+      "evaluation": {
+        "run_id": "run_6fd4cbbd3efe455a",
+        "case_id": "BO-TEL-01",
+        "criteria": [
+          {
+            "id": "c1",
+            "description": "run reconstructable",
+            "mandatory": true,
+            "evaluator": "hash",
+            "state": "PASS",
+            "evidence_ids": [
+              "ev_run_6fd4cbbd3efe455a_0"
+            ],
+            "evaluated_at": "2026-11-11T23:07:05.544Z"
+          },
+          {
+            "id": "c2",
+            "description": "tests pass",
+            "mandatory": true,
+            "evaluator": "test",
+            "state": "PASS",
+            "evidence_ids": [
+              "ev_run_6fd4cbbd3efe455a_1"
+            ],
+            "evaluated_at": "2026-11-11T23:07:05.544Z"
+          }
+        ],
+        "true_full_pass": true,
+        "true_full_pass_reason": "all_mandatory_criteria_verified",
+        "evidence_validity_rate": 1,
+        "false_positive_checks": []
+      },
+      "workspace": "/tmp/tmp.9R5KLPBYVo/measurement/workspaces/run_6fd4cbbd3efe455a"
+    },
+    {
+      "run_id": "run_b911b08633c046de",
+      "case_id": "BO-ORCH-01",
+      "strategy": "C_evolveloop_adaptive",
+      "repetition": 1,
+      "validity": "valid",
+      "invalid_reasons": [],
+      "true_full_pass": true,
+      "metrics": {
+        "hierarchy": {
+          "agent_count_requested": 1,
+          "agent_count_created": 1,
+          "agent_count_started": 1,
+          "agent_count_completed": 1,
+          "agent_count_failed": 0,
+          "agent_count_cancelled": 0,
+          "agent_count_blocked": 0,
+          "subagent_count": 0,
+          "delegation_depth": 0,
+          "fan_out_max": 0,
+          "fan_out_mean": 0,
+          "fan_out_median": 0,
+          "delegation_requested": 0,
+          "delegation_accepted": 0,
+          "delegation_rejected": 0,
+          "delegation_acceptance_rate": null,
+          "delegated_task_share": 0,
+          "delegation_rework_rate": null,
+          "root_direct_engineering_share": 0.5,
+          "root_coordination_share": 0.5,
+          "delegated_engineering_share": 0,
+          "unattributed_work_share": 0
+        },
+        "usage": {
+          "input_tokens": {
+            "metric": "input_tokens",
+            "value": null,
+            "unit": "tokens",
+            "provenance": "UNAVAILABLE"
+          },
+          "output_tokens": {
+            "metric": "output_tokens",
+            "value": null,
+            "unit": "tokens",
+            "provenance": "UNAVAILABLE"
+          },
+          "cached_input_tokens": {
+            "metric": "cached_input_tokens",
+            "value": null,
+            "unit": "tokens",
+            "provenance": "UNAVAILABLE"
+          },
+          "cache_creation_tokens": {
+            "metric": "cache_creation_tokens",
+            "value": null,
+            "unit": "tokens",
+            "provenance": "UNAVAILABLE"
+          },
+          "reasoning_tokens": {
+            "metric": "reasoning_tokens",
+            "value": null,
+            "unit": "tokens",
+            "provenance": "UNAVAILABLE"
+          },
+          "total_reported": {
+            "metric": "total_reported",
+            "value": null,
+            "unit": "tokens",
+            "provenance": "UNAVAILABLE"
+          },
+          "total_estimated": {
+            "metric": "total_estimated",
+            "value": null,
+            "unit": "tokens",
+            "provenance": "UNAVAILABLE"
+          },
+          "cost_usd_reported": {
+            "metric": "cost_usd_reported",
+            "value": null,
+            "unit": "USD",
+            "provenance": "UNAVAILABLE"
+          },
+          "cost_usd_calculated": {
+            "metric": "cost_usd_calculated",
+            "value": null,
+            "unit": "USD",
+            "provenance": "UNAVAILABLE"
+          },
+          "cost_usd_estimated": {
+            "metric": "cost_usd_estimated",
+            "value": null,
+            "unit": "USD",
+            "provenance": "UNAVAILABLE"
+          },
+          "request_count": 0,
+          "deduped_request_count": 0
+        },
+        "timing": {
+          "end_to_end_duration_ms": 2,
+          "time_to_first_useful_action_ms": 1,
+          "active_engineering_time_ms": 21,
+          "wall_clock_duration_ms": 2,
+          "provider_request_latency": {
+            "sample_size": 0,
+            "mean_ms": null,
+            "median_ms": null,
+            "p50_ms": null,
+            "p90_ms": null,
+            "p95_ms": null,
+            "min_ms": null,
+            "max_ms": null,
+            "reliability": "insufficient_sample"
+          },
+          "tool_duration": {
+            "sample_size": 1,
+            "mean_ms": 12,
+            "median_ms": 12,
+            "p50_ms": 12,
+            "p90_ms": null,
+            "p95_ms": null,
+            "min_ms": 12,
+            "max_ms": 12,
+            "reliability": "insufficient_sample"
+          },
+          "provenance": "OBSERVED"
+        },
+        "event_counts": {
+          "experiment.started": 1,
+          "benchmark.case_started": 1,
+          "run.started": 1,
+          "agent.spawn_requested": 1,
+          "agent.spawned": 1,
+          "agent.started": 1,
+          "plan.created": 1,
+          "task.assigned": 1,
+          "filesystem.write": 1,
+          "tool.completed": 1,
+          "test.started": 1,
+          "test.completed": 1,
+          "evaluation.started": 1,
+          "criterion.passed": 2,
+          "true_full_pass.granted": 1,
+          "evaluation.completed": 1,
+          "agent.completed": 1,
+          "run.completed": 1,
+          "benchmark.case_completed": 1
+        },
+        "coverage_gaps": []
+      },
+      "evaluation": {
+        "run_id": "run_b911b08633c046de",
+        "case_id": "BO-ORCH-01",
+        "criteria": [
+          {
+            "id": "c1",
+            "description": "completed by root",
+            "mandatory": true,
+            "evaluator": "diff",
+            "state": "PASS",
+            "evidence_ids": [
+              "ev_run_b911b08633c046de_0"
+            ],
+            "evaluated_at": "2026-11-11T23:07:05.547Z"
+          },
+          {
+            "id": "c2",
+            "description": "tests pass",
+            "mandatory": true,
+            "evaluator": "test",
+            "state": "PASS",
+            "evidence_ids": [
+              "ev_run_b911b08633c046de_1"
+            ],
+            "evaluated_at": "2026-11-11T23:07:05.547Z"
+          }
+        ],
+        "true_full_pass": true,
+        "true_full_pass_reason": "all_mandatory_criteria_verified",
+        "evidence_validity_rate": 1,
+        "false_positive_checks": []
+      },
+      "workspace": "/tmp/tmp.9R5KLPBYVo/measurement/workspaces/run_b911b08633c046de"
+    },
+    {
+      "run_id": "run_b9b3106feb5e44d6",
+      "case_id": "BO-ORCH-02",
+      "strategy": "C_evolveloop_adaptive",
+      "repetition": 1,
+      "validity": "valid",
+      "invalid_reasons": [],
+      "true_full_pass": true,
+      "metrics": {
+        "hierarchy": {
+          "agent_count_requested": 3,
+          "agent_count_created": 3,
+          "agent_count_started": 1,
+          "agent_count_completed": 3,
+          "agent_count_failed": 0,
+          "agent_count_cancelled": 0,
+          "agent_count_blocked": 0,
+          "subagent_count": 2,
+          "delegation_depth": 2,
+          "fan_out_max": 1,
+          "fan_out_mean": 1,
+          "fan_out_median": 1,
+          "delegation_requested": 1,
+          "delegation_accepted": 1,
+          "delegation_rejected": 0,
+          "delegation_acceptance_rate": 1,
+          "delegated_task_share": 1,
+          "delegation_rework_rate": null,
+          "root_direct_engineering_share": 0.14285714285714285,
+          "root_coordination_share": 0.7142857142857143,
+          "delegated_engineering_share": 0.14285714285714285,
+          "unattributed_work_share": 0
+        },
+        "usage": {
+          "input_tokens": {
+            "metric": "input_tokens",
+            "value": null,
+            "unit": "tokens",
+            "provenance": "UNAVAILABLE"
+          },
+          "output_tokens": {
+            "metric": "output_tokens",
+            "value": null,
+            "unit": "tokens",
+            "provenance": "UNAVAILABLE"
+          },
+          "cached_input_tokens": {
+            "metric": "cached_input_tokens",
+            "value": null,
+            "unit": "tokens",
+            "provenance": "UNAVAILABLE"
+          },
+          "cache_creation_tokens": {
+            "metric": "cache_creation_tokens",
+            "value": null,
+            "unit": "tokens",
+            "provenance": "UNAVAILABLE"
+          },
+          "reasoning_tokens": {
+            "metric": "reasoning_tokens",
+            "value": null,
+            "unit": "tokens",
+            "provenance": "UNAVAILABLE"
+          },
+          "total_reported": {
+            "metric": "total_reported",
+            "value": null,
+            "unit": "tokens",
+            "provenance": "UNAVAILABLE"
+          },
+          "total_estimated": {
+            "metric": "total_estimated",
+            "value": null,
+            "unit": "tokens",
+            "provenance": "UNAVAILABLE"
+          },
+          "cost_usd_reported": {
+            "metric": "cost_usd_reported",
+            "value": null,
+            "unit": "USD",
+            "provenance": "UNAVAILABLE"
+          },
+          "cost_usd_calculated": {
+            "metric": "cost_usd_calculated",
+            "value": null,
+            "unit": "USD",
+            "provenance": "UNAVAILABLE"
+          },
+          "cost_usd_estimated": {
+            "metric": "cost_usd_estimated",
+            "value": null,
+            "unit": "USD",
+            "provenance": "UNAVAILABLE"
+          },
+          "request_count": 0,
+          "deduped_request_count": 0
+        },
+        "timing": {
+          "end_to_end_duration_ms": 2,
+          "time_to_first_useful_action_ms": 1,
+          "active_engineering_time_ms": 20,
+          "wall_clock_duration_ms": 2,
+          "provider_request_latency": {
+            "sample_size": 0,
+            "mean_ms": null,
+            "median_ms": null,
+            "p50_ms": null,
+            "p90_ms": null,
+            "p95_ms": null,
+            "min_ms": null,
+            "max_ms": null,
+            "reliability": "insufficient_sample"
+          },
+          "tool_duration": {
+            "sample_size": 0,
+            "mean_ms": null,
+            "median_ms": null,
+            "p50_ms": null,
+            "p90_ms": null,
+            "p95_ms": null,
+            "min_ms": null,
+            "max_ms": null,
+            "reliability": "insufficient_sample"
+          },
+          "provenance": "OBSERVED"
+        },
+        "event_counts": {
+          "experiment.started": 1,
+          "benchmark.case_started": 1,
+          "run.started": 1,
+          "agent.spawn_requested": 3,
+          "agent.spawned": 3,
+          "agent.started": 1,
+          "plan.created": 1,
+          "delegation.requested": 1,
+          "subagent.spawned": 2,
+          "delegation.accepted": 1,
+          "task.assigned": 1,
+          "filesystem.write": 1,
+          "agent.completed": 3,
+          "test.started": 1,
+          "test.completed": 1,
+          "evaluation.started": 1,
+          "criterion.passed": 2,
+          "true_full_pass.granted": 1,
+          "evaluation.completed": 1,
+          "run.completed": 1,
+          "benchmark.case_completed": 1
+        },
+        "coverage_gaps": []
+      },
+      "evaluation": {
+        "run_id": "run_b9b3106feb5e44d6",
+        "case_id": "BO-ORCH-02",
+        "criteria": [
+          {
+            "id": "c1",
+            "description": "work completed",
+            "mandatory": true,
+            "evaluator": "test",
+            "state": "PASS",
+            "evidence_ids": [
+              "ev_run_b9b3106feb5e44d6_0"
+            ],
+            "evaluated_at": "2026-11-11T23:07:05.549Z"
+          },
+          {
+            "id": "c2",
+            "description": "diff present",
+            "mandatory": true,
+            "evaluator": "diff",
+            "state": "PASS",
+            "evidence_ids": [
+              "ev_run_b9b3106feb5e44d6_1"
+            ],
+            "evaluated_at": "2026-11-11T23:07:05.549Z"
+          }
+        ],
+        "true_full_pass": true,
+        "true_full_pass_reason": "all_mandatory_criteria_verified",
+        "evidence_validity_rate": 1,
+        "false_positive_checks": []
+      },
+      "workspace": "/tmp/tmp.9R5KLPBYVo/measurement/workspaces/run_b9b3106feb5e44d6"
+    },
+    {
+      "run_id": "run_0fa20bcabd014139",
+      "case_id": "BO-ORCH-05",
+      "strategy": "C_evolveloop_adaptive",
+      "repetition": 1,
+      "validity": "valid",
+      "invalid_reasons": [],
+      "true_full_pass": true,
+      "metrics": {
+        "hierarchy": {
+          "agent_count_requested": 2,
+          "agent_count_created": 1,
+          "agent_count_started": 1,
+          "agent_count_completed": 1,
+          "agent_count_failed": 0,
+          "agent_count_cancelled": 0,
+          "agent_count_blocked": 1,
+          "subagent_count": 0,
+          "delegation_depth": 0,
+          "fan_out_max": 0,
+          "fan_out_mean": 0,
+          "fan_out_median": 0,
+          "delegation_requested": 0,
+          "delegation_accepted": 0,
+          "delegation_rejected": 0,
+          "delegation_acceptance_rate": null,
+          "delegated_task_share": 0,
+          "delegation_rework_rate": null,
+          "root_direct_engineering_share": 0.5,
+          "root_coordination_share": 0.5,
+          "delegated_engineering_share": 0,
+          "unattributed_work_share": 0
+        },
+        "usage": {
+          "input_tokens": {
+            "metric": "input_tokens",
+            "value": null,
+            "unit": "tokens",
+            "provenance": "UNAVAILABLE"
+          },
+          "output_tokens": {
+            "metric": "output_tokens",
+            "value": null,
+            "unit": "tokens",
+            "provenance": "UNAVAILABLE"
+          },
+          "cached_input_tokens": {
+            "metric": "cached_input_tokens",
+            "value": null,
+            "unit": "tokens",
+            "provenance": "UNAVAILABLE"
+          },
+          "cache_creation_tokens": {
+            "metric": "cache_creation_tokens",
+            "value": null,
+            "unit": "tokens",
+            "provenance": "UNAVAILABLE"
+          },
+          "reasoning_tokens": {
+            "metric": "reasoning_tokens",
+            "value": null,
+            "unit": "tokens",
+            "provenance": "UNAVAILABLE"
+          },
+          "total_reported": {
+            "metric": "total_reported",
+            "value": null,
+            "unit": "tokens",
+            "provenance": "UNAVAILABLE"
+          },
+          "total_estimated": {
+            "metric": "total_estimated",
+            "value": null,
+            "unit": "tokens",
+            "provenance": "UNAVAILABLE"
+          },
+          "cost_usd_reported": {
+            "metric": "cost_usd_reported",
+            "value": null,
+            "unit": "USD",
+            "provenance": "UNAVAILABLE"
+          },
+          "cost_usd_calculated": {
+            "metric": "cost_usd_calculated",
+            "value": null,
+            "unit": "USD",
+            "provenance": "UNAVAILABLE"
+          },
+          "cost_usd_estimated": {
+            "metric": "cost_usd_estimated",
+            "value": null,
+            "unit": "USD",
+            "provenance": "UNAVAILABLE"
+          },
+          "request_count": 0,
+          "deduped_request_count": 0
+        },
+        "timing": {
+          "end_to_end_duration_ms": 2,
+          "time_to_first_useful_action_ms": 1,
+          "active_engineering_time_ms": 20,
+          "wall_clock_duration_ms": 2,
+          "provider_request_latency": {
+            "sample_size": 0,
+            "mean_ms": null,
+            "median_ms": null,
+            "p50_ms": null,
+            "p90_ms": null,
+            "p95_ms": null,
+            "min_ms": null,
+            "max_ms": null,
+            "reliability": "insufficient_sample"
+          },
+          "tool_duration": {
+            "sample_size": 1,
+            "mean_ms": 12,
+            "median_ms": 12,
+            "p50_ms": 12,
+            "p90_ms": null,
+            "p95_ms": null,
+            "min_ms": 12,
+            "max_ms": 12,
+            "reliability": "insufficient_sample"
+          },
+          "provenance": "OBSERVED"
+        },
+        "event_counts": {
+          "experiment.started": 1,
+          "benchmark.case_started": 1,
+          "run.started": 1,
+          "agent.spawn_requested": 2,
+          "agent.spawned": 1,
+          "agent.started": 1,
+          "plan.created": 1,
+          "task.assigned": 1,
+          "filesystem.write": 1,
+          "tool.completed": 1,
+          "agent.spawn_blocked": 1,
+          "test.started": 1,
+          "test.completed": 1,
+          "evaluation.started": 1,
+          "criterion.passed": 2,
+          "true_full_pass.granted": 1,
+          "evaluation.completed": 1,
+          "agent.completed": 1,
+          "run.completed": 1,
+          "benchmark.case_completed": 1
+        },
+        "coverage_gaps": []
+      },
+      "evaluation": {
+        "run_id": "run_0fa20bcabd014139",
+        "case_id": "BO-ORCH-05",
+        "criteria": [
+          {
+            "id": "c1",
+            "description": "root completed without blocked child",
+            "mandatory": true,
+            "evaluator": "test",
+            "state": "PASS",
+            "evidence_ids": [
+              "ev_run_0fa20bcabd014139_0"
+            ],
+            "evaluated_at": "2026-11-11T23:07:05.552Z"
+          },
+          {
+            "id": "c2",
+            "description": "diff or no-op documented",
+            "mandatory": true,
+            "evaluator": "diff",
+            "state": "PASS",
+            "evidence_ids": [
+              "ev_run_0fa20bcabd014139_1"
+            ],
+            "evaluated_at": "2026-11-11T23:07:05.552Z"
+          }
+        ],
+        "true_full_pass": true,
+        "true_full_pass_reason": "all_mandatory_criteria_verified",
+        "evidence_validity_rate": 1,
+        "false_positive_checks": []
+      },
+      "workspace": "/tmp/tmp.9R5KLPBYVo/measurement/workspaces/run_0fa20bcabd014139"
+    },
+    {
+      "run_id": "run_0348f1e4d2034328",
+      "case_id": "BO-TEL-01",
+      "strategy": "C_evolveloop_adaptive",
+      "repetition": 1,
+      "validity": "valid",
+      "invalid_reasons": [],
+      "true_full_pass": true,
+      "metrics": {
+        "hierarchy": {
+          "agent_count_requested": 1,
+          "agent_count_created": 1,
+          "agent_count_started": 1,
+          "agent_count_completed": 1,
+          "agent_count_failed": 0,
+          "agent_count_cancelled": 0,
+          "agent_count_blocked": 0,
+          "subagent_count": 0,
+          "delegation_depth": 0,
+          "fan_out_max": 0,
+          "fan_out_mean": 0,
+          "fan_out_median": 0,
+          "delegation_requested": 0,
+          "delegation_accepted": 0,
+          "delegation_rejected": 0,
+          "delegation_acceptance_rate": null,
+          "delegated_task_share": 0,
+          "delegation_rework_rate": null,
+          "root_direct_engineering_share": 0.5,
+          "root_coordination_share": 0.5,
+          "delegated_engineering_share": 0,
+          "unattributed_work_share": 0
+        },
+        "usage": {
+          "input_tokens": {
+            "metric": "input_tokens",
+            "value": null,
+            "unit": "tokens",
+            "provenance": "UNAVAILABLE"
+          },
+          "output_tokens": {
+            "metric": "output_tokens",
+            "value": null,
+            "unit": "tokens",
+            "provenance": "UNAVAILABLE"
+          },
+          "cached_input_tokens": {
+            "metric": "cached_input_tokens",
+            "value": null,
+            "unit": "tokens",
+            "provenance": "UNAVAILABLE"
+          },
+          "cache_creation_tokens": {
+            "metric": "cache_creation_tokens",
+            "value": null,
+            "unit": "tokens",
+            "provenance": "UNAVAILABLE"
+          },
+          "reasoning_tokens": {
+            "metric": "reasoning_tokens",
+            "value": null,
+            "unit": "tokens",
+            "provenance": "UNAVAILABLE"
+          },
+          "total_reported": {
+            "metric": "total_reported",
+            "value": null,
+            "unit": "tokens",
+            "provenance": "UNAVAILABLE"
+          },
+          "total_estimated": {
+            "metric": "total_estimated",
+            "value": null,
+            "unit": "tokens",
+            "provenance": "UNAVAILABLE"
+          },
+          "cost_usd_reported": {
+            "metric": "cost_usd_reported",
+            "value": null,
+            "unit": "USD",
+            "provenance": "UNAVAILABLE"
+          },
+          "cost_usd_calculated": {
+            "metric": "cost_usd_calculated",
+            "value": null,
+            "unit": "USD",
+            "provenance": "UNAVAILABLE"
+          },
+          "cost_usd_estimated": {
+            "metric": "cost_usd_estimated",
+            "value": null,
+            "unit": "USD",
+            "provenance": "UNAVAILABLE"
+          },
+          "request_count": 0,
+          "deduped_request_count": 0
+        },
+        "timing": {
+          "end_to_end_duration_ms": 2,
+          "time_to_first_useful_action_ms": 1,
+          "active_engineering_time_ms": 21,
+          "wall_clock_duration_ms": 2,
+          "provider_request_latency": {
+            "sample_size": 0,
+            "mean_ms": null,
+            "median_ms": null,
+            "p50_ms": null,
+            "p90_ms": null,
+            "p95_ms": null,
+            "min_ms": null,
+            "max_ms": null,
+            "reliability": "insufficient_sample"
+          },
+          "tool_duration": {
+            "sample_size": 1,
+            "mean_ms": 12,
+            "median_ms": 12,
+            "p50_ms": 12,
+            "p90_ms": null,
+            "p95_ms": null,
+            "min_ms": 12,
+            "max_ms": 12,
+            "reliability": "insufficient_sample"
+          },
+          "provenance": "OBSERVED"
+        },
+        "event_counts": {
+          "experiment.started": 1,
+          "benchmark.case_started": 1,
+          "run.started": 1,
+          "agent.spawn_requested": 1,
+          "agent.spawned": 1,
+          "agent.started": 1,
+          "plan.created": 1,
+          "task.assigned": 1,
+          "filesystem.write": 1,
+          "tool.completed": 1,
+          "test.started": 1,
+          "test.completed": 1,
+          "evaluation.started": 1,
+          "criterion.passed": 2,
+          "true_full_pass.granted": 1,
+          "evaluation.completed": 1,
+          "agent.completed": 1,
+          "run.completed": 1,
+          "benchmark.case_completed": 1
+        },
+        "coverage_gaps": []
+      },
+      "evaluation": {
+        "run_id": "run_0348f1e4d2034328",
+        "case_id": "BO-TEL-01",
+        "criteria": [
+          {
+            "id": "c1",
+            "description": "run reconstructable",
+            "mandatory": true,
+            "evaluator": "hash",
+            "state": "PASS",
+            "evidence_ids": [
+              "ev_run_0348f1e4d2034328_0"
+            ],
+            "evaluated_at": "2026-11-11T23:07:05.555Z"
+          },
+          {
+            "id": "c2",
+            "description": "tests pass",
+            "mandatory": true,
+            "evaluator": "test",
+            "state": "PASS",
+            "evidence_ids": [
+              "ev_run_0348f1e4d2034328_1"
+            ],
+            "evaluated_at": "2026-11-11T23:07:05.555Z"
+          }
+        ],
+        "true_full_pass": true,
+        "true_full_pass_reason": "all_mandatory_criteria_verified",
+        "evidence_validity_rate": 1,
+        "false_positive_checks": []
+      },
+      "workspace": "/tmp/tmp.9R5KLPBYVo/measurement/workspaces/run_0348f1e4d2034328"
+    }
+  ],
+  "comparison": {
+    "arms": {
+      "A_single_agent": {
+        "sample_size": 3,
+        "invalid_or_incomplete": 0,
+        "verified_completion_rate": 1,
+        "mean_duration_ms": 3,
+        "cost_per_verified_completion": {
+          "metric": "cost_per_verified_completion",
+          "value": null,
+          "unit": "USD",
+          "provenance": "UNAVAILABLE"
+        },
+        "wasted_cost": {
+          "metric": "wasted_cost_usd",
+          "value": 0,
+          "unit": "USD",
+          "provenance": "OBSERVED"
+        },
+        "mean_delegation_depth": 0,
+        "mean_subagent_count": 0,
+        "mean_agent_count": 1
+      },
+      "B_evolveloop_no_delegation": {
+        "sample_size": 3,
+        "invalid_or_incomplete": 0,
+        "verified_completion_rate": 1,
+        "mean_duration_ms": 1.3333333333333333,
+        "cost_per_verified_completion": {
+          "metric": "cost_per_verified_completion",
+          "value": null,
+          "unit": "USD",
+          "provenance": "UNAVAILABLE"
+        },
+        "wasted_cost": {
+          "metric": "wasted_cost_usd",
+          "value": 0,
+          "unit": "USD",
+          "provenance": "OBSERVED"
+        },
+        "mean_delegation_depth": 0,
+        "mean_subagent_count": 0,
+        "mean_agent_count": 1
+      },
+      "C_evolveloop_adaptive": {
+        "sample_size": 4,
+        "invalid_or_incomplete": 0,
+        "verified_completion_rate": 1,
+        "mean_duration_ms": 2,
+        "cost_per_verified_completion": {
+          "metric": "cost_per_verified_completion",
+          "value": null,
+          "unit": "USD",
+          "provenance": "UNAVAILABLE"
+        },
+        "wasted_cost": {
+          "metric": "wasted_cost_usd",
+          "value": 0,
+          "unit": "USD",
+          "provenance": "OBSERVED"
+        },
+        "mean_delegation_depth": 0.5,
+        "mean_subagent_count": 0.5,
+        "mean_agent_count": 1.5
+      }
+    },
+    "notes": [
+      "Strategies compared on same cases when eligible.",
+      "Cost requires price table; otherwise UNAVAILABLE.",
+      "Adaptive strategy is not assumed to win."
+    ]
+  }
+}

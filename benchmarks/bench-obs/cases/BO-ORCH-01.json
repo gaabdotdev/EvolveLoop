@@ -1,0 +1,19 @@
+{
+  "case_id": "BO-ORCH-01",
+  "name": "Simple task stays on root",
+  "objective": "Root should not delegate trivial work",
+  "repo": "alpha-lib",
+  "fixture_path": "orchestrator/tests/fixtures/v3-eval/alpha-lib",
+  "preconditions": [],
+  "acceptance_criteria": [
+    {"id": "c1", "description": "completed by root", "mandatory": true, "evaluator": "diff"},
+    {"id": "c2", "description": "tests pass", "mandatory": true, "evaluator": "test"}
+  ],
+  "timeout_ms": 60000,
+  "strategies": ["A_single_agent", "B_evolveloop_no_delegation", "C_evolveloop_adaptive"],
+  "invalidation_rules": ["critical_telemetry_loss"],
+  "difficulty": "easy",
+  "class": "orchestration_simple_root",
+  "multi_file": false,
+  "split": "development"
+}

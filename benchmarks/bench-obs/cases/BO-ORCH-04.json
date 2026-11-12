@@ -1,0 +1,19 @@
+{
+  "case_id": "BO-ORCH-04",
+  "name": "Worker helper spawn",
+  "objective": "Worker creates helper when policy allows",
+  "repo": "gamma-service",
+  "fixture_path": "orchestrator/tests/fixtures/v3-eval/gamma-service",
+  "preconditions": [],
+  "acceptance_criteria": [
+    {"id": "c1", "description": "helper work done", "mandatory": true, "evaluator": "test"},
+    {"id": "c2", "description": "diff present", "mandatory": true, "evaluator": "diff"}
+  ],
+  "timeout_ms": 60000,
+  "strategies": ["C_evolveloop_adaptive"],
+  "invalidation_rules": ["critical_telemetry_loss"],
+  "difficulty": "hard",
+  "class": "orchestration_helper",
+  "multi_file": true,
+  "split": "validation"
+}

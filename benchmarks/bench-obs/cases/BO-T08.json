@@ -1,0 +1,19 @@
+{
+  "case_id": "BO-T08",
+  "name": "Integrate config into router",
+  "objective": "Integration with existing dependency",
+  "repo": "gamma-service",
+  "fixture_path": "orchestrator/tests/fixtures/v3-eval/gamma-service",
+  "preconditions": [],
+  "acceptance_criteria": [
+    {"id": "c1", "description": "integration works", "mandatory": true, "evaluator": "test"},
+    {"id": "c2", "description": "diff present", "mandatory": true, "evaluator": "diff"}
+  ],
+  "timeout_ms": 60000,
+  "strategies": ["A_single_agent", "B_evolveloop_no_delegation", "C_evolveloop_adaptive"],
+  "invalidation_rules": ["critical_telemetry_loss"],
+  "difficulty": "medium",
+  "class": "integration",
+  "multi_file": true,
+  "split": "development"
+}
