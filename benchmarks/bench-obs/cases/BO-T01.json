@@ -1,0 +1,19 @@
+{
+  "case_id": "BO-T01",
+  "name": "Fix clamp lower bound",
+  "objective": "Fix clamp lower bound bug in alpha-lib",
+  "repo": "alpha-lib",
+  "fixture_path": "orchestrator/tests/fixtures/v3-eval/alpha-lib",
+  "preconditions": ["fixture present"],
+  "acceptance_criteria": [
+    {"id": "c1", "description": "clamp lower bound fixed", "mandatory": true, "evaluator": "test"},
+    {"id": "c2", "description": "files changed", "mandatory": true, "evaluator": "diff"}
+  ],
+  "timeout_ms": 60000,
+  "strategies": ["A_single_agent", "B_evolveloop_no_delegation", "C_evolveloop_adaptive"],
+  "invalidation_rules": ["critical_telemetry_loss"],
+  "difficulty": "easy",
+  "class": "bugfix",
+  "multi_file": true,
+  "split": "development"
+}

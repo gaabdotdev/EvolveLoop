@@ -1,0 +1,27 @@
+{
+  "version": "prices.v1",
+  "currency": "USD",
+  "source": "local-fixture-table-not-market-data",
+  "entries": [
+    {
+      "provider_id": "mock",
+      "model_id": "mock-model",
+      "currency": "USD",
+      "input_per_mtok": 1.0,
+      "output_per_mtok": 3.0,
+      "cached_input_per_mtok": 0.1,
+      "source": "bench-obs-fixture",
+      "valid_from": "2026-01-01"
+    },
+    {
+      "provider_id": "anthropic",
+      "model_id": "*",
+      "currency": "USD",
+      "input_per_mtok": 3.0,
+      "output_per_mtok": 15.0,
+      "cached_input_per_mtok": 0.3,
+      "source": "operator-supplied-placeholder",
+      "valid_from": "2026-01-01"
+    }
+  ]
+}

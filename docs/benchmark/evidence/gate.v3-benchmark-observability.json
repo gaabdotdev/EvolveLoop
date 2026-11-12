@@ -1,0 +1,423 @@
+{
+  "kind": "gate.v3-benchmark-observability",
+  "at": "2026-11-12T00:12:21.229Z",
+  "commit": "6b69c3f8dfde36b0f0282accff3aae3595dcc6fd",
+  "preserves_v3_complete": {
+    "tag": "v3-complete",
+    "tag_commit": "6b69c3f8dfde36b0f0282accff3aae3595dcc6fd",
+    "note": "Historical V3_COMPLETE evidence untouched"
+  },
+  "historical_proxy_disclaimer": "docs/v3/evidence/gate.v3-benchmarks.json token_reduction_vs_proxy (~25.9%) is DETERMINISTIC PROXY only — not live economy evidence",
+  "doctor": {
+    "ok": true,
+    "measurement_root": "/tmp/bench-obs-gate-2cM2Sb/measurement/measurement",
+    "run_count": 12,
+    "experiments": 1,
+    "local_first": true,
+    "notes": [
+      "Measurement Plane stores data only under local --data-dir/measurement"
+    ]
+  },
+  "experiment_id": "exp_978123df9012",
+  "compare_summary": {
+    "arms": {
+      "A_single_agent": {
+        "sample_size": 4,
+        "invalid_or_incomplete": 0,
+        "verified_completion_rate": 1,
+        "mean_duration_ms": 2.25,
+        "cost_per_verified_completion": {
+          "metric": "cost_per_verified_completion",
+          "value": null,
+          "unit": "USD",
+          "provenance": "UNAVAILABLE"
+        },
+        "wasted_cost": {
+          "metric": "wasted_cost_usd",
+          "value": 0,
+          "unit": "USD",
+          "provenance": "OBSERVED"
+        },
+        "mean_delegation_depth": 0,
+        "mean_subagent_count": 0,
+        "mean_agent_count": 1
+      },
+      "B_evolveloop_no_delegation": {
+        "sample_size": 4,
+        "invalid_or_incomplete": 0,
+        "verified_completion_rate": 1,
+        "mean_duration_ms": 1.75,
+        "cost_per_verified_completion": {
+          "metric": "cost_per_verified_completion",
+          "value": null,
+          "unit": "USD",
+          "provenance": "UNAVAILABLE"
+        },
+        "wasted_cost": {
+          "metric": "wasted_cost_usd",
+          "value": 0,
+          "unit": "USD",
+          "provenance": "OBSERVED"
+        },
+        "mean_delegation_depth": 0,
+        "mean_subagent_count": 0,
+        "mean_agent_count": 1
+      },
+      "C_evolveloop_adaptive": {
+        "sample_size": 4,
+        "invalid_or_incomplete": 0,
+        "verified_completion_rate": 1,
+        "mean_duration_ms": 1.25,
+        "cost_per_verified_completion": {
+          "metric": "cost_per_verified_completion",
+          "value": null,
+          "unit": "USD",
+          "provenance": "UNAVAILABLE"
+        },
+        "wasted_cost": {
+          "metric": "wasted_cost_usd",
+          "value": 0,
+          "unit": "USD",
+          "provenance": "OBSERVED"
+        },
+        "mean_delegation_depth": 1.5,
+        "mean_subagent_count": 1.5,
+        "mean_agent_count": 2.5
+      }
+    },
+    "notes": [
+      "Strategies compared on same cases when eligible.",
+      "Cost requires price table; otherwise UNAVAILABLE.",
+      "Adaptive strategy is not assumed to win."
+    ]
+  },
+  "live": {
+    "kind": "LiveValidationSuiteReport",
+    "readiness": {
+      "kind": "LiveLlmReadiness",
+      "state": "BLOCKED",
+      "consent": false,
+      "providers": [
+        {
+          "id": "claude-code",
+          "available": true,
+          "auth": "none",
+          "detail": "claude auth status loggedIn=false or unparseable"
+        },
+        {
+          "id": "openai",
+          "available": false,
+          "auth": "none",
+          "detail": "OPENAI_API_KEY unset"
+        },
+        {
+          "id": "openrouter",
+          "available": false,
+          "auth": "none",
+          "detail": "OPENROUTER_API_KEY unset"
+        },
+        {
+          "id": "cursor",
+          "available": true,
+          "auth": "unknown",
+          "detail": "ExecutionBridge/jobs path — not a full live LLM chat API"
+        }
+      ],
+      "blockers": [
+        "EVOLVELOOP_HARNESS_CONSENT!=true",
+        "no_authenticated_live_llm_provider"
+      ],
+      "notes": [
+        "Does not set EVOLVELOOP_HARNESS_CONSENT",
+        "Does not invent tokens or API keys",
+        "Deterministic solvers remain the CI regression path"
+      ]
+    },
+    "results": [
+      {
+        "kind": "LiveEngineeringRunResult",
+        "run_id": "live-6645e314-b",
+        "task_id": "T01",
+        "strategy": "A_single_agent",
+        "readiness": {
+          "kind": "LiveLlmReadiness",
+          "state": "BLOCKED",
+          "consent": false,
+          "providers": [
+            {
+              "id": "claude-code",
+              "available": true,
+              "auth": "none",
+              "detail": "claude auth status loggedIn=false or unparseable"
+            },
+            {
+              "id": "openai",
+              "available": false,
+              "auth": "none",
+              "detail": "OPENAI_API_KEY unset"
+            },
+            {
+              "id": "openrouter",
+              "available": false,
+              "auth": "none",
+              "detail": "OPENROUTER_API_KEY unset"
+            },
+            {
+              "id": "cursor",
+              "available": true,
+              "auth": "unknown",
+              "detail": "ExecutionBridge/jobs path — not a full live LLM chat API"
+            }
+          ],
+          "blockers": [
+            "EVOLVELOOP_HARNESS_CONSENT!=true",
+            "no_authenticated_live_llm_provider"
+          ],
+          "notes": [
+            "Does not set EVOLVELOOP_HARNESS_CONSENT",
+            "Does not invent tokens or API keys",
+            "Deterministic solvers remain the CI regression path"
+          ]
+        },
+        "mode": "BLOCKED",
+        "workspace": "/tmp/bench-obs-gate-2cM2Sb/v3/live-workspaces/live-6645e314-b",
+        "files_changed": [],
+        "exploration_file_count": 4,
+        "true_full_pass": false,
+        "review": {
+          "independent": true,
+          "session_separated": true,
+          "verdict": "BLOCKED",
+          "provenance": "reviewer=w-live-6645e314-b-live-reviewer;session=live-reviewer-e94cbc85;status=dry_run",
+          "raw": "DRY_RUN prompt written to /tmp/bench-obs-gate-2cM2Sb/v3/harness-prompts/w-live-6645e314-b/live-reviewer-e94cbc85.md"
+        },
+        "provider_usage": {
+          "provenance": "UNAVAILABLE"
+        },
+        "measurement_run_id": "live-6645e314-b",
+        "limitations": [
+          "Does not set EVOLVELOOP_HARNESS_CONSENT",
+          "Does not invent tokens or API keys",
+          "Deterministic solvers remain the CI regression path",
+          "LIVE_LLM_NOT_EXECUTED — dry plumbing / blocked only",
+          "TRUE_FULL_PASS still requires verified evidence; LLM review does not replace evaluator",
+          "No DETERMINISTIC_SOLVER applied in this path"
+        ],
+        "reasons": [
+          "mandatory_not_pass:c-diff",
+          "mandatory_incomplete:c-diff:FAIL",
+          "mandatory_not_pass:c-review",
+          "mandatory_incomplete:c-review:FAIL",
+          "missing_valid_independent_review",
+          "missing_diff_with_changes",
+          "blocked:EVOLVELOOP_HARNESS_CONSENT!=true",
+          "blocked:no_authenticated_live_llm_provider"
+        ]
+      },
+      {
+        "kind": "LiveEngineeringRunResult",
+        "run_id": "live-846453d7-f",
+        "task_id": "T04",
+        "strategy": "B_evolveloop_no_delegation",
+        "readiness": {
+          "kind": "LiveLlmReadiness",
+          "state": "BLOCKED",
+          "consent": false,
+          "providers": [
+            {
+              "id": "claude-code",
+              "available": true,
+              "auth": "none",
+              "detail": "claude auth status loggedIn=false or unparseable"
+            },
+            {
+              "id": "openai",
+              "available": false,
+              "auth": "none",
+              "detail": "OPENAI_API_KEY unset"
+            },
+            {
+              "id": "openrouter",
+              "available": false,
+              "auth": "none",
+              "detail": "OPENROUTER_API_KEY unset"
+            },
+            {
+              "id": "cursor",
+              "available": true,
+              "auth": "unknown",
+              "detail": "ExecutionBridge/jobs path — not a full live LLM chat API"
+            }
+          ],
+          "blockers": [
+            "EVOLVELOOP_HARNESS_CONSENT!=true",
+            "no_authenticated_live_llm_provider"
+          ],
+          "notes": [
+            "Does not set EVOLVELOOP_HARNESS_CONSENT",
+            "Does not invent tokens or API keys",
+            "Deterministic solvers remain the CI regression path"
+          ]
+        },
+        "mode": "BLOCKED",
+        "workspace": "/tmp/bench-obs-gate-2cM2Sb/v3/live-workspaces/live-846453d7-f",
+        "files_changed": [
+          ".evolveloop/partial-marker.txt"
+        ],
+        "exploration_file_count": 6,
+        "true_full_pass": false,
+        "review": {
+          "independent": true,
+          "session_separated": true,
+          "verdict": "BLOCKED",
+          "provenance": "reviewer=w-live-846453d7-f-live-reviewer;session=live-reviewer-07dd6353;status=dry_run",
+          "raw": "DRY_RUN prompt written to /tmp/bench-obs-gate-2cM2Sb/v3/harness-prompts/w-live-846453d7-f/live-reviewer-07dd6353.md"
+        },
+        "recovery": {
+          "used": true,
+          "handoff_status": "applied",
+          "substitute_agent_id": "w-live-846453d7-f-live-worker-sub-ho-c701b"
+        },
+        "provider_usage": {
+          "provenance": "UNAVAILABLE"
+        },
+        "measurement_run_id": "live-846453d7-f",
+        "limitations": [
+          "Does not set EVOLVELOOP_HARNESS_CONSENT",
+          "Does not invent tokens or API keys",
+          "Deterministic solvers remain the CI regression path",
+          "LIVE_LLM_NOT_EXECUTED — dry plumbing / blocked only",
+          "TRUE_FULL_PASS still requires verified evidence; LLM review does not replace evaluator",
+          "No DETERMINISTIC_SOLVER applied in this path"
+        ],
+        "reasons": [
+          "mandatory_not_pass:c-review",
+          "mandatory_incomplete:c-review:FAIL",
+          "missing_valid_independent_review",
+          "blocked:EVOLVELOOP_HARNESS_CONSENT!=true",
+          "blocked:no_authenticated_live_llm_provider"
+        ]
+      },
+      {
+        "kind": "LiveEngineeringRunResult",
+        "run_id": "live-771015ac-b",
+        "task_id": "T07",
+        "strategy": "C_evolveloop_adaptive",
+        "readiness": {
+          "kind": "LiveLlmReadiness",
+          "state": "BLOCKED",
+          "consent": false,
+          "providers": [
+            {
+              "id": "claude-code",
+              "available": true,
+              "auth": "none",
+              "detail": "claude auth status loggedIn=false or unparseable"
+            },
+            {
+              "id": "openai",
+              "available": false,
+              "auth": "none",
+              "detail": "OPENAI_API_KEY unset"
+            },
+            {
+              "id": "openrouter",
+              "available": false,
+              "auth": "none",
+              "detail": "OPENROUTER_API_KEY unset"
+            },
+            {
+              "id": "cursor",
+              "available": true,
+              "auth": "unknown",
+              "detail": "ExecutionBridge/jobs path — not a full live LLM chat API"
+            }
+          ],
+          "blockers": [
+            "EVOLVELOOP_HARNESS_CONSENT!=true",
+            "no_authenticated_live_llm_provider"
+          ],
+          "notes": [
+            "Does not set EVOLVELOOP_HARNESS_CONSENT",
+            "Does not invent tokens or API keys",
+            "Deterministic solvers remain the CI regression path"
+          ]
+        },
+        "mode": "BLOCKED",
+        "workspace": "/tmp/bench-obs-gate-2cM2Sb/v3/live-workspaces/live-771015ac-b",
+        "files_changed": [],
+        "exploration_file_count": 6,
+        "true_full_pass": false,
+        "review": {
+          "independent": true,
+          "session_separated": true,
+          "verdict": "BLOCKED",
+          "provenance": "reviewer=w-live-771015ac-b-live-reviewer;session=live-reviewer-b59cee4f;status=dry_run",
+          "raw": "DRY_RUN prompt written to /tmp/bench-obs-gate-2cM2Sb/v3/harness-prompts/w-live-771015ac-b/live-reviewer-b59cee4f.md"
+        },
+        "provider_usage": {
+          "provenance": "UNAVAILABLE"
+        },
+        "measurement_run_id": "live-771015ac-b",
+        "limitations": [
+          "Does not set EVOLVELOOP_HARNESS_CONSENT",
+          "Does not invent tokens or API keys",
+          "Deterministic solvers remain the CI regression path",
+          "LIVE_LLM_NOT_EXECUTED — dry plumbing / blocked only",
+          "TRUE_FULL_PASS still requires verified evidence; LLM review does not replace evaluator",
+          "No DETERMINISTIC_SOLVER applied in this path"
+        ],
+        "reasons": [
+          "mandatory_not_pass:c-diff",
+          "mandatory_incomplete:c-diff:FAIL",
+          "mandatory_not_pass:c-review",
+          "mandatory_incomplete:c-review:FAIL",
+          "missing_valid_independent_review",
+          "missing_diff_with_changes",
+          "blocked:EVOLVELOOP_HARNESS_CONSENT!=true",
+          "blocked:no_authenticated_live_llm_provider"
+        ]
+      }
+    ],
+    "gate_l_state": "BLOCKED"
+  },
+  "criteria": {
+    "gate_O_observability": {
+      "state": "PASS",
+      "evidence": "tests/unit/measurement-plane"
+    },
+    "gate_M_metrics": {
+      "state": "PASS",
+      "evidence": "measurement-plane/metrics/*"
+    },
+    "gate_B_benchmark": {
+      "state": "PASS",
+      "evidence": "benchmarks/bench-obs + runner"
+    },
+    "gate_L_live_llm": {
+      "state": "BLOCKED",
+      "evidence": "eval live-suite",
+      "blockers": [
+        "EVOLVELOOP_HARNESS_CONSENT!=true",
+        "no_authenticated_live_llm_provider"
+      ]
+    },
+    "gate_E_evaluation_integrity": {
+      "state": "PASS",
+      "evidence": "verified-pass-adversarial + measurement evaluation engine"
+    },
+    "gate_P_privacy_performance": {
+      "state": "PASS",
+      "evidence": "docs/bench-obs/OVERHEAD.md + local-first collector",
+      "notes": [
+        "overhead methodology documented; full instrumentation A/B not claiming statistical significance"
+      ]
+    }
+  },
+  "global_status": "BLOCKED",
+  "limitations": [
+    "Live LLM Gate L BLOCKED without EVOLVELOOP_HARNESS_CONSENT=true and authenticated provider",
+    "Deterministic solvers preserved for CI; live path never applies DETERMINISTIC_SOLVER",
+    "TUI/dashboard deferred until data reliability (spec)"
+  ]
+}

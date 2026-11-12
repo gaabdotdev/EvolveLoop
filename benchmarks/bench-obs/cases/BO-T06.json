@@ -1,0 +1,19 @@
+{
+  "case_id": "BO-T06",
+  "name": "Refactor totalItems via store.keys",
+  "objective": "Refactor preserving behavior",
+  "repo": "beta-app",
+  "fixture_path": "orchestrator/tests/fixtures/v3-eval/beta-app",
+  "preconditions": [],
+  "acceptance_criteria": [
+    {"id": "c1", "description": "behavior preserved", "mandatory": true, "evaluator": "test"},
+    {"id": "c2", "description": "diff present", "mandatory": true, "evaluator": "diff"}
+  ],
+  "timeout_ms": 60000,
+  "strategies": ["A_single_agent", "B_evolveloop_no_delegation", "C_evolveloop_adaptive"],
+  "invalidation_rules": ["critical_telemetry_loss"],
+  "difficulty": "medium",
+  "class": "refactor",
+  "multi_file": true,
+  "split": "development"
+}
