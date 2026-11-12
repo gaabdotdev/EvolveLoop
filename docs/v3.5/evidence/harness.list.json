@@ -1,0 +1,24 @@
+{
+  "adapters": [
+    {
+      "adapter_id": "cursor",
+      "execution_bridge": "jobs_pickup",
+      "certification": "declared"
+    },
+    {
+      "adapter_id": "claude-code",
+      "execution_bridge": "cli_process",
+      "certification": "declared"
+    },
+    {
+      "adapter_id": "codex",
+      "execution_bridge": "none",
+      "certification": "declared"
+    },
+    {
+      "adapter_id": "antigravity",
+      "execution_bridge": "none",
+      "certification": "declared"
+    }
+  ]
+}

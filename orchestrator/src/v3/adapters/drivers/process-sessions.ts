@@ -1,11 +1,18 @@
 /**
  * Tracks Core-spawned harness child processes for cancel we actually own.
  * Does not claim control over IDE-attached sessions.
+ * V3.5: PGID + /proc starttime to cancel trees and avoid PID reuse kills.
  */
 
 import { existsSync, mkdirSync, readFileSync, renameSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import type { AdapterId } from "../types.js";
+import {
+  cancelProcessTree,
+  identifyProcess,
+  sameProcess,
+  type SupervisedProcessIdentity,
+} from "../../sandbox/process-supervisor.js";
 
 export interface ProcessSessionRecord {
   kind: "ProcessSessionRecord";
@@ -13,8 +20,12 @@ export interface ProcessSessionRecord {
   work_id: string;
   task_id: string;
   adapter_id: AdapterId;
+  agent_id?: string;
   pid?: number;
-  status: "running" | "exited" | "cancelled" | "dry_run";
+  pgid?: number;
+  /** /proc/<pid>/stat starttime — fencing against PID reuse */
+  starttime?: string;
+  status: "running" | "exited" | "cancelled" | "dry_run" | "orphaned";
   started_at: string;
   ended_at?: string;
   exit_code?: number | null;
@@ -51,13 +62,46 @@ export class ProcessSessionStore {
     this.save(rec.work_id, all);
   }
 
+  attachIdentity(rec: ProcessSessionRecord, pid: number): ProcessSessionRecord {
+    const id = identifyProcess(pid);
+    if (id) {
+      rec.pid = id.pid;
+      rec.pgid = id.pgid;
+      rec.starttime = id.starttime;
+    } else {
+      rec.pid = pid;
+      rec.pgid = pid;
+    }
+    this.upsert(rec);
+    return rec;
+  }
+
   cancel(workId: string, sessionId: string): ProcessSessionRecord {
     const all = this.load(workId);
     const rec = all.find((s) => s.session_id === sessionId);
     if (!rec) throw new Error(`SESSION_NOT_FOUND: ${sessionId}`);
-    if (rec.status === "running" && rec.pid != null) {
+    if (rec.status === "running" && rec.pid != null && rec.starttime) {
+      const identity: SupervisedProcessIdentity = {
+        pid: rec.pid,
+        pgid: rec.pgid ?? rec.pid,
+        starttime: rec.starttime,
+        cmdline: rec.command.join(" "),
+      };
+      const result = cancelProcessTree(identity, "SIGTERM");
+      rec.limitations.push(`cancel:${result.reason}`);
+      if (result.signalled) {
+        // Escalate if still same process after short wait is left to supervisor loop.
+        setTimeout(() => {
+          if (sameProcess(identity)) {
+            cancelProcessTree(identity, "SIGKILL");
+          }
+        }, 2000).unref?.();
+      }
+    } else if (rec.status === "running" && rec.pid != null) {
+      // Legacy records without starttime — SIGTERM pid only, document limitation.
       try {
         process.kill(rec.pid, "SIGTERM");
+        rec.limitations.push("cancel:legacy_pid_only_no_starttime");
       } catch {
         /* already gone */
       }
@@ -66,5 +110,35 @@ export class ProcessSessionStore {
     rec.ended_at = new Date().toISOString();
     this.save(workId, all);
     return rec;
+  }
+
+  reconcile(workId: string): ProcessSessionRecord[] {
+    const all = this.load(workId);
+    let changed = false;
+    for (const rec of all) {
+      if (rec.status !== "running" || rec.pid == null) continue;
+      if (!rec.starttime) {
+        if (!existsSync(`/proc/${rec.pid}`)) {
+          rec.status = "exited";
+          rec.ended_at = new Date().toISOString();
+          changed = true;
+        }
+        continue;
+      }
+      const identity: SupervisedProcessIdentity = {
+        pid: rec.pid,
+        pgid: rec.pgid ?? rec.pid,
+        starttime: rec.starttime,
+        cmdline: "",
+      };
+      if (!sameProcess(identity)) {
+        rec.status = existsSync(`/proc/${rec.pid}`) ? "orphaned" : "exited";
+        rec.ended_at = new Date().toISOString();
+        rec.limitations.push("reconcile:pid_gone_or_reused");
+        changed = true;
+      }
+    }
+    if (changed) this.save(workId, all);
+    return all;
   }
 }

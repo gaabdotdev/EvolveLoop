@@ -119,18 +119,24 @@ export class CliProcessAdapterDriver implements AgentAdapterDriver {
     }
 
     const args = this.cfg.buildArgs(promptPath, request);
+    // Detached process group for tree cancel; env allowlist (not full process.env).
     const child = spawn(cliPath, args, {
       stdio: ["ignore", "pipe", "pipe"],
+      detached: true,
       env: {
         PATH: process.env.PATH,
         HOME: process.env.HOME,
-        // Do not forward API keys unless already in env — operator responsibility
-        ANTHROPIC_API_KEY: process.env.ANTHROPIC_API_KEY,
-        OPENAI_API_KEY: process.env.OPENAI_API_KEY,
+        LANG: process.env.LANG,
+        // Scoped secrets only when already present — never dump full env
+        ...(process.env.ANTHROPIC_API_KEY
+          ? { ANTHROPIC_API_KEY: process.env.ANTHROPIC_API_KEY }
+          : {}),
+        ...(process.env.OPENAI_API_KEY ? { OPENAI_API_KEY: process.env.OPENAI_API_KEY } : {}),
       },
     });
 
-    sessions.upsert({
+    const started_at = new Date().toISOString();
+    let rec: import("./process-sessions.js").ProcessSessionRecord = {
       kind: "ProcessSessionRecord",
       session_id,
       work_id: request.work_id,
@@ -138,28 +144,27 @@ export class CliProcessAdapterDriver implements AgentAdapterDriver {
       adapter_id: this.adapter_id,
       pid: child.pid,
       status: "running",
-      started_at: new Date().toISOString(),
+      started_at,
       command: [cliPath, ...args],
       prompt_path: promptPath,
-      limitations: notes,
-    });
+      limitations: [
+        ...notes,
+        "detached_pgid_for_tree_cancel",
+        "env_allowlist_not_full_process_env",
+      ],
+    };
+    sessions.upsert(rec);
+    if (child.pid != null) {
+      rec = sessions.attachIdentity(rec, child.pid);
+    }
 
     // Non-blocking accept — supervisor/operator can cancel via process-sessions
     child.on("exit", (code) => {
       sessions.upsert({
-        kind: "ProcessSessionRecord",
-        session_id,
-        work_id: request.work_id,
-        task_id: request.task_id,
-        adapter_id: this.adapter_id,
-        pid: child.pid,
+        ...rec,
         status: "exited",
-        started_at: new Date().toISOString(),
         ended_at: new Date().toISOString(),
         exit_code: code ?? null,
-        command: [cliPath, ...args],
-        prompt_path: promptPath,
-        limitations: notes,
       });
     });
 

@@ -79,6 +79,7 @@ import { cancelWorkSlice } from "../v3/cancel/index.js";
 import { scheduleReadyTasks, listReadyTasks } from "../v3/parallel/index.js";
 import { runFailureBattery, runEngineeringFailureBattery } from "../v3/failure-injection/index.js";
 import type { ProviderMode } from "./provider-bootstrap.js";
+import { handleV35Command, V35_USAGE_GROUPS } from "./v35-commands.js";
 
 function parseArgs(argv: string[]) {
   const group = argv[2] ?? "help";
@@ -118,17 +119,18 @@ function print(obj: unknown) {
 function usage() {
   print({
     name: "evolve",
-    version: "3.0.0-foundation",
+    version: "3.5.0-runtime",
     groups: {
       grill: ["apply", "validate"],
       goal: ["create", "show", "evaluate", "criterion"],
       work: ["init", "status"],
       hierarchy: ["spawn", "approve", "aux"],
       task: ["add", "approve-plan", "show"],
-      agents: ["register", "heartbeat", "list", "reconcile", "adopt"],
+      agents: ["register", "heartbeat", "list", "reconcile", "adopt", "inspect"],
       continuity: ["handoff", "apply", "show"],
       exec: ["run"],
       coordinator: ["start", "stop", "tick", "status"],
+      ...V35_USAGE_GROUPS,
       events: ["list"],
       ledger: ["show", "rebuild"],
       adapters: [
@@ -156,11 +158,12 @@ function usage() {
       parallel: ["schedule", "ready"],
       battery: ["run", "engineering", "eval"],
       engineering: ["run", "show"],
-      harness: ["matrix"],
+      harness: ["matrix", "list", "inspect", "sessions"],
       eval: ["battery"],
     },
     notes: [
       "Closing this CLI does not erase --data-dir state.",
+      "V3.5: prefer `evolve service start` for persistent coordinator (IPC); legacy `coordinator start` only marks PID in-process.",
       "coordinator start only marks process running in this Node process; use scripts/v3/coordinator-supervise.sh or systemd user template for supervised ticks.",
       "grill apply requires a GRILL_ME_RESULT JSON (fail-closed → Goal Contract).",
       "exec run / adapters invoke require PLAN_APPROVED for implement tasks; use --provider-mode real|mock.",
@@ -204,6 +207,24 @@ async function main() {
   }
 
   try {
+    // V3.5 operational groups (service/runtime/sandbox/harness/workspace/approvals)
+    const v35Groups = new Set([
+      "service",
+      "runtime",
+      "sandbox",
+      "approvals",
+      "workspace",
+    ]);
+    if (
+      v35Groups.has(args.group) ||
+      (args.group === "harness" && args.command !== "matrix") ||
+      (args.group === "agents" && args.command === "inspect")
+    ) {
+      const paths = requireDataDir(args);
+      const handled = await handleV35Command(args, paths);
+      if (handled) return;
+    }
+
     if (args.group === "grill") {
       const paths = requireDataDir(args);
       if (args.command === "validate" || args.command === "apply") {

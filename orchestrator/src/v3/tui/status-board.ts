@@ -3,7 +3,7 @@
  * Not a full interactive TUI; Core does not depend on this module for execution.
  */
 
-import { readdirSync, existsSync } from "node:fs";
+import { readdirSync, existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { CoordinatorService } from "../coordinator/service.js";
 import { TaskGraphStore } from "../task-graph/store.js";
@@ -16,6 +16,10 @@ export interface StatusBoardSnapshot {
   kind: "StatusBoardSnapshot";
   generated_at: string;
   coordinator_process: string;
+  /** V3.5 daemon lifecycle when daemon.json present — TUI is not SSOT. */
+  daemon_lifecycle?: string;
+  pending_approvals?: number;
+  sandbox_backend?: string;
   works: Array<{
     work_id: string;
     work_state: string;
@@ -47,6 +51,25 @@ export function buildStatusBoard(paths: V3DataPaths): StatusBoardSnapshot {
   const tasks = new TaskGraphStore(paths.taskGraphsDir);
   const agents = new AgentRegistryStore(paths.agentsDir);
   const ledger = new WorkLedgerStore(paths.workLedgerDir);
+
+  let daemon_lifecycle: string | undefined;
+  const daemonPath = join(paths.coordinatorDir, "daemon.json");
+  if (existsSync(daemonPath)) {
+    try {
+      const d = JSON.parse(readFileSync(daemonPath, "utf-8")) as { lifecycle?: string };
+      daemon_lifecycle = d.lifecycle;
+    } catch {
+      daemon_lifecycle = "unknown";
+    }
+  }
+  let pending_approvals: number | undefined;
+  if (existsSync(paths.approvalsDir)) {
+    try {
+      pending_approvals = readdirSync(paths.approvalsDir).filter((f) => f.endsWith(".json")).length;
+    } catch {
+      pending_approvals = undefined;
+    }
+  }
 
   const works = status.coordinator.works.map((w) => {
     let taskSummary = { total: 0, by_state: {} as Record<string, number> };
@@ -98,6 +121,9 @@ export function buildStatusBoard(paths: V3DataPaths): StatusBoardSnapshot {
     kind: "StatusBoardSnapshot",
     generated_at: new Date().toISOString(),
     coordinator_process: status.coordinator.process_state,
+    daemon_lifecycle,
+    pending_approvals,
+    sandbox_backend: process.platform === "linux" ? "bubblewrap|probe" : "unavailable",
     works,
     adapters_summary: listAdapterContracts().map((a) => ({
       adapter_id: a.adapter_id,
@@ -111,9 +137,12 @@ export function buildStatusBoard(paths: V3DataPaths): StatusBoardSnapshot {
 /** Plain-text board for terminals without JSON consumers. */
 export function renderStatusBoardText(snap: StatusBoardSnapshot): string {
   const lines: string[] = [];
-  lines.push("EvolveLoop V3 — Status Board (read-only)");
+  lines.push("EvolveLoop V3.5 — Status Board (read-only; not SSOT)");
   lines.push(`generated: ${snap.generated_at}`);
   lines.push(`coordinator: ${snap.coordinator_process}`);
+  if (snap.daemon_lifecycle) lines.push(`daemon: ${snap.daemon_lifecycle}`);
+  if (snap.pending_approvals != null) lines.push(`approvals_files: ${snap.pending_approvals}`);
+  if (snap.sandbox_backend) lines.push(`sandbox: ${snap.sandbox_backend}`);
   lines.push("");
   if (snap.works.length === 0) {
     lines.push("(no works registered)");

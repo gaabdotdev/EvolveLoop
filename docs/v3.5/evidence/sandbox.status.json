@@ -1,0 +1,33 @@
+{
+  "preferred": {
+    "available": true,
+    "backend_id": "bubblewrap",
+    "version_hint": "/usr/bin/bwrap",
+    "notes": [
+      "Rootless bubblewrap — namespaces via bwrap",
+      "Network deny uses --unshare-net",
+      "Not a claim of perfect kernel isolation against privileged attackers"
+    ]
+  },
+  "backends": [
+    {
+      "available": true,
+      "backend_id": "bubblewrap",
+      "version_hint": "/usr/bin/bwrap",
+      "notes": [
+        "Rootless bubblewrap — namespaces via bwrap",
+        "Network deny uses --unshare-net",
+        "Not a claim of perfect kernel isolation against privileged attackers"
+      ]
+    },
+    {
+      "available": false,
+      "backend_id": "unavailable",
+      "reason": "no_os_sandbox_backend",
+      "notes": [
+        "Silent host fallback is forbidden when require_os_sandbox=true"
+      ]
+    }
+  ],
+  "os": "linux"
+}

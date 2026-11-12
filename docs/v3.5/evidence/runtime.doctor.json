@@ -1,0 +1,127 @@
+{
+  "kind": "RuntimeDoctorReport",
+  "checked_at": "2026-11-12T21:59:22.615Z",
+  "os": "linux",
+  "arch": "x64",
+  "node": "v22.15.0",
+  "sandbox": {
+    "preferred": {
+      "available": true,
+      "backend_id": "bubblewrap",
+      "version_hint": "/usr/bin/bwrap",
+      "notes": [
+        "Rootless bubblewrap — namespaces via bwrap",
+        "Network deny uses --unshare-net",
+        "Not a claim of perfect kernel isolation against privileged attackers"
+      ]
+    },
+    "backends": [
+      {
+        "available": true,
+        "backend_id": "bubblewrap",
+        "version_hint": "/usr/bin/bwrap",
+        "notes": [
+          "Rootless bubblewrap — namespaces via bwrap",
+          "Network deny uses --unshare-net",
+          "Not a claim of perfect kernel isolation against privileged attackers"
+        ]
+      },
+      {
+        "available": false,
+        "backend_id": "unavailable",
+        "reason": "no_os_sandbox_backend",
+        "notes": [
+          "Silent host fallback is forbidden when require_os_sandbox=true"
+        ]
+      }
+    ],
+    "os": "linux"
+  },
+  "cgroup_v2": true,
+  "bubblewrap": "/usr/bin/bwrap",
+  "unshare": "/usr/bin/unshare",
+  "systemd_user_cli": true,
+  "coordinator": {
+    "socket_exists": false,
+    "leader_lock_exists": false,
+    "data_dir": "/tmp/el-v35-ev"
+  },
+  "harness": {
+    "adapters": [
+      {
+        "adapter_id": "cursor",
+        "can_invoke": true,
+        "notes": [
+          "invokes ExecutionBridge (PLAN_APPROVED gated)",
+          "cursor-skill providers use JobStore pickup — not a live IDE agent API",
+          "host-internal tools remain incompletely mediated"
+        ]
+      },
+      {
+        "adapter_id": "claude-code",
+        "can_invoke": true,
+        "notes": [
+          "Claude Code CLI bridge (print mode)",
+          "Does not claim IDE session injection or full permission mediation",
+          "Cancel only for Core-owned spawned PIDs (process-sessions)",
+          "cli=/home/gaab/.local/bin/claude version_hint=2.1.302 (Claude Code)",
+          "real spawn requires provider_mode=real + EVOLVELOOP_HARNESS_CONSENT=true",
+          "dry-run writes prompt package under --data-dir/harness-prompts without calling network"
+        ]
+      },
+      {
+        "adapter_id": "codex",
+        "can_invoke": false,
+        "notes": [
+          "codex CLI not on PATH",
+          "invoke() always returns blocked — fail-closed",
+          "operator may export Handoff Package for manual resume outside Core"
+        ]
+      },
+      {
+        "adapter_id": "antigravity",
+        "can_invoke": true,
+        "notes": [
+          "Antigravity CLI bridge — experimental argv; validate locally",
+          "Cancel only for Core-owned spawned PIDs",
+          "cli=/home/gaab/.local/bin/agent version_hint=2026.11.11-043ef28",
+          "real spawn requires provider_mode=real + EVOLVELOOP_HARNESS_CONSENT=true",
+          "dry-run writes prompt package under --data-dir/harness-prompts without calling network"
+        ]
+      }
+    ],
+    "cli_probes": [
+      {
+        "cli_id": "claude",
+        "available": true,
+        "path": "/home/gaab/.local/bin/claude",
+        "version_hint": "2.1.302 (Claude Code)"
+      },
+      {
+        "cli_id": "codex",
+        "available": false,
+        "error": "not_on_path"
+      },
+      {
+        "cli_id": "antigravity",
+        "available": true,
+        "path": "/home/gaab/.local/bin/agent",
+        "version_hint": "2026.11.11-043ef28"
+      }
+    ],
+    "consent": false,
+    "notes": [
+      "Real spawn requires consent env + available CLI",
+      "Cursor Jobs uses ExecutionBridge — not full IDE session control"
+    ]
+  },
+  "insecure_flags": {
+    "harness_consent": false,
+    "allow_host_fallback": false
+  },
+  "notes": [
+    "Worktree is not OS sandbox",
+    "Host fallback forbidden when profile.require_os_sandbox=true",
+    "IDE session control not claimed without API"
+  ]
+}
