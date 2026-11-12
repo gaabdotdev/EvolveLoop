@@ -12,22 +12,19 @@ describe("JobStore.reopenJob", () => {
     const store = new JobStore(jobsDir);
     const runId = "run-reopen-1";
 
-    writeFileSync(
-      join(jobsDir, `${runId}.json`),
-      JSON.stringify({
-        apiVersion: "capability-orchestrator.io/v2",
-        kind: "SkillJob",
-        run_id: runId,
-        provider_id: "testing",
-        skill_path: ".cursor/skills/testing/SKILL.md",
-        capability: "testing",
-        node_id: "n1",
-        briefing: "x",
-        definition_of_done: [],
-        inputs: [],
-        status: "completed",
-      }),
-    );
+    store.writeJob({
+      apiVersion: "capability-orchestrator.io/v2",
+      kind: "SkillJob",
+      run_id: runId,
+      provider_id: "testing",
+      skill_path: ".cursor/skills/testing/SKILL.md",
+      capability: "testing",
+      node_id: "n1",
+      briefing: "x",
+      definition_of_done: [],
+      inputs: [],
+      status: "completed",
+    });
     store.completeJob(runId, { success: true, evidence_path: "/tmp/ev.json" });
     expect(existsSync(join(jobsDir, `${runId}.result.json`))).toBe(true);
 
@@ -44,22 +41,19 @@ describe("JobStore.reopenJob", () => {
     const store = new JobStore(jobsDir);
     const runId = "run-pending";
 
-    writeFileSync(
-      join(jobsDir, `${runId}.json`),
-      JSON.stringify({
-        apiVersion: "capability-orchestrator.io/v2",
-        kind: "SkillJob",
-        run_id: runId,
-        provider_id: "testing",
-        skill_path: ".cursor/skills/testing/SKILL.md",
-        capability: "testing",
-        node_id: "n1",
-        briefing: "x",
-        definition_of_done: [],
-        inputs: [],
-        status: "pending",
-      }),
-    );
+    store.writeJob({
+      apiVersion: "capability-orchestrator.io/v2",
+      kind: "SkillJob",
+      run_id: runId,
+      provider_id: "testing",
+      skill_path: ".cursor/skills/testing/SKILL.md",
+      capability: "testing",
+      node_id: "n1",
+      briefing: "x",
+      definition_of_done: [],
+      inputs: [],
+      status: "pending",
+    });
 
     expect(() => store.reopenJob(runId)).toThrow(/REOPEN_NOT_ALLOWED/);
   });

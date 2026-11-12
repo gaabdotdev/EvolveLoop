@@ -1,13 +1,13 @@
 /**
  * Live LLM engineering evaluation path.
- * When readiness is READY: invokes consented harness for real agent work.
- * When BLOCKED/PARTIAL: records plumbing dry-runs + BLOCKED status (never claims live PASS).
+ * When executable (consent + auth harness): invokes real agent work.
+ * When BLOCKED/PARTIAL without auth: records plumbing dry-runs (never claims live PASS).
+ * Never applies DETERMINISTIC_SOLVER on this path.
  */
 
 import { cpSync, existsSync, mkdirSync, readdirSync, writeFileSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { randomUUID } from "node:crypto";
-import { spawnSync } from "node:child_process";
 import type { V3DataPaths } from "../../paths.js";
 import { EngineeringWorkspace, walkRelFiles } from "../../engineering/workspace.js";
 import { exploreRepository } from "../explore.js";
@@ -27,6 +27,7 @@ import {
 } from "../../../telemetry/measurement-plane/adapters/hierarchy-adapter.js";
 import { probeLiveLlmReadiness, type LiveReadinessReport } from "./readiness.js";
 import { LIVE_TASK_BRIEFS, buildReviewerPrompt, buildWorkerPrompt } from "./prompts.js";
+import { invokeLiveHarness, type LiveHarnessId } from "./harness.js";
 
 export interface LiveRunOptions {
   repoRoot: string;
@@ -37,6 +38,10 @@ export interface LiveRunOptions {
   /** Inject recovery mid-run (handoff) when live or dry plumbing */
   injectRecovery?: boolean;
   work_id?: string;
+  /** Reuse suite-level readiness (avoids repeated can-start smoke). */
+  readiness?: LiveReadinessReport;
+  /** Force can-start verification when probing locally. */
+  verifyCanStart?: boolean;
 }
 
 export interface LiveRunResult {
@@ -46,13 +51,22 @@ export interface LiveRunResult {
   strategy: string;
   readiness: LiveReadinessReport;
   mode: "LIVE" | "DRY_PLUMBING" | "BLOCKED";
+  harness_id: LiveHarnessId | "none";
   workspace: string;
   files_changed: string[];
   exploration_file_count: number;
   true_full_pass: boolean;
+  worker: {
+    agent_id: string;
+    session_id: string;
+    status: string;
+    duration_ms: number;
+  };
   review: {
     independent: boolean;
     session_separated: boolean;
+    agent_id: string;
+    session_id: string;
     verdict: "PASS" | "FAIL" | "NOT_RUN" | "BLOCKED";
     provenance: string;
     raw?: string;
@@ -60,10 +74,14 @@ export interface LiveRunResult {
   recovery?: {
     used: boolean;
     handoff_status?: string;
+    original_agent_id?: string;
     substitute_agent_id?: string;
+    original_session_id?: string;
+    substitute_session_id?: string;
+    partial_files_before_handoff?: string[];
   };
   provider_usage: {
-    provenance: "PROVIDER_REPORTED" | "UNAVAILABLE";
+    provenance: "PROVIDER_REPORTED" | "HARNESS_REPORTED" | "UNAVAILABLE";
     input_tokens?: number;
     output_tokens?: number;
   };
@@ -87,46 +105,29 @@ function runTests(ws: EngineeringWorkspace) {
   return ws.run("node", ["--test", ...files]);
 }
 
-function invokeClaudePrompt(prompt: string, opts: { real: boolean; outDir: string; label: string }): {
-  status: "spawned" | "dry_run" | "blocked" | "failed";
-  output: string;
-  session_id: string;
-} {
-  const session_id = `live-${opts.label}-${randomUUID().slice(0, 8)}`;
-  mkdirSync(opts.outDir, { recursive: true });
-  const promptPath = join(opts.outDir, `${session_id}.md`);
-  writeFileSync(promptPath, prompt, "utf-8");
-
-  if (!opts.real) {
-    return {
-      status: "dry_run",
-      output: `DRY_RUN prompt written to ${promptPath}`,
-      session_id,
-    };
+function diffFiles(
+  ws: EngineeringWorkspace,
+  before: Map<string, string>,
+): string[] {
+  const afterListing = walkRelFiles(ws.root);
+  const files_changed: string[] = [];
+  for (const f of afterListing) {
+    const prev = before.get(f);
+    const next = existsSync(join(ws.root, f)) ? ws.readFile(f) : "";
+    if (prev === undefined || prev !== next) files_changed.push(f);
   }
-
-  const r = spawnSync(
-    "claude",
-    ["-p", prompt, "--output-format", "text"],
-    { encoding: "utf-8", timeout: 180_000, env: process.env, maxBuffer: 4 * 1024 * 1024 },
-  );
-  if (r.error || r.status !== 0) {
-    return {
-      status: "failed",
-      output: `${r.stderr ?? ""}\n${r.stdout ?? ""}\n${r.error ?? ""}`.slice(0, 8000),
-      session_id,
-    };
-  }
-  return { status: "spawned", output: (r.stdout ?? "").slice(0, 8000), session_id };
+  files_changed.sort();
+  return files_changed;
 }
 
 /**
  * Live (or blocked/dry) engineering evaluation for one task.
- * Never uses DETERMINISTIC_SOLVER for code changes in LIVE mode.
- * In DRY/BLOCKED mode, does not fabricate LLM success — leaves workspace unmodified except markers.
+ * Never uses DETERMINISTIC_SOLVER for code changes.
  */
 export function runLiveEngineeringCase(opts: LiveRunOptions): LiveRunResult {
-  const readiness = probeLiveLlmReadiness();
+  const readiness =
+    opts.readiness ??
+    probeLiveLlmReadiness({ verifyCanStart: opts.verifyCanStart === true });
   const brief = LIVE_TASK_BRIEFS[opts.taskId];
   const run_id = `live-${randomUUID().slice(0, 10)}`;
   const work_id = opts.work_id ?? `w-${run_id}`;
@@ -142,15 +143,26 @@ export function runLiveEngineeringCase(opts: LiveRunOptions): LiveRunResult {
   const ws = new EngineeringWorkspace(workspace);
   const exploration = exploreRepository(ws.root);
 
-  const liveOk = readiness.state === "READY";
-  const mode: LiveRunResult["mode"] = liveOk ? "LIVE" : readiness.state === "PARTIAL" ? "DRY_PLUMBING" : "BLOCKED";
+  const harness: LiveHarnessId | "none" = readiness.selected_harness ?? "none";
+  const liveOk = readiness.executable && harness !== "none";
+  const mode: LiveRunResult["mode"] = liveOk
+    ? "LIVE"
+    : readiness.state === "PARTIAL"
+      ? "DRY_PLUMBING"
+      : "BLOCKED";
 
   emit(
     createMeasurementEvent({
       event_name: "run.started",
       source: { component: "v3-live-eval", module: "runner" },
       correlation: { run_id, case_id: opts.taskId },
-      attributes: { strategy: opts.strategy, mode, readiness: readiness.state },
+      attributes: {
+        strategy: opts.strategy,
+        mode,
+        readiness: readiness.state,
+        harness_id: harness,
+        consent: readiness.consent,
+      },
       critical: true,
     }),
   );
@@ -268,8 +280,19 @@ export function runLiveEngineeringCase(opts: LiveRunOptions): LiveRunResult {
   agents.activate(work_id, reviewerId);
 
   emit(buildAgentLifecycleEvent({ run_id, agent_id: workerId, role: "worker", kind: "spawn_requested" }));
-  emit(buildAgentLifecycleEvent({ run_id, agent_id: workerId, role: "worker", kind: "spawned" }));
-  emit(buildAgentLifecycleEvent({ run_id, agent_id: workerId, role: "worker", kind: "started" }));
+  if (liveOk) {
+    emit(buildAgentLifecycleEvent({ run_id, agent_id: workerId, role: "worker", kind: "spawned" }));
+    emit(buildAgentLifecycleEvent({ run_id, agent_id: workerId, role: "worker", kind: "started" }));
+  } else {
+    emit(
+      buildAgentLifecycleEvent({
+        run_id,
+        agent_id: workerId,
+        role: "worker",
+        kind: "spawn_blocked",
+      }),
+    );
+  }
 
   if (opts.strategy === "C_evolveloop_adaptive") {
     emit(
@@ -282,16 +305,29 @@ export function runLiveEngineeringCase(opts: LiveRunOptions): LiveRunResult {
         kind: "requested",
       }),
     );
-    emit(
-      buildDelegationEvent({
-        run_id,
-        delegation_id: "del-live-1",
-        from_agent_id: `${work_id}-master`,
-        to_agent_id: workerId,
-        task_id: "live-impl",
-        kind: "accepted",
-      }),
-    );
+    if (liveOk) {
+      emit(
+        buildDelegationEvent({
+          run_id,
+          delegation_id: "del-live-1",
+          from_agent_id: `${work_id}-master`,
+          to_agent_id: workerId,
+          task_id: "live-impl",
+          kind: "accepted",
+        }),
+      );
+    } else {
+      emit(
+        buildDelegationEvent({
+          run_id,
+          delegation_id: "del-live-1",
+          from_agent_id: `${work_id}-master`,
+          to_agent_id: workerId,
+          task_id: "live-impl",
+          kind: "rejected",
+        }),
+      );
+    }
   }
 
   const before = new Map(walkRelFiles(ws.root).map((f) => [f, ws.readFile(f)]));
@@ -299,10 +335,61 @@ export function runLiveEngineeringCase(opts: LiveRunOptions): LiveRunResult {
   const workerPrompt = buildWorkerPrompt(brief, ws.root);
 
   let recovery: LiveRunResult["recovery"] | undefined;
+  let actorId = workerId;
+  let originalSessionId: string | undefined;
+  let substituteSessionId: string | undefined;
+  let partialBeforeHandoff: string[] = [];
+
   if (opts.injectRecovery) {
-    ws.writeFile(".evolveloop/partial-marker.txt", `interrupted_by_live_runner\nexploration_files=${exploration.file_count}\n`);
     tasks.setTaskOwner(work_id, "live-impl", workerId);
     tasks.setTaskState(work_id, "live-impl", "IN_PROGRESS");
+
+    if (liveOk) {
+      // L5: original LLM does real partial work before handoff
+      const partialPrompt = [
+        workerPrompt,
+        "",
+        "PARTIAL MODE (recovery drill):",
+        "- Inspect the repo and make a REAL but INCOMPLETE fix.",
+        "- Write .evolveloop/progress.md describing what you did and what remains.",
+        "- Leave at least one acceptance criterion unfinished OR leave a TODO comment.",
+        "- Do NOT claim the task is fully done.",
+        "- Stop after writing progress.md.",
+      ].join("\n");
+      const partialInvoke = invokeLiveHarness({
+        harness,
+        prompt: partialPrompt,
+        real: true,
+        outDir: promptDir,
+        label: "worker-partial",
+        workspace: ws.root,
+        timeoutMs: 600_000,
+      });
+      originalSessionId = partialInvoke.session_id;
+      partialBeforeHandoff = diffFiles(ws, before);
+      emit(
+        createMeasurementEvent({
+          event_name: "provider.request.completed",
+          source: { component: "v3-live-eval", module: "worker-partial" },
+          correlation: { run_id, agent_id: workerId, session_id: partialInvoke.session_id },
+          attributes: {
+            status: partialInvoke.status,
+            harness_id: harness,
+            duration_ms: partialInvoke.duration_ms,
+            phase: "pre_handoff_partial",
+            files_changed: partialBeforeHandoff.length,
+          },
+          critical: true,
+        }),
+      );
+    } else {
+      ws.writeFile(
+        ".evolveloop/partial-marker.txt",
+        `interrupted_by_live_runner\nexploration_files=${exploration.file_count}\n`,
+      );
+      partialBeforeHandoff = diffFiles(ws, before);
+    }
+
     const engine = new ContinuityEngine(opts.paths);
     const pkg = engine.createHandoff({
       work_id,
@@ -312,10 +399,14 @@ export function runLiveEngineeringCase(opts: LiveRunOptions): LiveRunResult {
       next_action: "substitute continues with persisted workspace",
     });
     const applied = engine.applyHandoff(pkg.handoff_id, { create_substitute: true });
+    actorId = applied.to_agent_id ?? workerId;
     recovery = {
       used: true,
       handoff_status: applied.status,
+      original_agent_id: workerId,
       substitute_agent_id: applied.to_agent_id,
+      original_session_id: originalSessionId,
+      partial_files_before_handoff: partialBeforeHandoff,
     };
     emit(
       createMeasurementEvent({
@@ -326,37 +417,73 @@ export function runLiveEngineeringCase(opts: LiveRunOptions): LiveRunResult {
         critical: true,
       }),
     );
+    if (applied.to_agent_id) {
+      emit(
+        buildAgentLifecycleEvent({
+          run_id,
+          agent_id: applied.to_agent_id,
+          role: "worker",
+          kind: liveOk ? "spawned" : "spawn_blocked",
+        }),
+      );
+    }
   }
 
-  const workerInvoke = invokeClaudePrompt(workerPrompt, {
-    real: liveOk,
-    outDir: promptDir,
-    label: "worker",
-  });
+  const continuePrompt =
+    opts.injectRecovery && liveOk
+      ? [
+          workerPrompt,
+          "",
+          "HANDOFF CONTINUATION:",
+          `You are substitute agent ${actorId} replacing ${workerId}.`,
+          "Read .evolveloop/progress.md if present. Preserve completed work. Finish remaining criteria.",
+          "Run `node --test` on test/*.test.js and fix until green.",
+        ].join("\n")
+      : workerPrompt;
+
+  const workerInvoke =
+    harness === "none"
+      ? {
+          status: "blocked" as const,
+          harness_id: "none" as const,
+          output: "no harness",
+          session_id: `blocked-${randomUUID().slice(0, 8)}`,
+          duration_ms: 0,
+          exit_code: null,
+        }
+      : invokeLiveHarness({
+          harness,
+          prompt: continuePrompt,
+          real: liveOk,
+          outDir: promptDir,
+          label: opts.injectRecovery ? "substitute" : "worker",
+          workspace: ws.root,
+          timeoutMs: 600_000,
+        });
+
+  if (opts.injectRecovery) {
+    substituteSessionId = workerInvoke.session_id;
+    if (recovery) recovery.substitute_session_id = substituteSessionId;
+  }
+
   emit(
     createMeasurementEvent({
       event_name: liveOk ? "provider.request.completed" : "provider.request.failed",
-      source: { component: "v3-live-eval", module: "worker" },
-      correlation: { run_id, agent_id: workerId, session_id: workerInvoke.session_id },
+      source: { component: "v3-live-eval", module: opts.injectRecovery ? "substitute" : "worker" },
+      correlation: { run_id, agent_id: actorId, session_id: workerInvoke.session_id },
       attributes: {
         status: workerInvoke.status,
-        harness_id: "claude-code",
+        harness_id: harness,
+        duration_ms: workerInvoke.duration_ms,
         note: liveOk ? "live_spawn_attempted" : "consent_or_auth_blocked_dry_run",
+        consent_explicit: readiness.consent,
       },
       critical: true,
     }),
   );
 
-  // LIVE mode: agent must have mutated workspace. We do NOT apply solvers here.
-  // DRY/BLOCKED: workspace stays without fabricated "LLM success" patches.
-  const afterListing = walkRelFiles(ws.root);
-  const files_changed: string[] = [];
-  for (const f of afterListing) {
-    const prev = before.get(f);
-    const next = existsSync(join(ws.root, f)) ? ws.readFile(f) : "";
-    if (prev === undefined || prev !== next) files_changed.push(f);
-  }
-  files_changed.sort();
+  // LIVE: agent must mutate workspace. We do NOT apply solvers here.
+  const files_changed = diffFiles(ws, before);
 
   const post = runTests(ws);
   const mutationAt = new Date().toISOString();
@@ -366,7 +493,7 @@ export function runLiveEngineeringCase(opts: LiveRunOptions): LiveRunResult {
     evidence_kind: "diff",
     work_id,
     goal_contract_id: goalId,
-    actor_agent_id: workerId,
+    actor_agent_id: actorId,
     workspace_root: ws.root,
     payload: { files_changed, label: "diff", mode },
   });
@@ -374,7 +501,7 @@ export function runLiveEngineeringCase(opts: LiveRunOptions): LiveRunResult {
     evidence_kind: "test_result",
     work_id,
     goal_contract_id: goalId,
-    actor_agent_id: workerId,
+    actor_agent_id: actorId,
     workspace_root: ws.root,
     payload: {
       label: "test_result",
@@ -386,26 +513,61 @@ export function runLiveEngineeringCase(opts: LiveRunOptions): LiveRunResult {
     },
   });
 
+  const diffParts: string[] = [];
+  for (const f of files_changed) {
+    const prev = before.get(f) ?? "";
+    const next = existsSync(join(ws.root, f)) ? ws.readFile(f) : "";
+    diffParts.push(`--- a/${f}\n+++ b/${f}\nPREV:\n${prev.slice(0, 4000)}\nNEXT:\n${next.slice(0, 4000)}`);
+  }
   const reviewPrompt = buildReviewerPrompt({
     objective: brief.objective,
     acceptance: brief.acceptance,
-    diffSummary: files_changed.join("\n") || "(no file changes)",
+    diffSummary: diffParts.join("\n\n") || "(no file changes)",
     testSummary: `exit=${post.status}\n${post.stdout.slice(0, 2000)}`,
     implementerClaim: "Implementer claims done (untrusted).",
   });
-  const reviewInvoke = invokeClaudePrompt(reviewPrompt, {
-    real: liveOk,
-    outDir: promptDir,
-    label: "reviewer",
-  });
+  const reviewInvoke =
+    harness === "none"
+      ? {
+          status: "blocked" as const,
+          harness_id: "none" as const,
+          output: "no harness",
+          session_id: `blocked-rev-${randomUUID().slice(0, 8)}`,
+          duration_ms: 0,
+          exit_code: null,
+        }
+      : invokeLiveHarness({
+          harness,
+          prompt: reviewPrompt,
+          real: liveOk,
+          outDir: promptDir,
+          label: "reviewer",
+          mode: "ask",
+          workspace: ws.root,
+          timeoutMs: 300_000,
+        });
 
   let reviewVerdict: LiveRunResult["review"]["verdict"] = "BLOCKED";
   let reviewRaw = reviewInvoke.output;
   if (liveOk && reviewInvoke.status === "spawned") {
     try {
-      const jsonMatch = reviewRaw.match(/\{[\s\S]*\}/);
-      const parsed = jsonMatch ? JSON.parse(jsonMatch[0]) : null;
-      reviewVerdict = parsed?.verdict === "PASS" ? "PASS" : "FAIL";
+      // Prefer last JSON object in output (agents often preface with prose)
+      const matches = [...reviewRaw.matchAll(/\{[\s\S]*?\}(?=\s*$|\s*[^,{[\s])/g)];
+      let parsed: { verdict?: string } | null = null;
+      for (let i = matches.length - 1; i >= 0; i--) {
+        try {
+          parsed = JSON.parse(matches[i]![0]);
+          if (parsed && typeof parsed.verdict === "string") break;
+        } catch {
+          parsed = null;
+        }
+      }
+      if (!parsed) {
+        const greedy = reviewRaw.match(/\{[\s\S]*\}/);
+        parsed = greedy ? JSON.parse(greedy[0]) : null;
+      }
+      const v = String(parsed?.verdict ?? "").toUpperCase();
+      reviewVerdict = v === "PASS" ? "PASS" : "FAIL";
     } catch {
       reviewVerdict = "FAIL";
     }
@@ -413,7 +575,6 @@ export function runLiveEngineeringCase(opts: LiveRunOptions): LiveRunResult {
     reviewVerdict = "BLOCKED";
   }
 
-  // Deterministic evaluator still owns TRUE_FULL_PASS — LLM review complements.
   const reviewEv = evidence.create({
     evidence_kind: "review",
     work_id,
@@ -424,7 +585,7 @@ export function runLiveEngineeringCase(opts: LiveRunOptions): LiveRunResult {
       label: "review",
       verdict: reviewVerdict === "PASS" ? "PASS" : "FAIL",
       reviewer_agent_id: reviewerId,
-      implementer_agent_id: workerId,
+      implementer_agent_id: actorId,
       session_id: reviewInvoke.session_id,
       independent: true,
       session_separated: reviewInvoke.session_id !== workerInvoke.session_id,
@@ -442,13 +603,13 @@ export function runLiveEngineeringCase(opts: LiveRunOptions): LiveRunResult {
   const evaluation = evaluateVerifiedTrueFullPass(goals.loadLatest(goalId), {
     evidence,
     workspace_root: ws.root,
-    implementer_agent_id: workerId,
+    implementer_agent_id: actorId,
     require_code_changes: true,
     last_mutation_at: mutationAt,
     expected_workspace_fingerprint: fp,
   });
 
-  // Live-blocked runs must never claim TRUE_FULL_PASS from dry plumbing
+  // Rejected independent review blocks premature completion
   const true_full_pass = liveOk && evaluation.eligible && reviewVerdict === "PASS";
 
   emit(
@@ -461,6 +622,7 @@ export function runLiveEngineeringCase(opts: LiveRunOptions): LiveRunResult {
         mode,
         reasons: evaluation.reasons,
         readiness_blockers: readiness.blockers,
+        review_verdict: reviewVerdict,
       },
       critical: true,
     }),
@@ -473,15 +635,24 @@ export function runLiveEngineeringCase(opts: LiveRunOptions): LiveRunResult {
     strategy: opts.strategy,
     readiness,
     mode,
+    harness_id: harness,
     workspace: ws.root,
     files_changed,
     exploration_file_count: exploration.file_count,
     true_full_pass,
+    worker: {
+      agent_id: actorId,
+      session_id: workerInvoke.session_id,
+      status: workerInvoke.status,
+      duration_ms: workerInvoke.duration_ms,
+    },
     review: {
       independent: true,
       session_separated: reviewInvoke.session_id !== workerInvoke.session_id,
+      agent_id: reviewerId,
+      session_id: reviewInvoke.session_id,
       verdict: reviewVerdict,
-      provenance: `reviewer=${reviewerId};session=${reviewInvoke.session_id};status=${reviewInvoke.status}`,
+      provenance: `reviewer=${reviewerId};session=${reviewInvoke.session_id};status=${reviewInvoke.status};harness=${harness}`,
       raw: reviewRaw.slice(0, 2000),
     },
     recovery,
@@ -492,9 +663,15 @@ export function runLiveEngineeringCase(opts: LiveRunOptions): LiveRunResult {
       ...(liveOk ? [] : ["LIVE_LLM_NOT_EXECUTED — dry plumbing / blocked only"]),
       "TRUE_FULL_PASS still requires verified evidence; LLM review does not replace evaluator",
       "No DETERMINISTIC_SOLVER applied in this path",
+      ...(liveOk
+        ? [`Explicit process consent: EVOLVELOOP_HARNESS_CONSENT=true; harness=${harness}`]
+        : []),
     ],
     reasons: liveOk
-      ? evaluation.reasons
+      ? [
+          ...evaluation.reasons,
+          ...(reviewVerdict !== "PASS" ? [`review_rejected:${reviewVerdict}`] : []),
+        ]
       : [...evaluation.reasons, ...readiness.blockers.map((b) => `blocked:${b}`)],
   };
 
@@ -511,8 +688,8 @@ export function runLiveValidationSuite(input: {
   results: LiveRunResult[];
   gate_l_state: "PASS" | "BLOCKED" | "FAIL" | "NOT_RUN";
 } {
-  const readiness = probeLiveLlmReadiness();
-  const cases: Array<Omit<LiveRunOptions, "repoRoot" | "paths">> = [
+  const readiness = probeLiveLlmReadiness({ verifyCanStart: true });
+  const cases: Array<Omit<LiveRunOptions, "repoRoot" | "paths" | "readiness">> = [
     {
       fixtureRel: "orchestrator/tests/fixtures/v3-eval/alpha-lib",
       taskId: "T01",
@@ -532,7 +709,12 @@ export function runLiveValidationSuite(input: {
   ];
 
   const results = cases.map((c) =>
-    runLiveEngineeringCase({ ...c, repoRoot: input.repoRoot, paths: input.paths }),
+    runLiveEngineeringCase({
+      ...c,
+      repoRoot: input.repoRoot,
+      paths: input.paths,
+      readiness,
+    }),
   );
 
   let gate_l_state: "PASS" | "BLOCKED" | "FAIL" | "NOT_RUN" = "NOT_RUN";

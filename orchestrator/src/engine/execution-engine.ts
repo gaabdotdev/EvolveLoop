@@ -44,7 +44,13 @@ import {
   loadSessionContinuity,
   persistSessionContinuity,
 } from "../session/session-continuity.js";
-import { saveCheckpoint, loadCheckpoint, clearCheckpoint } from "../jobs/checkpoint.js";
+import {
+  saveCheckpoint,
+  loadCheckpoint,
+  clearCheckpoint,
+  recordNodeAttempt,
+  getNodeAttempts,
+} from "../jobs/checkpoint.js";
 import type { Scheduler as SchedulerType } from "../scheduler/scheduler.js";
 import type { LongitudinalEvolveLoop } from "../evolveloop/longitudinal-controller.js";
 import { attachEvolveLoopObserver } from "../evolveloop/adapters/runtime-observer.js";
@@ -212,8 +218,20 @@ export class ExecutionEngine {
             }
           }
         }
+        const attemptedNodes = getNodeAttempts(this.jobsDir, featureId);
         for (const node of graph.getAllNodes()) {
-          const interrupted = node.metadata?.reconciliation === "interrupted_running";
+          const interrupted =
+            node.metadata?.reconciliation === "interrupted_running" ||
+            node.metadata?.reconciliation === "interrupted_attempt";
+          if (node.status === "pending" && attemptedNodes.has(node.id)) {
+            graph.setNodeStatus(node.id, "blocked");
+            const current = graph.getNode(node.id);
+            if (current) {
+              current.metadata = { ...(current.metadata ?? {}), reconciliation: "interrupted_attempt" };
+            }
+            this.reconciliationRequired = true;
+            continue;
+          }
           if (node.status !== "running" && !interrupted) continue;
           if (node.status === "running") {
             graph.setNodeStatus(node.id, "blocked");
@@ -351,6 +369,9 @@ export class ExecutionEngine {
       const batchIds = batch.map((n) => n.id);
       const handles = batch.map((node) => {
         metrics.recordCapability(node.capability);
+        if (this.jobsDir) {
+          recordNodeAttempt(this.jobsDir, featureId, node.id);
+        }
         const selection = this.selectProvider(node, policy, eventBus, featureId);
         this.allEvidence.push(selection.evidence);
         return scheduler.schedule(node, selection.provider, policy, graph, selection.rejected, batchIds);

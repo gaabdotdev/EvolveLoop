@@ -18,12 +18,15 @@ GLOBAL_COMMANDS="$GLOBAL_CURSOR/commands"
 GLOBAL_HOOKS="$GLOBAL_CURSOR/hooks"
 GLOBAL_RULES="$GLOBAL_CURSOR/rules"
 GLOBAL_AGENTS="$HOME/.agents/skills"
+GLOBAL_GEMINI="$HOME/.gemini/config"
+GLOBAL_GEMINI_SKILLS="$GLOBAL_GEMINI/skills"
+GLOBAL_GEMINI_RULES="$GLOBAL_GEMINI/rules"
 ENV_FILE="$GLOBAL_CURSOR/agents.env"
 MCP_ENV="$GLOBAL_CURSOR/mcp.env"
 
 echo "REPO_ROOT=$REPO_ROOT"
 
-mkdir -p "$GLOBAL_SKILLS" "$GLOBAL_COMMANDS" "$GLOBAL_HOOKS" "$GLOBAL_AGENTS" "$GLOBAL_RULES"
+mkdir -p "$GLOBAL_SKILLS" "$GLOBAL_COMMANDS" "$GLOBAL_HOOKS" "$GLOBAL_AGENTS" "$GLOBAL_RULES" "$GLOBAL_GEMINI_SKILLS" "$GLOBAL_GEMINI_RULES"
 
 # --- Pipeline EvolveLoop ---
 SKILLS=(
@@ -34,13 +37,15 @@ SKILLS=(
   code-reviewer validator
 )
 
-rm -rf "$GLOBAL_SKILLS/gaabwiki" "$GLOBAL_SKILLS/gaabwiki-mem" "$GLOBAL_AGENTS/gaabwiki" "$GLOBAL_AGENTS/gaabwiki-mem" 2>/dev/null || true
+rm -rf "$GLOBAL_SKILLS/gaabwiki" "$GLOBAL_SKILLS/gaabwiki-mem" "$GLOBAL_AGENTS/gaabwiki" "$GLOBAL_AGENTS/gaabwiki-mem" "$GLOBAL_GEMINI_SKILLS/gaabwiki" "$GLOBAL_GEMINI_SKILLS/gaabwiki-mem" 2>/dev/null || true
 for skill in "${SKILLS[@]}"; do
   if [[ -d "$CURSOR_SKILLS_SRC/$skill" ]]; then
     rm -rf "$GLOBAL_SKILLS/$skill" 2>/dev/null || true
     ln -sfn "$CURSOR_SKILLS_SRC/$skill" "$GLOBAL_SKILLS/$skill"
     rm -rf "$GLOBAL_AGENTS/$skill" 2>/dev/null || true
     ln -sfn "$CURSOR_SKILLS_SRC/$skill" "$GLOBAL_AGENTS/$skill"
+    rm -rf "$GLOBAL_GEMINI_SKILLS/$skill" 2>/dev/null || true
+    ln -sfn "$CURSOR_SKILLS_SRC/$skill" "$GLOBAL_GEMINI_SKILLS/$skill"
     echo "  skill: $skill"
   fi
 done
@@ -48,6 +53,7 @@ done
 if [[ -d "$CURSOR_SKILLS_SRC/orquestrar" ]]; then
   ln -sfn "$CURSOR_SKILLS_SRC/orquestrar" "$GLOBAL_SKILLS/EvolveLoop"
   ln -sfn "$CURSOR_SKILLS_SRC/orquestrar" "$GLOBAL_AGENTS/EvolveLoop"
+  ln -sfn "$CURSOR_SKILLS_SRC/orquestrar" "$GLOBAL_GEMINI_SKILLS/EvolveLoop"
   echo "  skill alias: EvolveLoop -> orquestrar"
 fi
 
@@ -57,8 +63,9 @@ if [[ -d "$GLOBAL_SKILLS_SRC" ]]; then
     [[ -d "$skill_dir" ]] || continue
     name="$(basename "$skill_dir")"
     rm -rf "$GLOBAL_AGENTS/$name" 2>/dev/null || true
-    # Cópia real (não symlink) para sobreviver se o clone for apagado? Symlink é melhor para updates.
     ln -sfn "$skill_dir" "$GLOBAL_AGENTS/$name"
+    rm -rf "$GLOBAL_GEMINI_SKILLS/$name" 2>/dev/null || true
+    ln -sfn "$skill_dir" "$GLOBAL_GEMINI_SKILLS/$name"
     echo "  global-skill: $name"
   done
 fi
@@ -161,6 +168,13 @@ if [[ -f "$RULES_SRC/wiki-agent.mdc" ]]; then
   cp "$RULES_SRC/wiki-agent.mdc" "$GLOBAL_RULES/wiki-agent.mdc"
   echo "  rules: wiki-agent.mdc"
 fi
+# Gemini/Antigravity rules
+if [[ -f "$RULES_SRC/Rules.md" ]]; then
+  cp "$RULES_SRC/Rules.md" "$GLOBAL_GEMINI_RULES/evolveloop.md"
+fi
+if [[ -f "$RULES_SRC/wiki-agent.mdc" ]]; then
+  cp "$RULES_SRC/wiki-agent.mdc" "$GLOBAL_GEMINI_RULES/wiki-agent.md"
+fi
 
 # --- agents.env ---
 cat > "$ENV_FILE" << EOF
@@ -208,6 +222,8 @@ with open(path, "w") as f:
     f.write(data)
 print("  mcp: ~/.cursor/mcp.json instalado")
 PY
+  cp "$GLOBAL_CURSOR/mcp.json" "$GLOBAL_GEMINI/mcp_config.json"
+  echo "  mcp: ~/.gemini/config/mcp_config.json instalado"
 fi
 
 # --- CLI wrapper ---

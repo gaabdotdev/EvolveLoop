@@ -3,6 +3,7 @@ import { mkdtempSync, readFileSync, existsSync, writeFileSync, mkdirSync } from 
 import { join } from "node:path";
 import { tmpdir } from "node:os";
 import { buildPickupPrompt, invokePickup } from "../../src/jobs/job-pickup.js";
+import { JobStore } from "../../src/jobs/job-store.js";
 
 describe("Job pickup", () => {
   it("buildPickupPrompt includes skill path and complete command", () => {
@@ -76,7 +77,7 @@ describe("Job pickup", () => {
       status: "pending" as const,
     };
     mkdirSync(jobsDir, { recursive: true });
-    writeFileSync(join(jobsDir, "run-1.json"), JSON.stringify(job));
+    new JobStore(jobsDir).writeJob(job);
 
     const plan = invokePickup({ jobsDir, promptDir });
     expect(plan.status).toBe("ready");

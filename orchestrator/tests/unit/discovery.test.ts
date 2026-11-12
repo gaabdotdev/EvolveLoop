@@ -67,24 +67,21 @@ describe("JobStore", () => {
 
     const dir = mkdtempSync(join(tmpdir(), "orch-jobs-"));
     mkdirSync(dir, { recursive: true });
-    writeFileSync(
-      join(dir, "run-abc.json"),
-      JSON.stringify({
-        apiVersion: "capability-orchestrator.io/v2",
-        kind: "SkillJob",
-        run_id: "run-abc",
-        provider_id: "testing",
-        skill_path: ".cursor/skills/testing/SKILL.md",
-        capability: "testing",
-        node_id: "test-suite",
-        briefing: "test",
-        definition_of_done: [],
-        inputs: [],
-        status: "pending",
-      }),
-    );
-
     const store = new JobStore(dir);
+    store.writeJob({
+      apiVersion: "capability-orchestrator.io/v2",
+      kind: "SkillJob",
+      run_id: "run-abc",
+      provider_id: "testing",
+      skill_path: ".cursor/skills/testing/SKILL.md",
+      capability: "testing",
+      node_id: "test-suite",
+      briefing: "test",
+      definition_of_done: [],
+      inputs: [],
+      status: "pending",
+    });
+
     expect(store.listPending()).toHaveLength(1);
     store.completeJob("run-abc", { success: true, evidence_path: "telemetry/evidence/x.json" });
     expect(store.listPending()).toHaveLength(0);

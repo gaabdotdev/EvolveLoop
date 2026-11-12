@@ -2,10 +2,10 @@ import { readFileSync, mkdirSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import type { Evidence, EvidenceCheck, ExecuteRequest, ExecuteResult, ProviderManifest, ProviderRuntime } from "../types/index.js";
 import { unverifiedDodChecks } from "../evidence/builders.js";
-import { writeSanitizedJsonFile } from "../evidence/evidence-bus.js";
 import { redactSecrets } from "../evidence/secret-redaction.js";
 import { recordSkillLifecycle } from "../telemetry/skill-telemetry.js";
 import type { EventBus } from "../events/event-bus.js";
+import { JobStore, type SkillJob } from "../jobs/job-store.js";
 import {
   extractContextRetrievalFromRequest,
   extractGateBundleFromRequest,
@@ -43,7 +43,7 @@ export class JobFileExecutor implements SkillExecutor {
       spawn_metadata: request.node.metadata ?? {},
     };
 
-    writeSanitizedJsonFile(jobPath, job);
+    new JobStore(this.jobsDir).writeJob(job as SkillJob);
 
     return {
       run_id: request.run_id,

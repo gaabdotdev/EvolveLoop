@@ -1351,6 +1351,10 @@ async function main() {
     }
 
     if (args.group === "eval") {
+      if (args.command === "live-readiness") {
+        print(probeLiveLlmReadiness({ verifyCanStart: true }));
+        return;
+      }
       const paths = requireDataDir(args);
       if (args.command === "battery") {
         const repoRoot = args["repo-root"]
@@ -1364,10 +1368,6 @@ async function main() {
             keep_workspaces: args["keep-workspaces"] === "true",
           }),
         );
-        return;
-      }
-      if (args.command === "live-readiness") {
-        print(probeLiveLlmReadiness());
         return;
       }
       if (args.command === "live-suite") {

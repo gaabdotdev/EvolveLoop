@@ -27,6 +27,9 @@ image_to_code_skill: ~/.agents/skills/image-to-code/SKILL.md | n/a
 grill_me_required: true | false
 grill_me_status: satisfied | blocked | failed | exempt | absent | n/a
 grill_me_skill: ~/.agents/skills/grill-me/SKILL.md | n/a
+graphify_skill: required | n/a
+graphify_skill_status: pending | applied | blocked | n/a
+graphify_skill_path: .cursor/skills/graphify/SKILL.md | n/a
 outer_loop: cycle_id=… outer_cycle=…/… last_decision=… reentry=…
 anti_vibe: coding via Agent tools — NÃO wiki vibe / Composer CLI
 wiki_register: se editar código → append {Projeto}/log.md (± wiki/); NUNCA raw/; executor: librarian se spawnado, senão exec/raiz
@@ -48,6 +51,7 @@ context_budget:
 | `knowledge_grounding` | Se `pending` e a missão toca código/arquitectura Gaab: o filho **deve** retrieve (skill/CLI/vault) antes de editar, ou declarar GAP |
 | `image_attachment: true` | Filho visual **obrigado** a `image-to-code` |
 | `grill_me_required: true` | Filho `role: plan` **obrigado** a evidência `gate.grill-me.json` `satisfied|exempt` — senão `bloqueado: grill_me_gate` |
+| `graphify_skill` | Em projecto novo e neste EvolveLoop, o subset da skill Graphify precede o retrieve wiki. CLI do venv ausente → `graphify_skill_status: blocked` e a wiki segue. Não define `EVOLVELOOP_GRAPHIFY` |
 | `wiki_register` | Qualquer edit de código no filho → registo wiki (ou handoff explícito ao raiz com lista de paths). **Executor:** `librarian` se spawnado; senão `exec` / raiz. Ver [pda-roles.md](pda-roles.md) |
 
 ---
