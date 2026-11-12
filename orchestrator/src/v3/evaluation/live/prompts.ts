@@ -38,14 +38,14 @@ export const LIVE_TASK_BRIEFS: Record<string, LiveTaskBrief> = {
 export function buildWorkerPrompt(brief: LiveTaskBrief, workspaceHint: string): string {
   return [
     "You are an engineering agent working inside an isolated workspace.",
-    `Workspace: ${workspaceHint}`,
+    `Workspace root (edit files here): ${workspaceHint}`,
     `Objective: ${brief.objective}`,
     "Acceptance criteria:",
     ...brief.acceptance.map((a) => `- ${a}`),
     "Constraints:",
     ...brief.constraints.map((c) => `- ${c}`),
     "Explore the repository yourself. Do not assume a hidden solution.",
-    "Make real file edits, run tests with `node --test`, and stop when criteria are met.",
+    "Make real file edits under the workspace root, run `node --test` on test/*.test.js, and stop when criteria are met.",
     "Do not claim success without tests passing.",
   ].join("\n");
 }
@@ -58,18 +58,25 @@ export function buildReviewerPrompt(input: {
   implementerClaim?: string;
 }): string {
   return [
-    "You are an independent reviewer. Do NOT trust the implementer's claim of completion.",
+    "You are an independent reviewer in a separate session from the implementer.",
+    "Do NOT trust the implementer's claim of completion.",
+    "Do NOT invent file contents. The PREV/NEXT blocks below are the authoritative workspace snapshots.",
+    "Judge ONLY from PREV/NEXT and the test summary.",
+    "If NEXT meets acceptance criteria AND tests show exit=0 with # fail 0, verdict MUST be PASS.",
+    "If NEXT still violates a mandatory criterion, verdict MUST be FAIL.",
     `Objective: ${input.objective}`,
     "Acceptance criteria:",
     ...input.acceptance.map((a) => `- ${a}`),
-    "Diff summary:",
-    input.diffSummary.slice(0, 8000),
-    "Test summary:",
+    "=== BEGIN FILE SNAPSHOTS (PREV → NEXT) ===",
+    input.diffSummary.slice(0, 14000),
+    "=== END FILE SNAPSHOTS ===",
+    "=== BEGIN TEST SUMMARY ===",
     input.testSummary.slice(0, 4000),
+    "=== END TEST SUMMARY ===",
     input.implementerClaim
       ? `Implementer claim (untrusted): ${input.implementerClaim}`
       : "No implementer claim provided.",
-    "Respond with STRICT JSON:",
-    '{"verdict":"PASS"|"FAIL","severity":[{"severity":"low|medium|high","criterion":"...","detail":"..."}],"recommendation":"..."}',
+    "Respond with STRICT JSON only (no markdown fences, no prose outside JSON):",
+    '{"verdict":"PASS"|"FAIL","findings":[{"severity":"low|medium|high","criterion":"...","detail":"..."}],"recommendation":"..."}',
   ].join("\n");
 }

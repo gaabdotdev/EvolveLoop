@@ -30,6 +30,8 @@ Este `SKILL.md` é um **contrato normativo executivo**. Você é o **orquestrado
 
 **Autoridade executiva:** o orquestrador raiz dispõe de **autoridade executiva total** para **decidir** arquitetura, **executar** correções de bugs, **replanejar** tarefas e **validar** gates **sem intervenção humana** entre passos. **O silêncio do utilizador equivale a consentimento** para continuar o ciclo até conclusão ou bloqueio documentado.
 
+**V2.3:** as decisões aceites estão em `memory/v23-planning/evidence/grill-me-round1.md`. `/evolve` não declara o projeto pronto sem a saída `pronto` de `scripts/v23/readiness.py`. O silêncio não autoriza `git push`, `worktree rm`, `repo add`, `project setup-update`, instalação de pacote nem escrita de segredo. Contratos: `docs/v23/ROLES.md`, `docs/v23/LIMITS.md`, `docs/v23/VERDICTS.md`.
+
 **Única exceção operacional:** interromper e **registar** no log persistente (secção PDA) quando existir **falha catastrófica de infraestrutura** (ex.: perda persistente de acesso ao repositório ou ao ambiente de execução, indisponibilidade grave e continuada de CI/rede que impossibilite verificação, ou compromisso credencial evidente). Nesse caso **não** simular sucesso; **documentar** o estado e o que falta para retomar.
 
 **Coordenação:** **executar** e **delegar** via PDA — não simular especialistas na mesma instância quando o protocolo exigir sub-agente.
@@ -39,6 +41,15 @@ Este `SKILL.md` é um **contrato normativo executivo**. Você é o **orquestrado
 **Paradigma:** Planner produz **Capability IR** → **Execution Policy** → **Scheduler** resolve providers via **Capability Registry**. Skills são implementação de providers — o Scheduler não depende de nomes concretos.
 
 **Modelo multi-agente:** o **raiz** orquestra; cada etapa material corre em filho tipado (`plan` \| `exec` \| `gate` \| `explore` \| `critic` \| `librarian`) com **`GATE_BUNDLE`** herdado (hard-gates wiki/RAG, imagem, outer loop, anti-vibe). Sub-subagentes permitidos até `max_spawn_depth=3`. Ver [gate-bundle.md](references/gate-bundle.md) + [pda-roles.md](references/pda-roles.md).
+
+## HARD-GATE — Graphify (subset da skill)
+
+**Regra absoluta do EvolveLoop:** em projecto novo e neste EvolveLoop, o subset da skill Graphify corre primeiro. A seguir corre o retrieve wiki já especificado em [references/knowledge-grounding-gate.md](references/knowledge-grounding-gate.md). Este bloco não substitui o hard gate de wiki, o de imagem nem o grill-me.
+
+1. **Ler** [references/graphify-skill-gate.md](references/graphify-skill-gate.md) e executar `.cursor/skills/graphify/SKILL.md`. A cópia upstream não é o procedimento.
+2. **Subset:** AST local ou query com `--budget`. Recusar o Step 1 e a Part B do upstream.
+3. **CLI ausente:** `graphify_skill_status: blocked`. A wiki segue. Não instalar no site-packages do sistema.
+4. **Flag:** não definir `EVOLVELOOP_GRAPHIFY`. ADR-0014 mantém o default OFF. Sem `KnowledgeBackendId`.
 
 ## HARD-GATE — Wiki (wiki + RAG)
 

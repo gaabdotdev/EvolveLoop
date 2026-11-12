@@ -5,7 +5,7 @@ import { join } from "node:path";
 import { tmpdir } from "node:os";
 import { buildPickupPrompt } from "../../src/jobs/job-pickup.js";
 import { estimateWhitespaceTokens } from "../../src/v22/token-estimate.js";
-import type { SkillJob } from "../../src/jobs/job-store.js";
+import { JobStore, type SkillJob } from "../../src/jobs/job-store.js";
 
 const orchestratorRoot = join(import.meta.dirname, "../..");
 
@@ -107,7 +107,7 @@ describe("V22 P2 goals integration (run-engine / run-jobs)", () => {
       inputs: [],
       status: "pending",
     };
-    writeFileSync(join(jobsDir, `${job.run_id}.json`), JSON.stringify(job));
+    new JobStore(jobsDir).writeJob(job);
 
     clearP2Env();
     const offPrompt = buildPickupPrompt(job, jobsDir, orchestratorRoot);

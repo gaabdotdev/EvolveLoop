@@ -60,8 +60,20 @@ const v3complete = execFileSync("git", ["rev-parse", "v3-complete^{}"], {
   encoding: "utf-8",
 }).trim();
 
-const readiness = probeLiveLlmReadiness();
-const live = runLiveValidationSuite({ repoRoot, paths: v3paths });
+// Prefer process-scoped consent + verified can-start for Gate L honesty.
+// Optional reuse: EVOLVELOOP_LIVE_SUITE_REPORT=/path/to/live-suite-report.json
+const readiness = probeLiveLlmReadiness({ verifyCanStart: process.env.EVOLVELOOP_HARNESS_CONSENT === "true" });
+let live;
+const liveReportPath = process.env.EVOLVELOOP_LIVE_SUITE_REPORT;
+if (liveReportPath && existsSync(liveReportPath)) {
+  live = JSON.parse(readFileSync(liveReportPath, "utf-8"));
+  if (live?.kind !== "LiveValidationSuiteReport") {
+    console.error("EVOLVELOOP_LIVE_SUITE_REPORT is not a LiveValidationSuiteReport:", liveReportPath);
+    process.exit(1);
+  }
+} else {
+  live = runLiveValidationSuite({ repoRoot, paths: v3paths });
+}
 
 const suitePath = join(repoRoot, "benchmarks/bench-obs/suites/engineering-v1.json");
 const suite = loadSuite(suitePath);
@@ -151,9 +163,16 @@ const evidence = {
   criteria,
   global_status,
   limitations: [
-    "Live LLM Gate L BLOCKED without EVOLVELOOP_HARNESS_CONSENT=true and authenticated provider",
+    criteria.gate_L_live_llm.state === "PASS"
+      ? "Live LLM Gate L executed with process-scoped EVOLVELOOP_HARNESS_CONSENT=true"
+      : criteria.gate_L_live_llm.state === "BLOCKED"
+        ? "Live LLM Gate L BLOCKED without EVOLVELOOP_HARNESS_CONSENT=true and authenticated provider"
+        : `Live LLM Gate L ${criteria.gate_L_live_llm.state} — see live.results reasons`,
     "Deterministic solvers preserved for CI; live path never applies DETERMINISTIC_SOLVER",
     "TUI/dashboard deferred until data reliability (spec)",
+    liveReportPath && existsSync(liveReportPath)
+      ? `Reused live suite report: ${liveReportPath}`
+      : "Live suite executed inline by this gate script",
   ],
 };
 

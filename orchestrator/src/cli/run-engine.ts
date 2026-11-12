@@ -4,8 +4,9 @@
  *
  * Usage:
  *   node dist/cli/run-engine.js --ir path/to/ir.yaml [--policy high-reliability] [--feature-id feat-1]
- *   node dist/cli/run-engine.js --ir ir.yaml --jobs-dir ./jobs   # cursor-skill via JobFileExecutor
- *   node dist/cli/run-engine.js --ir ir.yaml --discovery --jobs-dir ./jobs  # runtime provider discovery
+ *   node dist/cli/run-engine.js --ir ir.yaml --provider-mode mock   # explicit simulation (default)
+ *   node dist/cli/run-engine.js --ir ir.yaml --provider-mode real --jobs-dir ./jobs
+ *   node dist/cli/run-engine.js --ir ir.yaml --discovery --jobs-dir ./jobs --provider-mode real
  */
 import { mkdtempSync, readdirSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
@@ -13,12 +14,8 @@ import { fileURLToPath } from "node:url";
 import { tmpdir } from "node:os";
 import {
   ExecutionEngine,
-  ProviderRouter,
-  createMockProvider,
   loadYamlFile,
   buildRegistryFromManifestFiles,
-  PluginLoader,
-  JobFileExecutor,
   FilesystemKnowledgeStore,
   FilesystemMemoryStore,
   resolveDataPaths,
@@ -29,6 +26,11 @@ import type { AnalysisScope } from "../evolveloop/longitudinal-types.js";
 import type { CapabilityIR, ProviderManifest } from "../types/index.js";
 import { manifestToRegistryEntries } from "../registry/manifest-loader.js";
 import { loadAgentsEnvFile, resolveOrchestratorCliPaths } from "./run-engine-env.js";
+import {
+  parseProviderMode,
+  setupProviders,
+  ProviderBootstrapError,
+} from "./provider-bootstrap.js";
 import { serializeForPublish } from "../evidence/publish-sanitize.js";
 import {
   isGraphifyExperimentEnabled,
@@ -148,34 +150,14 @@ function registryForMockRun(
   return { ...result, capabilities };
 }
 
-function setupProviders(
+function collectProviderIds(
   registry: ReturnType<typeof buildRegistryFromManifestFiles>,
-  agentsRoot: string,
-  jobsDir?: string,
-): ProviderRouter {
-  const router = new ProviderRouter();
-  const loader = new PluginLoader(agentsRoot);
-  const executor = jobsDir ? new JobFileExecutor(resolve(jobsDir)) : undefined;
-
+): Set<string> {
   const ids = new Set<string>();
   for (const cap of Object.values(registry.capabilities)) {
     for (const p of cap.providers) ids.add(p.id);
   }
-
-  const manifestsDir = resolve(__dirname, "../../providers");
-  const manifests = loadProviderManifests(manifestsDir);
-  const manifestByName = new Map(manifests.map((m) => [m.metadata.name, m]));
-
-  for (const id of ids) {
-    const manifest = manifestByName.get(id);
-    if (manifest?.spec.plugin?.type === "cursor-skill" && executor) {
-      router.register(loader.load(manifest, executor));
-    } else {
-      router.register(createMockProvider(id));
-    }
-  }
-
-  return router;
+  return ids;
 }
 
 function parseEvolveScope(args: Record<string, string>): AnalysisScope | null {
@@ -207,9 +189,22 @@ async function main() {
 
   if (!args.ir) {
     console.error(
-      `Usage: run-engine --ir <path.yaml> [--policy id] [--feature-id id] [--jobs-dir path] [--data-dir path] [--discovery] [--resume] [--wait-for-jobs ms] [--evolve] [--evolve-scope-type USER|PROJECT|WORKSPACE|SYSTEM] [--evolve-scope-id id] [--evolve-authorize-system]`,
+      `Usage: run-engine --ir <path.yaml> [--provider-mode mock|real] [--policy id] [--feature-id id] [--jobs-dir path] [--data-dir path] [--discovery] [--resume] [--wait-for-jobs ms] [--evolve] [--evolve-scope-type USER|PROJECT|WORKSPACE|SYSTEM] [--evolve-scope-id id] [--evolve-authorize-system]`,
     );
     process.exit(1);
+  }
+
+  let providerMode;
+  try {
+    providerMode = parseProviderMode(args["provider-mode"]);
+  } catch (err) {
+    console.error(err instanceof Error ? err.message : err);
+    process.exit(1);
+  }
+  if (args["provider-mode"] === undefined) {
+    console.error(
+      "[provider-mode] omitted → default mock (simulated). Pass --provider-mode real for non-mock providers.",
+    );
   }
 
   const enableDiscovery = args.discovery === "true";
@@ -232,10 +227,32 @@ async function main() {
   const manifests = loadProviderManifests(providersDir);
 
   let registry = buildRegistryFromManifestFiles(manifests);
-  registry = jobsDir
-    ? supplementRegistry(registry, ir, manifests)
-    : registryForMockRun(registry, ir, manifests);
-  const providers = setupProviders(registry, agentsRoot, jobsDir);
+  registry =
+    providerMode === "mock"
+      ? registryForMockRun(registry, ir, manifests)
+      : supplementRegistry(registry, ir, manifests);
+
+  let bootstrap;
+  try {
+    bootstrap = setupProviders({
+      mode: providerMode,
+      agentsRoot,
+      jobsDir,
+      manifests,
+      providerIds: collectProviderIds(registry),
+    });
+  } catch (err) {
+    const message =
+      err instanceof ProviderBootstrapError
+        ? err.message
+        : err instanceof Error
+          ? err.message
+          : String(err);
+    console.error(`[provider-mode=${providerMode}] bootstrap failed: ${message}`);
+    process.exit(1);
+  }
+  for (const w of bootstrap.warnings) console.error(`[provider-mode] warning: ${w}`);
+  const providers = bootstrap.router;
 
   const dataDir = args["data-dir"] ? resolve(args["data-dir"]) : undefined;
   const dataPaths = dataDir ? resolveDataPaths(dataDir) : undefined;
@@ -303,6 +320,8 @@ async function main() {
     nodes: result.graph.nodes.map((n) => ({ id: n.id, status: n.status, capability: n.capability })),
     metrics: result.metrics,
     event_count: result.events.length,
+    provider_mode: bootstrap.provider_mode,
+    providers_registered: bootstrap.registered,
   };
 
   const anyP2 =

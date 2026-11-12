@@ -66,5 +66,11 @@ jobs:
         working-directory: agent-setup
         run: python -m pytest -q
 
+      - name: pytest wiki index
+        run: python -m pytest -q fixtures/evolveloop-wiki-vault/tests/test_index.py
+
+      - name: v23 readiness structural
+        run: python3 scripts/v23/test_readiness.py
+
       - name: validate
         run: bash docs/architecture/v2.2/scripts/validate-v22-artifacts.sh

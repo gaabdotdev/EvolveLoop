@@ -8,6 +8,7 @@ import {
   CheckpointError,
   loadCheckpoint,
   saveCheckpoint,
+  recordNodeAttempt,
   type EngineCheckpoint,
 } from "../../src/jobs/checkpoint.js";
 import type { CapabilityIR, CapabilityRegistry, GraphNode, NodeStatus } from "../../src/types/index.js";
@@ -202,15 +203,14 @@ describe("checkpoint integrity", () => {
     expect(errorCode(() => loadCheckpoint(dir, "feat-a", { policy_id: "other-policy" }))).toBe("CONTEXT_MISMATCH");
   });
 
-  it("accepts an older valid envelope copied over a newer one because there is no freshness store", () => {
+  it("rejects an older valid envelope copied over a newer one via freshness store", () => {
     const dir = workspace();
     const path = saveCheckpoint(dir, draft("feat-a", "waiting"));
     const older = readFileSync(path);
     saveCheckpoint(dir, draft("feat-a", "satisfied"));
     expect(loadCheckpoint(dir, "feat-a")?.graph.nodes[0]?.status).toBe("satisfied");
     writeFileSync(path, older);
-    const rolled = loadCheckpoint(dir, "feat-a");
-    expect(rolled?.graph.nodes[0]?.status).toBe("waiting");
+    expect(errorCode(() => loadCheckpoint(dir, "feat-a"))).toBe("ROLLBACK_DENIED");
   });
 
   it("keeps a single file per feature and replaces it on the next save", () => {
@@ -285,5 +285,22 @@ describe("checkpoint resume", () => {
     });
     expect(loadCheckpoint(dir, "feat-new")).toBeNull();
     expect(result.events.some((event) => event.type === "ProviderSelected")).toBe(true);
+  });
+
+  it("does not re-schedule or re-execute a pending node that has an attempt recorded in persistent store on resume", async () => {
+    const dir = workspace();
+    saveCheckpoint(dir, draft("feat-idempotent", "pending"));
+    recordNodeAttempt(dir, "feat-idempotent", "n1");
+    const result = await resumeEngine(dir).run({
+      ir: irFor("feat-idempotent"),
+      policy_id: "rapid-prototype",
+      feature_id: "feat-idempotent",
+      resume: true,
+    });
+    expect(result.success).toBe(false);
+    expect(result.blocked_reason).toBe("reconciliation_required");
+    expect(result.events.some((event) => event.type === "ProviderSelected")).toBe(false);
+    expect(result.graph.nodes[0]?.status).toBe("blocked");
+    expect(result.graph.nodes[0]?.metadata?.reconciliation).toBe("interrupted_attempt");
   });
 });

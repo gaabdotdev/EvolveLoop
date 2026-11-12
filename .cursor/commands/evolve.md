@@ -2,6 +2,7 @@
 
 Invocação **`/evolve`**.
 
+0. **Classificar** sem escrever configuração: `python3 scripts/v23/readiness.py --live`. Só o estado `pronto` permite dizer que o projeto está pronto. Conta do provider `cursor` não conta como conta de lançamento. Gates abaixo continuam obrigatórios.
 1. **Ler** `~/.cursor/skills/orquestrar/SKILL.md` (contrato normativo)
 2. AGENTS_ROOT: `~/.cursor/agents.env`
 3. Runtime: `$ORCHESTRATOR_ROOT` — `agents-orch engine`
