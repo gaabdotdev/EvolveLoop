@@ -19,6 +19,10 @@ import {
 import { STRATEGY_CATALOG } from "../benchmark/strategies.js";
 import type { BenchmarkCaseManifest, StrategyId } from "../types.js";
 import { evaluateRun } from "../evaluation/engine.js";
+import { applyRetention } from "../retention.js";
+import { migrateStoreToCurrent, readStoreMeta, repairRunJsonl } from "../migrations.js";
+import { measureInstrumentationOverhead, writeOverheadReport } from "../overhead.js";
+import { computeDelegationRoiMatrix } from "../metrics/delegation-roi.js";
 
 export function handleTelemetryCommand(
   command: string,
@@ -81,7 +85,64 @@ export function handleBenchmarkCommand(
 ): { code: number; payload: unknown } {
   if (command === "doctor") {
     if (!args["data-dir"]) return { code: 2, payload: { error: "Required: --data-dir <path>" } };
-    return { code: 0, payload: doctor(resolveMeasurementPaths(args["data-dir"])) };
+    const paths = resolveMeasurementPaths(args["data-dir"]);
+    return {
+      code: 0,
+      payload: {
+        ...doctor(paths),
+        store_meta: readStoreMeta(paths),
+        tui_dashboard: "NOT_IMPLEMENTED",
+      },
+    };
+  }
+
+  if (command === "retain") {
+    if (!args["data-dir"]) return { code: 2, payload: { error: "Required: --data-dir" } };
+    const days = args.days ? parseInt(args.days, 10) : 30;
+    if (!Number.isFinite(days) || days < 0) return { code: 2, payload: { error: "Invalid --days" } };
+    const paths = resolveMeasurementPaths(args["data-dir"]);
+    const result = applyRetention(paths, {
+      retention_days: days,
+      dry_run: args["dry-run"] === "true",
+      prune_workspaces: args["prune-workspaces"] !== "false",
+    });
+    return { code: 0, payload: result };
+  }
+
+  if (command === "migrate") {
+    if (!args["data-dir"]) return { code: 2, payload: { error: "Required: --data-dir" } };
+    const paths = resolveMeasurementPaths(args["data-dir"]);
+    return { code: 0, payload: migrateStoreToCurrent(paths) };
+  }
+
+  if (command === "repair") {
+    if (!args["data-dir"] || !args.run) return { code: 2, payload: { error: "Required: --data-dir --run" } };
+    const paths = resolveMeasurementPaths(args["data-dir"]);
+    return { code: 0, payload: repairRunJsonl(paths, args.run, { write: args["dry-run"] !== "true" }) };
+  }
+
+  if (command === "overhead") {
+    const iterations = args.iterations ? parseInt(args.iterations, 10) : 5;
+    if (args.out) {
+      const out = resolve(args.out);
+      return { code: 0, payload: writeOverheadReport(out, iterations) };
+    }
+    return { code: 0, payload: measureInstrumentationOverhead(iterations) };
+  }
+
+  if (command === "roi") {
+    if (!args["data-dir"] || !args.experiment) {
+      return { code: 2, payload: { error: "Required: --data-dir --experiment <id>" } };
+    }
+    const paths = resolveMeasurementPaths(args["data-dir"]);
+    const reportPath = join(paths.reportsDir, `${args.experiment}.compare.json`);
+    if (!existsSync(reportPath)) return { code: 1, payload: { error: "report_not_found" } };
+    const report = JSON.parse(readFileSync(reportPath, "utf-8")) as {
+      results: Parameters<typeof computeDelegationRoiMatrix>[0];
+      comparison?: { delegation_roi?: unknown };
+    };
+    const roi = report.comparison?.delegation_roi ?? computeDelegationRoiMatrix(report.results);
+    return { code: 0, payload: roi };
   }
 
   if (command === "suite") {

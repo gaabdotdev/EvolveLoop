@@ -195,6 +195,11 @@ function usage() {
         "validate-suite",
         "validate-evidence",
         "doctor",
+        "retain",
+        "migrate",
+        "repair",
+        "overhead",
+        "roi",
       ],
     },
     notes: [

@@ -30,6 +30,7 @@ import {
   buildSubagentEvent,
 } from "../adapters/hierarchy-adapter.js";
 import { getStrategy } from "./strategies.js";
+import { computeDelegationRoiMatrix } from "../metrics/delegation-roi.js";
 
 export interface RunnerOptions {
   paths: MeasurementDataPaths;
@@ -501,12 +502,17 @@ export function compareStrategies(
     };
   }
 
+  const roi = computeDelegationRoiMatrix(results);
+
   return {
     arms,
+    delegation_roi: roi,
     notes: [
       "Strategies compared on same cases when eligible.",
-      "Cost requires price table; otherwise UNAVAILABLE.",
+      "Cost requires price table + reported usage; otherwise UNAVAILABLE (never invented).",
       "Adaptive strategy is not assumed to win.",
+      "Delegation ROI is decomposed; depth/subagent counts are contextual only.",
+      "Smoke ≠ conclusive: check sample_size and reliability flags.",
     ],
   };
 }

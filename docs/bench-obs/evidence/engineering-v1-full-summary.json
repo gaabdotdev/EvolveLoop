@@ -1,0 +1,2846 @@
+{
+  "kind": "EngineeringV1FullBattery",
+  "conclusive": true,
+  "smoke": false,
+  "experiment_id": "exp_5e5332f8df92",
+  "evolveloop_commit": "da02ea9",
+  "repetitions": 3,
+  "case_count": 16,
+  "result_count": 126,
+  "elapsed_ms": 356,
+  "comparison": {
+    "arms": {
+      "A_single_agent": {
+        "sample_size": 39,
+        "invalid_or_incomplete": 0,
+        "verified_completion_rate": 1,
+        "mean_duration_ms": 2.1538461538461537,
+        "cost_per_verified_completion": {
+          "metric": "cost_per_verified_completion",
+          "value": null,
+          "unit": "USD",
+          "provenance": "UNAVAILABLE"
+        },
+        "wasted_cost": {
+          "metric": "wasted_cost_usd",
+          "value": 0,
+          "unit": "USD",
+          "provenance": "OBSERVED"
+        },
+        "mean_delegation_depth": 0,
+        "mean_subagent_count": 0,
+        "mean_agent_count": 1
+      },
+      "B_evolveloop_no_delegation": {
+        "sample_size": 39,
+        "invalid_or_incomplete": 0,
+        "verified_completion_rate": 1,
+        "mean_duration_ms": 1.8974358974358974,
+        "cost_per_verified_completion": {
+          "metric": "cost_per_verified_completion",
+          "value": null,
+          "unit": "USD",
+          "provenance": "UNAVAILABLE"
+        },
+        "wasted_cost": {
+          "metric": "wasted_cost_usd",
+          "value": 0,
+          "unit": "USD",
+          "provenance": "OBSERVED"
+        },
+        "mean_delegation_depth": 0,
+        "mean_subagent_count": 0,
+        "mean_agent_count": 1
+      },
+      "C_evolveloop_adaptive": {
+        "sample_size": 48,
+        "invalid_or_incomplete": 0,
+        "verified_completion_rate": 1,
+        "mean_duration_ms": 2.6041666666666665,
+        "cost_per_verified_completion": {
+          "metric": "cost_per_verified_completion",
+          "value": null,
+          "unit": "USD",
+          "provenance": "UNAVAILABLE"
+        },
+        "wasted_cost": {
+          "metric": "wasted_cost_usd",
+          "value": 0,
+          "unit": "USD",
+          "provenance": "OBSERVED"
+        },
+        "mean_delegation_depth": 1.5625,
+        "mean_subagent_count": 1.5625,
+        "mean_agent_count": 2.5625
+      }
+    },
+    "delegation_roi": {
+      "by_case": [
+        {
+          "baseline_strategy": "A_single_agent",
+          "candidate_strategy": "B_evolveloop_no_delegation",
+          "case_id": "BO-T01",
+          "sample_size_baseline": 3,
+          "sample_size_candidate": 3,
+          "reliability": "low",
+          "quality": {
+            "verified_completion_rate_baseline": 1,
+            "verified_completion_rate_candidate": 1,
+            "delta": 0
+          },
+          "latency": {
+            "mean_ms_baseline": 3,
+            "mean_ms_candidate": 2,
+            "delta_ms": -1
+          },
+          "cost": {
+            "cost_per_verified_baseline": null,
+            "cost_per_verified_candidate": null,
+            "delta": null,
+            "provenance": "UNAVAILABLE"
+          },
+          "tokens": {
+            "total_reported_baseline": null,
+            "total_reported_candidate": null,
+            "delta": null,
+            "provenance": "UNAVAILABLE"
+          },
+          "rework": {
+            "mean_rework_rate_baseline": null,
+            "mean_rework_rate_candidate": null,
+            "delta": null
+          },
+          "coordination": {
+            "mean_coordination_share_baseline": 0.5,
+            "mean_coordination_share_candidate": 0.5,
+            "delta": 0
+          },
+          "hierarchy_context": {
+            "mean_depth_baseline": 0,
+            "mean_depth_candidate": 0,
+            "mean_subagents_baseline": 0,
+            "mean_subagents_candidate": 0,
+            "note": "Contextual only — interpret with quality/latency/cost/rework components."
+          },
+          "interpretation_notes": [
+            "ROI is decomposed; no single opaque score.",
+            "Hierarchy depth/subagent counts are context only — not proof of beneficial delegation.",
+            "Tokens/costs remain UNAVAILABLE unless PROVIDER_REPORTED/HARNESS_REPORTED/DERIVED from priced usage.",
+            "Sample reliability=low (n_min=3)."
+          ]
+        },
+        {
+          "baseline_strategy": "A_single_agent",
+          "candidate_strategy": "C_evolveloop_adaptive",
+          "case_id": "BO-T01",
+          "sample_size_baseline": 3,
+          "sample_size_candidate": 3,
+          "reliability": "low",
+          "quality": {
+            "verified_completion_rate_baseline": 1,
+            "verified_completion_rate_candidate": 1,
+            "delta": 0
+          },
+          "latency": {
+            "mean_ms_baseline": 3,
+            "mean_ms_candidate": 2.3333333333333335,
+            "delta_ms": -0.6666666666666665
+          },
+          "cost": {
+            "cost_per_verified_baseline": null,
+            "cost_per_verified_candidate": null,
+            "delta": null,
+            "provenance": "UNAVAILABLE"
+          },
+          "tokens": {
+            "total_reported_baseline": null,
+            "total_reported_candidate": null,
+            "delta": null,
+            "provenance": "UNAVAILABLE"
+          },
+          "rework": {
+            "mean_rework_rate_baseline": null,
+            "mean_rework_rate_candidate": null,
+            "delta": null
+          },
+          "coordination": {
+            "mean_coordination_share_baseline": 0.5,
+            "mean_coordination_share_candidate": 0.7142857142857143,
+            "delta": 0.2142857142857143
+          },
+          "hierarchy_context": {
+            "mean_depth_baseline": 0,
+            "mean_depth_candidate": 2,
+            "mean_subagents_baseline": 0,
+            "mean_subagents_candidate": 2,
+            "note": "Contextual only — interpret with quality/latency/cost/rework components."
+          },
+          "interpretation_notes": [
+            "ROI is decomposed; no single opaque score.",
+            "Hierarchy depth/subagent counts are context only — not proof of beneficial delegation.",
+            "Tokens/costs remain UNAVAILABLE unless PROVIDER_REPORTED/HARNESS_REPORTED/DERIVED from priced usage.",
+            "Sample reliability=low (n_min=3)."
+          ]
+        },
+        {
+          "baseline_strategy": "B_evolveloop_no_delegation",
+          "candidate_strategy": "C_evolveloop_adaptive",
+          "case_id": "BO-T01",
+          "sample_size_baseline": 3,
+          "sample_size_candidate": 3,
+          "reliability": "low",
+          "quality": {
+            "verified_completion_rate_baseline": 1,
+            "verified_completion_rate_candidate": 1,
+            "delta": 0
+          },
+          "latency": {
+            "mean_ms_baseline": 2,
+            "mean_ms_candidate": 2.3333333333333335,
+            "delta_ms": 0.3333333333333335
+          },
+          "cost": {
+            "cost_per_verified_baseline": null,
+            "cost_per_verified_candidate": null,
+            "delta": null,
+            "provenance": "UNAVAILABLE"
+          },
+          "tokens": {
+            "total_reported_baseline": null,
+            "total_reported_candidate": null,
+            "delta": null,
+            "provenance": "UNAVAILABLE"
+          },
+          "rework": {
+            "mean_rework_rate_baseline": null,
+            "mean_rework_rate_candidate": null,
+            "delta": null
+          },
+          "coordination": {
+            "mean_coordination_share_baseline": 0.5,
+            "mean_coordination_share_candidate": 0.7142857142857143,
+            "delta": 0.2142857142857143
+          },
+          "hierarchy_context": {
+            "mean_depth_baseline": 0,
+            "mean_depth_candidate": 2,
+            "mean_subagents_baseline": 0,
+            "mean_subagents_candidate": 2,
+            "note": "Contextual only — interpret with quality/latency/cost/rework components."
+          },
+          "interpretation_notes": [
+            "ROI is decomposed; no single opaque score.",
+            "Hierarchy depth/subagent counts are context only — not proof of beneficial delegation.",
+            "Tokens/costs remain UNAVAILABLE unless PROVIDER_REPORTED/HARNESS_REPORTED/DERIVED from priced usage.",
+            "Sample reliability=low (n_min=3)."
+          ]
+        },
+        {
+          "baseline_strategy": "A_single_agent",
+          "candidate_strategy": "B_evolveloop_no_delegation",
+          "case_id": "BO-T02",
+          "sample_size_baseline": 3,
+          "sample_size_candidate": 3,
+          "reliability": "low",
+          "quality": {
+            "verified_completion_rate_baseline": 1,
+            "verified_completion_rate_candidate": 1,
+            "delta": 0
+          },
+          "latency": {
+            "mean_ms_baseline": 2,
+            "mean_ms_candidate": 2,
+            "delta_ms": 0
+          },
+          "cost": {
+            "cost_per_verified_baseline": null,
+            "cost_per_verified_candidate": null,
+            "delta": null,
+            "provenance": "UNAVAILABLE"
+          },
+          "tokens": {
+            "total_reported_baseline": null,
+            "total_reported_candidate": null,
+            "delta": null,
+            "provenance": "UNAVAILABLE"
+          },
+          "rework": {
+            "mean_rework_rate_baseline": null,
+            "mean_rework_rate_candidate": null,
+            "delta": null
+          },
+          "coordination": {
+            "mean_coordination_share_baseline": 0.5,
+            "mean_coordination_share_candidate": 0.5,
+            "delta": 0
+          },
+          "hierarchy_context": {
+            "mean_depth_baseline": 0,
+            "mean_depth_candidate": 0,
+            "mean_subagents_baseline": 0,
+            "mean_subagents_candidate": 0,
+            "note": "Contextual only — interpret with quality/latency/cost/rework components."
+          },
+          "interpretation_notes": [
+            "ROI is decomposed; no single opaque score.",
+            "Hierarchy depth/subagent counts are context only — not proof of beneficial delegation.",
+            "Tokens/costs remain UNAVAILABLE unless PROVIDER_REPORTED/HARNESS_REPORTED/DERIVED from priced usage.",
+            "Sample reliability=low (n_min=3)."
+          ]
+        },
+        {
+          "baseline_strategy": "A_single_agent",
+          "candidate_strategy": "C_evolveloop_adaptive",
+          "case_id": "BO-T02",
+          "sample_size_baseline": 3,
+          "sample_size_candidate": 3,
+          "reliability": "low",
+          "quality": {
+            "verified_completion_rate_baseline": 1,
+            "verified_completion_rate_candidate": 1,
+            "delta": 0
+          },
+          "latency": {
+            "mean_ms_baseline": 2,
+            "mean_ms_candidate": 10.666666666666666,
+            "delta_ms": 8.666666666666666
+          },
+          "cost": {
+            "cost_per_verified_baseline": null,
+            "cost_per_verified_candidate": null,
+            "delta": null,
+            "provenance": "UNAVAILABLE"
+          },
+          "tokens": {
+            "total_reported_baseline": null,
+            "total_reported_candidate": null,
+            "delta": null,
+            "provenance": "UNAVAILABLE"
+          },
+          "rework": {
+            "mean_rework_rate_baseline": null,
+            "mean_rework_rate_candidate": null,
+            "delta": null
+          },
+          "coordination": {
+            "mean_coordination_share_baseline": 0.5,
+            "mean_coordination_share_candidate": 0.7142857142857143,
+            "delta": 0.2142857142857143
+          },
+          "hierarchy_context": {
+            "mean_depth_baseline": 0,
+            "mean_depth_candidate": 2,
+            "mean_subagents_baseline": 0,
+            "mean_subagents_candidate": 2,
+            "note": "Contextual only — interpret with quality/latency/cost/rework components."
+          },
+          "interpretation_notes": [
+            "ROI is decomposed; no single opaque score.",
+            "Hierarchy depth/subagent counts are context only — not proof of beneficial delegation.",
+            "Tokens/costs remain UNAVAILABLE unless PROVIDER_REPORTED/HARNESS_REPORTED/DERIVED from priced usage.",
+            "Sample reliability=low (n_min=3)."
+          ]
+        },
+        {
+          "baseline_strategy": "B_evolveloop_no_delegation",
+          "candidate_strategy": "C_evolveloop_adaptive",
+          "case_id": "BO-T02",
+          "sample_size_baseline": 3,
+          "sample_size_candidate": 3,
+          "reliability": "low",
+          "quality": {
+            "verified_completion_rate_baseline": 1,
+            "verified_completion_rate_candidate": 1,
+            "delta": 0
+          },
+          "latency": {
+            "mean_ms_baseline": 2,
+            "mean_ms_candidate": 10.666666666666666,
+            "delta_ms": 8.666666666666666
+          },
+          "cost": {
+            "cost_per_verified_baseline": null,
+            "cost_per_verified_candidate": null,
+            "delta": null,
+            "provenance": "UNAVAILABLE"
+          },
+          "tokens": {
+            "total_reported_baseline": null,
+            "total_reported_candidate": null,
+            "delta": null,
+            "provenance": "UNAVAILABLE"
+          },
+          "rework": {
+            "mean_rework_rate_baseline": null,
+            "mean_rework_rate_candidate": null,
+            "delta": null
+          },
+          "coordination": {
+            "mean_coordination_share_baseline": 0.5,
+            "mean_coordination_share_candidate": 0.7142857142857143,
+            "delta": 0.2142857142857143
+          },
+          "hierarchy_context": {
+            "mean_depth_baseline": 0,
+            "mean_depth_candidate": 2,
+            "mean_subagents_baseline": 0,
+            "mean_subagents_candidate": 2,
+            "note": "Contextual only — interpret with quality/latency/cost/rework components."
+          },
+          "interpretation_notes": [
+            "ROI is decomposed; no single opaque score.",
+            "Hierarchy depth/subagent counts are context only — not proof of beneficial delegation.",
+            "Tokens/costs remain UNAVAILABLE unless PROVIDER_REPORTED/HARNESS_REPORTED/DERIVED from priced usage.",
+            "Sample reliability=low (n_min=3)."
+          ]
+        },
+        {
+          "baseline_strategy": "A_single_agent",
+          "candidate_strategy": "B_evolveloop_no_delegation",
+          "case_id": "BO-T03",
+          "sample_size_baseline": 3,
+          "sample_size_candidate": 3,
+          "reliability": "low",
+          "quality": {
+            "verified_completion_rate_baseline": 1,
+            "verified_completion_rate_candidate": 1,
+            "delta": 0
+          },
+          "latency": {
+            "mean_ms_baseline": 2,
+            "mean_ms_candidate": 2,
+            "delta_ms": 0
+          },
+          "cost": {
+            "cost_per_verified_baseline": null,
+            "cost_per_verified_candidate": null,
+            "delta": null,
+            "provenance": "UNAVAILABLE"
+          },
+          "tokens": {
+            "total_reported_baseline": null,
+            "total_reported_candidate": null,
+            "delta": null,
+            "provenance": "UNAVAILABLE"
+          },
+          "rework": {
+            "mean_rework_rate_baseline": null,
+            "mean_rework_rate_candidate": null,
+            "delta": null
+          },
+          "coordination": {
+            "mean_coordination_share_baseline": 0.5,
+            "mean_coordination_share_candidate": 0.5,
+            "delta": 0
+          },
+          "hierarchy_context": {
+            "mean_depth_baseline": 0,
+            "mean_depth_candidate": 0,
+            "mean_subagents_baseline": 0,
+            "mean_subagents_candidate": 0,
+            "note": "Contextual only — interpret with quality/latency/cost/rework components."
+          },
+          "interpretation_notes": [
+            "ROI is decomposed; no single opaque score.",
+            "Hierarchy depth/subagent counts are context only — not proof of beneficial delegation.",
+            "Tokens/costs remain UNAVAILABLE unless PROVIDER_REPORTED/HARNESS_REPORTED/DERIVED from priced usage.",
+            "Sample reliability=low (n_min=3)."
+          ]
+        },
+        {
+          "baseline_strategy": "A_single_agent",
+          "candidate_strategy": "C_evolveloop_adaptive",
+          "case_id": "BO-T03",
+          "sample_size_baseline": 3,
+          "sample_size_candidate": 3,
+          "reliability": "low",
+          "quality": {
+            "verified_completion_rate_baseline": 1,
+            "verified_completion_rate_candidate": 1,
+            "delta": 0
+          },
+          "latency": {
+            "mean_ms_baseline": 2,
+            "mean_ms_candidate": 2,
+            "delta_ms": 0
+          },
+          "cost": {
+            "cost_per_verified_baseline": null,
+            "cost_per_verified_candidate": null,
+            "delta": null,
+            "provenance": "UNAVAILABLE"
+          },
+          "tokens": {
+            "total_reported_baseline": null,
+            "total_reported_candidate": null,
+            "delta": null,
+            "provenance": "UNAVAILABLE"
+          },
+          "rework": {
+            "mean_rework_rate_baseline": null,
+            "mean_rework_rate_candidate": null,
+            "delta": null
+          },
+          "coordination": {
+            "mean_coordination_share_baseline": 0.5,
+            "mean_coordination_share_candidate": 0.7142857142857143,
+            "delta": 0.2142857142857143
+          },
+          "hierarchy_context": {
+            "mean_depth_baseline": 0,
+            "mean_depth_candidate": 2,
+            "mean_subagents_baseline": 0,
+            "mean_subagents_candidate": 2,
+            "note": "Contextual only — interpret with quality/latency/cost/rework components."
+          },
+          "interpretation_notes": [
+            "ROI is decomposed; no single opaque score.",
+            "Hierarchy depth/subagent counts are context only — not proof of beneficial delegation.",
+            "Tokens/costs remain UNAVAILABLE unless PROVIDER_REPORTED/HARNESS_REPORTED/DERIVED from priced usage.",
+            "Sample reliability=low (n_min=3)."
+          ]
+        },
+        {
+          "baseline_strategy": "B_evolveloop_no_delegation",
+          "candidate_strategy": "C_evolveloop_adaptive",
+          "case_id": "BO-T03",
+          "sample_size_baseline": 3,
+          "sample_size_candidate": 3,
+          "reliability": "low",
+          "quality": {
+            "verified_completion_rate_baseline": 1,
+            "verified_completion_rate_candidate": 1,
+            "delta": 0
+          },
+          "latency": {
+            "mean_ms_baseline": 2,
+            "mean_ms_candidate": 2,
+            "delta_ms": 0
+          },
+          "cost": {
+            "cost_per_verified_baseline": null,
+            "cost_per_verified_candidate": null,
+            "delta": null,
+            "provenance": "UNAVAILABLE"
+          },
+          "tokens": {
+            "total_reported_baseline": null,
+            "total_reported_candidate": null,
+            "delta": null,
+            "provenance": "UNAVAILABLE"
+          },
+          "rework": {
+            "mean_rework_rate_baseline": null,
+            "mean_rework_rate_candidate": null,
+            "delta": null
+          },
+          "coordination": {
+            "mean_coordination_share_baseline": 0.5,
+            "mean_coordination_share_candidate": 0.7142857142857143,
+            "delta": 0.2142857142857143
+          },
+          "hierarchy_context": {
+            "mean_depth_baseline": 0,
+            "mean_depth_candidate": 2,
+            "mean_subagents_baseline": 0,
+            "mean_subagents_candidate": 2,
+            "note": "Contextual only — interpret with quality/latency/cost/rework components."
+          },
+          "interpretation_notes": [
+            "ROI is decomposed; no single opaque score.",
+            "Hierarchy depth/subagent counts are context only — not proof of beneficial delegation.",
+            "Tokens/costs remain UNAVAILABLE unless PROVIDER_REPORTED/HARNESS_REPORTED/DERIVED from priced usage.",
+            "Sample reliability=low (n_min=3)."
+          ]
+        },
+        {
+          "baseline_strategy": "A_single_agent",
+          "candidate_strategy": "B_evolveloop_no_delegation",
+          "case_id": "BO-T04",
+          "sample_size_baseline": 3,
+          "sample_size_candidate": 3,
+          "reliability": "low",
+          "quality": {
+            "verified_completion_rate_baseline": 1,
+            "verified_completion_rate_candidate": 1,
+            "delta": 0
+          },
+          "latency": {
+            "mean_ms_baseline": 2.6666666666666665,
+            "mean_ms_candidate": 2,
+            "delta_ms": -0.6666666666666665
+          },
+          "cost": {
+            "cost_per_verified_baseline": null,
+            "cost_per_verified_candidate": null,
+            "delta": null,
+            "provenance": "UNAVAILABLE"
+          },
+          "tokens": {
+            "total_reported_baseline": null,
+            "total_reported_candidate": null,
+            "delta": null,
+            "provenance": "UNAVAILABLE"
+          },
+          "rework": {
+            "mean_rework_rate_baseline": null,
+            "mean_rework_rate_candidate": null,
+            "delta": null
+          },
+          "coordination": {
+            "mean_coordination_share_baseline": 0.5,
+            "mean_coordination_share_candidate": 0.5,
+            "delta": 0
+          },
+          "hierarchy_context": {
+            "mean_depth_baseline": 0,
+            "mean_depth_candidate": 0,
+            "mean_subagents_baseline": 0,
+            "mean_subagents_candidate": 0,
+            "note": "Contextual only — interpret with quality/latency/cost/rework components."
+          },
+          "interpretation_notes": [
+            "ROI is decomposed; no single opaque score.",
+            "Hierarchy depth/subagent counts are context only — not proof of beneficial delegation.",
+            "Tokens/costs remain UNAVAILABLE unless PROVIDER_REPORTED/HARNESS_REPORTED/DERIVED from priced usage.",
+            "Sample reliability=low (n_min=3)."
+          ]
+        },
+        {
+          "baseline_strategy": "A_single_agent",
+          "candidate_strategy": "C_evolveloop_adaptive",
+          "case_id": "BO-T04",
+          "sample_size_baseline": 3,
+          "sample_size_candidate": 3,
+          "reliability": "low",
+          "quality": {
+            "verified_completion_rate_baseline": 1,
+            "verified_completion_rate_candidate": 1,
+            "delta": 0
+          },
+          "latency": {
+            "mean_ms_baseline": 2.6666666666666665,
+            "mean_ms_candidate": 2,
+            "delta_ms": -0.6666666666666665
+          },
+          "cost": {
+            "cost_per_verified_baseline": null,
+            "cost_per_verified_candidate": null,
+            "delta": null,
+            "provenance": "UNAVAILABLE"
+          },
+          "tokens": {
+            "total_reported_baseline": null,
+            "total_reported_candidate": null,
+            "delta": null,
+            "provenance": "UNAVAILABLE"
+          },
+          "rework": {
+            "mean_rework_rate_baseline": null,
+            "mean_rework_rate_candidate": null,
+            "delta": null
+          },
+          "coordination": {
+            "mean_coordination_share_baseline": 0.5,
+            "mean_coordination_share_candidate": 0.7142857142857143,
+            "delta": 0.2142857142857143
+          },
+          "hierarchy_context": {
+            "mean_depth_baseline": 0,
+            "mean_depth_candidate": 2,
+            "mean_subagents_baseline": 0,
+            "mean_subagents_candidate": 2,
+            "note": "Contextual only — interpret with quality/latency/cost/rework components."
+          },
+          "interpretation_notes": [
+            "ROI is decomposed; no single opaque score.",
+            "Hierarchy depth/subagent counts are context only — not proof of beneficial delegation.",
+            "Tokens/costs remain UNAVAILABLE unless PROVIDER_REPORTED/HARNESS_REPORTED/DERIVED from priced usage.",
+            "Sample reliability=low (n_min=3)."
+          ]
+        },
+        {
+          "baseline_strategy": "B_evolveloop_no_delegation",
+          "candidate_strategy": "C_evolveloop_adaptive",
+          "case_id": "BO-T04",
+          "sample_size_baseline": 3,
+          "sample_size_candidate": 3,
+          "reliability": "low",
+          "quality": {
+            "verified_completion_rate_baseline": 1,
+            "verified_completion_rate_candidate": 1,
+            "delta": 0
+          },
+          "latency": {
+            "mean_ms_baseline": 2,
+            "mean_ms_candidate": 2,
+            "delta_ms": 0
+          },
+          "cost": {
+            "cost_per_verified_baseline": null,
+            "cost_per_verified_candidate": null,
+            "delta": null,
+            "provenance": "UNAVAILABLE"
+          },
+          "tokens": {
+            "total_reported_baseline": null,
+            "total_reported_candidate": null,
+            "delta": null,
+            "provenance": "UNAVAILABLE"
+          },
+          "rework": {
+            "mean_rework_rate_baseline": null,
+            "mean_rework_rate_candidate": null,
+            "delta": null
+          },
+          "coordination": {
+            "mean_coordination_share_baseline": 0.5,
+            "mean_coordination_share_candidate": 0.7142857142857143,
+            "delta": 0.2142857142857143
+          },
+          "hierarchy_context": {
+            "mean_depth_baseline": 0,
+            "mean_depth_candidate": 2,
+            "mean_subagents_baseline": 0,
+            "mean_subagents_candidate": 2,
+            "note": "Contextual only — interpret with quality/latency/cost/rework components."
+          },
+          "interpretation_notes": [
+            "ROI is decomposed; no single opaque score.",
+            "Hierarchy depth/subagent counts are context only — not proof of beneficial delegation.",
+            "Tokens/costs remain UNAVAILABLE unless PROVIDER_REPORTED/HARNESS_REPORTED/DERIVED from priced usage.",
+            "Sample reliability=low (n_min=3)."
+          ]
+        },
+        {
+          "baseline_strategy": "A_single_agent",
+          "candidate_strategy": "B_evolveloop_no_delegation",
+          "case_id": "BO-T05",
+          "sample_size_baseline": 3,
+          "sample_size_candidate": 3,
+          "reliability": "low",
+          "quality": {
+            "verified_completion_rate_baseline": 1,
+            "verified_completion_rate_candidate": 1,
+            "delta": 0
+          },
+          "latency": {
+            "mean_ms_baseline": 2,
+            "mean_ms_candidate": 2,
+            "delta_ms": 0
+          },
+          "cost": {
+            "cost_per_verified_baseline": null,
+            "cost_per_verified_candidate": null,
+            "delta": null,
+            "provenance": "UNAVAILABLE"
+          },
+          "tokens": {
+            "total_reported_baseline": null,
+            "total_reported_candidate": null,
+            "delta": null,
+            "provenance": "UNAVAILABLE"
+          },
+          "rework": {
+            "mean_rework_rate_baseline": null,
+            "mean_rework_rate_candidate": null,
+            "delta": null
+          },
+          "coordination": {
+            "mean_coordination_share_baseline": 0.5,
+            "mean_coordination_share_candidate": 0.5,
+            "delta": 0
+          },
+          "hierarchy_context": {
+            "mean_depth_baseline": 0,
+            "mean_depth_candidate": 0,
+            "mean_subagents_baseline": 0,
+            "mean_subagents_candidate": 0,
+            "note": "Contextual only — interpret with quality/latency/cost/rework components."
+          },
+          "interpretation_notes": [
+            "ROI is decomposed; no single opaque score.",
+            "Hierarchy depth/subagent counts are context only — not proof of beneficial delegation.",
+            "Tokens/costs remain UNAVAILABLE unless PROVIDER_REPORTED/HARNESS_REPORTED/DERIVED from priced usage.",
+            "Sample reliability=low (n_min=3)."
+          ]
+        },
+        {
+          "baseline_strategy": "A_single_agent",
+          "candidate_strategy": "C_evolveloop_adaptive",
+          "case_id": "BO-T05",
+          "sample_size_baseline": 3,
+          "sample_size_candidate": 3,
+          "reliability": "low",
+          "quality": {
+            "verified_completion_rate_baseline": 1,
+            "verified_completion_rate_candidate": 1,
+            "delta": 0
+          },
+          "latency": {
+            "mean_ms_baseline": 2,
+            "mean_ms_candidate": 2,
+            "delta_ms": 0
+          },
+          "cost": {
+            "cost_per_verified_baseline": null,
+            "cost_per_verified_candidate": null,
+            "delta": null,
+            "provenance": "UNAVAILABLE"
+          },
+          "tokens": {
+            "total_reported_baseline": null,
+            "total_reported_candidate": null,
+            "delta": null,
+            "provenance": "UNAVAILABLE"
+          },
+          "rework": {
+            "mean_rework_rate_baseline": null,
+            "mean_rework_rate_candidate": null,
+            "delta": null
+          },
+          "coordination": {
+            "mean_coordination_share_baseline": 0.5,
+            "mean_coordination_share_candidate": 0.7142857142857143,
+            "delta": 0.2142857142857143
+          },
+          "hierarchy_context": {
+            "mean_depth_baseline": 0,
+            "mean_depth_candidate": 2,
+            "mean_subagents_baseline": 0,
+            "mean_subagents_candidate": 2,
+            "note": "Contextual only — interpret with quality/latency/cost/rework components."
+          },
+          "interpretation_notes": [
+            "ROI is decomposed; no single opaque score.",
+            "Hierarchy depth/subagent counts are context only — not proof of beneficial delegation.",
+            "Tokens/costs remain UNAVAILABLE unless PROVIDER_REPORTED/HARNESS_REPORTED/DERIVED from priced usage.",
+            "Sample reliability=low (n_min=3)."
+          ]
+        },
+        {
+          "baseline_strategy": "B_evolveloop_no_delegation",
+          "candidate_strategy": "C_evolveloop_adaptive",
+          "case_id": "BO-T05",
+          "sample_size_baseline": 3,
+          "sample_size_candidate": 3,
+          "reliability": "low",
+          "quality": {
+            "verified_completion_rate_baseline": 1,
+            "verified_completion_rate_candidate": 1,
+            "delta": 0
+          },
+          "latency": {
+            "mean_ms_baseline": 2,
+            "mean_ms_candidate": 2,
+            "delta_ms": 0
+          },
+          "cost": {
+            "cost_per_verified_baseline": null,
+            "cost_per_verified_candidate": null,
+            "delta": null,
+            "provenance": "UNAVAILABLE"
+          },
+          "tokens": {
+            "total_reported_baseline": null,
+            "total_reported_candidate": null,
+            "delta": null,
+            "provenance": "UNAVAILABLE"
+          },
+          "rework": {
+            "mean_rework_rate_baseline": null,
+            "mean_rework_rate_candidate": null,
+            "delta": null
+          },
+          "coordination": {
+            "mean_coordination_share_baseline": 0.5,
+            "mean_coordination_share_candidate": 0.7142857142857143,
+            "delta": 0.2142857142857143
+          },
+          "hierarchy_context": {
+            "mean_depth_baseline": 0,
+            "mean_depth_candidate": 2,
+            "mean_subagents_baseline": 0,
+            "mean_subagents_candidate": 2,
+            "note": "Contextual only — interpret with quality/latency/cost/rework components."
+          },
+          "interpretation_notes": [
+            "ROI is decomposed; no single opaque score.",
+            "Hierarchy depth/subagent counts are context only — not proof of beneficial delegation.",
+            "Tokens/costs remain UNAVAILABLE unless PROVIDER_REPORTED/HARNESS_REPORTED/DERIVED from priced usage.",
+            "Sample reliability=low (n_min=3)."
+          ]
+        },
+        {
+          "baseline_strategy": "A_single_agent",
+          "candidate_strategy": "B_evolveloop_no_delegation",
+          "case_id": "BO-T06",
+          "sample_size_baseline": 3,
+          "sample_size_candidate": 3,
+          "reliability": "low",
+          "quality": {
+            "verified_completion_rate_baseline": 1,
+            "verified_completion_rate_candidate": 1,
+            "delta": 0
+          },
+          "latency": {
+            "mean_ms_baseline": 2,
+            "mean_ms_candidate": 2,
+            "delta_ms": 0
+          },
+          "cost": {
+            "cost_per_verified_baseline": null,
+            "cost_per_verified_candidate": null,
+            "delta": null,
+            "provenance": "UNAVAILABLE"
+          },
+          "tokens": {
+            "total_reported_baseline": null,
+            "total_reported_candidate": null,
+            "delta": null,
+            "provenance": "UNAVAILABLE"
+          },
+          "rework": {
+            "mean_rework_rate_baseline": null,
+            "mean_rework_rate_candidate": null,
+            "delta": null
+          },
+          "coordination": {
+            "mean_coordination_share_baseline": 0.5,
+            "mean_coordination_share_candidate": 0.5,
+            "delta": 0
+          },
+          "hierarchy_context": {
+            "mean_depth_baseline": 0,
+            "mean_depth_candidate": 0,
+            "mean_subagents_baseline": 0,
+            "mean_subagents_candidate": 0,
+            "note": "Contextual only — interpret with quality/latency/cost/rework components."
+          },
+          "interpretation_notes": [
+            "ROI is decomposed; no single opaque score.",
+            "Hierarchy depth/subagent counts are context only — not proof of beneficial delegation.",
+            "Tokens/costs remain UNAVAILABLE unless PROVIDER_REPORTED/HARNESS_REPORTED/DERIVED from priced usage.",
+            "Sample reliability=low (n_min=3)."
+          ]
+        },
+        {
+          "baseline_strategy": "A_single_agent",
+          "candidate_strategy": "C_evolveloop_adaptive",
+          "case_id": "BO-T06",
+          "sample_size_baseline": 3,
+          "sample_size_candidate": 3,
+          "reliability": "low",
+          "quality": {
+            "verified_completion_rate_baseline": 1,
+            "verified_completion_rate_candidate": 1,
+            "delta": 0
+          },
+          "latency": {
+            "mean_ms_baseline": 2,
+            "mean_ms_candidate": 2.6666666666666665,
+            "delta_ms": 0.6666666666666665
+          },
+          "cost": {
+            "cost_per_verified_baseline": null,
+            "cost_per_verified_candidate": null,
+            "delta": null,
+            "provenance": "UNAVAILABLE"
+          },
+          "tokens": {
+            "total_reported_baseline": null,
+            "total_reported_candidate": null,
+            "delta": null,
+            "provenance": "UNAVAILABLE"
+          },
+          "rework": {
+            "mean_rework_rate_baseline": null,
+            "mean_rework_rate_candidate": null,
+            "delta": null
+          },
+          "coordination": {
+            "mean_coordination_share_baseline": 0.5,
+            "mean_coordination_share_candidate": 0.7142857142857143,
+            "delta": 0.2142857142857143
+          },
+          "hierarchy_context": {
+            "mean_depth_baseline": 0,
+            "mean_depth_candidate": 2,
+            "mean_subagents_baseline": 0,
+            "mean_subagents_candidate": 2,
+            "note": "Contextual only — interpret with quality/latency/cost/rework components."
+          },
+          "interpretation_notes": [
+            "ROI is decomposed; no single opaque score.",
+            "Hierarchy depth/subagent counts are context only — not proof of beneficial delegation.",
+            "Tokens/costs remain UNAVAILABLE unless PROVIDER_REPORTED/HARNESS_REPORTED/DERIVED from priced usage.",
+            "Sample reliability=low (n_min=3)."
+          ]
+        },
+        {
+          "baseline_strategy": "B_evolveloop_no_delegation",
+          "candidate_strategy": "C_evolveloop_adaptive",
+          "case_id": "BO-T06",
+          "sample_size_baseline": 3,
+          "sample_size_candidate": 3,
+          "reliability": "low",
+          "quality": {
+            "verified_completion_rate_baseline": 1,
+            "verified_completion_rate_candidate": 1,
+            "delta": 0
+          },
+          "latency": {
+            "mean_ms_baseline": 2,
+            "mean_ms_candidate": 2.6666666666666665,
+            "delta_ms": 0.6666666666666665
+          },
+          "cost": {
+            "cost_per_verified_baseline": null,
+            "cost_per_verified_candidate": null,
+            "delta": null,
+            "provenance": "UNAVAILABLE"
+          },
+          "tokens": {
+            "total_reported_baseline": null,
+            "total_reported_candidate": null,
+            "delta": null,
+            "provenance": "UNAVAILABLE"
+          },
+          "rework": {
+            "mean_rework_rate_baseline": null,
+            "mean_rework_rate_candidate": null,
+            "delta": null
+          },
+          "coordination": {
+            "mean_coordination_share_baseline": 0.5,
+            "mean_coordination_share_candidate": 0.7142857142857143,
+            "delta": 0.2142857142857143
+          },
+          "hierarchy_context": {
+            "mean_depth_baseline": 0,
+            "mean_depth_candidate": 2,
+            "mean_subagents_baseline": 0,
+            "mean_subagents_candidate": 2,
+            "note": "Contextual only — interpret with quality/latency/cost/rework components."
+          },
+          "interpretation_notes": [
+            "ROI is decomposed; no single opaque score.",
+            "Hierarchy depth/subagent counts are context only — not proof of beneficial delegation.",
+            "Tokens/costs remain UNAVAILABLE unless PROVIDER_REPORTED/HARNESS_REPORTED/DERIVED from priced usage.",
+            "Sample reliability=low (n_min=3)."
+          ]
+        },
+        {
+          "baseline_strategy": "A_single_agent",
+          "candidate_strategy": "B_evolveloop_no_delegation",
+          "case_id": "BO-T07",
+          "sample_size_baseline": 3,
+          "sample_size_candidate": 3,
+          "reliability": "low",
+          "quality": {
+            "verified_completion_rate_baseline": 1,
+            "verified_completion_rate_candidate": 1,
+            "delta": 0
+          },
+          "latency": {
+            "mean_ms_baseline": 2,
+            "mean_ms_candidate": 1.6666666666666667,
+            "delta_ms": -0.33333333333333326
+          },
+          "cost": {
+            "cost_per_verified_baseline": null,
+            "cost_per_verified_candidate": null,
+            "delta": null,
+            "provenance": "UNAVAILABLE"
+          },
+          "tokens": {
+            "total_reported_baseline": null,
+            "total_reported_candidate": null,
+            "delta": null,
+            "provenance": "UNAVAILABLE"
+          },
+          "rework": {
+            "mean_rework_rate_baseline": null,
+            "mean_rework_rate_candidate": null,
+            "delta": null
+          },
+          "coordination": {
+            "mean_coordination_share_baseline": 0.5,
+            "mean_coordination_share_candidate": 0.5,
+            "delta": 0
+          },
+          "hierarchy_context": {
+            "mean_depth_baseline": 0,
+            "mean_depth_candidate": 0,
+            "mean_subagents_baseline": 0,
+            "mean_subagents_candidate": 0,
+            "note": "Contextual only — interpret with quality/latency/cost/rework components."
+          },
+          "interpretation_notes": [
+            "ROI is decomposed; no single opaque score.",
+            "Hierarchy depth/subagent counts are context only — not proof of beneficial delegation.",
+            "Tokens/costs remain UNAVAILABLE unless PROVIDER_REPORTED/HARNESS_REPORTED/DERIVED from priced usage.",
+            "Sample reliability=low (n_min=3)."
+          ]
+        },
+        {
+          "baseline_strategy": "A_single_agent",
+          "candidate_strategy": "C_evolveloop_adaptive",
+          "case_id": "BO-T07",
+          "sample_size_baseline": 3,
+          "sample_size_candidate": 3,
+          "reliability": "low",
+          "quality": {
+            "verified_completion_rate_baseline": 1,
+            "verified_completion_rate_candidate": 1,
+            "delta": 0
+          },
+          "latency": {
+            "mean_ms_baseline": 2,
+            "mean_ms_candidate": 2.3333333333333335,
+            "delta_ms": 0.3333333333333335
+          },
+          "cost": {
+            "cost_per_verified_baseline": null,
+            "cost_per_verified_candidate": null,
+            "delta": null,
+            "provenance": "UNAVAILABLE"
+          },
+          "tokens": {
+            "total_reported_baseline": null,
+            "total_reported_candidate": null,
+            "delta": null,
+            "provenance": "UNAVAILABLE"
+          },
+          "rework": {
+            "mean_rework_rate_baseline": null,
+            "mean_rework_rate_candidate": null,
+            "delta": null
+          },
+          "coordination": {
+            "mean_coordination_share_baseline": 0.5,
+            "mean_coordination_share_candidate": 0.7142857142857143,
+            "delta": 0.2142857142857143
+          },
+          "hierarchy_context": {
+            "mean_depth_baseline": 0,
+            "mean_depth_candidate": 2,
+            "mean_subagents_baseline": 0,
+            "mean_subagents_candidate": 2,
+            "note": "Contextual only — interpret with quality/latency/cost/rework components."
+          },
+          "interpretation_notes": [
+            "ROI is decomposed; no single opaque score.",
+            "Hierarchy depth/subagent counts are context only — not proof of beneficial delegation.",
+            "Tokens/costs remain UNAVAILABLE unless PROVIDER_REPORTED/HARNESS_REPORTED/DERIVED from priced usage.",
+            "Sample reliability=low (n_min=3)."
+          ]
+        },
+        {
+          "baseline_strategy": "B_evolveloop_no_delegation",
+          "candidate_strategy": "C_evolveloop_adaptive",
+          "case_id": "BO-T07",
+          "sample_size_baseline": 3,
+          "sample_size_candidate": 3,
+          "reliability": "low",
+          "quality": {
+            "verified_completion_rate_baseline": 1,
+            "verified_completion_rate_candidate": 1,
+            "delta": 0
+          },
+          "latency": {
+            "mean_ms_baseline": 1.6666666666666667,
+            "mean_ms_candidate": 2.3333333333333335,
+            "delta_ms": 0.6666666666666667
+          },
+          "cost": {
+            "cost_per_verified_baseline": null,
+            "cost_per_verified_candidate": null,
+            "delta": null,
+            "provenance": "UNAVAILABLE"
+          },
+          "tokens": {
+            "total_reported_baseline": null,
+            "total_reported_candidate": null,
+            "delta": null,
+            "provenance": "UNAVAILABLE"
+          },
+          "rework": {
+            "mean_rework_rate_baseline": null,
+            "mean_rework_rate_candidate": null,
+            "delta": null
+          },
+          "coordination": {
+            "mean_coordination_share_baseline": 0.5,
+            "mean_coordination_share_candidate": 0.7142857142857143,
+            "delta": 0.2142857142857143
+          },
+          "hierarchy_context": {
+            "mean_depth_baseline": 0,
+            "mean_depth_candidate": 2,
+            "mean_subagents_baseline": 0,
+            "mean_subagents_candidate": 2,
+            "note": "Contextual only — interpret with quality/latency/cost/rework components."
+          },
+          "interpretation_notes": [
+            "ROI is decomposed; no single opaque score.",
+            "Hierarchy depth/subagent counts are context only — not proof of beneficial delegation.",
+            "Tokens/costs remain UNAVAILABLE unless PROVIDER_REPORTED/HARNESS_REPORTED/DERIVED from priced usage.",
+            "Sample reliability=low (n_min=3)."
+          ]
+        },
+        {
+          "baseline_strategy": "A_single_agent",
+          "candidate_strategy": "B_evolveloop_no_delegation",
+          "case_id": "BO-T08",
+          "sample_size_baseline": 3,
+          "sample_size_candidate": 3,
+          "reliability": "low",
+          "quality": {
+            "verified_completion_rate_baseline": 1,
+            "verified_completion_rate_candidate": 1,
+            "delta": 0
+          },
+          "latency": {
+            "mean_ms_baseline": 2,
+            "mean_ms_candidate": 2,
+            "delta_ms": 0
+          },
+          "cost": {
+            "cost_per_verified_baseline": null,
+            "cost_per_verified_candidate": null,
+            "delta": null,
+            "provenance": "UNAVAILABLE"
+          },
+          "tokens": {
+            "total_reported_baseline": null,
+            "total_reported_candidate": null,
+            "delta": null,
+            "provenance": "UNAVAILABLE"
+          },
+          "rework": {
+            "mean_rework_rate_baseline": null,
+            "mean_rework_rate_candidate": null,
+            "delta": null
+          },
+          "coordination": {
+            "mean_coordination_share_baseline": 0.5,
+            "mean_coordination_share_candidate": 0.5,
+            "delta": 0
+          },
+          "hierarchy_context": {
+            "mean_depth_baseline": 0,
+            "mean_depth_candidate": 0,
+            "mean_subagents_baseline": 0,
+            "mean_subagents_candidate": 0,
+            "note": "Contextual only — interpret with quality/latency/cost/rework components."
+          },
+          "interpretation_notes": [
+            "ROI is decomposed; no single opaque score.",
+            "Hierarchy depth/subagent counts are context only — not proof of beneficial delegation.",
+            "Tokens/costs remain UNAVAILABLE unless PROVIDER_REPORTED/HARNESS_REPORTED/DERIVED from priced usage.",
+            "Sample reliability=low (n_min=3)."
+          ]
+        },
+        {
+          "baseline_strategy": "A_single_agent",
+          "candidate_strategy": "C_evolveloop_adaptive",
+          "case_id": "BO-T08",
+          "sample_size_baseline": 3,
+          "sample_size_candidate": 3,
+          "reliability": "low",
+          "quality": {
+            "verified_completion_rate_baseline": 1,
+            "verified_completion_rate_candidate": 1,
+            "delta": 0
+          },
+          "latency": {
+            "mean_ms_baseline": 2,
+            "mean_ms_candidate": 2.6666666666666665,
+            "delta_ms": 0.6666666666666665
+          },
+          "cost": {
+            "cost_per_verified_baseline": null,
+            "cost_per_verified_candidate": null,
+            "delta": null,
+            "provenance": "UNAVAILABLE"
+          },
+          "tokens": {
+            "total_reported_baseline": null,
+            "total_reported_candidate": null,
+            "delta": null,
+            "provenance": "UNAVAILABLE"
+          },
+          "rework": {
+            "mean_rework_rate_baseline": null,
+            "mean_rework_rate_candidate": null,
+            "delta": null
+          },
+          "coordination": {
+            "mean_coordination_share_baseline": 0.5,
+            "mean_coordination_share_candidate": 0.7142857142857143,
+            "delta": 0.2142857142857143
+          },
+          "hierarchy_context": {
+            "mean_depth_baseline": 0,
+            "mean_depth_candidate": 2,
+            "mean_subagents_baseline": 0,
+            "mean_subagents_candidate": 2,
+            "note": "Contextual only — interpret with quality/latency/cost/rework components."
+          },
+          "interpretation_notes": [
+            "ROI is decomposed; no single opaque score.",
+            "Hierarchy depth/subagent counts are context only — not proof of beneficial delegation.",
+            "Tokens/costs remain UNAVAILABLE unless PROVIDER_REPORTED/HARNESS_REPORTED/DERIVED from priced usage.",
+            "Sample reliability=low (n_min=3)."
+          ]
+        },
+        {
+          "baseline_strategy": "B_evolveloop_no_delegation",
+          "candidate_strategy": "C_evolveloop_adaptive",
+          "case_id": "BO-T08",
+          "sample_size_baseline": 3,
+          "sample_size_candidate": 3,
+          "reliability": "low",
+          "quality": {
+            "verified_completion_rate_baseline": 1,
+            "verified_completion_rate_candidate": 1,
+            "delta": 0
+          },
+          "latency": {
+            "mean_ms_baseline": 2,
+            "mean_ms_candidate": 2.6666666666666665,
+            "delta_ms": 0.6666666666666665
+          },
+          "cost": {
+            "cost_per_verified_baseline": null,
+            "cost_per_verified_candidate": null,
+            "delta": null,
+            "provenance": "UNAVAILABLE"
+          },
+          "tokens": {
+            "total_reported_baseline": null,
+            "total_reported_candidate": null,
+            "delta": null,
+            "provenance": "UNAVAILABLE"
+          },
+          "rework": {
+            "mean_rework_rate_baseline": null,
+            "mean_rework_rate_candidate": null,
+            "delta": null
+          },
+          "coordination": {
+            "mean_coordination_share_baseline": 0.5,
+            "mean_coordination_share_candidate": 0.7142857142857143,
+            "delta": 0.2142857142857143
+          },
+          "hierarchy_context": {
+            "mean_depth_baseline": 0,
+            "mean_depth_candidate": 2,
+            "mean_subagents_baseline": 0,
+            "mean_subagents_candidate": 2,
+            "note": "Contextual only — interpret with quality/latency/cost/rework components."
+          },
+          "interpretation_notes": [
+            "ROI is decomposed; no single opaque score.",
+            "Hierarchy depth/subagent counts are context only — not proof of beneficial delegation.",
+            "Tokens/costs remain UNAVAILABLE unless PROVIDER_REPORTED/HARNESS_REPORTED/DERIVED from priced usage.",
+            "Sample reliability=low (n_min=3)."
+          ]
+        },
+        {
+          "baseline_strategy": "A_single_agent",
+          "candidate_strategy": "B_evolveloop_no_delegation",
+          "case_id": "BO-T09",
+          "sample_size_baseline": 3,
+          "sample_size_candidate": 3,
+          "reliability": "low",
+          "quality": {
+            "verified_completion_rate_baseline": 1,
+            "verified_completion_rate_candidate": 1,
+            "delta": 0
+          },
+          "latency": {
+            "mean_ms_baseline": 2,
+            "mean_ms_candidate": 1.3333333333333333,
+            "delta_ms": -0.6666666666666667
+          },
+          "cost": {
+            "cost_per_verified_baseline": null,
+            "cost_per_verified_candidate": null,
+            "delta": null,
+            "provenance": "UNAVAILABLE"
+          },
+          "tokens": {
+            "total_reported_baseline": null,
+            "total_reported_candidate": null,
+            "delta": null,
+            "provenance": "UNAVAILABLE"
+          },
+          "rework": {
+            "mean_rework_rate_baseline": null,
+            "mean_rework_rate_candidate": null,
+            "delta": null
+          },
+          "coordination": {
+            "mean_coordination_share_baseline": 0.5,
+            "mean_coordination_share_candidate": 0.5,
+            "delta": 0
+          },
+          "hierarchy_context": {
+            "mean_depth_baseline": 0,
+            "mean_depth_candidate": 0,
+            "mean_subagents_baseline": 0,
+            "mean_subagents_candidate": 0,
+            "note": "Contextual only — interpret with quality/latency/cost/rework components."
+          },
+          "interpretation_notes": [
+            "ROI is decomposed; no single opaque score.",
+            "Hierarchy depth/subagent counts are context only — not proof of beneficial delegation.",
+            "Tokens/costs remain UNAVAILABLE unless PROVIDER_REPORTED/HARNESS_REPORTED/DERIVED from priced usage.",
+            "Sample reliability=low (n_min=3)."
+          ]
+        },
+        {
+          "baseline_strategy": "A_single_agent",
+          "candidate_strategy": "C_evolveloop_adaptive",
+          "case_id": "BO-T09",
+          "sample_size_baseline": 3,
+          "sample_size_candidate": 3,
+          "reliability": "low",
+          "quality": {
+            "verified_completion_rate_baseline": 1,
+            "verified_completion_rate_candidate": 1,
+            "delta": 0
+          },
+          "latency": {
+            "mean_ms_baseline": 2,
+            "mean_ms_candidate": 1.6666666666666667,
+            "delta_ms": -0.33333333333333326
+          },
+          "cost": {
+            "cost_per_verified_baseline": null,
+            "cost_per_verified_candidate": null,
+            "delta": null,
+            "provenance": "UNAVAILABLE"
+          },
+          "tokens": {
+            "total_reported_baseline": null,
+            "total_reported_candidate": null,
+            "delta": null,
+            "provenance": "UNAVAILABLE"
+          },
+          "rework": {
+            "mean_rework_rate_baseline": null,
+            "mean_rework_rate_candidate": null,
+            "delta": null
+          },
+          "coordination": {
+            "mean_coordination_share_baseline": 0.5,
+            "mean_coordination_share_candidate": 0.5,
+            "delta": 0
+          },
+          "hierarchy_context": {
+            "mean_depth_baseline": 0,
+            "mean_depth_candidate": 0,
+            "mean_subagents_baseline": 0,
+            "mean_subagents_candidate": 0,
+            "note": "Contextual only — interpret with quality/latency/cost/rework components."
+          },
+          "interpretation_notes": [
+            "ROI is decomposed; no single opaque score.",
+            "Hierarchy depth/subagent counts are context only — not proof of beneficial delegation.",
+            "Tokens/costs remain UNAVAILABLE unless PROVIDER_REPORTED/HARNESS_REPORTED/DERIVED from priced usage.",
+            "Sample reliability=low (n_min=3)."
+          ]
+        },
+        {
+          "baseline_strategy": "B_evolveloop_no_delegation",
+          "candidate_strategy": "C_evolveloop_adaptive",
+          "case_id": "BO-T09",
+          "sample_size_baseline": 3,
+          "sample_size_candidate": 3,
+          "reliability": "low",
+          "quality": {
+            "verified_completion_rate_baseline": 1,
+            "verified_completion_rate_candidate": 1,
+            "delta": 0
+          },
+          "latency": {
+            "mean_ms_baseline": 1.3333333333333333,
+            "mean_ms_candidate": 1.6666666666666667,
+            "delta_ms": 0.3333333333333335
+          },
+          "cost": {
+            "cost_per_verified_baseline": null,
+            "cost_per_verified_candidate": null,
+            "delta": null,
+            "provenance": "UNAVAILABLE"
+          },
+          "tokens": {
+            "total_reported_baseline": null,
+            "total_reported_candidate": null,
+            "delta": null,
+            "provenance": "UNAVAILABLE"
+          },
+          "rework": {
+            "mean_rework_rate_baseline": null,
+            "mean_rework_rate_candidate": null,
+            "delta": null
+          },
+          "coordination": {
+            "mean_coordination_share_baseline": 0.5,
+            "mean_coordination_share_candidate": 0.5,
+            "delta": 0
+          },
+          "hierarchy_context": {
+            "mean_depth_baseline": 0,
+            "mean_depth_candidate": 0,
+            "mean_subagents_baseline": 0,
+            "mean_subagents_candidate": 0,
+            "note": "Contextual only — interpret with quality/latency/cost/rework components."
+          },
+          "interpretation_notes": [
+            "ROI is decomposed; no single opaque score.",
+            "Hierarchy depth/subagent counts are context only — not proof of beneficial delegation.",
+            "Tokens/costs remain UNAVAILABLE unless PROVIDER_REPORTED/HARNESS_REPORTED/DERIVED from priced usage.",
+            "Sample reliability=low (n_min=3)."
+          ]
+        },
+        {
+          "baseline_strategy": "A_single_agent",
+          "candidate_strategy": "B_evolveloop_no_delegation",
+          "case_id": "BO-T10",
+          "sample_size_baseline": 3,
+          "sample_size_candidate": 3,
+          "reliability": "low",
+          "quality": {
+            "verified_completion_rate_baseline": 1,
+            "verified_completion_rate_candidate": 1,
+            "delta": 0
+          },
+          "latency": {
+            "mean_ms_baseline": 2,
+            "mean_ms_candidate": 2,
+            "delta_ms": 0
+          },
+          "cost": {
+            "cost_per_verified_baseline": null,
+            "cost_per_verified_candidate": null,
+            "delta": null,
+            "provenance": "UNAVAILABLE"
+          },
+          "tokens": {
+            "total_reported_baseline": null,
+            "total_reported_candidate": null,
+            "delta": null,
+            "provenance": "UNAVAILABLE"
+          },
+          "rework": {
+            "mean_rework_rate_baseline": null,
+            "mean_rework_rate_candidate": null,
+            "delta": null
+          },
+          "coordination": {
+            "mean_coordination_share_baseline": 0.5,
+            "mean_coordination_share_candidate": 0.5,
+            "delta": 0
+          },
+          "hierarchy_context": {
+            "mean_depth_baseline": 0,
+            "mean_depth_candidate": 0,
+            "mean_subagents_baseline": 0,
+            "mean_subagents_candidate": 0,
+            "note": "Contextual only — interpret with quality/latency/cost/rework components."
+          },
+          "interpretation_notes": [
+            "ROI is decomposed; no single opaque score.",
+            "Hierarchy depth/subagent counts are context only — not proof of beneficial delegation.",
+            "Tokens/costs remain UNAVAILABLE unless PROVIDER_REPORTED/HARNESS_REPORTED/DERIVED from priced usage.",
+            "Sample reliability=low (n_min=3)."
+          ]
+        },
+        {
+          "baseline_strategy": "A_single_agent",
+          "candidate_strategy": "C_evolveloop_adaptive",
+          "case_id": "BO-T10",
+          "sample_size_baseline": 3,
+          "sample_size_candidate": 3,
+          "reliability": "low",
+          "quality": {
+            "verified_completion_rate_baseline": 1,
+            "verified_completion_rate_candidate": 1,
+            "delta": 0
+          },
+          "latency": {
+            "mean_ms_baseline": 2,
+            "mean_ms_candidate": 2,
+            "delta_ms": 0
+          },
+          "cost": {
+            "cost_per_verified_baseline": null,
+            "cost_per_verified_candidate": null,
+            "delta": null,
+            "provenance": "UNAVAILABLE"
+          },
+          "tokens": {
+            "total_reported_baseline": null,
+            "total_reported_candidate": null,
+            "delta": null,
+            "provenance": "UNAVAILABLE"
+          },
+          "rework": {
+            "mean_rework_rate_baseline": null,
+            "mean_rework_rate_candidate": null,
+            "delta": null
+          },
+          "coordination": {
+            "mean_coordination_share_baseline": 0.5,
+            "mean_coordination_share_candidate": 0.7142857142857143,
+            "delta": 0.2142857142857143
+          },
+          "hierarchy_context": {
+            "mean_depth_baseline": 0,
+            "mean_depth_candidate": 2,
+            "mean_subagents_baseline": 0,
+            "mean_subagents_candidate": 2,
+            "note": "Contextual only — interpret with quality/latency/cost/rework components."
+          },
+          "interpretation_notes": [
+            "ROI is decomposed; no single opaque score.",
+            "Hierarchy depth/subagent counts are context only — not proof of beneficial delegation.",
+            "Tokens/costs remain UNAVAILABLE unless PROVIDER_REPORTED/HARNESS_REPORTED/DERIVED from priced usage.",
+            "Sample reliability=low (n_min=3)."
+          ]
+        },
+        {
+          "baseline_strategy": "B_evolveloop_no_delegation",
+          "candidate_strategy": "C_evolveloop_adaptive",
+          "case_id": "BO-T10",
+          "sample_size_baseline": 3,
+          "sample_size_candidate": 3,
+          "reliability": "low",
+          "quality": {
+            "verified_completion_rate_baseline": 1,
+            "verified_completion_rate_candidate": 1,
+            "delta": 0
+          },
+          "latency": {
+            "mean_ms_baseline": 2,
+            "mean_ms_candidate": 2,
+            "delta_ms": 0
+          },
+          "cost": {
+            "cost_per_verified_baseline": null,
+            "cost_per_verified_candidate": null,
+            "delta": null,
+            "provenance": "UNAVAILABLE"
+          },
+          "tokens": {
+            "total_reported_baseline": null,
+            "total_reported_candidate": null,
+            "delta": null,
+            "provenance": "UNAVAILABLE"
+          },
+          "rework": {
+            "mean_rework_rate_baseline": null,
+            "mean_rework_rate_candidate": null,
+            "delta": null
+          },
+          "coordination": {
+            "mean_coordination_share_baseline": 0.5,
+            "mean_coordination_share_candidate": 0.7142857142857143,
+            "delta": 0.2142857142857143
+          },
+          "hierarchy_context": {
+            "mean_depth_baseline": 0,
+            "mean_depth_candidate": 2,
+            "mean_subagents_baseline": 0,
+            "mean_subagents_candidate": 2,
+            "note": "Contextual only — interpret with quality/latency/cost/rework components."
+          },
+          "interpretation_notes": [
+            "ROI is decomposed; no single opaque score.",
+            "Hierarchy depth/subagent counts are context only — not proof of beneficial delegation.",
+            "Tokens/costs remain UNAVAILABLE unless PROVIDER_REPORTED/HARNESS_REPORTED/DERIVED from priced usage.",
+            "Sample reliability=low (n_min=3)."
+          ]
+        },
+        {
+          "baseline_strategy": "A_single_agent",
+          "candidate_strategy": "B_evolveloop_no_delegation",
+          "case_id": "BO-ORCH-01",
+          "sample_size_baseline": 3,
+          "sample_size_candidate": 3,
+          "reliability": "low",
+          "quality": {
+            "verified_completion_rate_baseline": 1,
+            "verified_completion_rate_candidate": 1,
+            "delta": 0
+          },
+          "latency": {
+            "mean_ms_baseline": 2,
+            "mean_ms_candidate": 2,
+            "delta_ms": 0
+          },
+          "cost": {
+            "cost_per_verified_baseline": null,
+            "cost_per_verified_candidate": null,
+            "delta": null,
+            "provenance": "UNAVAILABLE"
+          },
+          "tokens": {
+            "total_reported_baseline": null,
+            "total_reported_candidate": null,
+            "delta": null,
+            "provenance": "UNAVAILABLE"
+          },
+          "rework": {
+            "mean_rework_rate_baseline": null,
+            "mean_rework_rate_candidate": null,
+            "delta": null
+          },
+          "coordination": {
+            "mean_coordination_share_baseline": 0.5,
+            "mean_coordination_share_candidate": 0.5,
+            "delta": 0
+          },
+          "hierarchy_context": {
+            "mean_depth_baseline": 0,
+            "mean_depth_candidate": 0,
+            "mean_subagents_baseline": 0,
+            "mean_subagents_candidate": 0,
+            "note": "Contextual only — interpret with quality/latency/cost/rework components."
+          },
+          "interpretation_notes": [
+            "ROI is decomposed; no single opaque score.",
+            "Hierarchy depth/subagent counts are context only — not proof of beneficial delegation.",
+            "Tokens/costs remain UNAVAILABLE unless PROVIDER_REPORTED/HARNESS_REPORTED/DERIVED from priced usage.",
+            "Sample reliability=low (n_min=3)."
+          ]
+        },
+        {
+          "baseline_strategy": "A_single_agent",
+          "candidate_strategy": "C_evolveloop_adaptive",
+          "case_id": "BO-ORCH-01",
+          "sample_size_baseline": 3,
+          "sample_size_candidate": 3,
+          "reliability": "low",
+          "quality": {
+            "verified_completion_rate_baseline": 1,
+            "verified_completion_rate_candidate": 1,
+            "delta": 0
+          },
+          "latency": {
+            "mean_ms_baseline": 2,
+            "mean_ms_candidate": 1.6666666666666667,
+            "delta_ms": -0.33333333333333326
+          },
+          "cost": {
+            "cost_per_verified_baseline": null,
+            "cost_per_verified_candidate": null,
+            "delta": null,
+            "provenance": "UNAVAILABLE"
+          },
+          "tokens": {
+            "total_reported_baseline": null,
+            "total_reported_candidate": null,
+            "delta": null,
+            "provenance": "UNAVAILABLE"
+          },
+          "rework": {
+            "mean_rework_rate_baseline": null,
+            "mean_rework_rate_candidate": null,
+            "delta": null
+          },
+          "coordination": {
+            "mean_coordination_share_baseline": 0.5,
+            "mean_coordination_share_candidate": 0.5,
+            "delta": 0
+          },
+          "hierarchy_context": {
+            "mean_depth_baseline": 0,
+            "mean_depth_candidate": 0,
+            "mean_subagents_baseline": 0,
+            "mean_subagents_candidate": 0,
+            "note": "Contextual only — interpret with quality/latency/cost/rework components."
+          },
+          "interpretation_notes": [
+            "ROI is decomposed; no single opaque score.",
+            "Hierarchy depth/subagent counts are context only — not proof of beneficial delegation.",
+            "Tokens/costs remain UNAVAILABLE unless PROVIDER_REPORTED/HARNESS_REPORTED/DERIVED from priced usage.",
+            "Sample reliability=low (n_min=3)."
+          ]
+        },
+        {
+          "baseline_strategy": "B_evolveloop_no_delegation",
+          "candidate_strategy": "C_evolveloop_adaptive",
+          "case_id": "BO-ORCH-01",
+          "sample_size_baseline": 3,
+          "sample_size_candidate": 3,
+          "reliability": "low",
+          "quality": {
+            "verified_completion_rate_baseline": 1,
+            "verified_completion_rate_candidate": 1,
+            "delta": 0
+          },
+          "latency": {
+            "mean_ms_baseline": 2,
+            "mean_ms_candidate": 1.6666666666666667,
+            "delta_ms": -0.33333333333333326
+          },
+          "cost": {
+            "cost_per_verified_baseline": null,
+            "cost_per_verified_candidate": null,
+            "delta": null,
+            "provenance": "UNAVAILABLE"
+          },
+          "tokens": {
+            "total_reported_baseline": null,
+            "total_reported_candidate": null,
+            "delta": null,
+            "provenance": "UNAVAILABLE"
+          },
+          "rework": {
+            "mean_rework_rate_baseline": null,
+            "mean_rework_rate_candidate": null,
+            "delta": null
+          },
+          "coordination": {
+            "mean_coordination_share_baseline": 0.5,
+            "mean_coordination_share_candidate": 0.5,
+            "delta": 0
+          },
+          "hierarchy_context": {
+            "mean_depth_baseline": 0,
+            "mean_depth_candidate": 0,
+            "mean_subagents_baseline": 0,
+            "mean_subagents_candidate": 0,
+            "note": "Contextual only — interpret with quality/latency/cost/rework components."
+          },
+          "interpretation_notes": [
+            "ROI is decomposed; no single opaque score.",
+            "Hierarchy depth/subagent counts are context only — not proof of beneficial delegation.",
+            "Tokens/costs remain UNAVAILABLE unless PROVIDER_REPORTED/HARNESS_REPORTED/DERIVED from priced usage.",
+            "Sample reliability=low (n_min=3)."
+          ]
+        },
+        {
+          "baseline_strategy": "A_single_agent",
+          "candidate_strategy": "B_evolveloop_no_delegation",
+          "case_id": "BO-ORCH-02",
+          "sample_size_baseline": 3,
+          "sample_size_candidate": 3,
+          "reliability": "low",
+          "quality": {
+            "verified_completion_rate_baseline": 1,
+            "verified_completion_rate_candidate": 1,
+            "delta": 0
+          },
+          "latency": {
+            "mean_ms_baseline": 2.3333333333333335,
+            "mean_ms_candidate": 1.6666666666666667,
+            "delta_ms": -0.6666666666666667
+          },
+          "cost": {
+            "cost_per_verified_baseline": null,
+            "cost_per_verified_candidate": null,
+            "delta": null,
+            "provenance": "UNAVAILABLE"
+          },
+          "tokens": {
+            "total_reported_baseline": null,
+            "total_reported_candidate": null,
+            "delta": null,
+            "provenance": "UNAVAILABLE"
+          },
+          "rework": {
+            "mean_rework_rate_baseline": null,
+            "mean_rework_rate_candidate": null,
+            "delta": null
+          },
+          "coordination": {
+            "mean_coordination_share_baseline": 0.5,
+            "mean_coordination_share_candidate": 0.5,
+            "delta": 0
+          },
+          "hierarchy_context": {
+            "mean_depth_baseline": 0,
+            "mean_depth_candidate": 0,
+            "mean_subagents_baseline": 0,
+            "mean_subagents_candidate": 0,
+            "note": "Contextual only — interpret with quality/latency/cost/rework components."
+          },
+          "interpretation_notes": [
+            "ROI is decomposed; no single opaque score.",
+            "Hierarchy depth/subagent counts are context only — not proof of beneficial delegation.",
+            "Tokens/costs remain UNAVAILABLE unless PROVIDER_REPORTED/HARNESS_REPORTED/DERIVED from priced usage.",
+            "Sample reliability=low (n_min=3)."
+          ]
+        },
+        {
+          "baseline_strategy": "A_single_agent",
+          "candidate_strategy": "C_evolveloop_adaptive",
+          "case_id": "BO-ORCH-02",
+          "sample_size_baseline": 3,
+          "sample_size_candidate": 3,
+          "reliability": "low",
+          "quality": {
+            "verified_completion_rate_baseline": 1,
+            "verified_completion_rate_candidate": 1,
+            "delta": 0
+          },
+          "latency": {
+            "mean_ms_baseline": 2.3333333333333335,
+            "mean_ms_candidate": 2,
+            "delta_ms": -0.3333333333333335
+          },
+          "cost": {
+            "cost_per_verified_baseline": null,
+            "cost_per_verified_candidate": null,
+            "delta": null,
+            "provenance": "UNAVAILABLE"
+          },
+          "tokens": {
+            "total_reported_baseline": null,
+            "total_reported_candidate": null,
+            "delta": null,
+            "provenance": "UNAVAILABLE"
+          },
+          "rework": {
+            "mean_rework_rate_baseline": null,
+            "mean_rework_rate_candidate": null,
+            "delta": null
+          },
+          "coordination": {
+            "mean_coordination_share_baseline": 0.5,
+            "mean_coordination_share_candidate": 0.7142857142857143,
+            "delta": 0.2142857142857143
+          },
+          "hierarchy_context": {
+            "mean_depth_baseline": 0,
+            "mean_depth_candidate": 2,
+            "mean_subagents_baseline": 0,
+            "mean_subagents_candidate": 2,
+            "note": "Contextual only — interpret with quality/latency/cost/rework components."
+          },
+          "interpretation_notes": [
+            "ROI is decomposed; no single opaque score.",
+            "Hierarchy depth/subagent counts are context only — not proof of beneficial delegation.",
+            "Tokens/costs remain UNAVAILABLE unless PROVIDER_REPORTED/HARNESS_REPORTED/DERIVED from priced usage.",
+            "Sample reliability=low (n_min=3)."
+          ]
+        },
+        {
+          "baseline_strategy": "B_evolveloop_no_delegation",
+          "candidate_strategy": "C_evolveloop_adaptive",
+          "case_id": "BO-ORCH-02",
+          "sample_size_baseline": 3,
+          "sample_size_candidate": 3,
+          "reliability": "low",
+          "quality": {
+            "verified_completion_rate_baseline": 1,
+            "verified_completion_rate_candidate": 1,
+            "delta": 0
+          },
+          "latency": {
+            "mean_ms_baseline": 1.6666666666666667,
+            "mean_ms_candidate": 2,
+            "delta_ms": 0.33333333333333326
+          },
+          "cost": {
+            "cost_per_verified_baseline": null,
+            "cost_per_verified_candidate": null,
+            "delta": null,
+            "provenance": "UNAVAILABLE"
+          },
+          "tokens": {
+            "total_reported_baseline": null,
+            "total_reported_candidate": null,
+            "delta": null,
+            "provenance": "UNAVAILABLE"
+          },
+          "rework": {
+            "mean_rework_rate_baseline": null,
+            "mean_rework_rate_candidate": null,
+            "delta": null
+          },
+          "coordination": {
+            "mean_coordination_share_baseline": 0.5,
+            "mean_coordination_share_candidate": 0.7142857142857143,
+            "delta": 0.2142857142857143
+          },
+          "hierarchy_context": {
+            "mean_depth_baseline": 0,
+            "mean_depth_candidate": 2,
+            "mean_subagents_baseline": 0,
+            "mean_subagents_candidate": 2,
+            "note": "Contextual only — interpret with quality/latency/cost/rework components."
+          },
+          "interpretation_notes": [
+            "ROI is decomposed; no single opaque score.",
+            "Hierarchy depth/subagent counts are context only — not proof of beneficial delegation.",
+            "Tokens/costs remain UNAVAILABLE unless PROVIDER_REPORTED/HARNESS_REPORTED/DERIVED from priced usage.",
+            "Sample reliability=low (n_min=3)."
+          ]
+        },
+        {
+          "baseline_strategy": "A_single_agent",
+          "candidate_strategy": "B_evolveloop_no_delegation",
+          "case_id": "BO-TEL-01",
+          "sample_size_baseline": 3,
+          "sample_size_candidate": 3,
+          "reliability": "low",
+          "quality": {
+            "verified_completion_rate_baseline": 1,
+            "verified_completion_rate_candidate": 1,
+            "delta": 0
+          },
+          "latency": {
+            "mean_ms_baseline": 2,
+            "mean_ms_candidate": 2,
+            "delta_ms": 0
+          },
+          "cost": {
+            "cost_per_verified_baseline": null,
+            "cost_per_verified_candidate": null,
+            "delta": null,
+            "provenance": "UNAVAILABLE"
+          },
+          "tokens": {
+            "total_reported_baseline": null,
+            "total_reported_candidate": null,
+            "delta": null,
+            "provenance": "UNAVAILABLE"
+          },
+          "rework": {
+            "mean_rework_rate_baseline": null,
+            "mean_rework_rate_candidate": null,
+            "delta": null
+          },
+          "coordination": {
+            "mean_coordination_share_baseline": 0.5,
+            "mean_coordination_share_candidate": 0.5,
+            "delta": 0
+          },
+          "hierarchy_context": {
+            "mean_depth_baseline": 0,
+            "mean_depth_candidate": 0,
+            "mean_subagents_baseline": 0,
+            "mean_subagents_candidate": 0,
+            "note": "Contextual only — interpret with quality/latency/cost/rework components."
+          },
+          "interpretation_notes": [
+            "ROI is decomposed; no single opaque score.",
+            "Hierarchy depth/subagent counts are context only — not proof of beneficial delegation.",
+            "Tokens/costs remain UNAVAILABLE unless PROVIDER_REPORTED/HARNESS_REPORTED/DERIVED from priced usage.",
+            "Sample reliability=low (n_min=3)."
+          ]
+        },
+        {
+          "baseline_strategy": "A_single_agent",
+          "candidate_strategy": "C_evolveloop_adaptive",
+          "case_id": "BO-TEL-01",
+          "sample_size_baseline": 3,
+          "sample_size_candidate": 3,
+          "reliability": "low",
+          "quality": {
+            "verified_completion_rate_baseline": 1,
+            "verified_completion_rate_candidate": 1,
+            "delta": 0
+          },
+          "latency": {
+            "mean_ms_baseline": 2,
+            "mean_ms_candidate": 2,
+            "delta_ms": 0
+          },
+          "cost": {
+            "cost_per_verified_baseline": null,
+            "cost_per_verified_candidate": null,
+            "delta": null,
+            "provenance": "UNAVAILABLE"
+          },
+          "tokens": {
+            "total_reported_baseline": null,
+            "total_reported_candidate": null,
+            "delta": null,
+            "provenance": "UNAVAILABLE"
+          },
+          "rework": {
+            "mean_rework_rate_baseline": null,
+            "mean_rework_rate_candidate": null,
+            "delta": null
+          },
+          "coordination": {
+            "mean_coordination_share_baseline": 0.5,
+            "mean_coordination_share_candidate": 0.5,
+            "delta": 0
+          },
+          "hierarchy_context": {
+            "mean_depth_baseline": 0,
+            "mean_depth_candidate": 0,
+            "mean_subagents_baseline": 0,
+            "mean_subagents_candidate": 0,
+            "note": "Contextual only — interpret with quality/latency/cost/rework components."
+          },
+          "interpretation_notes": [
+            "ROI is decomposed; no single opaque score.",
+            "Hierarchy depth/subagent counts are context only — not proof of beneficial delegation.",
+            "Tokens/costs remain UNAVAILABLE unless PROVIDER_REPORTED/HARNESS_REPORTED/DERIVED from priced usage.",
+            "Sample reliability=low (n_min=3)."
+          ]
+        },
+        {
+          "baseline_strategy": "B_evolveloop_no_delegation",
+          "candidate_strategy": "C_evolveloop_adaptive",
+          "case_id": "BO-TEL-01",
+          "sample_size_baseline": 3,
+          "sample_size_candidate": 3,
+          "reliability": "low",
+          "quality": {
+            "verified_completion_rate_baseline": 1,
+            "verified_completion_rate_candidate": 1,
+            "delta": 0
+          },
+          "latency": {
+            "mean_ms_baseline": 2,
+            "mean_ms_candidate": 2,
+            "delta_ms": 0
+          },
+          "cost": {
+            "cost_per_verified_baseline": null,
+            "cost_per_verified_candidate": null,
+            "delta": null,
+            "provenance": "UNAVAILABLE"
+          },
+          "tokens": {
+            "total_reported_baseline": null,
+            "total_reported_candidate": null,
+            "delta": null,
+            "provenance": "UNAVAILABLE"
+          },
+          "rework": {
+            "mean_rework_rate_baseline": null,
+            "mean_rework_rate_candidate": null,
+            "delta": null
+          },
+          "coordination": {
+            "mean_coordination_share_baseline": 0.5,
+            "mean_coordination_share_candidate": 0.5,
+            "delta": 0
+          },
+          "hierarchy_context": {
+            "mean_depth_baseline": 0,
+            "mean_depth_candidate": 0,
+            "mean_subagents_baseline": 0,
+            "mean_subagents_candidate": 0,
+            "note": "Contextual only — interpret with quality/latency/cost/rework components."
+          },
+          "interpretation_notes": [
+            "ROI is decomposed; no single opaque score.",
+            "Hierarchy depth/subagent counts are context only — not proof of beneficial delegation.",
+            "Tokens/costs remain UNAVAILABLE unless PROVIDER_REPORTED/HARNESS_REPORTED/DERIVED from priced usage.",
+            "Sample reliability=low (n_min=3)."
+          ]
+        },
+        {
+          "baseline_strategy": "A_single_agent",
+          "candidate_strategy": "B_evolveloop_no_delegation",
+          "case_id": "BO-ORCH-03",
+          "sample_size_baseline": 0,
+          "sample_size_candidate": 0,
+          "reliability": "insufficient_sample",
+          "quality": {
+            "verified_completion_rate_baseline": null,
+            "verified_completion_rate_candidate": null,
+            "delta": null
+          },
+          "latency": {
+            "mean_ms_baseline": null,
+            "mean_ms_candidate": null,
+            "delta_ms": null
+          },
+          "cost": {
+            "cost_per_verified_baseline": null,
+            "cost_per_verified_candidate": null,
+            "delta": null,
+            "provenance": "UNAVAILABLE"
+          },
+          "tokens": {
+            "total_reported_baseline": null,
+            "total_reported_candidate": null,
+            "delta": null,
+            "provenance": "UNAVAILABLE"
+          },
+          "rework": {
+            "mean_rework_rate_baseline": null,
+            "mean_rework_rate_candidate": null,
+            "delta": null
+          },
+          "coordination": {
+            "mean_coordination_share_baseline": null,
+            "mean_coordination_share_candidate": null,
+            "delta": null
+          },
+          "hierarchy_context": {
+            "mean_depth_baseline": null,
+            "mean_depth_candidate": null,
+            "mean_subagents_baseline": null,
+            "mean_subagents_candidate": null,
+            "note": "Contextual only — interpret with quality/latency/cost/rework components."
+          },
+          "interpretation_notes": [
+            "ROI is decomposed; no single opaque score.",
+            "Hierarchy depth/subagent counts are context only — not proof of beneficial delegation.",
+            "Tokens/costs remain UNAVAILABLE unless PROVIDER_REPORTED/HARNESS_REPORTED/DERIVED from priced usage.",
+            "Sample reliability=insufficient_sample (n_min=0)."
+          ]
+        },
+        {
+          "baseline_strategy": "A_single_agent",
+          "candidate_strategy": "C_evolveloop_adaptive",
+          "case_id": "BO-ORCH-03",
+          "sample_size_baseline": 0,
+          "sample_size_candidate": 3,
+          "reliability": "insufficient_sample",
+          "quality": {
+            "verified_completion_rate_baseline": null,
+            "verified_completion_rate_candidate": 1,
+            "delta": null
+          },
+          "latency": {
+            "mean_ms_baseline": null,
+            "mean_ms_candidate": 2,
+            "delta_ms": null
+          },
+          "cost": {
+            "cost_per_verified_baseline": null,
+            "cost_per_verified_candidate": null,
+            "delta": null,
+            "provenance": "UNAVAILABLE"
+          },
+          "tokens": {
+            "total_reported_baseline": null,
+            "total_reported_candidate": null,
+            "delta": null,
+            "provenance": "UNAVAILABLE"
+          },
+          "rework": {
+            "mean_rework_rate_baseline": null,
+            "mean_rework_rate_candidate": null,
+            "delta": null
+          },
+          "coordination": {
+            "mean_coordination_share_baseline": null,
+            "mean_coordination_share_candidate": 0.7142857142857143,
+            "delta": null
+          },
+          "hierarchy_context": {
+            "mean_depth_baseline": null,
+            "mean_depth_candidate": 2,
+            "mean_subagents_baseline": null,
+            "mean_subagents_candidate": 2,
+            "note": "Contextual only — interpret with quality/latency/cost/rework components."
+          },
+          "interpretation_notes": [
+            "ROI is decomposed; no single opaque score.",
+            "Hierarchy depth/subagent counts are context only — not proof of beneficial delegation.",
+            "Tokens/costs remain UNAVAILABLE unless PROVIDER_REPORTED/HARNESS_REPORTED/DERIVED from priced usage.",
+            "Sample reliability=insufficient_sample (n_min=0)."
+          ]
+        },
+        {
+          "baseline_strategy": "B_evolveloop_no_delegation",
+          "candidate_strategy": "C_evolveloop_adaptive",
+          "case_id": "BO-ORCH-03",
+          "sample_size_baseline": 0,
+          "sample_size_candidate": 3,
+          "reliability": "insufficient_sample",
+          "quality": {
+            "verified_completion_rate_baseline": null,
+            "verified_completion_rate_candidate": 1,
+            "delta": null
+          },
+          "latency": {
+            "mean_ms_baseline": null,
+            "mean_ms_candidate": 2,
+            "delta_ms": null
+          },
+          "cost": {
+            "cost_per_verified_baseline": null,
+            "cost_per_verified_candidate": null,
+            "delta": null,
+            "provenance": "UNAVAILABLE"
+          },
+          "tokens": {
+            "total_reported_baseline": null,
+            "total_reported_candidate": null,
+            "delta": null,
+            "provenance": "UNAVAILABLE"
+          },
+          "rework": {
+            "mean_rework_rate_baseline": null,
+            "mean_rework_rate_candidate": null,
+            "delta": null
+          },
+          "coordination": {
+            "mean_coordination_share_baseline": null,
+            "mean_coordination_share_candidate": 0.7142857142857143,
+            "delta": null
+          },
+          "hierarchy_context": {
+            "mean_depth_baseline": null,
+            "mean_depth_candidate": 2,
+            "mean_subagents_baseline": null,
+            "mean_subagents_candidate": 2,
+            "note": "Contextual only — interpret with quality/latency/cost/rework components."
+          },
+          "interpretation_notes": [
+            "ROI is decomposed; no single opaque score.",
+            "Hierarchy depth/subagent counts are context only — not proof of beneficial delegation.",
+            "Tokens/costs remain UNAVAILABLE unless PROVIDER_REPORTED/HARNESS_REPORTED/DERIVED from priced usage.",
+            "Sample reliability=insufficient_sample (n_min=0)."
+          ]
+        },
+        {
+          "baseline_strategy": "A_single_agent",
+          "candidate_strategy": "B_evolveloop_no_delegation",
+          "case_id": "BO-ORCH-04",
+          "sample_size_baseline": 0,
+          "sample_size_candidate": 0,
+          "reliability": "insufficient_sample",
+          "quality": {
+            "verified_completion_rate_baseline": null,
+            "verified_completion_rate_candidate": null,
+            "delta": null
+          },
+          "latency": {
+            "mean_ms_baseline": null,
+            "mean_ms_candidate": null,
+            "delta_ms": null
+          },
+          "cost": {
+            "cost_per_verified_baseline": null,
+            "cost_per_verified_candidate": null,
+            "delta": null,
+            "provenance": "UNAVAILABLE"
+          },
+          "tokens": {
+            "total_reported_baseline": null,
+            "total_reported_candidate": null,
+            "delta": null,
+            "provenance": "UNAVAILABLE"
+          },
+          "rework": {
+            "mean_rework_rate_baseline": null,
+            "mean_rework_rate_candidate": null,
+            "delta": null
+          },
+          "coordination": {
+            "mean_coordination_share_baseline": null,
+            "mean_coordination_share_candidate": null,
+            "delta": null
+          },
+          "hierarchy_context": {
+            "mean_depth_baseline": null,
+            "mean_depth_candidate": null,
+            "mean_subagents_baseline": null,
+            "mean_subagents_candidate": null,
+            "note": "Contextual only — interpret with quality/latency/cost/rework components."
+          },
+          "interpretation_notes": [
+            "ROI is decomposed; no single opaque score.",
+            "Hierarchy depth/subagent counts are context only — not proof of beneficial delegation.",
+            "Tokens/costs remain UNAVAILABLE unless PROVIDER_REPORTED/HARNESS_REPORTED/DERIVED from priced usage.",
+            "Sample reliability=insufficient_sample (n_min=0)."
+          ]
+        },
+        {
+          "baseline_strategy": "A_single_agent",
+          "candidate_strategy": "C_evolveloop_adaptive",
+          "case_id": "BO-ORCH-04",
+          "sample_size_baseline": 0,
+          "sample_size_candidate": 3,
+          "reliability": "insufficient_sample",
+          "quality": {
+            "verified_completion_rate_baseline": null,
+            "verified_completion_rate_candidate": 1,
+            "delta": null
+          },
+          "latency": {
+            "mean_ms_baseline": null,
+            "mean_ms_candidate": 2.3333333333333335,
+            "delta_ms": null
+          },
+          "cost": {
+            "cost_per_verified_baseline": null,
+            "cost_per_verified_candidate": null,
+            "delta": null,
+            "provenance": "UNAVAILABLE"
+          },
+          "tokens": {
+            "total_reported_baseline": null,
+            "total_reported_candidate": null,
+            "delta": null,
+            "provenance": "UNAVAILABLE"
+          },
+          "rework": {
+            "mean_rework_rate_baseline": null,
+            "mean_rework_rate_candidate": null,
+            "delta": null
+          },
+          "coordination": {
+            "mean_coordination_share_baseline": null,
+            "mean_coordination_share_candidate": 0.7142857142857143,
+            "delta": null
+          },
+          "hierarchy_context": {
+            "mean_depth_baseline": null,
+            "mean_depth_candidate": 3,
+            "mean_subagents_baseline": null,
+            "mean_subagents_candidate": 3,
+            "note": "Contextual only — interpret with quality/latency/cost/rework components."
+          },
+          "interpretation_notes": [
+            "ROI is decomposed; no single opaque score.",
+            "Hierarchy depth/subagent counts are context only — not proof of beneficial delegation.",
+            "Tokens/costs remain UNAVAILABLE unless PROVIDER_REPORTED/HARNESS_REPORTED/DERIVED from priced usage.",
+            "Sample reliability=insufficient_sample (n_min=0)."
+          ]
+        },
+        {
+          "baseline_strategy": "B_evolveloop_no_delegation",
+          "candidate_strategy": "C_evolveloop_adaptive",
+          "case_id": "BO-ORCH-04",
+          "sample_size_baseline": 0,
+          "sample_size_candidate": 3,
+          "reliability": "insufficient_sample",
+          "quality": {
+            "verified_completion_rate_baseline": null,
+            "verified_completion_rate_candidate": 1,
+            "delta": null
+          },
+          "latency": {
+            "mean_ms_baseline": null,
+            "mean_ms_candidate": 2.3333333333333335,
+            "delta_ms": null
+          },
+          "cost": {
+            "cost_per_verified_baseline": null,
+            "cost_per_verified_candidate": null,
+            "delta": null,
+            "provenance": "UNAVAILABLE"
+          },
+          "tokens": {
+            "total_reported_baseline": null,
+            "total_reported_candidate": null,
+            "delta": null,
+            "provenance": "UNAVAILABLE"
+          },
+          "rework": {
+            "mean_rework_rate_baseline": null,
+            "mean_rework_rate_candidate": null,
+            "delta": null
+          },
+          "coordination": {
+            "mean_coordination_share_baseline": null,
+            "mean_coordination_share_candidate": 0.7142857142857143,
+            "delta": null
+          },
+          "hierarchy_context": {
+            "mean_depth_baseline": null,
+            "mean_depth_candidate": 3,
+            "mean_subagents_baseline": null,
+            "mean_subagents_candidate": 3,
+            "note": "Contextual only — interpret with quality/latency/cost/rework components."
+          },
+          "interpretation_notes": [
+            "ROI is decomposed; no single opaque score.",
+            "Hierarchy depth/subagent counts are context only — not proof of beneficial delegation.",
+            "Tokens/costs remain UNAVAILABLE unless PROVIDER_REPORTED/HARNESS_REPORTED/DERIVED from priced usage.",
+            "Sample reliability=insufficient_sample (n_min=0)."
+          ]
+        },
+        {
+          "baseline_strategy": "A_single_agent",
+          "candidate_strategy": "B_evolveloop_no_delegation",
+          "case_id": "BO-ORCH-05",
+          "sample_size_baseline": 0,
+          "sample_size_candidate": 0,
+          "reliability": "insufficient_sample",
+          "quality": {
+            "verified_completion_rate_baseline": null,
+            "verified_completion_rate_candidate": null,
+            "delta": null
+          },
+          "latency": {
+            "mean_ms_baseline": null,
+            "mean_ms_candidate": null,
+            "delta_ms": null
+          },
+          "cost": {
+            "cost_per_verified_baseline": null,
+            "cost_per_verified_candidate": null,
+            "delta": null,
+            "provenance": "UNAVAILABLE"
+          },
+          "tokens": {
+            "total_reported_baseline": null,
+            "total_reported_candidate": null,
+            "delta": null,
+            "provenance": "UNAVAILABLE"
+          },
+          "rework": {
+            "mean_rework_rate_baseline": null,
+            "mean_rework_rate_candidate": null,
+            "delta": null
+          },
+          "coordination": {
+            "mean_coordination_share_baseline": null,
+            "mean_coordination_share_candidate": null,
+            "delta": null
+          },
+          "hierarchy_context": {
+            "mean_depth_baseline": null,
+            "mean_depth_candidate": null,
+            "mean_subagents_baseline": null,
+            "mean_subagents_candidate": null,
+            "note": "Contextual only — interpret with quality/latency/cost/rework components."
+          },
+          "interpretation_notes": [
+            "ROI is decomposed; no single opaque score.",
+            "Hierarchy depth/subagent counts are context only — not proof of beneficial delegation.",
+            "Tokens/costs remain UNAVAILABLE unless PROVIDER_REPORTED/HARNESS_REPORTED/DERIVED from priced usage.",
+            "Sample reliability=insufficient_sample (n_min=0)."
+          ]
+        },
+        {
+          "baseline_strategy": "A_single_agent",
+          "candidate_strategy": "C_evolveloop_adaptive",
+          "case_id": "BO-ORCH-05",
+          "sample_size_baseline": 0,
+          "sample_size_candidate": 3,
+          "reliability": "insufficient_sample",
+          "quality": {
+            "verified_completion_rate_baseline": null,
+            "verified_completion_rate_candidate": 1,
+            "delta": null
+          },
+          "latency": {
+            "mean_ms_baseline": null,
+            "mean_ms_candidate": 1.3333333333333333,
+            "delta_ms": null
+          },
+          "cost": {
+            "cost_per_verified_baseline": null,
+            "cost_per_verified_candidate": null,
+            "delta": null,
+            "provenance": "UNAVAILABLE"
+          },
+          "tokens": {
+            "total_reported_baseline": null,
+            "total_reported_candidate": null,
+            "delta": null,
+            "provenance": "UNAVAILABLE"
+          },
+          "rework": {
+            "mean_rework_rate_baseline": null,
+            "mean_rework_rate_candidate": null,
+            "delta": null
+          },
+          "coordination": {
+            "mean_coordination_share_baseline": null,
+            "mean_coordination_share_candidate": 0.5,
+            "delta": null
+          },
+          "hierarchy_context": {
+            "mean_depth_baseline": null,
+            "mean_depth_candidate": 0,
+            "mean_subagents_baseline": null,
+            "mean_subagents_candidate": 0,
+            "note": "Contextual only — interpret with quality/latency/cost/rework components."
+          },
+          "interpretation_notes": [
+            "ROI is decomposed; no single opaque score.",
+            "Hierarchy depth/subagent counts are context only — not proof of beneficial delegation.",
+            "Tokens/costs remain UNAVAILABLE unless PROVIDER_REPORTED/HARNESS_REPORTED/DERIVED from priced usage.",
+            "Sample reliability=insufficient_sample (n_min=0)."
+          ]
+        },
+        {
+          "baseline_strategy": "B_evolveloop_no_delegation",
+          "candidate_strategy": "C_evolveloop_adaptive",
+          "case_id": "BO-ORCH-05",
+          "sample_size_baseline": 0,
+          "sample_size_candidate": 3,
+          "reliability": "insufficient_sample",
+          "quality": {
+            "verified_completion_rate_baseline": null,
+            "verified_completion_rate_candidate": 1,
+            "delta": null
+          },
+          "latency": {
+            "mean_ms_baseline": null,
+            "mean_ms_candidate": 1.3333333333333333,
+            "delta_ms": null
+          },
+          "cost": {
+            "cost_per_verified_baseline": null,
+            "cost_per_verified_candidate": null,
+            "delta": null,
+            "provenance": "UNAVAILABLE"
+          },
+          "tokens": {
+            "total_reported_baseline": null,
+            "total_reported_candidate": null,
+            "delta": null,
+            "provenance": "UNAVAILABLE"
+          },
+          "rework": {
+            "mean_rework_rate_baseline": null,
+            "mean_rework_rate_candidate": null,
+            "delta": null
+          },
+          "coordination": {
+            "mean_coordination_share_baseline": null,
+            "mean_coordination_share_candidate": 0.5,
+            "delta": null
+          },
+          "hierarchy_context": {
+            "mean_depth_baseline": null,
+            "mean_depth_candidate": 0,
+            "mean_subagents_baseline": null,
+            "mean_subagents_candidate": 0,
+            "note": "Contextual only — interpret with quality/latency/cost/rework components."
+          },
+          "interpretation_notes": [
+            "ROI is decomposed; no single opaque score.",
+            "Hierarchy depth/subagent counts are context only — not proof of beneficial delegation.",
+            "Tokens/costs remain UNAVAILABLE unless PROVIDER_REPORTED/HARNESS_REPORTED/DERIVED from priced usage.",
+            "Sample reliability=insufficient_sample (n_min=0)."
+          ]
+        }
+      ],
+      "aggregate": [
+        {
+          "baseline_strategy": "A_single_agent",
+          "candidate_strategy": "B_evolveloop_no_delegation",
+          "sample_size_baseline": 39,
+          "sample_size_candidate": 39,
+          "reliability": "ok",
+          "quality": {
+            "verified_completion_rate_baseline": 1,
+            "verified_completion_rate_candidate": 1,
+            "delta": 0
+          },
+          "latency": {
+            "mean_ms_baseline": 2.1538461538461537,
+            "mean_ms_candidate": 1.8974358974358974,
+            "delta_ms": -0.2564102564102564
+          },
+          "cost": {
+            "cost_per_verified_baseline": null,
+            "cost_per_verified_candidate": null,
+            "delta": null,
+            "provenance": "UNAVAILABLE"
+          },
+          "tokens": {
+            "total_reported_baseline": null,
+            "total_reported_candidate": null,
+            "delta": null,
+            "provenance": "UNAVAILABLE"
+          },
+          "rework": {
+            "mean_rework_rate_baseline": null,
+            "mean_rework_rate_candidate": null,
+            "delta": null
+          },
+          "coordination": {
+            "mean_coordination_share_baseline": 0.5,
+            "mean_coordination_share_candidate": 0.5,
+            "delta": 0
+          },
+          "hierarchy_context": {
+            "mean_depth_baseline": 0,
+            "mean_depth_candidate": 0,
+            "mean_subagents_baseline": 0,
+            "mean_subagents_candidate": 0,
+            "note": "Contextual only — interpret with quality/latency/cost/rework components."
+          },
+          "interpretation_notes": [
+            "ROI is decomposed; no single opaque score.",
+            "Hierarchy depth/subagent counts are context only — not proof of beneficial delegation.",
+            "Tokens/costs remain UNAVAILABLE unless PROVIDER_REPORTED/HARNESS_REPORTED/DERIVED from priced usage."
+          ]
+        },
+        {
+          "baseline_strategy": "A_single_agent",
+          "candidate_strategy": "C_evolveloop_adaptive",
+          "sample_size_baseline": 39,
+          "sample_size_candidate": 48,
+          "reliability": "ok",
+          "quality": {
+            "verified_completion_rate_baseline": 1,
+            "verified_completion_rate_candidate": 1,
+            "delta": 0
+          },
+          "latency": {
+            "mean_ms_baseline": 2.1538461538461537,
+            "mean_ms_candidate": 2.6041666666666665,
+            "delta_ms": 0.4503205128205128
+          },
+          "cost": {
+            "cost_per_verified_baseline": null,
+            "cost_per_verified_candidate": null,
+            "delta": null,
+            "provenance": "UNAVAILABLE"
+          },
+          "tokens": {
+            "total_reported_baseline": null,
+            "total_reported_candidate": null,
+            "delta": null,
+            "provenance": "UNAVAILABLE"
+          },
+          "rework": {
+            "mean_rework_rate_baseline": null,
+            "mean_rework_rate_candidate": null,
+            "delta": null
+          },
+          "coordination": {
+            "mean_coordination_share_baseline": 0.5,
+            "mean_coordination_share_candidate": 0.6607142857142858,
+            "delta": 0.1607142857142858
+          },
+          "hierarchy_context": {
+            "mean_depth_baseline": 0,
+            "mean_depth_candidate": 1.5625,
+            "mean_subagents_baseline": 0,
+            "mean_subagents_candidate": 1.5625,
+            "note": "Contextual only — interpret with quality/latency/cost/rework components."
+          },
+          "interpretation_notes": [
+            "ROI is decomposed; no single opaque score.",
+            "Hierarchy depth/subagent counts are context only — not proof of beneficial delegation.",
+            "Tokens/costs remain UNAVAILABLE unless PROVIDER_REPORTED/HARNESS_REPORTED/DERIVED from priced usage."
+          ]
+        },
+        {
+          "baseline_strategy": "B_evolveloop_no_delegation",
+          "candidate_strategy": "C_evolveloop_adaptive",
+          "sample_size_baseline": 39,
+          "sample_size_candidate": 48,
+          "reliability": "ok",
+          "quality": {
+            "verified_completion_rate_baseline": 1,
+            "verified_completion_rate_candidate": 1,
+            "delta": 0
+          },
+          "latency": {
+            "mean_ms_baseline": 1.8974358974358974,
+            "mean_ms_candidate": 2.6041666666666665,
+            "delta_ms": 0.7067307692307692
+          },
+          "cost": {
+            "cost_per_verified_baseline": null,
+            "cost_per_verified_candidate": null,
+            "delta": null,
+            "provenance": "UNAVAILABLE"
+          },
+          "tokens": {
+            "total_reported_baseline": null,
+            "total_reported_candidate": null,
+            "delta": null,
+            "provenance": "UNAVAILABLE"
+          },
+          "rework": {
+            "mean_rework_rate_baseline": null,
+            "mean_rework_rate_candidate": null,
+            "delta": null
+          },
+          "coordination": {
+            "mean_coordination_share_baseline": 0.5,
+            "mean_coordination_share_candidate": 0.6607142857142858,
+            "delta": 0.1607142857142858
+          },
+          "hierarchy_context": {
+            "mean_depth_baseline": 0,
+            "mean_depth_candidate": 1.5625,
+            "mean_subagents_baseline": 0,
+            "mean_subagents_candidate": 1.5625,
+            "note": "Contextual only — interpret with quality/latency/cost/rework components."
+          },
+          "interpretation_notes": [
+            "ROI is decomposed; no single opaque score.",
+            "Hierarchy depth/subagent counts are context only — not proof of beneficial delegation.",
+            "Tokens/costs remain UNAVAILABLE unless PROVIDER_REPORTED/HARNESS_REPORTED/DERIVED from priced usage."
+          ]
+        }
+      ],
+      "latency_distributions": {
+        "A_single_agent": {
+          "sample_size": 39,
+          "mean_ms": 2.1538461538461537,
+          "median_ms": 2,
+          "p50_ms": 2,
+          "p90_ms": 3,
+          "p95_ms": 3,
+          "min_ms": 1,
+          "max_ms": 5,
+          "reliability": "ok"
+        },
+        "B_evolveloop_no_delegation": {
+          "sample_size": 39,
+          "mean_ms": 1.8974358974358974,
+          "median_ms": 2,
+          "p50_ms": 2,
+          "p90_ms": 2,
+          "p95_ms": 2,
+          "min_ms": 1,
+          "max_ms": 2,
+          "reliability": "ok"
+        },
+        "C_evolveloop_adaptive": {
+          "sample_size": 48,
+          "mean_ms": 2.6041666666666665,
+          "median_ms": 2,
+          "p50_ms": 2,
+          "p90_ms": 3,
+          "p95_ms": 3,
+          "min_ms": 1,
+          "max_ms": 28,
+          "reliability": "ok"
+        }
+      }
+    },
+    "notes": [
+      "Strategies compared on same cases when eligible.",
+      "Cost requires price table + reported usage; otherwise UNAVAILABLE (never invented).",
+      "Adaptive strategy is not assumed to win.",
+      "Delegation ROI is decomposed; depth/subagent counts are contextual only.",
+      "Smoke ≠ conclusive: check sample_size and reliability flags."
+    ]
+  },
+  "validity_counts": {
+    "valid": 126
+  },
+  "verified_by_strategy": {
+    "A_single_agent": {
+      "valid": 39,
+      "verified": 39,
+      "verified_completion_rate": 1
+    },
+    "B_evolveloop_no_delegation": {
+      "valid": 39,
+      "verified": 39,
+      "verified_completion_rate": 1
+    },
+    "C_evolveloop_adaptive": {
+      "valid": 48,
+      "verified": 48,
+      "verified_completion_rate": 1
+    }
+  },
+  "tokens_note": "No live provider usage in this battery — token/cost fields remain UNAVAILABLE unless PROVIDER_REPORTED.",
+  "overhead_report": "/home/gaab/Downloads/EvolveLoop/docs/bench-obs/evidence/overhead-report.json",
+  "tui_dashboard": "NOT_IMPLEMENTED"
+}

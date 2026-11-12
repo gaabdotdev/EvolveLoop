@@ -56,10 +56,17 @@ export function computeUsageAggregate(events: MeasurementEvent[]): UsageAggregat
       return null;
     };
 
+    // Skip UNAVAILABLE shells — null must stay null, never coerce to 0.
+    if (e.provenance?.kind === "UNAVAILABLE") continue;
+
     if (family === "reported") {
+      const inV = take("input_tokens");
+      const outV = take("output_tokens");
+      // Component tokens only — harness totals without split do not invent input/output.
+      if (inV == null && outV == null) continue;
       hasReported = true;
-      input += take("input_tokens") ?? 0;
-      output += take("output_tokens") ?? 0;
+      input += inV ?? 0;
+      output += outV ?? 0;
       cached += take("cached_input_tokens") ?? 0;
       cacheCreate += take("cache_creation_tokens") ?? 0;
     } else {

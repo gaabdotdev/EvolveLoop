@@ -204,6 +204,7 @@ export {
   type SkillUsageAggregate,
   type ObservationWindow as SkillTelemetryObservationWindow,
 } from "./telemetry/skill-telemetry.js";
+export * from "./telemetry/measurement-plane/index.js";
 export {
   evaluateGrillMeRequired,
   evaluateGrillMeTransition,
