@@ -1,67 +1,49 @@
-# Relatório Final — Benchmark & Observability System
+# Relatório Final — Benchmark & Observability (continuação)
 
 **Branch:** `feature/bench-obs-v1`  
-**Feature id:** `bench-obs`  
-**Data:** 2026-11-11  
-**Preserva:** tag `v3-complete` (`6b69c3f`) — não reescrito
+**Feature:** `bench-obs`  
+**Atualizado:** 2026-11-11
 
-## Arquitetura
+## Entregas desta continuação
 
-**Reutilizado:** EventBus, JsonlEventPersister (padrão), secret-redaction, VendorCacheUsage, V3 evaluation semantics, fixtures `v3-eval` (3 repos).
+1. **Retenção automática** — `retention.ts`, CLI `evolve benchmark retain --days N [--dry-run true]`
+2. **Migrações + recovery** — `migrations.ts` (legacy→1.0, quarantine, `.bak`, `repair`/`migrate`)
+3. **Adapter usage real** — `adapters/provider-usage.ts` (Anthropic/OpenAI body, VendorCacheUsage, budget HARNESS_REPORTED, UNAVAILABLE)
+4. **Collector faults** — testes de duplicado/atraso/inválido/overflow/write_failure
+5. **Overhead** — medido e persistido em `evidence/overhead-report.json`
+6. **Suite completa** — engineering-v1 × A/B/C × 3 reps = **126 runs** (`exp_5e5332f8df92`)
+7. **Delegation ROI decomposto** — qualidade/latência/custo/tokens/rework/coordenação; hierarchy só como contexto
 
-**Criado:** `orchestrator/src/telemetry/measurement-plane/` (contrato, collector, stores, adapters, metrics, trace, evaluation, benchmark runner, CLI handlers, engineering bridge).
+## Resultados comparativos (agregados)
 
-**Live path:** `orchestrator/src/v3/evaluation/live/` — readiness probe, worker/reviewer prompts sem solvers, recovery handoff, suite A/B/C.
+Fonte: `docs/bench-obs/evidence/engineering-v1-full-summary.json`
 
-**Decisão:** ADR-BENCH-OBS-0001 — Measurement Plane sob `telemetry/`, dados em `{data-dir}/measurement/`, sem segundo EventBus.
+| Strategy | valid | VCR | mean_ms (harness) | mean_depth | mean_subagents | cost/verified |
+|----------|-------|-----|-------------------|------------|----------------|---------------|
+| A | 39 | 1.0 | ~2.15 | 0 | 0 | UNAVAILABLE |
+| B | 39 | 1.0 | ~1.90 | 0 | 0 | UNAVAILABLE |
+| C | 48 | 1.0 | ~2.60 | ~1.56 | ~1.56 | UNAVAILABLE |
 
-## Instrumentação
-
-- Adapter EventBus → envelope v1.0
-- Hierarchy/delegation/spawn_requested vs spawned vs blocked
-- Usage adapter com proveniência (PROVIDER_REPORTED / ESTIMATED / UNAVAILABLE)
-- Collector modes: normal | benchmark | debug
-- Bridge observe-only do Engineering Loop → measurement events
-
-## Estratégias A/B/C
-
-Comparáveis via Benchmark Runner + cases versionados em `benchmarks/bench-obs/`.
-
-## Tokens e custos
-
-- Sem provider live nesta sessão → `UNAVAILABLE` (correto)
-- Proxy histórico (~25.9%) **não** é evidência de economia real (disclaimer na evidência complementar)
-- Dedup + tabela `prices.v1.json`
-
-## Live LLM
-
-| Item | Estado |
-|------|--------|
-| Infraestrutura | PASS |
-| Consent gate | PASS (não auto-habilita) |
-| Execução live | BLOCKED (Claude não autenticado; API keys ausentes; consent unset) |
-| Reviewer sessão separada | PASS (plumbing + testes) |
-| Recovery handoff | PASS (plumbing + T04-like injection; sem LLM pós-handoff nesta sessão) |
-
-## CLI
-
-`evolve telemetry …`, `evolve benchmark …`, `evolve eval live-readiness|live-suite`
+ROI A→C: quality_delta=0, latency_delta≈+0.45 ms (harness), tokens/cost UNAVAILABLE, reliability=ok (n≥5).
 
 ## Testes
 
+`npx vitest run tests/unit/measurement-plane` → **20/20 PASS**.
+
+## Honestidade
+
+- Esta bateria **não** é execução live de LLM/Engineering Loop; é o harness determinístico do Measurement Plane.
+- Tokens/custos **não** foram inventados.
+- Profundidade/subagentes **não** são evidência isolada de boa delegação.
+- **TUI/Dashboard = NOT_IMPLEMENTED**.
+
+## Como reproduzir
+
 ```bash
-npx vitest run tests/unit/measurement-plane tests/unit/live-llm-readiness.test.ts
+cd orchestrator && npm run build
+npx vitest run tests/unit/measurement-plane
+node ../scripts/bench-obs/run-engineering-v1.mjs --repetitions 3
+evolve benchmark retain --data-dir ./v3-data --days 30 --dry-run true
+evolve benchmark migrate --data-dir ./v3-data
+evolve benchmark overhead --iterations 5
 ```
-
-## Evidência complementar
-
-- `docs/benchmark/BENCHMARK_ACCEPTANCE_MATRIX.md`
-- `docs/benchmark/evidence/gate.v3-benchmark-observability.json`
-- Gate global complementar: `BLOCKED` enquanto Gate L live não executar
-
-## Limitações honestas
-
-- WIKI_ROOT pode estar unset
-- TUI/dashboard adiado
-- Gate L exige `EVOLVELOOP_HARNESS_CONSENT=true` + provider autenticado
-- Solvers determinísticos preservados e **não** apresentados como autonomia LLM

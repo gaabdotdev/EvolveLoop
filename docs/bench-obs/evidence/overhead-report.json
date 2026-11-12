@@ -1,0 +1,51 @@
+{
+  "samples": [
+    {
+      "label": "none",
+      "iterations": 5,
+      "wall_ms_mean": 0.017010799999934535,
+      "wall_ms_min": 0.0018239999999423162,
+      "wall_ms_max": 0.0749430000000757,
+      "rss_delta_bytes_mean": 0,
+      "storage_bytes_mean": 0,
+      "events_per_iter": 0,
+      "rebuild_ms_mean": 0,
+      "report_ms_mean": 0
+    },
+    {
+      "label": "minimal",
+      "iterations": 5,
+      "wall_ms_mean": 0.955114599999888,
+      "wall_ms_min": 0.808458999999857,
+      "wall_ms_max": 1.23347399999966,
+      "rss_delta_bytes_mean": -320307.2,
+      "storage_bytes_mean": 14275,
+      "events_per_iter": 20,
+      "rebuild_ms_mean": 0.03413340000006428,
+      "report_ms_mean": 0.05729379999993398
+    },
+    {
+      "label": "full",
+      "iterations": 5,
+      "wall_ms_mean": 2.868520200000057,
+      "wall_ms_min": 2.5681319999998777,
+      "wall_ms_max": 3.285196000000269,
+      "rss_delta_bytes_mean": 1232076.8,
+      "storage_bytes_mean": 56935,
+      "events_per_iter": 80,
+      "rebuild_ms_mean": 0.07645679999995991,
+      "report_ms_mean": 0.15622960000000602
+    }
+  ],
+  "methodology": [
+    "none: CPU loop without Measurement Plane",
+    "minimal: normal-mode collector + ~20 events",
+    "full: benchmark-mode collector + ~80 events + reconstruct + metrics report",
+    "RSS deltas are process-level and noisy on small samples"
+  ],
+  "limitations": [
+    "Does not measure live ExecutionEngine attach path end-to-end",
+    "Does not include network LLM latency",
+    "Synthetic event generation — not a substitute for suite benchmarks"
+  ]
+}

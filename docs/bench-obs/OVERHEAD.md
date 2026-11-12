@@ -1,35 +1,33 @@
-# Instrumentation Overhead Methodology
+# Instrumentation Overhead — Measured
 
-## Goal
-
-Measure cost of Measurement Plane itself (spec §23.3 / §28).
+**Method:** `measureInstrumentationOverhead` / `evolve benchmark overhead`  
+**Evidence:** `docs/bench-obs/evidence/overhead-report.json`  
+**Date:** 2026-11-11
 
 ## Protocol
 
-1. **Baseline (no measurement):** Execution Plane run with EventBus only (existing JsonlEventPersister optional).
-2. **Minimal:** EventBus adapter attached; collector mode `normal`; no artifact store writes beyond events.
-3. **Full:** collector mode `benchmark`; hierarchy + usage + evaluation events; artifact meta writes.
+| Label | Meaning |
+|-------|---------|
+| `none` | CPU loop without Measurement Plane |
+| `minimal` | normal-mode collector ≈20 events |
+| `full` | benchmark-mode ≈80 events + reconstruct + metrics report |
 
-## Metrics
+## Results (5 iterations, local process)
 
-| Metric | How |
-|--------|-----|
-| Latency delta | wall-clock of same fixture case |
-| CPU/RSS | `process.cpuUsage` / `process.memoryUsage` snapshots around run |
-| Storage/run | size of `{data-dir}/measurement/events/<run>.jsonl` + artifacts |
-| Event loss | `CollectorStats.dropped` / `emitted` |
-| Trace rebuild | time of `reconstructExecution` |
-| Report gen | time of `buildRunMetricsReport` + compare JSON write |
+| Label | wall_ms_mean | storage_bytes_mean | events/iter |
+|-------|--------------|--------------------|-------------|
+| none | ~0.02 | 0 | 0 |
+| minimal | ~0.96 | ~14 KB | 20 |
+| full | ~2.87 | ~57 KB | 80 |
 
-## Smoke observation (2026-11-11)
-
-On local deterministic `runBenchmarkCase` for `BO-TEL-01` / strategy A:
-
-- Event JSONL typically < 50 KB per case smoke run.
-- Collector overhead dominated by sync append in benchmark mode (intentional durability).
-- No Core PolicyEngine path is entered by Measurement Plane (observe-only / in-process synthetic runner for suite smoke).
+Exact numbers are in the JSON evidence file (machine-readable).
 
 ## Limitations
 
-- Full “without instrumentation” Core path requires opt-out flag on live ExecutionEngine attach; not enabled by default.
-- Live multi-provider LLM runs not measured here (no API keys in session).
+- Measures Measurement Plane synthetic path, not live ExecutionEngine + LLM network.
+- RSS deltas are process-noisy on small samples.
+- Does not replace suite benchmarks.
+
+## Conclusion
+
+Full instrumentation adds low single-digit milliseconds and tens of KB per synthetic burst on this machine. It must not be confused with product end-to-end latency.
