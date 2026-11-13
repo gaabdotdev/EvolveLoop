@@ -1,0 +1,37 @@
+{
+  "rbBase": "ac4761550ae3a35d30f24753db3a3f99798a5873",
+  "rbMerged": {
+    "kind": "WorkspaceIntegrationRecord",
+    "workspace_id": "wt-rb-work-1794528457642",
+    "work_id": "rb-work",
+    "agent_id": "rb-1",
+    "workspace_path": "/tmp/el-live-rb-data-aa3ckD/worktrees/rb-work/wt-rb-work-1794528457642",
+    "base_commit": "ac4761550ae3a35d30f24753db3a3f99798a5873",
+    "branch": "evolveloop/rb-work/wt-rb-work-1794528457642",
+    "state": "integrated",
+    "conflict_files": [],
+    "notes": [],
+    "updated_at": "2026-11-13T00:07:37.674Z",
+    "checkpoint_ref": "ac4761550ae3a35d30f24753db3a3f99798a5873",
+    "integrated_commit": "55753b768af9f23ab081ec83578f9e3a8dabd325"
+  },
+  "rbRolled": {
+    "kind": "WorkspaceIntegrationRecord",
+    "workspace_id": "wt-rb-work-1794528457642",
+    "work_id": "rb-work",
+    "agent_id": "rb-1",
+    "workspace_path": "/tmp/el-live-rb-data-aa3ckD/worktrees/rb-work/wt-rb-work-1794528457642",
+    "base_commit": "ac4761550ae3a35d30f24753db3a3f99798a5873",
+    "branch": "evolveloop/rb-work/wt-rb-work-1794528457642",
+    "state": "rolled_back",
+    "conflict_files": [],
+    "notes": [
+      "rolled_back_to_checkpoint"
+    ],
+    "updated_at": "2026-11-13T00:07:37.680Z",
+    "checkpoint_ref": "ac4761550ae3a35d30f24753db3a3f99798a5873",
+    "integrated_commit": "55753b768af9f23ab081ec83578f9e3a8dabd325"
+  },
+  "rbHead": "ac4761550ae3a35d30f24753db3a3f99798a5873",
+  "rollbackOk": true
+}

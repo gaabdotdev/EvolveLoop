@@ -1,0 +1,39 @@
+[
+  {
+    "kind": "ProcessSessionRecord",
+    "session_id": "sess-fd89575d-b5f4-4693-9736-c6b61f5ea7e3",
+    "work_id": "work-live-e2e-1794526866904",
+    "task_id": "t-impl",
+    "adapter_id": "antigravity",
+    "pid": 587316,
+    "status": "running",
+    "started_at": "2026-11-12T23:41:10.835Z",
+    "command": [
+      "/home/gaab/.local/bin/agent",
+      "-p",
+      "--output-format",
+      "text",
+      "--trust",
+      "--workspace",
+      "/home/gaab/Downloads/EvolveLoop-v35/orchestrator/v35-live-e2e-data/worktrees/work-live-e2e-1794526866904/wt-work-live-e2e-1794526866904-1794526867566",
+      "Read the EvolveLoop handoff prompt at /home/gaab/Downloads/EvolveLoop-v35/orchestrator/v35-live-e2e-data/harness-prompts/work-live-e2e-1794526866904/sess-fd89575d-b5f4-4693-9736-c6b61f5ea7e3.md and complete the assigned task. Stay strictly inside the workspace. Do not modify files outside it."
+    ],
+    "prompt_path": "/home/gaab/Downloads/EvolveLoop-v35/orchestrator/v35-live-e2e-data/harness-prompts/work-live-e2e-1794526866904/sess-fd89575d-b5f4-4693-9736-c6b61f5ea7e3.md",
+    "limitations": [
+      "cursor-agent bridge via antigravity adapter_id (print mode + workspace trust)",
+      "Cancel only for Core-owned spawned PIDs",
+      "--trust scopes workspace trust after session auth; it is not an auth substitute",
+      "cli=/home/gaab/.local/bin/agent version_hint=2026.11.11-043ef28",
+      "real spawn requires provider_mode=real + EVOLVELOOP_HARNESS_CONSENT=true",
+      "dry-run writes prompt package under --data-dir/harness-prompts without calling network",
+      "detached_pgid_for_tree_cancel",
+      "env_allowlist_not_full_process_env",
+      "harness_provider_path_outside_bwrap_session_auth",
+      "stdout_log=/home/gaab/Downloads/EvolveLoop-v35/orchestrator/v35-live-e2e-data/harness-prompts/work-live-e2e-1794526866904/sess-fd89575d-b5f4-4693-9736-c6b61f5ea7e3.stdout.log",
+      "stderr_log=/home/gaab/Downloads/EvolveLoop-v35/orchestrator/v35-live-e2e-data/harness-prompts/work-live-e2e-1794526866904/sess-fd89575d-b5f4-4693-9736-c6b61f5ea7e3.stderr.log",
+      "workspace=/home/gaab/Downloads/EvolveLoop-v35/orchestrator/v35-live-e2e-data/worktrees/work-live-e2e-1794526866904/wt-work-live-e2e-1794526866904-1794526867566"
+    ],
+    "pgid": 587316,
+    "starttime": "930043"
+  }
+]

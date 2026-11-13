@@ -1,0 +1,13 @@
+{
+  "status1": "{\n  \"lifecycle\": \"RUNNING\",\n  \"generation\": 1,\n  \"fencing_token\": \"585969:929694:1\",\n  \"heartbeat_at\": \"2026-11-12T23:51:09.481Z\",\n  \"socket_path\": \"/home/gaab/Downloads/EvolveLoop-v35/orchestrator/v35-live-e2e-data/coordinator/ipc.sock\",\n  \"coordinator\": {\n    \"process_state\": \"running\",\n    \"pid\": 585969,\n    \"works\": 1\n  },\n  \"pid\": 585969\n}\n",
+  "status2": "{\n  \"lifecycle\": \"RUNNING\",\n  \"generation\": 1,\n  \"fencing_token\": \"585969:929694:1\",\n  \"heartbeat_at\": \"2026-11-12T23:51:09.481Z\",\n  \"socket_path\": \"/home/gaab/Downloads/EvolveLoop-v35/orchestrator/v35-live-e2e-data/coordinator/ipc.sock\",\n  \"coordinator\": {\n    \"process_state\": \"running\",\n    \"pid\": 585969,\n    \"works\": 1\n  },\n  \"pid\": 585969\n}\n",
+  "ping": {
+    "id": "d94e77ff2cca83f3",
+    "ok": true,
+    "result": {
+      "pong": true,
+      "lifecycle": "RUNNING",
+      "pid": 585969
+    }
+  }
+}

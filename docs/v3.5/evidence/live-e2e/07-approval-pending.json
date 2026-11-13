@@ -1,0 +1,38 @@
+{
+  "status": "pending_approval",
+  "approval": {
+    "kind": "ApprovalRequest",
+    "approval_id": "apr-f3a9e98d-39d8-4b46-8ba7-b37714c5abbe",
+    "work_id": "work-live-e2e-1794526866904",
+    "goal_id": "gc-live-e2e-1794526866904",
+    "task_id": "t-integrate",
+    "agent_id": "impl-1",
+    "operation": "git.mutate",
+    "resource": "integrate:evolveloop/work-live-e2e-1794526866904/wt-work-live-e2e-1794526866904-1794526867566->main",
+    "justification": "Live E2E authorized merge after tests+independent review",
+    "risk": "medium",
+    "impact": "",
+    "permissions_requested": [
+      "git.mutate"
+    ],
+    "scope": {
+      "workspace": "/home/gaab/Downloads/EvolveLoop-v35/orchestrator/v35-live-e2e-data/worktrees/work-live-e2e-1794526866904/wt-work-live-e2e-1794526866904-1794526867566",
+      "max_uses": 1
+    },
+    "expires_at": "2026-11-13T01:07:36.533Z",
+    "state": "PENDING",
+    "uses_remaining": 1,
+    "history": [
+      {
+        "at": "2026-11-13T00:07:36.533Z",
+        "actor": "system",
+        "from_state": "PENDING",
+        "to_state": "PENDING",
+        "note": "created"
+      }
+    ],
+    "created_at": "2026-11-13T00:07:36.533Z",
+    "updated_at": "2026-11-13T00:07:36.533Z",
+    "test_provider": false
+  }
+}

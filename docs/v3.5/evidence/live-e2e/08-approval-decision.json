@@ -1,0 +1,65 @@
+{
+  "list1": "{\n  \"approvals\": [\n    {\n      \"kind\": \"ApprovalRequest\",\n      \"approval_id\": \"apr-9e53575d-66cf-4f2d-aa51-9df27ae3f07d\",\n      \"work_id\": \"work-live-e2e-1794526866904\",\n      \"goal_id\": \"gc-live-e2e-1794526866904\",\n      \"task_id\": \"t-integrate\",\n      \"agent_id\": \"impl-1\",\n      \"operation\": \"git.mutate\",\n      \"resource\": \"integrate:evolveloop/work-live-e2e-1794526866904/wt-work-live-e2e-1794526866904-1794526867566->main\",\n      \"justification\": \"Live E2E authorized merge of disposable fixture branch after tests+review\",\n      \"risk\": \"medium\",\n      \"impact\": \"\",\n      \"permissions_requested\": [\n        \"git.mutate\"\n      ],\n      \"scope\": {\n        \"workspace\": \"/home/gaab/Downloads/EvolveLoop-v35/orchestrator/v35-live-e2e-data/worktrees/work-live-e2e-1794526866904/wt-work-live-e2e-1794526866904-1794526867566\",\n        \"max_uses\": 1\n      },\n      \"expires_at\": \"2026-11-13T00:56:12.504Z\",\n      \"state\": \"PENDING\",\n      \"uses_remaining\": 1,\n      \"history\": [\n        {\n          \"at\": \"2026-11-12T23:56:12.504Z\",\n          \"actor\": \"system\",\n          \"from_state\": \"PENDING\",\n          \"to_state\": \"PENDING\",\n          \"note\": \"created\"\n        }\n      ],\n      \"created_at\": \"2026-11-12T23:56:12.504Z\",\n      \"updated_at\": \"2026-11-12T23:56:12.504Z\",\n      \"test_provider\": false\n    },\n    {\n      \"kind\": \"ApprovalRequest\",\n      \"approval_id\": \"apr-f3a9e98d-39d8-4b46-8ba7-b37714c5abbe\",\n      \"work_id\": \"work-live-e2e-1794526866904\",\n      \"goal_id\": \"gc-live-e2e-1794526866904\",\n      \"task_id\": \"t-integrate\",\n      \"agent_id\": \"impl-1\",\n      \"operation\": \"git.mutate\",\n      \"resource\": \"integrate:evolveloop/work-live-e2e-1794526866904/wt-work-live-e2e-1794526866904-1794526867566->main\",\n      \"justification\": \"Live E2E authorized merge after tests+independent review\",\n      \"risk\": \"medium\",\n      \"impact\": \"\",\n      \"permissions_requested\": [\n        \"git.mutate\"\n      ],\n      \"scope\": {\n        \"workspace\": \"/home/gaab/Downloads/EvolveLoop-v35/orchestrator/v35-live-e2e-data/worktrees/work-live-e2e-1794526866904/wt-work-live-e2e-1794526866904-1794526867566\",\n        \"max_uses\": 1\n      },\n      \"expires_at\": \"2026-11-13T01:07:36.533Z\",\n      \"state\": \"PENDING\",\n      \"uses_remaining\": 1,\n      \"history\": [\n        {\n          \"at\": \"2026-11-13T00:07:36.533Z\",\n          \"actor\": \"system\",\n          \"from_state\": \"PENDING\",\n          \"to_state\": \"PENDING\",\n          \"note\": \"created\"\n        }\n      ],\n      \"created_at\": \"2026-11-13T00:07:36.533Z\",\n      \"updated_at\": \"2026-11-13T00:07:36.533Z\",\n      \"test_provider\": false\n    }\n  ]\n}\n",
+  "list2": "{\n  \"approvals\": [\n    {\n      \"kind\": \"ApprovalRequest\",\n      \"approval_id\": \"apr-9e53575d-66cf-4f2d-aa51-9df27ae3f07d\",\n      \"work_id\": \"work-live-e2e-1794526866904\",\n      \"goal_id\": \"gc-live-e2e-1794526866904\",\n      \"task_id\": \"t-integrate\",\n      \"agent_id\": \"impl-1\",\n      \"operation\": \"git.mutate\",\n      \"resource\": \"integrate:evolveloop/work-live-e2e-1794526866904/wt-work-live-e2e-1794526866904-1794526867566->main\",\n      \"justification\": \"Live E2E authorized merge of disposable fixture branch after tests+review\",\n      \"risk\": \"medium\",\n      \"impact\": \"\",\n      \"permissions_requested\": [\n        \"git.mutate\"\n      ],\n      \"scope\": {\n        \"workspace\": \"/home/gaab/Downloads/EvolveLoop-v35/orchestrator/v35-live-e2e-data/worktrees/work-live-e2e-1794526866904/wt-work-live-e2e-1794526866904-1794526867566\",\n        \"max_uses\": 1\n      },\n      \"expires_at\": \"2026-11-13T00:56:12.504Z\",\n      \"state\": \"PENDING\",\n      \"uses_remaining\": 1,\n      \"history\": [\n        {\n          \"at\": \"2026-11-12T23:56:12.504Z\",\n          \"actor\": \"system\",\n          \"from_state\": \"PENDING\",\n          \"to_state\": \"PENDING\",\n          \"note\": \"created\"\n        }\n      ],\n      \"created_at\": \"2026-11-12T23:56:12.504Z\",\n      \"updated_at\": \"2026-11-12T23:56:12.504Z\",\n      \"test_provider\": false\n    },\n    {\n      \"kind\": \"ApprovalRequest\",\n      \"approval_id\": \"apr-f3a9e98d-39d8-4b46-8ba7-b37714c5abbe\",\n      \"work_id\": \"work-live-e2e-1794526866904\",\n      \"goal_id\": \"gc-live-e2e-1794526866904\",\n      \"task_id\": \"t-integrate\",\n      \"agent_id\": \"impl-1\",\n      \"operation\": \"git.mutate\",\n      \"resource\": \"integrate:evolveloop/work-live-e2e-1794526866904/wt-work-live-e2e-1794526866904-1794526867566->main\",\n      \"justification\": \"Live E2E authorized merge after tests+independent review\",\n      \"risk\": \"medium\",\n      \"impact\": \"\",\n      \"permissions_requested\": [\n        \"git.mutate\"\n      ],\n      \"scope\": {\n        \"workspace\": \"/home/gaab/Downloads/EvolveLoop-v35/orchestrator/v35-live-e2e-data/worktrees/work-live-e2e-1794526866904/wt-work-live-e2e-1794526866904-1794526867566\",\n        \"max_uses\": 1\n      },\n      \"expires_at\": \"2026-11-13T01:07:36.533Z\",\n      \"state\": \"PENDING\",\n      \"uses_remaining\": 1,\n      \"history\": [\n        {\n          \"at\": \"2026-11-13T00:07:36.533Z\",\n          \"actor\": \"system\",\n          \"from_state\": \"PENDING\",\n          \"to_state\": \"PENDING\",\n          \"note\": \"created\"\n        }\n      ],\n      \"created_at\": \"2026-11-13T00:07:36.533Z\",\n      \"updated_at\": \"2026-11-13T00:07:36.533Z\",\n      \"test_provider\": false\n    }\n  ]\n}\n",
+  "approveCli": "{\n  \"kind\": \"ApprovalRequest\",\n  \"approval_id\": \"apr-f3a9e98d-39d8-4b46-8ba7-b37714c5abbe\",\n  \"work_id\": \"work-live-e2e-1794526866904\",\n  \"goal_id\": \"gc-live-e2e-1794526866904\",\n  \"task_id\": \"t-integrate\",\n  \"agent_id\": \"impl-1\",\n  \"operation\": \"git.mutate\",\n  \"resource\": \"integrate:evolveloop/work-live-e2e-1794526866904/wt-work-live-e2e-1794526866904-1794526867566->main\",\n  \"justification\": \"Live E2E authorized merge after tests+independent review\",\n  \"risk\": \"medium\",\n  \"impact\": \"\",\n  \"permissions_requested\": [\n    \"git.mutate\"\n  ],\n  \"scope\": {\n    \"workspace\": \"/home/gaab/Downloads/EvolveLoop-v35/orchestrator/v35-live-e2e-data/worktrees/work-live-e2e-1794526866904/wt-work-live-e2e-1794526866904-1794526867566\",\n    \"max_uses\": 1\n  },\n  \"expires_at\": \"2026-11-13T01:07:36.533Z\",\n  \"state\": \"APPROVED\",\n  \"uses_remaining\": 1,\n  \"history\": [\n    {\n      \"at\": \"2026-11-13T00:07:36.533Z\",\n      \"actor\": \"system\",\n      \"from_state\": \"PENDING\",\n      \"to_state\": \"PENDING\",\n      \"note\": \"created\"\n    },\n    {\n      \"at\": \"2026-11-13T00:07:36.912Z\",\n      \"actor\": \"operator-live-e2e\",\n      \"from_state\": \"PENDING\",\n      \"to_state\": \"APPROVED\"\n    }\n  ],\n  \"created_at\": \"2026-11-13T00:07:36.533Z\",\n  \"updated_at\": \"2026-11-13T00:07:36.912Z\",\n  \"test_provider\": false,\n  \"decided_by\": \"operator-live-e2e\"\n}\n",
+  "scopeDenied": {
+    "ok": false,
+    "reason": "resource_mismatch"
+  },
+  "consumed": {
+    "ok": true,
+    "approval": {
+      "kind": "ApprovalRequest",
+      "approval_id": "apr-f3a9e98d-39d8-4b46-8ba7-b37714c5abbe",
+      "work_id": "work-live-e2e-1794526866904",
+      "goal_id": "gc-live-e2e-1794526866904",
+      "task_id": "t-integrate",
+      "agent_id": "impl-1",
+      "operation": "git.mutate",
+      "resource": "integrate:evolveloop/work-live-e2e-1794526866904/wt-work-live-e2e-1794526866904-1794526867566->main",
+      "justification": "Live E2E authorized merge after tests+independent review",
+      "risk": "medium",
+      "impact": "",
+      "permissions_requested": [
+        "git.mutate"
+      ],
+      "scope": {
+        "workspace": "/home/gaab/Downloads/EvolveLoop-v35/orchestrator/v35-live-e2e-data/worktrees/work-live-e2e-1794526866904/wt-work-live-e2e-1794526866904-1794526867566",
+        "max_uses": 1
+      },
+      "expires_at": "2026-11-13T01:07:36.533Z",
+      "state": "APPROVED",
+      "uses_remaining": 0,
+      "history": [
+        {
+          "at": "2026-11-13T00:07:36.533Z",
+          "actor": "system",
+          "from_state": "PENDING",
+          "to_state": "PENDING",
+          "note": "created"
+        },
+        {
+          "at": "2026-11-13T00:07:36.912Z",
+          "actor": "operator-live-e2e",
+          "from_state": "PENDING",
+          "to_state": "APPROVED"
+        },
+        {
+          "at": "2026-11-13T00:07:36.919Z",
+          "actor": "system",
+          "from_state": "APPROVED",
+          "to_state": "APPROVED",
+          "note": "consumed uses_remaining=0"
+        }
+      ],
+      "created_at": "2026-11-13T00:07:36.533Z",
+      "updated_at": "2026-11-13T00:07:36.919Z",
+      "test_provider": false,
+      "decided_by": "operator-live-e2e"
+    }
+  },
+  "replayDenied": {
+    "ok": false,
+    "reason": "uses_exhausted"
+  }
+}

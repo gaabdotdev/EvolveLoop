@@ -1,0 +1,557 @@
+{
+  "kind": "V35_LIVE_E2E_Evidence",
+  "run_id": "live-e2e-1794526866904",
+  "started_at": "2026-11-12T23:41:06.904Z",
+  "gates": {
+    "S": "PASS",
+    "H": "PASS",
+    "C": "PASS",
+    "A": "PASS",
+    "R": "PASS",
+    "E2E": "PASS"
+  },
+  "steps": [
+    {
+      "name": "fixture_created",
+      "at": "2026-11-12T23:41:07.104Z",
+      "repo": "/tmp/el-live-eng-C1XMug",
+      "initial_commit": "60de41009044478fadb44d78a99973505e18f7f1",
+      "pretest": {
+        "exit_code": 1,
+        "failed_as_expected": true,
+        "stderr_tail": "_runner/test:1101:12)\n    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)\n  ...\n# Subtest: books zero tax\nok 8 - books zero tax\n  ---\n  duration_ms: 0.724584\n  type: 'test'\n  ...\n# Subtest: default tax\nok 9 - default tax\n  ---\n  duration_ms: 0.234889\n  type: 'test'\n  ...\n1..9\n# tests 9\n# suites 0\n# pass 4\n# fail 5\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 56.857795\n"
+      }
+    },
+    {
+      "name": "service_start",
+      "at": "2026-11-12T23:41:07.559Z",
+      "exit": 0,
+      "out": "{\n  \"started\": true,\n  \"pid\": 585969,\n  \"status\": {\n    \"lifecycle\": \"RUNNING\",\n    \"generation\": 1,\n    \"fencing_token\": \"585969:929694:1\",\n    \"heartbeat_at\": \"2026-11-12T23:41:07.462Z\",\n    \"socket_path\": \"/home/gaab/Downloads/EvolveLoop-v35/orchestrator/v35-live-e2e-data/coordinator/ipc.sock\",\n    \"coordinator\": {\n      \"process_state\": \"running\",\n      \"pid\": 585969,\n      \"works\": 0\n    },\n    \"pid\": 585969\n  }\n}\n"
+    },
+    {
+      "name": "work_registered",
+      "at": "2026-11-12T23:41:07.562Z",
+      "work_id": "work-live-e2e-1794526866904",
+      "works": 1
+    },
+    {
+      "name": "worktree_created",
+      "at": "2026-11-12T23:41:07.574Z",
+      "worktree_id": "wt-work-live-e2e-1794526866904-1794526867566",
+      "path": "/home/gaab/Downloads/EvolveLoop-v35/orchestrator/v35-live-e2e-data/worktrees/work-live-e2e-1794526866904/wt-work-live-e2e-1794526866904-1794526867566",
+      "branch": "evolveloop/work-live-e2e-1794526866904/wt-work-live-e2e-1794526866904-1794526867566",
+      "status": "active"
+    },
+    {
+      "name": "ownership_claim",
+      "at": "2026-11-12T23:41:07.581Z",
+      "ok": true
+    },
+    {
+      "name": "sandbox_isolation",
+      "at": "2026-11-12T23:41:07.600Z",
+      "applied": true,
+      "backend": "bubblewrap",
+      "pid": 586066,
+      "pgid": 586066,
+      "exit_code_read": 0,
+      "exit_code_leak_attempt": 2,
+      "primary_write_denied": true,
+      "network_mode": "deny",
+      "mounts_workspace": "/home/gaab/Downloads/EvolveLoop-v35/orchestrator/v35-live-e2e-data/worktrees/work-live-e2e-1794526866904/wt-work-live-e2e-1794526866904-1794526867566",
+      "policy_profile": "agent-workspace"
+    },
+    {
+      "name": "harness_auth",
+      "at": "2026-11-12T23:41:08.667Z",
+      "ok": true,
+      "detail": "✓ Logged in as REDACTED@example.com"
+    },
+    {
+      "name": "harness_implement",
+      "at": "2026-11-12T23:51:10.836Z",
+      "status": "accepted",
+      "code": "PROCESS_SPAWNED_WAIT_TIMEOUT",
+      "message": "pid=587316 session=sess-fd89575d-b5f4-4693-9736-c6b61f5ea7e3 wait_ms=600000 still_running",
+      "bridge_ref": "sess-fd89575d-b5f4-4693-9736-c6b61f5ea7e3"
+    },
+    {
+      "name": "implement_verify",
+      "at": "2026-11-12T23:51:11.029Z",
+      "npm_test_exit": 0,
+      "commits": "",
+      "diff_bytes": 3078,
+      "implOk": true,
+      "primary_unchanged_porcelain": true
+    },
+    {
+      "name": "continuity_cli_reconnect",
+      "at": "2026-11-12T23:51:11.411Z",
+      "status1_exit": 0,
+      "status2_exit": 0,
+      "ping_ok": true,
+      "events_exit": 0
+    },
+    {
+      "name": "independent_review",
+      "at": "2026-11-12T23:56:12.504Z",
+      "invoke": {
+        "status": "accepted",
+        "code": "PROCESS_SPAWNED_WAIT_TIMEOUT",
+        "bridge_ref": "sess-952641d4-549e-49c8-b8c8-442d621cbbc2"
+      },
+      "session_id": "sess-952641d4-549e-49c8-b8c8-442d621cbbc2",
+      "agent_id": "reviewer-1",
+      "distinct_from_impl": true,
+      "reviewOk": false,
+      "review_tail": ""
+    },
+    {
+      "name": "approval_pending",
+      "at": "2026-11-12T23:56:12.504Z",
+      "status": "pending_approval",
+      "approval": {
+        "kind": "ApprovalRequest",
+        "approval_id": "apr-9e53575d-66cf-4f2d-aa51-9df27ae3f07d",
+        "work_id": "work-live-e2e-1794526866904",
+        "goal_id": "gc-live-e2e-1794526866904",
+        "task_id": "t-integrate",
+        "agent_id": "impl-1",
+        "operation": "git.mutate",
+        "resource": "integrate:evolveloop/work-live-e2e-1794526866904/wt-work-live-e2e-1794526866904-1794526867566->main",
+        "justification": "Live E2E authorized merge of disposable fixture branch after tests+review",
+        "risk": "medium",
+        "impact": "",
+        "permissions_requested": [
+          "git.mutate"
+        ],
+        "scope": {
+          "workspace": "/home/gaab/Downloads/EvolveLoop-v35/orchestrator/v35-live-e2e-data/worktrees/work-live-e2e-1794526866904/wt-work-live-e2e-1794526866904-1794526867566",
+          "max_uses": 1
+        },
+        "expires_at": "2026-11-13T00:56:12.504Z",
+        "state": "PENDING",
+        "uses_remaining": 1,
+        "history": [
+          {
+            "at": "2026-11-12T23:56:12.504Z",
+            "actor": "system",
+            "from_state": "PENDING",
+            "to_state": "PENDING",
+            "note": "created"
+          }
+        ],
+        "created_at": "2026-11-12T23:56:12.504Z",
+        "updated_at": "2026-11-12T23:56:12.504Z",
+        "test_provider": false
+      }
+    },
+    {
+      "name": "approval_decision",
+      "at": "2026-11-12T23:56:12.751Z",
+      "stillPending_before_approve": true,
+      "approved": null,
+      "consumed": null,
+      "replayDenied": null,
+      "scopeDenied": null
+    },
+    {
+      "name": "rollback_fixture",
+      "at": "2026-11-12T23:56:12.811Z",
+      "rbBase": "71e9228a0f839648dd005518ab43a151d965f687",
+      "rbMerged_state": "integrated",
+      "rbHead": "71e9228a0f839648dd005518ab43a151d965f687",
+      "rollbackOk": true
+    }
+  ],
+  "ended_at": "2026-11-13T00:07:37.683Z",
+  "goal_id": "gc-live-e2e-1794526866904",
+  "work_id": "work-live-e2e-1794526866904",
+  "harness": {
+    "adapter": "antigravity/cursor-agent",
+    "auth": "session",
+    "inspect": {
+      "contract": {
+        "kind": "AgentAdapterContract",
+        "adapter_id": "antigravity",
+        "display_name": "Antigravity",
+        "execution_bridge": "none",
+        "certification": "declared",
+        "capabilities": [
+          {
+            "key": "sessions",
+            "level": "unknown",
+            "notes": "External harness; no Core driver."
+          },
+          {
+            "key": "streaming",
+            "level": "unsupported",
+            "notes": "No Core bridge."
+          },
+          {
+            "key": "tools",
+            "level": "unsupported",
+            "notes": "No Core bridge."
+          },
+          {
+            "key": "terminal",
+            "level": "unsupported",
+            "notes": "No Core bridge."
+          },
+          {
+            "key": "mcp",
+            "level": "unknown",
+            "notes": "Not inventoried by Core."
+          },
+          {
+            "key": "subagents",
+            "level": "unsupported",
+            "notes": "No Core bridge."
+          },
+          {
+            "key": "cancel",
+            "level": "unsupported",
+            "notes": "No Core bridge."
+          },
+          {
+            "key": "resume",
+            "level": "partial",
+            "notes": "Handoff Package export only."
+          },
+          {
+            "key": "permissions",
+            "level": "unsupported",
+            "notes": "Not mediated."
+          },
+          {
+            "key": "telemetry",
+            "level": "unsupported",
+            "notes": "Not mediated."
+          },
+          {
+            "key": "core_mediated_fs",
+            "level": "unsupported",
+            "notes": "Not mediated."
+          },
+          {
+            "key": "core_mediated_shell",
+            "level": "unsupported",
+            "notes": "Not mediated."
+          },
+          {
+            "key": "handoff_package_consume",
+            "level": "partial",
+            "notes": "Envelope can name Antigravity as target; no auto-inject."
+          },
+          {
+            "key": "cross_provider_swap",
+            "level": "unsupported",
+            "notes": "No automatic swap."
+          }
+        ],
+        "limitations": [
+          "No native execution bridge in Core yet"
+        ],
+        "handoff": {
+          "can_export_package": true,
+          "can_import_package": false,
+          "preserves_private_transcripts": false,
+          "notes": "Manual operator apply until bridge exists."
+        }
+      },
+      "driver": {
+        "adapter_id": "antigravity",
+        "can_invoke": true,
+        "notes": [
+          "cursor-agent bridge via antigravity adapter_id (print mode + workspace trust)",
+          "Cancel only for Core-owned spawned PIDs",
+          "--trust scopes workspace trust after session auth; it is not an auth substitute",
+          "cli=/home/gaab/.local/bin/agent version_hint=2026.11.11-043ef28",
+          "real spawn requires provider_mode=real + EVOLVELOOP_HARNESS_CONSENT=true",
+          "dry-run writes prompt package under --data-dir/harness-prompts without calling network"
+        ]
+      },
+      "cli_probe": {
+        "cli_id": "antigravity",
+        "available": true,
+        "path": "/home/gaab/.local/bin/agent",
+        "version_hint": "2026.11.11-043ef28"
+      },
+      "matrix": [
+        {
+          "adapter_id": "antigravity",
+          "capability": "sessions",
+          "level": "UNSUPPORTED",
+          "notes": "External harness; no Core driver."
+        },
+        {
+          "adapter_id": "antigravity",
+          "capability": "streaming",
+          "level": "UNSUPPORTED",
+          "notes": "No Core bridge."
+        },
+        {
+          "adapter_id": "antigravity",
+          "capability": "tools",
+          "level": "UNSUPPORTED",
+          "notes": "No Core bridge."
+        },
+        {
+          "adapter_id": "antigravity",
+          "capability": "terminal",
+          "level": "UNSUPPORTED",
+          "notes": "No Core bridge."
+        },
+        {
+          "adapter_id": "antigravity",
+          "capability": "mcp",
+          "level": "UNSUPPORTED",
+          "notes": "Not inventoried by Core."
+        },
+        {
+          "adapter_id": "antigravity",
+          "capability": "subagents",
+          "level": "UNSUPPORTED",
+          "notes": "No Core bridge."
+        },
+        {
+          "adapter_id": "antigravity",
+          "capability": "cancel",
+          "level": "UNSUPPORTED",
+          "notes": "No Core bridge."
+        },
+        {
+          "adapter_id": "antigravity",
+          "capability": "resume",
+          "level": "PARTIAL",
+          "notes": "Handoff Package export only."
+        },
+        {
+          "adapter_id": "antigravity",
+          "capability": "permissions",
+          "level": "UNSUPPORTED",
+          "notes": "Not mediated."
+        },
+        {
+          "adapter_id": "antigravity",
+          "capability": "telemetry",
+          "level": "UNSUPPORTED",
+          "notes": "Not mediated."
+        },
+        {
+          "adapter_id": "antigravity",
+          "capability": "core_mediated_fs",
+          "level": "UNSUPPORTED",
+          "notes": "Not mediated."
+        },
+        {
+          "adapter_id": "antigravity",
+          "capability": "core_mediated_shell",
+          "level": "UNSUPPORTED",
+          "notes": "Not mediated."
+        },
+        {
+          "adapter_id": "antigravity",
+          "capability": "handoff_package_consume",
+          "level": "PARTIAL",
+          "notes": "Envelope can name Antigravity as target; no auto-inject."
+        },
+        {
+          "adapter_id": "antigravity",
+          "capability": "cross_provider_swap",
+          "level": "UNSUPPORTED",
+          "notes": "No automatic swap."
+        }
+      ],
+      "execution_path": "blocked"
+    },
+    "implement_session": "sess-fd89575d-b5f4-4693-9736-c6b61f5ea7e3",
+    "review_session": "sess-f9d71e48-7787-4a43-b732-5861f05834f0",
+    "review_mode": "ask"
+  },
+  "workspace": {
+    "repo": "/tmp/el-live-eng-C1XMug",
+    "worktree": "/home/gaab/Downloads/EvolveLoop-v35/orchestrator/v35-live-e2e-data/worktrees/work-live-e2e-1794526866904/wt-work-live-e2e-1794526866904-1794526867566",
+    "branch": "evolveloop/work-live-e2e-1794526866904/wt-work-live-e2e-1794526866904-1794526867566",
+    "initial_commit": "60de41009044478fadb44d78a99973505e18f7f1",
+    "integrated_commit": "f796fc88d0fe382e3b84b62569bebafa20a53d47"
+  },
+  "sandbox": {
+    "applied": true,
+    "backend": "bubblewrap",
+    "pid": 586066,
+    "pgid": 586066,
+    "exit_code_read": 0,
+    "exit_code_leak_attempt": 2,
+    "primary_write_denied": true,
+    "network_mode": "deny",
+    "mounts_workspace": "/home/gaab/Downloads/EvolveLoop-v35/orchestrator/v35-live-e2e-data/worktrees/work-live-e2e-1794526866904/wt-work-live-e2e-1794526866904-1794526867566",
+    "policy_profile": "agent-workspace"
+  },
+  "resume_at": "2026-11-13T00:05:41.662Z",
+  "resume_steps": [
+    {
+      "name": "service",
+      "at": "2026-11-13T00:05:41.787Z",
+      "exit": 0,
+      "ping": true
+    },
+    {
+      "name": "commit",
+      "at": "2026-11-13T00:05:42.008Z",
+      "log": "95731bb feat: applyDiscounts"
+    },
+    {
+      "name": "independent_review",
+      "at": "2026-11-13T00:07:36.531Z",
+      "code": "PROCESS_COMPLETED",
+      "bridge_ref": "sess-f9d71e48-7787-4a43-b732-5861f05834f0",
+      "session_id": "sess-f9d71e48-7787-4a43-b732-5861f05834f0",
+      "reviewOk": true,
+      "review_tail": "Wiki: n/a (review harness e2e com ficheiros explícitos)\n\nVERDICT: APPROVE\n\n- `applyDiscounts` cobre percent (`Math.round` + cap no subtotal), fixed (`Math.min` + floor em 0) e stacking (melhor non-stackable, depois stackables em sequência), alinhado a `test/discount.test.js`.\n- Os 4 cenários de desconto batem com a lógica: 3000→2700 (TEN), fixed→0, B (400) vence A (300), NS+S1 → 2520 com `applied` `[\"NS\",\"S1\"]`.\n- Integração em `cartTotals` usa `applyDiscounts` antes do imposto; o teste de cart exige `subtotal_cents === 2700` e `total_cents >= subtotal_cents` — consistente com tax ≥ 0.\n- `catalog.test.js` e `tax.test.js` não dependem de discounts; catalog/tax inalterados na leitura estática.\n- `npm test` / `npm run build` são scripts triviais (`node --test`, `scripts/build.js` escreve `built`); a implementação exporta o que os testes importam.\n- Escopo da mudança fica em `src/pricing/discount.js` (+ aceitação/testes no repo), cumprindo “no changes outside this repository”.\n"
+    },
+    {
+      "name": "approval_pending",
+      "at": "2026-11-13T00:07:36.533Z",
+      "status": "pending_approval",
+      "id": "apr-f3a9e98d-39d8-4b46-8ba7-b37714c5abbe"
+    },
+    {
+      "name": "approval_decision",
+      "at": "2026-11-13T00:07:36.919Z",
+      "list_persisted": true,
+      "approve_exit": 0,
+      "scopeDenied": {
+        "ok": false,
+        "reason": "resource_mismatch"
+      },
+      "consumed": {
+        "ok": true,
+        "approval": {
+          "kind": "ApprovalRequest",
+          "approval_id": "apr-f3a9e98d-39d8-4b46-8ba7-b37714c5abbe",
+          "work_id": "work-live-e2e-1794526866904",
+          "goal_id": "gc-live-e2e-1794526866904",
+          "task_id": "t-integrate",
+          "agent_id": "impl-1",
+          "operation": "git.mutate",
+          "resource": "integrate:evolveloop/work-live-e2e-1794526866904/wt-work-live-e2e-1794526866904-1794526867566->main",
+          "justification": "Live E2E authorized merge after tests+independent review",
+          "risk": "medium",
+          "impact": "",
+          "permissions_requested": [
+            "git.mutate"
+          ],
+          "scope": {
+            "workspace": "/home/gaab/Downloads/EvolveLoop-v35/orchestrator/v35-live-e2e-data/worktrees/work-live-e2e-1794526866904/wt-work-live-e2e-1794526866904-1794526867566",
+            "max_uses": 1
+          },
+          "expires_at": "2026-11-13T01:07:36.533Z",
+          "state": "APPROVED",
+          "uses_remaining": 0,
+          "history": [
+            {
+              "at": "2026-11-13T00:07:36.533Z",
+              "actor": "system",
+              "from_state": "PENDING",
+              "to_state": "PENDING",
+              "note": "created"
+            },
+            {
+              "at": "2026-11-13T00:07:36.912Z",
+              "actor": "operator-live-e2e",
+              "from_state": "PENDING",
+              "to_state": "APPROVED"
+            },
+            {
+              "at": "2026-11-13T00:07:36.919Z",
+              "actor": "system",
+              "from_state": "APPROVED",
+              "to_state": "APPROVED",
+              "note": "consumed uses_remaining=0"
+            }
+          ],
+          "created_at": "2026-11-13T00:07:36.533Z",
+          "updated_at": "2026-11-13T00:07:36.919Z",
+          "test_provider": false,
+          "decided_by": "operator-live-e2e"
+        }
+      },
+      "replayDenied": {
+        "ok": false,
+        "reason": "uses_exhausted"
+      }
+    },
+    {
+      "name": "integrate",
+      "at": "2026-11-13T00:07:37.617Z",
+      "state": "integrated",
+      "integrated_commit": "f796fc88d0fe382e3b84b62569bebafa20a53d47",
+      "post_merge": {
+        "kind": "PostMergeResult",
+        "repo": "/tmp/el-live-eng-C1XMug",
+        "checks": [
+          {
+            "id": "npm_run_build",
+            "argv": [
+              "npm",
+              "run",
+              "build",
+              "--silent"
+            ],
+            "required": true,
+            "present": true,
+            "ran": true,
+            "exit_code": 0,
+            "stdout_tail": "build ok\n",
+            "stderr_tail": "",
+            "duration_ms": 115
+          },
+          {
+            "id": "npm_run_test",
+            "argv": [
+              "npm",
+              "run",
+              "test",
+              "--silent"
+            ],
+            "required": true,
+            "present": true,
+            "ran": true,
+            "exit_code": 0,
+            "stdout_tail": "TAP version 13\n# Subtest: lists products\nok 1 - lists products\n  ---\n  duration_ms: 0.608543\n  type: 'test'\n  ...\n# Subtest: get product\nok 2 - get product\n  ---\n  duration_ms: 0.206305\n  type: 'test'\n  ...\n# Subtest: percent coupon\nok 3 - percent coupon\n  ---\n  duration_ms: 1.356714\n  type: 'test'\n  ...\n# Subtest: fixed coupon floors at zero\nok 4 - fixed coupon floors at zero\n  ---\n  duration_ms: 0.142713\n  type: 'test'\n  ...\n# Subtest: non-stackable picks best single\nok 5 - non-stackable picks best single\n  ---\n  duration_ms: 0.140269\n  type: 'test'\n  ...\n# Subtest: stackable combines after best non-stackable\nok 6 - stackable combines after best non-stackable\n  ---\n  duration_ms: 0.143394\n  type: 'test'\n  ...\n# Subtest: cart totals integrates discount + tax\nok 7 - cart totals integrates discount + tax\n  ---\n  duration_ms: 0.386439\n  type: 'test'\n  ...\n# Subtest: books zero tax\nok 8 - books zero tax\n  ---\n  duration_ms: 0.726249\n  type: 'test'\n  ...\n# Subtest: default tax\nok 9 - default tax\n  ---\n  duration_ms: 0.232183\n  type: 'test'\n  ...\n1..9\n# tests 9\n# suites 0\n# pass 9\n# fail 0\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 59.540489\n",
+            "stderr_tail": "",
+            "duration_ms": 170
+          },
+          {
+            "id": "npm_run_typecheck",
+            "argv": [
+              "npm",
+              "run",
+              "typecheck",
+              "--silent"
+            ],
+            "required": true,
+            "present": true,
+            "ran": true,
+            "exit_code": 0,
+            "stdout_tail": "no-ts\n",
+            "stderr_tail": "",
+            "duration_ms": 107
+          }
+        ],
+        "overall": "PASS",
+        "notes": []
+      },
+      "post_test_exit": 0,
+      "post_build_exit": 0
+    },
+    {
+      "name": "rollback_fixture",
+      "at": "2026-11-13T00:07:37.683Z",
+      "rollbackOk": true,
+      "rbBase": "ac4761550ae3a35d30f24753db3a3f99798a5873",
+      "rbHead": "ac4761550ae3a35d30f24753db3a3f99798a5873"
+    }
+  ]
+}

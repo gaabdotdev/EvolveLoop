@@ -1,0 +1,16 @@
+{
+  "kind": "AdapterInvokeResult",
+  "adapter_id": "antigravity",
+  "status": "accepted",
+  "code": "PROCESS_SPAWNED_WAIT_TIMEOUT",
+  "message": "pid=587316 session=sess-fd89575d-b5f4-4693-9736-c6b61f5ea7e3 wait_ms=600000 still_running",
+  "bridge_ref": "sess-fd89575d-b5f4-4693-9736-c6b61f5ea7e3",
+  "limitations": [
+    "cursor-agent bridge via antigravity adapter_id (print mode + workspace trust)",
+    "Cancel only for Core-owned spawned PIDs",
+    "--trust scopes workspace trust after session auth; it is not an auth substitute",
+    "cli=/home/gaab/.local/bin/agent version_hint=2026.11.11-043ef28",
+    "real spawn requires provider_mode=real + EVOLVELOOP_HARNESS_CONSENT=true",
+    "dry-run writes prompt package under --data-dir/harness-prompts without calling network"
+  ]
+}

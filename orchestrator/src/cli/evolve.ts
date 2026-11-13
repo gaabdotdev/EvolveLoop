@@ -743,12 +743,18 @@ async function main() {
           console.error("--provider-mode must be mock|real");
           process.exit(1);
         }
+        const waitRaw = args["wait-ms"];
+        const wait_ms =
+          waitRaw != null && waitRaw !== "" ? Number(waitRaw) : undefined;
         const result = await getAdapterDriver(args.id).invoke(paths, {
           work_id: args["work-id"],
           task_id: args["task-id"],
           agent_id: args["agent-id"],
           ir_path: args.ir ? resolve(args.ir) : undefined,
           provider_mode: mode,
+          workspace_path: args.workspace ? resolve(args.workspace) : undefined,
+          note: args.note,
+          wait_ms: Number.isFinite(wait_ms) ? wait_ms : undefined,
         });
         print(result);
         if (result.status === "blocked" || result.status === "unsupported") {

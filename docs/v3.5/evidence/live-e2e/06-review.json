@@ -1,0 +1,61 @@
+{
+  "reviewInvoke": {
+    "kind": "AdapterInvokeResult",
+    "adapter_id": "antigravity",
+    "status": "accepted",
+    "code": "PROCESS_COMPLETED",
+    "message": "pid=1163929 session=sess-f9d71e48-7787-4a43-b732-5861f05834f0 exit=0 stdout=/home/gaab/Downloads/EvolveLoop-v35/orchestrator/v35-live-e2e-data/harness-prompts/work-live-e2e-1794526866904/sess-f9d71e48-7787-4a43-b732-5861f05834f0.stdout.log",
+    "bridge_ref": "sess-f9d71e48-7787-4a43-b732-5861f05834f0",
+    "limitations": [
+      "cursor-agent bridge via antigravity adapter_id (print mode + workspace trust)",
+      "Cancel only for Core-owned spawned PIDs",
+      "--trust scopes workspace trust after session auth; it is not an auth substitute",
+      "cli=/home/gaab/.local/bin/agent version_hint=2026.11.11-043ef28",
+      "real spawn requires provider_mode=real + EVOLVELOOP_HARNESS_CONSENT=true",
+      "dry-run writes prompt package under --data-dir/harness-prompts without calling network"
+    ]
+  },
+  "reviewSession": {
+    "kind": "ProcessSessionRecord",
+    "session_id": "sess-f9d71e48-7787-4a43-b732-5861f05834f0",
+    "work_id": "work-live-e2e-1794526866904",
+    "task_id": "t-review",
+    "adapter_id": "antigravity",
+    "pid": 1163929,
+    "status": "exited",
+    "started_at": "2026-11-13T00:05:44.178Z",
+    "command": [
+      "/home/gaab/.local/bin/agent",
+      "-p",
+      "--output-format",
+      "text",
+      "--trust",
+      "--mode",
+      "ask",
+      "--workspace",
+      "/home/gaab/Downloads/EvolveLoop-v35/orchestrator/v35-live-e2e-data/worktrees/work-live-e2e-1794526866904/wt-work-live-e2e-1794526866904-1794526867566",
+      "Read the EvolveLoop handoff prompt at /home/gaab/Downloads/EvolveLoop-v35/orchestrator/v35-live-e2e-data/harness-prompts/work-live-e2e-1794526866904/sess-f9d71e48-7787-4a43-b732-5861f05834f0.md and complete the assigned task. Stay strictly inside the workspace. Do not modify files outside it."
+    ],
+    "prompt_path": "/home/gaab/Downloads/EvolveLoop-v35/orchestrator/v35-live-e2e-data/harness-prompts/work-live-e2e-1794526866904/sess-f9d71e48-7787-4a43-b732-5861f05834f0.md",
+    "limitations": [
+      "cursor-agent bridge via antigravity adapter_id (print mode + workspace trust)",
+      "Cancel only for Core-owned spawned PIDs",
+      "--trust scopes workspace trust after session auth; it is not an auth substitute",
+      "cli=/home/gaab/.local/bin/agent version_hint=2026.11.11-043ef28",
+      "real spawn requires provider_mode=real + EVOLVELOOP_HARNESS_CONSENT=true",
+      "dry-run writes prompt package under --data-dir/harness-prompts without calling network",
+      "detached_pgid_for_tree_cancel",
+      "env_allowlist_not_full_process_env",
+      "harness_provider_path_outside_bwrap_session_auth",
+      "stdio_file_backed_for_evidence",
+      "stdout_log=/home/gaab/Downloads/EvolveLoop-v35/orchestrator/v35-live-e2e-data/harness-prompts/work-live-e2e-1794526866904/sess-f9d71e48-7787-4a43-b732-5861f05834f0.stdout.log",
+      "stderr_log=/home/gaab/Downloads/EvolveLoop-v35/orchestrator/v35-live-e2e-data/harness-prompts/work-live-e2e-1794526866904/sess-f9d71e48-7787-4a43-b732-5861f05834f0.stderr.log",
+      "workspace=/home/gaab/Downloads/EvolveLoop-v35/orchestrator/v35-live-e2e-data/worktrees/work-live-e2e-1794526866904/wt-work-live-e2e-1794526866904-1794526867566"
+    ],
+    "pgid": 1163929,
+    "starttime": "1077377",
+    "ended_at": "2026-11-13T00:07:36.530Z",
+    "exit_code": 0
+  },
+  "reviewText": "Wiki: n/a (review harness e2e com ficheiros explícitos)\n\nVERDICT: APPROVE\n\n- `applyDiscounts` cobre percent (`Math.round` + cap no subtotal), fixed (`Math.min` + floor em 0) e stacking (melhor non-stackable, depois stackables em sequência), alinhado a `test/discount.test.js`.\n- Os 4 cenários de desconto batem com a lógica: 3000→2700 (TEN), fixed→0, B (400) vence A (300), NS+S1 → 2520 com `applied` `[\"NS\",\"S1\"]`.\n- Integração em `cartTotals` usa `applyDiscounts` antes do imposto; o teste de cart exige `subtotal_cents === 2700` e `total_cents >= subtotal_cents` — consistente com tax ≥ 0.\n- `catalog.test.js` e `tax.test.js` não dependem de discounts; catalog/tax inalterados na leitura estática.\n- `npm test` / `npm run build` são scripts triviais (`node --test`, `scripts/build.js` escreve `built`); a implementação exporta o que os testes importam.\n- Escopo da mudança fica em `src/pricing/discount.js` (+ aceitação/testes no repo), cumprindo “no changes outside this repository”.\n"
+}

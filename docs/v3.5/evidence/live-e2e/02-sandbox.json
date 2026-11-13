@@ -1,0 +1,12 @@
+{
+  "applied": true,
+  "backend": "bubblewrap",
+  "pid": 586066,
+  "pgid": 586066,
+  "exit_code_read": 0,
+  "exit_code_leak_attempt": 2,
+  "primary_write_denied": true,
+  "network_mode": "deny",
+  "mounts_workspace": "/home/gaab/Downloads/EvolveLoop-v35/orchestrator/v35-live-e2e-data/worktrees/work-live-e2e-1794526866904/wt-work-live-e2e-1794526866904-1794526867566",
+  "policy_profile": "agent-workspace"
+}

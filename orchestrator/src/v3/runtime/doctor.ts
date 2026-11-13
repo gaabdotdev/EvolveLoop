@@ -167,12 +167,28 @@ export async function runtimeDoctor(dataDir: string): Promise<{
     required: false,
   });
 
+  // cursor-agent session auth (preferred) OR CURSOR_API_KEY — either enables Gate H
+  const agentStatus = spawnSync("agent", ["status"], { encoding: "utf-8", timeout: 8000 });
+  const agentLoggedIn =
+    agentStatus.status === 0 &&
+    /logged in as/i.test(agentStatus.stdout || agentStatus.stderr || "");
+  const cursorApiKeySet = !!process.env.CURSOR_API_KEY;
+  checks.push({
+    id: "harness_cursor_agent_session",
+    status: agentLoggedIn ? "PASS" : "BLOCKED",
+    detail: agentLoggedIn
+      ? "agent status reports logged-in session (email redacted)"
+      : "agent session not logged in — run agent login",
+    required: false,
+  });
   checks.push({
     id: "harness_cursor_api_key",
-    status: process.env.CURSOR_API_KEY ? "PASS" : "BLOCKED",
-    detail: process.env.CURSOR_API_KEY
+    status: cursorApiKeySet ? "PASS" : agentLoggedIn ? "PASS" : "BLOCKED",
+    detail: cursorApiKeySet
       ? "CURSOR_API_KEY set (value redacted)"
-      : "CURSOR_API_KEY unset — agent real path blocked",
+      : agentLoggedIn
+        ? "CURSOR_API_KEY unset but session auth present — Gate H eligible via agent login"
+        : "CURSOR_API_KEY unset and no agent session — agent real path blocked",
     required: false,
   });
 

@@ -49,14 +49,23 @@ describe("V3.5 OP Gate H — harness consent & real path", () => {
     } catch {
       loggedIn = false;
     }
+    const agentStatus = spawnSync("agent", ["status"], { encoding: "utf-8", timeout: 8000 });
+    const agentSession =
+      agentStatus.status === 0 &&
+      /logged in as/i.test(agentStatus.stdout || agentStatus.stderr || "");
     const evidence = {
       kind: "HarnessRealAuthProbe",
       cli_available: probe.available,
       cli_path: probe.path,
       logged_in: loggedIn,
+      cursor_agent_session: agentSession,
       cursor_api_key_present: !!process.env.CURSOR_API_KEY,
-      verdict: loggedIn || process.env.CURSOR_API_KEY ? "AUTH_PRESENT" : "BLOCKED_AUTH",
-      note: "Gate H real LLM requires claude /login or CURSOR_API_KEY — do not forge PASS",
+      verdict:
+        loggedIn || agentSession || process.env.CURSOR_API_KEY
+          ? "AUTH_PRESENT"
+          : "BLOCKED_AUTH",
+      note:
+        "Gate H real LLM requires claude /login OR agent session OR CURSOR_API_KEY — do not forge PASS",
     };
     const out = join(tmpdir(), `el-harness-auth-${Date.now()}.json`);
     writeFileSync(out, JSON.stringify(evidence, null, 2));

@@ -1,0 +1,77 @@
+{
+  "merged": {
+    "kind": "WorkspaceIntegrationRecord",
+    "workspace_id": "wt-work-live-e2e-1794526866904-1794526867566",
+    "work_id": "work-live-e2e-1794526866904",
+    "agent_id": "impl-1",
+    "workspace_path": "/home/gaab/Downloads/EvolveLoop-v35/orchestrator/v35-live-e2e-data/worktrees/work-live-e2e-1794526866904/wt-work-live-e2e-1794526866904-1794526867566",
+    "base_commit": "60de41009044478fadb44d78a99973505e18f7f1",
+    "branch": "evolveloop/work-live-e2e-1794526866904/wt-work-live-e2e-1794526866904-1794526867566",
+    "state": "integrated",
+    "conflict_files": [],
+    "notes": [],
+    "updated_at": "2026-11-13T00:07:37.332Z",
+    "checkpoint_ref": "60de41009044478fadb44d78a99973505e18f7f1",
+    "post_merge": {
+      "kind": "PostMergeResult",
+      "repo": "/tmp/el-live-eng-C1XMug",
+      "checks": [
+        {
+          "id": "npm_run_build",
+          "argv": [
+            "npm",
+            "run",
+            "build",
+            "--silent"
+          ],
+          "required": true,
+          "present": true,
+          "ran": true,
+          "exit_code": 0,
+          "stdout_tail": "build ok\n",
+          "stderr_tail": "",
+          "duration_ms": 115
+        },
+        {
+          "id": "npm_run_test",
+          "argv": [
+            "npm",
+            "run",
+            "test",
+            "--silent"
+          ],
+          "required": true,
+          "present": true,
+          "ran": true,
+          "exit_code": 0,
+          "stdout_tail": "TAP version 13\n# Subtest: lists products\nok 1 - lists products\n  ---\n  duration_ms: 0.608543\n  type: 'test'\n  ...\n# Subtest: get product\nok 2 - get product\n  ---\n  duration_ms: 0.206305\n  type: 'test'\n  ...\n# Subtest: percent coupon\nok 3 - percent coupon\n  ---\n  duration_ms: 1.356714\n  type: 'test'\n  ...\n# Subtest: fixed coupon floors at zero\nok 4 - fixed coupon floors at zero\n  ---\n  duration_ms: 0.142713\n  type: 'test'\n  ...\n# Subtest: non-stackable picks best single\nok 5 - non-stackable picks best single\n  ---\n  duration_ms: 0.140269\n  type: 'test'\n  ...\n# Subtest: stackable combines after best non-stackable\nok 6 - stackable combines after best non-stackable\n  ---\n  duration_ms: 0.143394\n  type: 'test'\n  ...\n# Subtest: cart totals integrates discount + tax\nok 7 - cart totals integrates discount + tax\n  ---\n  duration_ms: 0.386439\n  type: 'test'\n  ...\n# Subtest: books zero tax\nok 8 - books zero tax\n  ---\n  duration_ms: 0.726249\n  type: 'test'\n  ...\n# Subtest: default tax\nok 9 - default tax\n  ---\n  duration_ms: 0.232183\n  type: 'test'\n  ...\n1..9\n# tests 9\n# suites 0\n# pass 9\n# fail 0\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 59.540489\n",
+          "stderr_tail": "",
+          "duration_ms": 170
+        },
+        {
+          "id": "npm_run_typecheck",
+          "argv": [
+            "npm",
+            "run",
+            "typecheck",
+            "--silent"
+          ],
+          "required": true,
+          "present": true,
+          "ran": true,
+          "exit_code": 0,
+          "stdout_tail": "no-ts\n",
+          "stderr_tail": "",
+          "duration_ms": 107
+        }
+      ],
+      "overall": "PASS",
+      "notes": []
+    },
+    "test_exit_code": 0,
+    "integrated_commit": "f796fc88d0fe382e3b84b62569bebafa20a53d47"
+  },
+  "post_test_tail": "\n> shop-core-live-e2e@0.1.0 test\n> node --test test/**/*.test.js\n\nTAP version 13\n# Subtest: lists products\nok 1 - lists products\n  ---\n  duration_ms: 0.706601\n  type: 'test'\n  ...\n# Subtest: get product\nok 2 - get product\n  ---\n  duration_ms: 0.195083\n  type: 'test'\n  ...\n# Subtest: percent coupon\nok 3 - percent coupon\n  ---\n  duration_ms: 1.303542\n  type: 'test'\n  ...\n# Subtest: fixed coupon floors at zero\nok 4 - fixed coupon floors at zero\n  ---\n  duration_ms: 0.14139\n  type: 'test'\n  ...\n# Subtest: non-stackable picks best single\nok 5 - non-stackable picks best single\n  ---\n  duration_ms: 0.186767\n  type: 'test'\n  ...\n# Subtest: stackable combines after best non-stackable\nok 6 - stackable combines after best non-stackable\n  ---\n  duration_ms: 0.151329\n  type: 'test'\n  ...\n# Subtest: cart totals integrates discount + tax\nok 7 - cart totals integrates discount + tax\n  ---\n  duration_ms: 0.39717\n  type: 'test'\n  ...\n# Subtest: books zero tax\nok 8 - books zero tax\n  ---\n  duration_ms: 1.076959\n  type: 'test'\n  ...\n# Subtest: default tax\nok 9 - default tax\n  ---\n  duration_ms: 0.275717\n  type: 'test'\n  ...\n1..9\n# tests 9\n# suites 0\n# pass 9\n# fail 0\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 53.042226\n",
+  "post_build_tail": "\n> shop-core-live-e2e@0.1.0 build\n> node scripts/build.js\n\nbuild ok\n",
+  "main_log": "f796fc8 integrate(wt-work-live-e2e-1794526866904-1794526867566): agent impl-1\n95731bb feat: applyDiscounts\n60de410 base: catalog/tax/cart with incomplete discounts\n"
+}

@@ -1,0 +1,9 @@
+{
+  "repo": "/tmp/el-live-eng-C1XMug",
+  "initial_commit": "60de41009044478fadb44d78a99973505e18f7f1",
+  "pretest": {
+    "exit_code": 1,
+    "failed_as_expected": true,
+    "stderr_tail": "_runner/test:1101:12)\n    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)\n  ...\n# Subtest: books zero tax\nok 8 - books zero tax\n  ---\n  duration_ms: 0.724584\n  type: 'test'\n  ...\n# Subtest: default tax\nok 9 - default tax\n  ---\n  duration_ms: 0.234889\n  type: 'test'\n  ...\n1..9\n# tests 9\n# suites 0\n# pass 4\n# fail 5\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 56.857795\n"
+  }
+}
