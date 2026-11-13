@@ -17,7 +17,7 @@
 | S — Security/isolation | **PASS** |
 | E2E-LIVE | **PASS** |
 
-Global V3.6 tag: **NOT_RUN** (awaits explicit human approval).
+Global V3.6 tag: **PASS** — annotated `v3.6-multi-workflow` → `2e76855` (local; no push).
 
 ## Projects
 
@@ -94,4 +94,4 @@ Intervals (`09-concurrency-timeline.json`):
 - A2 did not complete live engineering (intentionally failed while queued).
 - Independent reviewer session not required for these minimal fixtures (implementation-only goals).
 - Token/cost budgets remain UNAVAILABLE.
-- Release tag not created.
+- Release tag `v3.6-multi-workflow` created locally on `2e76855` after explicit human approval; not pushed.

@@ -29,12 +29,12 @@
 | S | Priority ≠ authority | ADR-0001 | review | PASS | ADR |
 | Release | build/typecheck/unit v36 + v35 daemon | tsc + vitest | commands | PASS | 8/8 regression after live |
 | Release | Historical tags intact | git | verify | PASS | v3-complete, v3.5-runtime |
-| Release | V3.6 tag | — | — | **NOT_RUN** | requires explicit human approval after this report |
+| Release | V3.6 tag | git annotated tag | verify | **PASS** | `v3.6-multi-workflow` → `2e76855` (human-approved 2026-11-12; local only, no push) |
 
 ## Global verdict
 
-**Technically ready for release approval.** Deterministic + **E2E-LIVE PASS**.  
-**Tag V3.6 remains NOT_RUN** until explicit human approval (no automatic tag).
+**V3.6_COMPLETE (local).** Deterministic + **E2E-LIVE PASS** + annotated tag `v3.6-multi-workflow` @ `2e76855`.  
+Push not performed. Historical tags `v3-complete` / `v3.5-runtime` preserved.
 
 ### E2E-LIVE proof highlights
 
