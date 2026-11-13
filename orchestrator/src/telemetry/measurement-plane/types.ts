@@ -61,8 +61,22 @@ export interface CorrelationIds {
   work_id?: string;
   /** Scheduler node UUID (do not confuse with measurement run_id) */
   engine_node_run_id?: string;
+  /** @deprecated semantic ambiguity — prefer engine_node_run_id or worker_node_id explicitly */
   node_id?: string;
+  /** V3.7 fabric correlation (additive; do not reinterpret node_id) */
+  control_plane_id?: string;
+  control_plane_epoch?: number;
+  worker_node_id?: string;
+  node_session_id?: string;
+  pool_id?: string;
+  lease_id?: string;
+  fencing_epoch?: number;
+  artifact_transfer_id?: string;
+  remote_trace_id?: string;
+  remote_span_id?: string;
+  workflow_id?: string;
 }
+
 
 export interface ProvenanceInfo {
   kind: ProvenanceKind;

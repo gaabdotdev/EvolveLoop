@@ -1,0 +1,7 @@
+{
+  "gate": "fabric-unit",
+  "at": "2026-11-13T23:51:09.377900+00:00",
+  "vitest": "tests/unit/fabric",
+  "result": "19/19 PASS",
+  "tsc": "PASS"
+}

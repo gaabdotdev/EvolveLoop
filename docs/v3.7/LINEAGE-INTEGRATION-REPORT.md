@@ -3,7 +3,7 @@
 **Date:** 2026-11-13  
 **Worktree:** `/tmp/evolveloop-v37`  
 **Integration branch:** `feature/v3.7-lineage-integration`  
-**Canonical baseline commit:** *(filled after docs commit; tip before distributed fabric)*  
+**Canonical baseline commit:** `9d13978ac199a05f2096b6e7f36829f4f2c333d1`  
 **Method:** V3.6 tip as base + controlled cherry-pick of Measurement Plane commits (no blind merge of `feature/bench-obs-v1`).
 
 ---
