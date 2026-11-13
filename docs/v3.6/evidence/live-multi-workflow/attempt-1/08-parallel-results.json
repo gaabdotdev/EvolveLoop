@@ -1,0 +1,12 @@
+[
+  {
+    "workflow_id": "wf-963a4687-68a6-4358-8cc1-e4b948db0115",
+    "error": "AgentRegistryError: non-master agents require parent, task_id, and delegation",
+    "ok": false
+  },
+  {
+    "workflow_id": "wf-3946e0e7-af02-4c89-9047-7e173687d5a7",
+    "error": "AgentRegistryError: non-master agents require parent, task_id, and delegation",
+    "ok": false
+  }
+]

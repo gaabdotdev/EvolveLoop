@@ -1,0 +1,214 @@
+{
+  "tick1": {
+    "queue": [
+      {
+        "kind": "QueueEntry",
+        "workflow_id": "wf-8af3d375-b716-4ccd-94a1-f102d8ab52bd",
+        "project_id": "proj-db41be0374e4",
+        "effective_priority": null,
+        "base_priority": 20,
+        "service_class": "standard",
+        "submitted_at": "2026-11-13T01:05:14.506Z",
+        "admission_attempts": 0,
+        "wait_reason": "scheduler_tick_capacity",
+        "aging_boost": null,
+        "fairness_key": "proj-db41be0374e4"
+      }
+    ],
+    "admitted": [
+      {
+        "kind": "SchedulerDecision",
+        "decision_id": "sd-34992338-a066-45b3-8da7-6d51a424d2c5",
+        "at": "2026-11-13T01:05:14.645Z",
+        "workflow_id": "wf-963a4687-68a6-4358-8cc1-e4b948db0115",
+        "action": "admit",
+        "reason": "admission_granted",
+        "effective_priority": null,
+        "details": {
+          "reservation_id": "res-cfc84d80-3289-4d4b-8748-91ef0281320c",
+          "team_plan_id": "team-f7c0518b-c10a-440e-b395-2b017b4323ce",
+          "work_id": "work-wf-963a4687-68a6-4358-8cc1-e4b948db0115"
+        }
+      },
+      {
+        "kind": "SchedulerDecision",
+        "decision_id": "sd-e543c2c0-e747-4b24-ae79-aac67bc54290",
+        "at": "2026-11-13T01:05:14.647Z",
+        "workflow_id": "wf-3946e0e7-af02-4c89-9047-7e173687d5a7",
+        "action": "admit",
+        "reason": "admission_granted",
+        "effective_priority": null,
+        "details": {
+          "reservation_id": "res-95d1aed8-02a0-4ec2-807e-e91f50be3336",
+          "team_plan_id": "team-2ba6128f-2813-4614-93f2-c9a654297b6e",
+          "work_id": "work-wf-3946e0e7-af02-4c89-9047-7e173687d5a7"
+        }
+      }
+    ],
+    "skipped": [
+      {
+        "kind": "SchedulerDecision",
+        "decision_id": "sd-5dd77754-ee13-4388-aa81-83ab419cd2fb",
+        "at": "2026-11-13T01:05:14.648Z",
+        "workflow_id": "wf-8af3d375-b716-4ccd-94a1-f102d8ab52bd",
+        "action": "wait",
+        "reason": "scheduler_tick_capacity"
+      }
+    ]
+  },
+  "queue1": {
+    "queue": [
+      {
+        "kind": "QueueEntry",
+        "workflow_id": "wf-8af3d375-b716-4ccd-94a1-f102d8ab52bd",
+        "project_id": "proj-db41be0374e4",
+        "effective_priority": null,
+        "base_priority": 20,
+        "service_class": "standard",
+        "submitted_at": "2026-11-13T01:05:14.506Z",
+        "admission_attempts": 0,
+        "wait_reason": "scheduler_tick_capacity",
+        "aging_boost": null,
+        "fairness_key": "proj-db41be0374e4"
+      }
+    ]
+  },
+  "status1": {
+    "version": "3.6.0",
+    "ops_dir": "/home/gaab/orca/workspaces/EvolveLoop/brant/orchestrator/v36-live-ops",
+    "policy": {
+      "kind": "SchedulerPolicy",
+      "version": 1,
+      "max_global_workflows": 2,
+      "max_per_project": 2,
+      "max_aging_boost": 50,
+      "service_class_weight": {
+        "interactive": 40,
+        "standard": 20,
+        "batch": 10,
+        "background": 0
+      },
+      "fairness_window": 8,
+      "updated_at": "2026-11-13T01:05:14.119Z"
+    },
+    "projects": 2,
+    "workflows_by_state": {
+      "ADMITTED": 2,
+      "WAITING_RESOURCE": 1
+    },
+    "queue_depth": 1,
+    "resources": {
+      "capacity": {
+        "cpu": 4,
+        "memory_mb": 8192,
+        "processes": 128,
+        "disk_mb": 10240,
+        "workflows": 8,
+        "agents": 16,
+        "harness_sessions": 4,
+        "provider_requests": 8
+      },
+      "usage": {
+        "cpu": {
+          "capacity": 4,
+          "held": 0,
+          "available": 4
+        },
+        "memory_mb": {
+          "capacity": 8192,
+          "held": 0,
+          "available": 8192
+        },
+        "processes": {
+          "capacity": 128,
+          "held": 0,
+          "available": 128
+        },
+        "disk_mb": {
+          "capacity": 10240,
+          "held": 0,
+          "available": 10240
+        },
+        "workflows": {
+          "capacity": 8,
+          "held": 2,
+          "available": 6
+        },
+        "agents": {
+          "capacity": 16,
+          "held": 0,
+          "available": 16
+        },
+        "harness_sessions": {
+          "capacity": 4,
+          "held": 0,
+          "available": 4
+        },
+        "provider_requests": {
+          "capacity": 8,
+          "held": 0,
+          "available": 8
+        }
+      },
+      "held_reservations": 2,
+      "note": "tokens/cost omitted unless provenance measured"
+    },
+    "active_workflows": 2
+  },
+  "resources1": {
+    "capacity": {
+      "cpu": 4,
+      "memory_mb": 8192,
+      "processes": 128,
+      "disk_mb": 10240,
+      "workflows": 8,
+      "agents": 16,
+      "harness_sessions": 4,
+      "provider_requests": 8
+    },
+    "usage": {
+      "cpu": {
+        "capacity": 4,
+        "held": 0,
+        "available": 4
+      },
+      "memory_mb": {
+        "capacity": 8192,
+        "held": 0,
+        "available": 8192
+      },
+      "processes": {
+        "capacity": 128,
+        "held": 0,
+        "available": 128
+      },
+      "disk_mb": {
+        "capacity": 10240,
+        "held": 0,
+        "available": 10240
+      },
+      "workflows": {
+        "capacity": 8,
+        "held": 2,
+        "available": 6
+      },
+      "agents": {
+        "capacity": 16,
+        "held": 0,
+        "available": 16
+      },
+      "harness_sessions": {
+        "capacity": 4,
+        "held": 0,
+        "available": 4
+      },
+      "provider_requests": {
+        "capacity": 8,
+        "held": 0,
+        "available": 8
+      }
+    },
+    "held_reservations": 2,
+    "note": "tokens/cost omitted unless provenance measured"
+  }
+}

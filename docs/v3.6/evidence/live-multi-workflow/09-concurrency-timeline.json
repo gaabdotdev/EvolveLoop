@@ -1,0 +1,106 @@
+{
+  "overlap": true,
+  "parallel_elapsed_ms": 114152,
+  "timeline": [
+    {
+      "event": "parallel_start",
+      "at": "2026-11-13T01:10:38.547Z",
+      "workflow_ids": [
+        "wf-b4868cba-1b28-440a-86fe-7ffcfff5206a",
+        "wf-0b8757a2-5f05-4e84-81e3-12a857b94954"
+      ]
+    },
+    {
+      "event": "workflow_running",
+      "at": "2026-11-13T01:10:38.573Z",
+      "workflow_id": "wf-b4868cba-1b28-440a-86fe-7ffcfff5206a",
+      "label": "A1",
+      "work_id": "work-wf-b4868cba-1b28-440a-86fe-7ffcfff5206a",
+      "worktree": "/home/gaab/orca/workspaces/EvolveLoop/brant/orchestrator/v36-live-ops/project-data/proj-dc79e8ca74d4/worktrees/work-wf-b4868cba-1b28-440a-86fe-7ffcfff5206a/wt-work-wf-b4868cba-1b28-440a-86fe-7ffcfff5206a-1794532238552"
+    },
+    {
+      "event": "workflow_running",
+      "at": "2026-11-13T01:10:39.631Z",
+      "workflow_id": "wf-0b8757a2-5f05-4e84-81e3-12a857b94954",
+      "label": "B1",
+      "work_id": "work-wf-0b8757a2-5f05-4e84-81e3-12a857b94954",
+      "worktree": "/home/gaab/orca/workspaces/EvolveLoop/brant/orchestrator/v36-live-ops/project-data/proj-8b34dfd4e596/worktrees/work-wf-0b8757a2-5f05-4e84-81e3-12a857b94954/wt-work-wf-0b8757a2-5f05-4e84-81e3-12a857b94954-1794532238564"
+    },
+    {
+      "event": "controlled_failure",
+      "at": "2026-11-13T01:10:55.585Z",
+      "mode": "queue_sibling_fail",
+      "workflow_id": "wf-614df707-e028-44cd-9db5-d4dd011dc242",
+      "label": "A2",
+      "others_preserved": true,
+      "preserved_running": [
+        "wf-b4868cba-1b28-440a-86fe-7ffcfff5206a",
+        "wf-0b8757a2-5f05-4e84-81e3-12a857b94954"
+      ],
+      "peer_states_at_failure": [
+        {
+          "workflow_id": "wf-b4868cba-1b28-440a-86fe-7ffcfff5206a",
+          "label": "A1",
+          "state": "RUNNING",
+          "sessions": [
+            {
+              "session_id": "sess-8ec5a744-d436-4c36-bea4-15f5380e7f95",
+              "status": "running",
+              "pid": 1558640,
+              "started_at": "2026-11-13T01:10:39.630Z"
+            }
+          ]
+        },
+        {
+          "workflow_id": "wf-0b8757a2-5f05-4e84-81e3-12a857b94954",
+          "label": "B1",
+          "state": "RUNNING",
+          "sessions": [
+            {
+              "session_id": "sess-de931908-dc14-42f4-b405-83c6d4d1e917",
+              "status": "running",
+              "pid": 1558779,
+              "started_at": "2026-11-13T01:10:40.669Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "event": "workflow_finished",
+      "at": "2026-11-13T01:12:29.245Z",
+      "workflow_id": "wf-b4868cba-1b28-440a-86fe-7ffcfff5206a",
+      "label": "A1",
+      "ok": true,
+      "started_at": "2026-11-13T01:10:38.573Z",
+      "completed_at": "2026-11-13T01:12:29.157Z"
+    },
+    {
+      "event": "workflow_finished",
+      "at": "2026-11-13T01:12:32.698Z",
+      "workflow_id": "wf-0b8757a2-5f05-4e84-81e3-12a857b94954",
+      "label": "B1",
+      "ok": true,
+      "started_at": "2026-11-13T01:10:39.631Z",
+      "completed_at": "2026-11-13T01:12:32.601Z"
+    }
+  ],
+  "intervals": [
+    {
+      "workflow_id": "wf-b4868cba-1b28-440a-86fe-7ffcfff5206a",
+      "label": "A1",
+      "project_id": "proj-dc79e8ca74d4",
+      "session_id": "sess-8ec5a744-d436-4c36-bea4-15f5380e7f95",
+      "started_at": "2026-11-13T01:10:38.573Z",
+      "completed_at": "2026-11-13T01:12:29.157Z"
+    },
+    {
+      "workflow_id": "wf-0b8757a2-5f05-4e84-81e3-12a857b94954",
+      "label": "B1",
+      "project_id": "proj-8b34dfd4e596",
+      "session_id": "sess-de931908-dc14-42f4-b405-83c6d4d1e917",
+      "started_at": "2026-11-13T01:10:39.631Z",
+      "completed_at": "2026-11-13T01:12:32.601Z"
+    }
+  ]
+}

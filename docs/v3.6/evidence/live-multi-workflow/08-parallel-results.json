@@ -1,0 +1,152 @@
+[
+  {
+    "workflow_id": "wf-b4868cba-1b28-440a-86fe-7ffcfff5206a",
+    "label": "A1",
+    "project_id": "proj-dc79e8ca74d4",
+    "work_id": "work-wf-b4868cba-1b28-440a-86fe-7ffcfff5206a",
+    "worktree": "/home/gaab/orca/workspaces/EvolveLoop/brant/orchestrator/v36-live-ops/project-data/proj-dc79e8ca74d4/worktrees/work-wf-b4868cba-1b28-440a-86fe-7ffcfff5206a/wt-work-wf-b4868cba-1b28-440a-86fe-7ffcfff5206a-1794532238552",
+    "branch": "evolveloop/work-wf-b4868cba-1b28-440a-86fe-7ffcfff5206a/wt-work-wf-b4868cba-1b28-440a-86fe-7ffcfff5206a-1794532238552",
+    "started_at": "2026-11-13T01:10:38.573Z",
+    "completed_at": "2026-11-13T01:12:29.157Z",
+    "invoke": {
+      "kind": "AdapterInvokeResult",
+      "adapter_id": "antigravity",
+      "status": "accepted",
+      "code": "PROCESS_COMPLETED",
+      "message": "pid=1558640 session=sess-8ec5a744-d436-4c36-bea4-15f5380e7f95 exit=0 stdout=/home/gaab/orca/workspaces/EvolveLoop/brant/orchestrator/v36-live-ops/project-data/proj-dc79e8ca74d4/harness-prompts/work-wf-b4868cba-1b28-440a-86fe-7ffcfff5206a/sess-8ec5a744-d436-4c36-bea4-15f5380e7f95.stdout.log",
+      "bridge_ref": "sess-8ec5a744-d436-4c36-bea4-15f5380e7f95",
+      "limitations": [
+        "cursor-agent bridge via antigravity adapter_id (print mode + workspace trust)",
+        "Cancel only for Core-owned spawned PIDs",
+        "--trust scopes workspace trust after session auth; it is not an auth substitute",
+        "cli=/home/gaab/.local/bin/agent version_hint=2026.11.11-043ef28",
+        "real spawn requires provider_mode=real + EVOLVELOOP_HARNESS_CONSENT=true",
+        "dry-run writes prompt package under --data-dir/harness-prompts without calling network"
+      ]
+    },
+    "session_id": "sess-8ec5a744-d436-4c36-bea4-15f5380e7f95",
+    "sessions": [
+      {
+        "kind": "ProcessSessionRecord",
+        "session_id": "sess-8ec5a744-d436-4c36-bea4-15f5380e7f95",
+        "work_id": "work-wf-b4868cba-1b28-440a-86fe-7ffcfff5206a",
+        "task_id": "t-impl",
+        "adapter_id": "antigravity",
+        "pid": 1558640,
+        "status": "exited",
+        "started_at": "2026-11-13T01:10:39.630Z",
+        "command": [
+          "/home/gaab/.local/bin/agent",
+          "-p",
+          "--output-format",
+          "text",
+          "--trust",
+          "--force",
+          "--workspace",
+          "/home/gaab/orca/workspaces/EvolveLoop/brant/orchestrator/v36-live-ops/project-data/proj-dc79e8ca74d4/worktrees/work-wf-b4868cba-1b28-440a-86fe-7ffcfff5206a/wt-work-wf-b4868cba-1b28-440a-86fe-7ffcfff5206a-1794532238552",
+          "Read the EvolveLoop handoff prompt at /home/gaab/orca/workspaces/EvolveLoop/brant/orchestrator/v36-live-ops/project-data/proj-dc79e8ca74d4/harness-prompts/work-wf-b4868cba-1b28-440a-86fe-7ffcfff5206a/sess-8ec5a744-d436-4c36-bea4-15f5380e7f95.md and complete the assigned task. Stay strictly inside the workspace. Do not modify files outside it."
+        ],
+        "prompt_path": "/home/gaab/orca/workspaces/EvolveLoop/brant/orchestrator/v36-live-ops/project-data/proj-dc79e8ca74d4/harness-prompts/work-wf-b4868cba-1b28-440a-86fe-7ffcfff5206a/sess-8ec5a744-d436-4c36-bea4-15f5380e7f95.md",
+        "limitations": [
+          "cursor-agent bridge via antigravity adapter_id (print mode + workspace trust)",
+          "Cancel only for Core-owned spawned PIDs",
+          "--trust scopes workspace trust after session auth; it is not an auth substitute",
+          "cli=/home/gaab/.local/bin/agent version_hint=2026.11.11-043ef28",
+          "real spawn requires provider_mode=real + EVOLVELOOP_HARNESS_CONSENT=true",
+          "dry-run writes prompt package under --data-dir/harness-prompts without calling network",
+          "detached_pgid_for_tree_cancel",
+          "env_allowlist_not_full_process_env",
+          "harness_provider_path_outside_bwrap_session_auth",
+          "stdio_file_backed_for_evidence",
+          "stdout_log=/home/gaab/orca/workspaces/EvolveLoop/brant/orchestrator/v36-live-ops/project-data/proj-dc79e8ca74d4/harness-prompts/work-wf-b4868cba-1b28-440a-86fe-7ffcfff5206a/sess-8ec5a744-d436-4c36-bea4-15f5380e7f95.stdout.log",
+          "stderr_log=/home/gaab/orca/workspaces/EvolveLoop/brant/orchestrator/v36-live-ops/project-data/proj-dc79e8ca74d4/harness-prompts/work-wf-b4868cba-1b28-440a-86fe-7ffcfff5206a/sess-8ec5a744-d436-4c36-bea4-15f5380e7f95.stderr.log",
+          "workspace=/home/gaab/orca/workspaces/EvolveLoop/brant/orchestrator/v36-live-ops/project-data/proj-dc79e8ca74d4/worktrees/work-wf-b4868cba-1b28-440a-86fe-7ffcfff5206a/wt-work-wf-b4868cba-1b28-440a-86fe-7ffcfff5206a-1794532238552"
+        ],
+        "pgid": 1558640,
+        "starttime": "1466922",
+        "ended_at": "2026-11-13T01:12:29.156Z",
+        "exit_code": 0
+      }
+    ],
+    "npm_test_exit": 0,
+    "diff_bytes": 735,
+    "commits": "e632e10 Implement applyPercentDiscount for percent coupons on line subtotals.",
+    "primary_porcelain": "",
+    "stdout_tail": "`applyPercentDiscount` está implementado e o teste de discount passa; commit `e632e10` criado.\n\n## Grounding Wiki\n- **modo:** scout (falhou)\n- **projeto:** shop-core-v36-a / EvolveLoop WF-A1\n- **confiança:** n/a — `WIKI_ROOT` unset; contrato tirado de `test/discount.test.js` + `ACCEPTANCE.md`\n\n### Contratos\n- Soma `line_subtotal_cents` e aplica `percent` → `{ subtotal_cents }`\n- Não editar inventory (WF-A2)\n\n### GAPs\n- Vault wiki indisponível neste ambiente\n\n## O que foi feito\nEm `src/pricing/discount.js`: soma das linhas, desconto percentual, `Math.round`, retorno `{ subtotal_cents }`.\n\n**Testes:** `node --test test/discount.test.js` → 2/2 ok.  \n(`npm test` ainda falha em inventory — fora do escopo; módulo não alterado.)\n\n**Commit:** `Implement applyPercentDiscount for percent coupons on line subtotals.`\n"
+  },
+  {
+    "workflow_id": "wf-0b8757a2-5f05-4e84-81e3-12a857b94954",
+    "label": "B1",
+    "project_id": "proj-8b34dfd4e596",
+    "work_id": "work-wf-0b8757a2-5f05-4e84-81e3-12a857b94954",
+    "worktree": "/home/gaab/orca/workspaces/EvolveLoop/brant/orchestrator/v36-live-ops/project-data/proj-8b34dfd4e596/worktrees/work-wf-0b8757a2-5f05-4e84-81e3-12a857b94954/wt-work-wf-0b8757a2-5f05-4e84-81e3-12a857b94954-1794532238564",
+    "branch": "evolveloop/work-wf-0b8757a2-5f05-4e84-81e3-12a857b94954/wt-work-wf-0b8757a2-5f05-4e84-81e3-12a857b94954-1794532238564",
+    "started_at": "2026-11-13T01:10:39.631Z",
+    "completed_at": "2026-11-13T01:12:32.601Z",
+    "invoke": {
+      "kind": "AdapterInvokeResult",
+      "adapter_id": "antigravity",
+      "status": "accepted",
+      "code": "PROCESS_COMPLETED",
+      "message": "pid=1558779 session=sess-de931908-dc14-42f4-b405-83c6d4d1e917 exit=0 stdout=/home/gaab/orca/workspaces/EvolveLoop/brant/orchestrator/v36-live-ops/project-data/proj-8b34dfd4e596/harness-prompts/work-wf-0b8757a2-5f05-4e84-81e3-12a857b94954/sess-de931908-dc14-42f4-b405-83c6d4d1e917.stdout.log",
+      "bridge_ref": "sess-de931908-dc14-42f4-b405-83c6d4d1e917",
+      "limitations": [
+        "cursor-agent bridge via antigravity adapter_id (print mode + workspace trust)",
+        "Cancel only for Core-owned spawned PIDs",
+        "--trust scopes workspace trust after session auth; it is not an auth substitute",
+        "cli=/home/gaab/.local/bin/agent version_hint=2026.11.11-043ef28",
+        "real spawn requires provider_mode=real + EVOLVELOOP_HARNESS_CONSENT=true",
+        "dry-run writes prompt package under --data-dir/harness-prompts without calling network"
+      ]
+    },
+    "session_id": "sess-de931908-dc14-42f4-b405-83c6d4d1e917",
+    "sessions": [
+      {
+        "kind": "ProcessSessionRecord",
+        "session_id": "sess-de931908-dc14-42f4-b405-83c6d4d1e917",
+        "work_id": "work-wf-0b8757a2-5f05-4e84-81e3-12a857b94954",
+        "task_id": "t-impl",
+        "adapter_id": "antigravity",
+        "pid": 1558779,
+        "status": "exited",
+        "started_at": "2026-11-13T01:10:40.669Z",
+        "command": [
+          "/home/gaab/.local/bin/agent",
+          "-p",
+          "--output-format",
+          "text",
+          "--trust",
+          "--force",
+          "--workspace",
+          "/home/gaab/orca/workspaces/EvolveLoop/brant/orchestrator/v36-live-ops/project-data/proj-8b34dfd4e596/worktrees/work-wf-0b8757a2-5f05-4e84-81e3-12a857b94954/wt-work-wf-0b8757a2-5f05-4e84-81e3-12a857b94954-1794532238564",
+          "Read the EvolveLoop handoff prompt at /home/gaab/orca/workspaces/EvolveLoop/brant/orchestrator/v36-live-ops/project-data/proj-8b34dfd4e596/harness-prompts/work-wf-0b8757a2-5f05-4e84-81e3-12a857b94954/sess-de931908-dc14-42f4-b405-83c6d4d1e917.md and complete the assigned task. Stay strictly inside the workspace. Do not modify files outside it."
+        ],
+        "prompt_path": "/home/gaab/orca/workspaces/EvolveLoop/brant/orchestrator/v36-live-ops/project-data/proj-8b34dfd4e596/harness-prompts/work-wf-0b8757a2-5f05-4e84-81e3-12a857b94954/sess-de931908-dc14-42f4-b405-83c6d4d1e917.md",
+        "limitations": [
+          "cursor-agent bridge via antigravity adapter_id (print mode + workspace trust)",
+          "Cancel only for Core-owned spawned PIDs",
+          "--trust scopes workspace trust after session auth; it is not an auth substitute",
+          "cli=/home/gaab/.local/bin/agent version_hint=2026.11.11-043ef28",
+          "real spawn requires provider_mode=real + EVOLVELOOP_HARNESS_CONSENT=true",
+          "dry-run writes prompt package under --data-dir/harness-prompts without calling network",
+          "detached_pgid_for_tree_cancel",
+          "env_allowlist_not_full_process_env",
+          "harness_provider_path_outside_bwrap_session_auth",
+          "stdio_file_backed_for_evidence",
+          "stdout_log=/home/gaab/orca/workspaces/EvolveLoop/brant/orchestrator/v36-live-ops/project-data/proj-8b34dfd4e596/harness-prompts/work-wf-0b8757a2-5f05-4e84-81e3-12a857b94954/sess-de931908-dc14-42f4-b405-83c6d4d1e917.stdout.log",
+          "stderr_log=/home/gaab/orca/workspaces/EvolveLoop/brant/orchestrator/v36-live-ops/project-data/proj-8b34dfd4e596/harness-prompts/work-wf-0b8757a2-5f05-4e84-81e3-12a857b94954/sess-de931908-dc14-42f4-b405-83c6d4d1e917.stderr.log",
+          "workspace=/home/gaab/orca/workspaces/EvolveLoop/brant/orchestrator/v36-live-ops/project-data/proj-8b34dfd4e596/worktrees/work-wf-0b8757a2-5f05-4e84-81e3-12a857b94954/wt-work-wf-0b8757a2-5f05-4e84-81e3-12a857b94954-1794532238564"
+        ],
+        "pgid": 1558779,
+        "starttime": "1467026",
+        "ended_at": "2026-11-13T01:12:32.600Z",
+        "exit_code": 0
+      }
+    ],
+    "npm_test_exit": 0,
+    "diff_bytes": 552,
+    "commits": "1ab5c52 Implement sortTasks by priority descending then title ascending.",
+    "primary_porcelain": "",
+    "stdout_tail": "## Grounding Wiki\n- **modo:** scout (falhou)\n- **projeto:** EvolveLoop / taskboard-v36-b\n- **confiança:** n/a — `WIKI_ROOT` unset; handoff + código local como evidência\n\n### Fontes\n1. Handoff `sess-de931908-…` — implementar `sortTasks`, testes verdes, commit\n2. `test/sort.test.js` + `ACCEPTANCE.md` — priority desc, title asc\n\n### Contratos / decisões\n- Ordenar por `priority` descendente; empate por `title` ascendente\n- Não alterar módulos não relacionados; ficar no worktree\n\n### GAPs\n- Vault wiki indisponível neste ambiente; sem pack EvolveLoop local no worktree\n\n### Pack\n- nenhum (CLI exige `WIKI_ROOT`)\n\n### Método\n- `ground.sh scout` → falhou por env\n- Complemento: leitura directa de `src/sort.js`, `test/sort.test.js`, `src/tasks.js`\n\n### Handoff\n- feito: implementação + teste + commit no worktree\n\n---\n\n`sortTasks` em `src/sort.js` ordena por prioridade decrescente e, em empate, título crescente (cópia do array, sem mutar o original).\n\n- `npm test` — 1/1 pass\n- commit: `1ab5c52` — *Implement sortTasks by priority descending then title ascending.*\n\nSOURCES: handoff prompt, `test/sort.test.js`, `ACCEPTANCE.md`\n"
+  }
+]

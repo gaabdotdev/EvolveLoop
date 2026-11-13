@@ -1,0 +1,5 @@
+{
+  "stop_exit": 0,
+  "start_exit": 0,
+  "status": "{\n  \"lifecycle\": \"RUNNING\",\n  \"generation\": 1,\n  \"fencing_token\": \"1510351:1436795:1\",\n  \"heartbeat_at\": \"2026-11-13T01:05:42.475Z\",\n  \"socket_path\": \"/home/gaab/orca/workspaces/EvolveLoop/brant/orchestrator/v36-live-ops/project-data/proj-4b106fcf22b2/coordinator/ipc.sock\",\n  \"coordinator\": {\n    \"process_state\": \"running\",\n    \"pid\": 1510351,\n    \"works\": 2\n  },\n  \"pid\": 1510351\n}\n"
+}

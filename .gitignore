@@ -47,3 +47,7 @@ mcp.json.bak.*
 # Personal profile outputs (generated)
 profiles/gaabtype/paths.local.yaml
 profiles/*/local.override.yaml
+
+# V3.6 live run ephemeral data-dir
+orchestrator/v36-live-ops/
+orchestrator/v36-live-run/

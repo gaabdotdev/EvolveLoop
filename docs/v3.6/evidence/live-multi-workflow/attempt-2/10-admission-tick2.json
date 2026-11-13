@@ -1,0 +1,113 @@
+{
+  "tick2": {
+    "queue": [
+      {
+        "kind": "QueueEntry",
+        "workflow_id": "wf-e764c2b1-c955-491d-b03b-63977bf9cbfc",
+        "project_id": "proj-baee4403e09c",
+        "effective_priority": null,
+        "base_priority": 40,
+        "service_class": "standard",
+        "submitted_at": "2026-11-13T01:06:46.207Z",
+        "admission_attempts": 0,
+        "wait_reason": "project_workflow_limit",
+        "aging_boost": null,
+        "fairness_key": "proj-baee4403e09c"
+      }
+    ],
+    "admitted": [],
+    "skipped": [
+      {
+        "kind": "SchedulerDecision",
+        "decision_id": "sd-2a199132-b01b-45b7-a266-5ef8d47d9421",
+        "at": "2026-11-13T01:09:04.778Z",
+        "workflow_id": "wf-e764c2b1-c955-491d-b03b-63977bf9cbfc",
+        "action": "wait",
+        "reason": "project_workflow_limit"
+      }
+    ]
+  },
+  "status2": {
+    "version": "3.6.0",
+    "ops_dir": "/home/gaab/orca/workspaces/EvolveLoop/brant/orchestrator/v36-live-ops",
+    "policy": {
+      "kind": "SchedulerPolicy",
+      "version": 1,
+      "max_global_workflows": 2,
+      "max_per_project": 1,
+      "max_aging_boost": 50,
+      "service_class_weight": {
+        "interactive": 40,
+        "standard": 20,
+        "batch": 10,
+        "background": 0
+      },
+      "fairness_window": 8,
+      "updated_at": "2026-11-13T01:06:45.826Z"
+    },
+    "projects": 2,
+    "workflows_by_state": {
+      "RUNNING": 1,
+      "FAILED": 1,
+      "WAITING_RESOURCE": 1
+    },
+    "queue_depth": 1,
+    "resources": {
+      "capacity": {
+        "cpu": 4,
+        "memory_mb": 8192,
+        "processes": 128,
+        "disk_mb": 10240,
+        "workflows": 8,
+        "agents": 16,
+        "harness_sessions": 4,
+        "provider_requests": 8
+      },
+      "usage": {
+        "cpu": {
+          "capacity": 4,
+          "held": 0,
+          "available": 4
+        },
+        "memory_mb": {
+          "capacity": 8192,
+          "held": 0,
+          "available": 8192
+        },
+        "processes": {
+          "capacity": 128,
+          "held": 0,
+          "available": 128
+        },
+        "disk_mb": {
+          "capacity": 10240,
+          "held": 0,
+          "available": 10240
+        },
+        "workflows": {
+          "capacity": 8,
+          "held": 1,
+          "available": 7
+        },
+        "agents": {
+          "capacity": 16,
+          "held": 0,
+          "available": 16
+        },
+        "harness_sessions": {
+          "capacity": 4,
+          "held": 0,
+          "available": 4
+        },
+        "provider_requests": {
+          "capacity": 8,
+          "held": 0,
+          "available": 8
+        }
+      },
+      "held_reservations": 1,
+      "note": "tokens/cost omitted unless provenance measured"
+    },
+    "active_workflows": 1
+  }
+}

@@ -1,0 +1,370 @@
+{
+  "kind": "V36_LIVE_MULTI_WORKFLOW_Evidence",
+  "run_id": "v36-live-1794532004058",
+  "started_at": "2026-11-13T01:06:44.058Z",
+  "gates": {
+    "Q": "PASS",
+    "P": "PASS",
+    "E2E-LIVE": "FAIL",
+    "R": "PASS",
+    "O": "PASS",
+    "S": "PASS"
+  },
+  "timeline": [
+    {
+      "event": "parallel_start",
+      "at": "2026-11-13T01:06:56.377Z",
+      "workflow_ids": [
+        "wf-9a292e96-f785-481c-a3a3-e63fc4c81a51",
+        "wf-448d9dd3-e699-4a8d-acbb-014d64643fc6"
+      ]
+    },
+    {
+      "event": "workflow_running",
+      "at": "2026-11-13T01:06:56.402Z",
+      "workflow_id": "wf-9a292e96-f785-481c-a3a3-e63fc4c81a51",
+      "label": "A1",
+      "work_id": "work-wf-9a292e96-f785-481c-a3a3-e63fc4c81a51",
+      "worktree": "/home/gaab/orca/workspaces/EvolveLoop/brant/orchestrator/v36-live-ops/project-data/proj-baee4403e09c/worktrees/work-wf-9a292e96-f785-481c-a3a3-e63fc4c81a51/wt-work-wf-9a292e96-f785-481c-a3a3-e63fc4c81a51-1794532016382"
+    },
+    {
+      "event": "workflow_running",
+      "at": "2026-11-13T01:06:57.467Z",
+      "workflow_id": "wf-448d9dd3-e699-4a8d-acbb-014d64643fc6",
+      "label": "B1",
+      "work_id": "work-wf-448d9dd3-e699-4a8d-acbb-014d64643fc6",
+      "worktree": "/home/gaab/orca/workspaces/EvolveLoop/brant/orchestrator/v36-live-ops/project-data/proj-9e2e9d00171d/worktrees/work-wf-448d9dd3-e699-4a8d-acbb-014d64643fc6/wt-work-wf-448d9dd3-e699-4a8d-acbb-014d64643fc6-1794532016394"
+    },
+    {
+      "event": "controlled_failure",
+      "at": "2026-11-13T01:07:16.426Z",
+      "mode": "session_cancel",
+      "workflow_id": "wf-448d9dd3-e699-4a8d-acbb-014d64643fc6",
+      "label": "B1",
+      "session_id": "sess-4b3b4291-5802-408f-87ba-a433fb55fd65",
+      "cancelled": {
+        "kind": "ProcessSessionRecord",
+        "session_id": "sess-4b3b4291-5802-408f-87ba-a433fb55fd65",
+        "work_id": "work-wf-448d9dd3-e699-4a8d-acbb-014d64643fc6",
+        "task_id": "t-impl",
+        "adapter_id": "antigravity",
+        "pid": 1516301,
+        "status": "cancelled",
+        "started_at": "2026-11-13T01:06:58.528Z",
+        "command": [
+          "/home/gaab/.local/bin/agent",
+          "-p",
+          "--output-format",
+          "text",
+          "--trust",
+          "--force",
+          "--workspace",
+          "/home/gaab/orca/workspaces/EvolveLoop/brant/orchestrator/v36-live-ops/project-data/proj-9e2e9d00171d/worktrees/work-wf-448d9dd3-e699-4a8d-acbb-014d64643fc6/wt-work-wf-448d9dd3-e699-4a8d-acbb-014d64643fc6-1794532016394",
+          "Read the EvolveLoop handoff prompt at /home/gaab/orca/workspaces/EvolveLoop/brant/orchestrator/v36-live-ops/project-data/proj-9e2e9d00171d/harness-prompts/work-wf-448d9dd3-e699-4a8d-acbb-014d64643fc6/sess-4b3b4291-5802-408f-87ba-a433fb55fd65.md and complete the assigned task. Stay strictly inside the workspace. Do not modify files outside it."
+        ],
+        "prompt_path": "/home/gaab/orca/workspaces/EvolveLoop/brant/orchestrator/v36-live-ops/project-data/proj-9e2e9d00171d/harness-prompts/work-wf-448d9dd3-e699-4a8d-acbb-014d64643fc6/sess-4b3b4291-5802-408f-87ba-a433fb55fd65.md",
+        "limitations": [
+          "cursor-agent bridge via antigravity adapter_id (print mode + workspace trust)",
+          "Cancel only for Core-owned spawned PIDs",
+          "--trust scopes workspace trust after session auth; it is not an auth substitute",
+          "cli=/home/gaab/.local/bin/agent version_hint=2026.11.11-043ef28",
+          "real spawn requires provider_mode=real + EVOLVELOOP_HARNESS_CONSENT=true",
+          "dry-run writes prompt package under --data-dir/harness-prompts without calling network",
+          "detached_pgid_for_tree_cancel",
+          "env_allowlist_not_full_process_env",
+          "harness_provider_path_outside_bwrap_session_auth",
+          "stdio_file_backed_for_evidence",
+          "stdout_log=/home/gaab/orca/workspaces/EvolveLoop/brant/orchestrator/v36-live-ops/project-data/proj-9e2e9d00171d/harness-prompts/work-wf-448d9dd3-e699-4a8d-acbb-014d64643fc6/sess-4b3b4291-5802-408f-87ba-a433fb55fd65.stdout.log",
+          "stderr_log=/home/gaab/orca/workspaces/EvolveLoop/brant/orchestrator/v36-live-ops/project-data/proj-9e2e9d00171d/harness-prompts/work-wf-448d9dd3-e699-4a8d-acbb-014d64643fc6/sess-4b3b4291-5802-408f-87ba-a433fb55fd65.stderr.log",
+          "workspace=/home/gaab/orca/workspaces/EvolveLoop/brant/orchestrator/v36-live-ops/project-data/proj-9e2e9d00171d/worktrees/work-wf-448d9dd3-e699-4a8d-acbb-014d64643fc6/wt-work-wf-448d9dd3-e699-4a8d-acbb-014d64643fc6-1794532016394",
+          "cancel:signal_SIGTERM_pgid"
+        ],
+        "pgid": 1516301,
+        "starttime": "1444812",
+        "ended_at": "2026-11-13T01:07:16.421Z"
+      },
+      "others_preserved": true,
+      "preserved": [
+        "wf-9a292e96-f785-481c-a3a3-e63fc4c81a51"
+      ]
+    },
+    {
+      "event": "workflow_finished",
+      "at": "2026-11-13T01:07:16.648Z",
+      "workflow_id": "wf-448d9dd3-e699-4a8d-acbb-014d64643fc6",
+      "label": "B1",
+      "ok": false,
+      "started_at": "2026-11-13T01:06:57.467Z",
+      "completed_at": "2026-11-13T01:07:16.463Z"
+    },
+    {
+      "event": "workflow_finished",
+      "at": "2026-11-13T01:09:04.634Z",
+      "workflow_id": "wf-9a292e96-f785-481c-a3a3-e63fc4c81a51",
+      "label": "A1",
+      "ok": false,
+      "started_at": "2026-11-13T01:06:56.402Z",
+      "completed_at": "2026-11-13T01:09:04.459Z"
+    }
+  ],
+  "steps": [
+    {
+      "name": "harness_auth",
+      "at": "2026-11-13T01:06:45.079Z",
+      "ok": true,
+      "detail": "✓ Logged in as REDACTED"
+    },
+    {
+      "name": "fixtures",
+      "at": "2026-11-13T01:06:45.445Z",
+      "a": {
+        "repo": "/tmp/v36-proj-a-NrzWfe",
+        "commit": "e829ea65a8b5229c999ce69b9adcbe58a6541f71",
+        "pretest": 1
+      },
+      "b": {
+        "repo": "/tmp/v36-proj-b-HIc8jG",
+        "commit": "46e187eb4f2bcd95b0c0e67074de78bc10f37963",
+        "pretest": 1
+      }
+    },
+    {
+      "name": "project_register",
+      "at": "2026-11-13T01:06:45.712Z",
+      "ok": true,
+      "a": "proj-baee4403e09c",
+      "b": "proj-9e2e9d00171d",
+      "paths": [
+        "/tmp/v36-proj-a-NrzWfe",
+        "/tmp/v36-proj-b-HIc8jG"
+      ]
+    },
+    {
+      "name": "workflows_submitted",
+      "at": "2026-11-13T01:06:46.219Z",
+      "A1": "wf-9a292e96-f785-481c-a3a3-e63fc4c81a51",
+      "A2": "wf-e764c2b1-c955-491d-b03b-63977bf9cbfc",
+      "B1": "wf-448d9dd3-e699-4a8d-acbb-014d64643fc6"
+    },
+    {
+      "name": "admission_capacity",
+      "at": "2026-11-13T01:06:46.728Z",
+      "admitted": 2,
+      "skipped": 1,
+      "active": 2,
+      "queue_depth": 1,
+      "resources": {
+        "capacity": 8,
+        "held": 2,
+        "available": 6
+      }
+    },
+    {
+      "name": "coordinator_start",
+      "at": "2026-11-13T01:06:51.060Z",
+      "project": "proj-baee4403e09c",
+      "exit": 0
+    },
+    {
+      "name": "coordinator_start",
+      "at": "2026-11-13T01:06:55.324Z",
+      "project": "proj-9e2e9d00171d",
+      "exit": 0
+    },
+    {
+      "name": "parallel_launch",
+      "at": "2026-11-13T01:06:56.377Z",
+      "workflow_ids": [
+        "wf-9a292e96-f785-481c-a3a3-e63fc4c81a51",
+        "wf-448d9dd3-e699-4a8d-acbb-014d64643fc6"
+      ],
+      "labels": [
+        "A1",
+        "B1"
+      ]
+    },
+    {
+      "name": "ops_tui",
+      "at": "2026-11-13T01:07:01.418Z",
+      "ok": true
+    },
+    {
+      "name": "isolation_deny",
+      "at": "2026-11-13T01:07:01.419Z",
+      "allowed": false,
+      "reason": "CROSS_PROJECT_ACCESS_DENIED"
+    },
+    {
+      "name": "controlled_failure",
+      "at": "2026-11-13T01:07:16.426Z",
+      "mode": "session_cancel",
+      "workflow_id": "wf-448d9dd3-e699-4a8d-acbb-014d64643fc6",
+      "label": "B1",
+      "session_id": "sess-4b3b4291-5802-408f-87ba-a433fb55fd65",
+      "cancelled": {
+        "kind": "ProcessSessionRecord",
+        "session_id": "sess-4b3b4291-5802-408f-87ba-a433fb55fd65",
+        "work_id": "work-wf-448d9dd3-e699-4a8d-acbb-014d64643fc6",
+        "task_id": "t-impl",
+        "adapter_id": "antigravity",
+        "pid": 1516301,
+        "status": "cancelled",
+        "started_at": "2026-11-13T01:06:58.528Z",
+        "command": [
+          "/home/gaab/.local/bin/agent",
+          "-p",
+          "--output-format",
+          "text",
+          "--trust",
+          "--force",
+          "--workspace",
+          "/home/gaab/orca/workspaces/EvolveLoop/brant/orchestrator/v36-live-ops/project-data/proj-9e2e9d00171d/worktrees/work-wf-448d9dd3-e699-4a8d-acbb-014d64643fc6/wt-work-wf-448d9dd3-e699-4a8d-acbb-014d64643fc6-1794532016394",
+          "Read the EvolveLoop handoff prompt at /home/gaab/orca/workspaces/EvolveLoop/brant/orchestrator/v36-live-ops/project-data/proj-9e2e9d00171d/harness-prompts/work-wf-448d9dd3-e699-4a8d-acbb-014d64643fc6/sess-4b3b4291-5802-408f-87ba-a433fb55fd65.md and complete the assigned task. Stay strictly inside the workspace. Do not modify files outside it."
+        ],
+        "prompt_path": "/home/gaab/orca/workspaces/EvolveLoop/brant/orchestrator/v36-live-ops/project-data/proj-9e2e9d00171d/harness-prompts/work-wf-448d9dd3-e699-4a8d-acbb-014d64643fc6/sess-4b3b4291-5802-408f-87ba-a433fb55fd65.md",
+        "limitations": [
+          "cursor-agent bridge via antigravity adapter_id (print mode + workspace trust)",
+          "Cancel only for Core-owned spawned PIDs",
+          "--trust scopes workspace trust after session auth; it is not an auth substitute",
+          "cli=/home/gaab/.local/bin/agent version_hint=2026.11.11-043ef28",
+          "real spawn requires provider_mode=real + EVOLVELOOP_HARNESS_CONSENT=true",
+          "dry-run writes prompt package under --data-dir/harness-prompts without calling network",
+          "detached_pgid_for_tree_cancel",
+          "env_allowlist_not_full_process_env",
+          "harness_provider_path_outside_bwrap_session_auth",
+          "stdio_file_backed_for_evidence",
+          "stdout_log=/home/gaab/orca/workspaces/EvolveLoop/brant/orchestrator/v36-live-ops/project-data/proj-9e2e9d00171d/harness-prompts/work-wf-448d9dd3-e699-4a8d-acbb-014d64643fc6/sess-4b3b4291-5802-408f-87ba-a433fb55fd65.stdout.log",
+          "stderr_log=/home/gaab/orca/workspaces/EvolveLoop/brant/orchestrator/v36-live-ops/project-data/proj-9e2e9d00171d/harness-prompts/work-wf-448d9dd3-e699-4a8d-acbb-014d64643fc6/sess-4b3b4291-5802-408f-87ba-a433fb55fd65.stderr.log",
+          "workspace=/home/gaab/orca/workspaces/EvolveLoop/brant/orchestrator/v36-live-ops/project-data/proj-9e2e9d00171d/worktrees/work-wf-448d9dd3-e699-4a8d-acbb-014d64643fc6/wt-work-wf-448d9dd3-e699-4a8d-acbb-014d64643fc6-1794532016394",
+          "cancel:signal_SIGTERM_pgid"
+        ],
+        "pgid": 1516301,
+        "starttime": "1444812",
+        "ended_at": "2026-11-13T01:07:16.421Z"
+      },
+      "others_preserved": true,
+      "preserved": [
+        "wf-9a292e96-f785-481c-a3a3-e63fc4c81a51"
+      ]
+    },
+    {
+      "name": "parallel_complete",
+      "at": "2026-11-13T01:09:04.635Z",
+      "elapsed_ms": 128258,
+      "outcomes": [
+        {
+          "id": "wf-9a292e96-f785-481c-a3a3-e63fc4c81a51",
+          "label": "A1",
+          "test": 1,
+          "code": "PROCESS_COMPLETED",
+          "started_at": "2026-11-13T01:06:56.402Z",
+          "completed_at": "2026-11-13T01:09:04.459Z"
+        },
+        {
+          "id": "wf-448d9dd3-e699-4a8d-acbb-014d64643fc6",
+          "label": "B1",
+          "test": 1,
+          "code": "PROCESS_EXIT_NONZERO",
+          "started_at": "2026-11-13T01:06:57.467Z",
+          "completed_at": "2026-11-13T01:07:16.463Z"
+        }
+      ]
+    },
+    {
+      "name": "overlap_proof",
+      "at": "2026-11-13T01:09:04.635Z",
+      "overlap": true,
+      "count": 2
+    },
+    {
+      "name": "admission_after_release",
+      "at": "2026-11-13T01:09:04.942Z",
+      "admitted": 0,
+      "active": 1
+    },
+    {
+      "name": "recover",
+      "at": "2026-11-13T01:09:05.079Z",
+      "examined": 3
+    },
+    {
+      "name": "coordinator_restart",
+      "at": "2026-11-13T01:09:09.464Z",
+      "ok": true
+    },
+    {
+      "name": "primary_repos_intact",
+      "at": "2026-11-13T01:09:09.475Z",
+      "project_a_primary_clean": true,
+      "project_b_primary_clean": true,
+      "a_head": "e829ea65a8b5229c999ce69b9adcbe58a6541f71",
+      "b_head": "46e187eb4f2bcd95b0c0e67074de78bc10f37963"
+    }
+  ],
+  "finished_at": "2026-11-13T01:09:09.600Z",
+  "summary": {
+    "projects": [
+      "proj-baee4403e09c",
+      "proj-9e2e9d00171d"
+    ],
+    "workflows": [
+      "wf-9a292e96-f785-481c-a3a3-e63fc4c81a51",
+      "wf-e764c2b1-c955-491d-b03b-63977bf9cbfc",
+      "wf-448d9dd3-e699-4a8d-acbb-014d64643fc6"
+    ],
+    "live_successes": [],
+    "overlap": true,
+    "failure": {
+      "mode": "session_cancel",
+      "workflow_id": "wf-448d9dd3-e699-4a8d-acbb-014d64643fc6",
+      "label": "B1",
+      "session_id": "sess-4b3b4291-5802-408f-87ba-a433fb55fd65",
+      "cancelled": {
+        "kind": "ProcessSessionRecord",
+        "session_id": "sess-4b3b4291-5802-408f-87ba-a433fb55fd65",
+        "work_id": "work-wf-448d9dd3-e699-4a8d-acbb-014d64643fc6",
+        "task_id": "t-impl",
+        "adapter_id": "antigravity",
+        "pid": 1516301,
+        "status": "cancelled",
+        "started_at": "2026-11-13T01:06:58.528Z",
+        "command": [
+          "/home/gaab/.local/bin/agent",
+          "-p",
+          "--output-format",
+          "text",
+          "--trust",
+          "--force",
+          "--workspace",
+          "/home/gaab/orca/workspaces/EvolveLoop/brant/orchestrator/v36-live-ops/project-data/proj-9e2e9d00171d/worktrees/work-wf-448d9dd3-e699-4a8d-acbb-014d64643fc6/wt-work-wf-448d9dd3-e699-4a8d-acbb-014d64643fc6-1794532016394",
+          "Read the EvolveLoop handoff prompt at /home/gaab/orca/workspaces/EvolveLoop/brant/orchestrator/v36-live-ops/project-data/proj-9e2e9d00171d/harness-prompts/work-wf-448d9dd3-e699-4a8d-acbb-014d64643fc6/sess-4b3b4291-5802-408f-87ba-a433fb55fd65.md and complete the assigned task. Stay strictly inside the workspace. Do not modify files outside it."
+        ],
+        "prompt_path": "/home/gaab/orca/workspaces/EvolveLoop/brant/orchestrator/v36-live-ops/project-data/proj-9e2e9d00171d/harness-prompts/work-wf-448d9dd3-e699-4a8d-acbb-014d64643fc6/sess-4b3b4291-5802-408f-87ba-a433fb55fd65.md",
+        "limitations": [
+          "cursor-agent bridge via antigravity adapter_id (print mode + workspace trust)",
+          "Cancel only for Core-owned spawned PIDs",
+          "--trust scopes workspace trust after session auth; it is not an auth substitute",
+          "cli=/home/gaab/.local/bin/agent version_hint=2026.11.11-043ef28",
+          "real spawn requires provider_mode=real + EVOLVELOOP_HARNESS_CONSENT=true",
+          "dry-run writes prompt package under --data-dir/harness-prompts without calling network",
+          "detached_pgid_for_tree_cancel",
+          "env_allowlist_not_full_process_env",
+          "harness_provider_path_outside_bwrap_session_auth",
+          "stdio_file_backed_for_evidence",
+          "stdout_log=/home/gaab/orca/workspaces/EvolveLoop/brant/orchestrator/v36-live-ops/project-data/proj-9e2e9d00171d/harness-prompts/work-wf-448d9dd3-e699-4a8d-acbb-014d64643fc6/sess-4b3b4291-5802-408f-87ba-a433fb55fd65.stdout.log",
+          "stderr_log=/home/gaab/orca/workspaces/EvolveLoop/brant/orchestrator/v36-live-ops/project-data/proj-9e2e9d00171d/harness-prompts/work-wf-448d9dd3-e699-4a8d-acbb-014d64643fc6/sess-4b3b4291-5802-408f-87ba-a433fb55fd65.stderr.log",
+          "workspace=/home/gaab/orca/workspaces/EvolveLoop/brant/orchestrator/v36-live-ops/project-data/proj-9e2e9d00171d/worktrees/work-wf-448d9dd3-e699-4a8d-acbb-014d64643fc6/wt-work-wf-448d9dd3-e699-4a8d-acbb-014d64643fc6-1794532016394",
+          "cancel:signal_SIGTERM_pgid"
+        ],
+        "pgid": 1516301,
+        "starttime": "1444812",
+        "ended_at": "2026-11-13T01:07:16.421Z"
+      },
+      "others_preserved": true,
+      "preserved": [
+        "wf-9a292e96-f785-481c-a3a3-e63fc4c81a51"
+      ]
+    },
+    "e2e_live": "FAIL"
+  }
+}

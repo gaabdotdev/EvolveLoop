@@ -1,0 +1,16 @@
+{
+  "kind": "GlobalRecoveryReport",
+  "at": "2026-11-13T01:09:05.074Z",
+  "workflows_examined": 3,
+  "demoted_to_recovering": [
+    "wf-9a292e96-f785-481c-a3a3-e63fc4c81a51"
+  ],
+  "demoted_to_paused": [
+    "wf-9a292e96-f785-481c-a3a3-e63fc4c81a51"
+  ],
+  "reservations_expired": [],
+  "dependencies_refreshed": 0,
+  "notes": [
+    "wf-9a292e96-f785-481c-a3a3-e63fc4c81a51: RUNNING→RECOVERING (no live process/session)"
+  ]
+}

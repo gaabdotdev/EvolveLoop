@@ -1,0 +1,10 @@
+{
+  "kind": "GlobalRecoveryReport",
+  "at": "2026-11-13T01:12:33.072Z",
+  "workflows_examined": 3,
+  "demoted_to_recovering": [],
+  "demoted_to_paused": [],
+  "reservations_expired": [],
+  "dependencies_refreshed": 0,
+  "notes": []
+}

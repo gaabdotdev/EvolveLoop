@@ -1,0 +1,72 @@
+{
+  "recA": {
+    "kind": "ProjectRecord",
+    "project_id": "proj-4b106fcf22b2",
+    "name": "shop-a",
+    "description": "",
+    "canonical_path": "/tmp/v36-proj-a-f1VN1H",
+    "default_branch": "main",
+    "data_dir": "/home/gaab/orca/workspaces/EvolveLoop/brant/orchestrator/v36-live-ops/project-data/proj-4b106fcf22b2",
+    "availability": "AVAILABLE",
+    "policy": {
+      "version": 1,
+      "quality_gates": [],
+      "sandbox_profile": "agent_workspace",
+      "max_concurrent_workflows": 2,
+      "max_agents": 4,
+      "allowed_harnesses": [
+        "cursor-agent",
+        "mock"
+      ],
+      "require_approval_for_integration": true,
+      "protected_branches": [
+        "main",
+        "master"
+      ],
+      "resource_limits": {
+        "workflows": 2,
+        "agents": 4,
+        "memory_mb": 2048,
+        "processes": 64
+      },
+      "allow_cross_project_artifacts": false
+    },
+    "created_at": "2026-11-13T01:05:13.874Z",
+    "updated_at": "2026-11-13T01:05:13.874Z"
+  },
+  "recB": {
+    "kind": "ProjectRecord",
+    "project_id": "proj-db41be0374e4",
+    "name": "board-b",
+    "description": "",
+    "canonical_path": "/tmp/v36-proj-b-Ph1Jzy",
+    "default_branch": "main",
+    "data_dir": "/home/gaab/orca/workspaces/EvolveLoop/brant/orchestrator/v36-live-ops/project-data/proj-db41be0374e4",
+    "availability": "AVAILABLE",
+    "policy": {
+      "version": 1,
+      "quality_gates": [],
+      "sandbox_profile": "agent_workspace",
+      "max_concurrent_workflows": 2,
+      "max_agents": 4,
+      "allowed_harnesses": [
+        "cursor-agent",
+        "mock"
+      ],
+      "require_approval_for_integration": true,
+      "protected_branches": [
+        "main",
+        "master"
+      ],
+      "resource_limits": {
+        "workflows": 2,
+        "agents": 4,
+        "memory_mb": 2048,
+        "processes": 64
+      },
+      "allow_cross_project_artifacts": false
+    },
+    "created_at": "2026-11-13T01:05:13.998Z",
+    "updated_at": "2026-11-13T01:05:13.998Z"
+  }
+}

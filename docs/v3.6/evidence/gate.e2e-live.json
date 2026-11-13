@@ -1,0 +1,26 @@
+{
+  "kind": "GateE2ELiveEvidence",
+  "feature_id": "v36-multi-workflow",
+  "cycle_id": "v36-20261112-001",
+  "submitted_at": "2026-11-13T01:12:37.611Z",
+  "verdict": "passed",
+  "confidence": "high",
+  "command": "EVOLVELOOP_HARNESS_CONSENT=true node scripts/v36-live-multi-workflow.mjs",
+  "run_id": "v36-live-1794532225705",
+  "artifacts": [
+    { "path": "docs/v3.6/evidence/live-multi-workflow/FINAL.json" },
+    { "path": "docs/v3.6/evidence/live-multi-workflow/08-parallel-results.json" },
+    { "path": "docs/v3.6/evidence/live-multi-workflow/09-concurrency-timeline.json" },
+    { "path": "docs/v3.6/LIVE-MULTI-WORKFLOW-VALIDATION.md" }
+  ],
+  "proof": {
+    "projects": 2,
+    "workflows_submitted": 3,
+    "live_llm_successes": ["A1", "B1"],
+    "overlap": true,
+    "capacity_wait": true,
+    "isolated_failure": "queue_sibling_fail:A2",
+    "harness": "cursor-agent/antigravity",
+    "usage": "UNAVAILABLE"
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "kind": "GlobalRecoveryReport",
+  "at": "2026-11-13T01:05:38.106Z",
+  "workflows_examined": 3,
+  "demoted_to_recovering": [
+    "wf-963a4687-68a6-4358-8cc1-e4b948db0115",
+    "wf-3946e0e7-af02-4c89-9047-7e173687d5a7"
+  ],
+  "demoted_to_paused": [
+    "wf-963a4687-68a6-4358-8cc1-e4b948db0115",
+    "wf-3946e0e7-af02-4c89-9047-7e173687d5a7"
+  ],
+  "reservations_expired": [],
+  "dependencies_refreshed": 0,
+  "notes": [
+    "wf-963a4687-68a6-4358-8cc1-e4b948db0115: ADMITTED→RECOVERING (no live process/session)",
+    "wf-3946e0e7-af02-4c89-9047-7e173687d5a7: ADMITTED→RECOVERING (no live process/session)"
+  ]
+}

@@ -1,0 +1,56 @@
+{
+  "capacity": {
+    "cpu": 4,
+    "memory_mb": 8192,
+    "processes": 128,
+    "disk_mb": 10240,
+    "workflows": 8,
+    "agents": 16,
+    "harness_sessions": 4,
+    "provider_requests": 8
+  },
+  "usage": {
+    "cpu": {
+      "capacity": 4,
+      "held": 0,
+      "available": 4
+    },
+    "memory_mb": {
+      "capacity": 8192,
+      "held": 0,
+      "available": 8192
+    },
+    "processes": {
+      "capacity": 128,
+      "held": 0,
+      "available": 128
+    },
+    "disk_mb": {
+      "capacity": 10240,
+      "held": 0,
+      "available": 10240
+    },
+    "workflows": {
+      "capacity": 8,
+      "held": 2,
+      "available": 6
+    },
+    "agents": {
+      "capacity": 16,
+      "held": 0,
+      "available": 16
+    },
+    "harness_sessions": {
+      "capacity": 4,
+      "held": 0,
+      "available": 4
+    },
+    "provider_requests": {
+      "capacity": 8,
+      "held": 0,
+      "available": 8
+    }
+  },
+  "held_reservations": 2,
+  "note": "tokens/cost omitted unless provenance measured"
+}

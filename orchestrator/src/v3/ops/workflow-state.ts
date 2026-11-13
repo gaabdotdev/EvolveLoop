@@ -21,6 +21,7 @@ const ALLOWED: Record<WorkflowState, ReadonlySet<WorkflowState>> = {
     "BLOCKED",
     "CANCELLED",
     "PAUSED",
+    "FAILED",
   ]),
   WAITING_DEPENDENCY: new Set([
     "QUEUED",
@@ -29,6 +30,7 @@ const ALLOWED: Record<WorkflowState, ReadonlySet<WorkflowState>> = {
     "BLOCKED",
     "CANCELLED",
     "PAUSED",
+    "FAILED",
   ]),
   WAITING_RESOURCE: new Set([
     "QUEUED",
@@ -37,8 +39,17 @@ const ALLOWED: Record<WorkflowState, ReadonlySet<WorkflowState>> = {
     "BLOCKED",
     "CANCELLED",
     "PAUSED",
+    "FAILED",
   ]),
-  ADMITTED: new Set(["RUNNING", "PAUSING", "PAUSED", "CANCELLED", "BLOCKED", "RECOVERING"]),
+  ADMITTED: new Set([
+    "RUNNING",
+    "PAUSING",
+    "PAUSED",
+    "CANCELLED",
+    "BLOCKED",
+    "RECOVERING",
+    "FAILED",
+  ]),
   RUNNING: new Set([
     "PAUSING",
     "PAUSED",

@@ -1,0 +1,118 @@
+{
+  "subA1": {
+    "kind": "WorkflowRecord",
+    "workflow_id": "wf-963a4687-68a6-4358-8cc1-e4b948db0115",
+    "project_id": "proj-4b106fcf22b2",
+    "objective": "Implement applyPercentDiscount in src/pricing/discount.js so test/discount.test.js passes. Do not modify inventory module.",
+    "priority": 10,
+    "service_class": "interactive",
+    "state": "VALIDATING",
+    "dependency_ids": [],
+    "budget": {
+      "max_duration_ms": 3600000,
+      "usage_provenance": "unavailable"
+    },
+    "reservation_ids": [],
+    "runtime": {
+      "coordinator_associated": false
+    },
+    "evidence_refs": [],
+    "submitted_at": "2026-11-13T01:05:14.254Z",
+    "updated_at": "2026-11-13T01:05:14.255Z",
+    "history": [
+      {
+        "at": "2026-11-13T01:05:14.254Z",
+        "from": "SUBMITTED",
+        "to": "SUBMITTED",
+        "actor": "system",
+        "reason": "submitted"
+      },
+      {
+        "at": "2026-11-13T01:05:14.255Z",
+        "from": "SUBMITTED",
+        "to": "VALIDATING",
+        "actor": "scheduler",
+        "reason": "admission_validation"
+      }
+    ]
+  },
+  "subA2": {
+    "kind": "WorkflowRecord",
+    "workflow_id": "wf-3946e0e7-af02-4c89-9047-7e173687d5a7",
+    "project_id": "proj-4b106fcf22b2",
+    "objective": "Implement reserveStock and releaseStock in src/inventory/reserve.js so test/inventory.test.js passes. Do not modify pricing module.",
+    "priority": 40,
+    "service_class": "standard",
+    "state": "VALIDATING",
+    "dependency_ids": [],
+    "budget": {
+      "max_duration_ms": 3600000,
+      "usage_provenance": "unavailable"
+    },
+    "reservation_ids": [],
+    "runtime": {
+      "coordinator_associated": false
+    },
+    "evidence_refs": [],
+    "submitted_at": "2026-11-13T01:05:14.377Z",
+    "updated_at": "2026-11-13T01:05:14.378Z",
+    "history": [
+      {
+        "at": "2026-11-13T01:05:14.377Z",
+        "from": "SUBMITTED",
+        "to": "SUBMITTED",
+        "actor": "system",
+        "reason": "submitted"
+      },
+      {
+        "at": "2026-11-13T01:05:14.378Z",
+        "from": "SUBMITTED",
+        "to": "VALIDATING",
+        "actor": "scheduler",
+        "reason": "admission_validation"
+      }
+    ]
+  },
+  "subB1": {
+    "kind": "WorkflowRecord",
+    "workflow_id": "wf-8af3d375-b716-4ccd-94a1-f102d8ab52bd",
+    "project_id": "proj-db41be0374e4",
+    "objective": "Implement sortTasks in src/sort.js so test/sort.test.js passes. Stay inside this repository only.",
+    "priority": 20,
+    "service_class": "standard",
+    "state": "VALIDATING",
+    "dependency_ids": [],
+    "budget": {
+      "max_duration_ms": 3600000,
+      "usage_provenance": "unavailable"
+    },
+    "reservation_ids": [],
+    "runtime": {
+      "coordinator_associated": false
+    },
+    "evidence_refs": [],
+    "submitted_at": "2026-11-13T01:05:14.506Z",
+    "updated_at": "2026-11-13T01:05:14.507Z",
+    "history": [
+      {
+        "at": "2026-11-13T01:05:14.506Z",
+        "from": "SUBMITTED",
+        "to": "SUBMITTED",
+        "actor": "system",
+        "reason": "submitted"
+      },
+      {
+        "at": "2026-11-13T01:05:14.507Z",
+        "from": "SUBMITTED",
+        "to": "VALIDATING",
+        "actor": "scheduler",
+        "reason": "admission_validation"
+      }
+    ]
+  },
+  "goals": {
+    "A1": "Implement applyPercentDiscount in src/pricing/discount.js so test/discount.test.js passes. Do not modify inventory module.",
+    "A2": "Implement reserveStock and releaseStock in src/inventory/reserve.js so test/inventory.test.js passes. Do not modify pricing module.",
+    "B1": "Implement sortTasks in src/sort.js so test/sort.test.js passes. Stay inside this repository only."
+  }
+}

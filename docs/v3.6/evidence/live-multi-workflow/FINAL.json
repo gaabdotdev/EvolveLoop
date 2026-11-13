@@ -1,0 +1,334 @@
+{
+  "kind": "V36_LIVE_MULTI_WORKFLOW_Evidence",
+  "run_id": "v36-live-1794532225705",
+  "started_at": "2026-11-13T01:10:25.705Z",
+  "gates": {
+    "Q": "PASS",
+    "P": "PASS",
+    "E2E-LIVE": "PASS",
+    "R": "PASS",
+    "O": "PASS",
+    "S": "PASS"
+  },
+  "timeline": [
+    {
+      "event": "parallel_start",
+      "at": "2026-11-13T01:10:38.547Z",
+      "workflow_ids": [
+        "wf-b4868cba-1b28-440a-86fe-7ffcfff5206a",
+        "wf-0b8757a2-5f05-4e84-81e3-12a857b94954"
+      ]
+    },
+    {
+      "event": "workflow_running",
+      "at": "2026-11-13T01:10:38.573Z",
+      "workflow_id": "wf-b4868cba-1b28-440a-86fe-7ffcfff5206a",
+      "label": "A1",
+      "work_id": "work-wf-b4868cba-1b28-440a-86fe-7ffcfff5206a",
+      "worktree": "/home/gaab/orca/workspaces/EvolveLoop/brant/orchestrator/v36-live-ops/project-data/proj-dc79e8ca74d4/worktrees/work-wf-b4868cba-1b28-440a-86fe-7ffcfff5206a/wt-work-wf-b4868cba-1b28-440a-86fe-7ffcfff5206a-1794532238552"
+    },
+    {
+      "event": "workflow_running",
+      "at": "2026-11-13T01:10:39.631Z",
+      "workflow_id": "wf-0b8757a2-5f05-4e84-81e3-12a857b94954",
+      "label": "B1",
+      "work_id": "work-wf-0b8757a2-5f05-4e84-81e3-12a857b94954",
+      "worktree": "/home/gaab/orca/workspaces/EvolveLoop/brant/orchestrator/v36-live-ops/project-data/proj-8b34dfd4e596/worktrees/work-wf-0b8757a2-5f05-4e84-81e3-12a857b94954/wt-work-wf-0b8757a2-5f05-4e84-81e3-12a857b94954-1794532238564"
+    },
+    {
+      "event": "controlled_failure",
+      "at": "2026-11-13T01:10:55.585Z",
+      "mode": "queue_sibling_fail",
+      "workflow_id": "wf-614df707-e028-44cd-9db5-d4dd011dc242",
+      "label": "A2",
+      "others_preserved": true,
+      "preserved_running": [
+        "wf-b4868cba-1b28-440a-86fe-7ffcfff5206a",
+        "wf-0b8757a2-5f05-4e84-81e3-12a857b94954"
+      ],
+      "peer_states_at_failure": [
+        {
+          "workflow_id": "wf-b4868cba-1b28-440a-86fe-7ffcfff5206a",
+          "label": "A1",
+          "state": "RUNNING",
+          "sessions": [
+            {
+              "session_id": "sess-8ec5a744-d436-4c36-bea4-15f5380e7f95",
+              "status": "running",
+              "pid": 1558640,
+              "started_at": "2026-11-13T01:10:39.630Z"
+            }
+          ]
+        },
+        {
+          "workflow_id": "wf-0b8757a2-5f05-4e84-81e3-12a857b94954",
+          "label": "B1",
+          "state": "RUNNING",
+          "sessions": [
+            {
+              "session_id": "sess-de931908-dc14-42f4-b405-83c6d4d1e917",
+              "status": "running",
+              "pid": 1558779,
+              "started_at": "2026-11-13T01:10:40.669Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "event": "workflow_finished",
+      "at": "2026-11-13T01:12:29.245Z",
+      "workflow_id": "wf-b4868cba-1b28-440a-86fe-7ffcfff5206a",
+      "label": "A1",
+      "ok": true,
+      "started_at": "2026-11-13T01:10:38.573Z",
+      "completed_at": "2026-11-13T01:12:29.157Z"
+    },
+    {
+      "event": "workflow_finished",
+      "at": "2026-11-13T01:12:32.698Z",
+      "workflow_id": "wf-0b8757a2-5f05-4e84-81e3-12a857b94954",
+      "label": "B1",
+      "ok": true,
+      "started_at": "2026-11-13T01:10:39.631Z",
+      "completed_at": "2026-11-13T01:12:32.601Z"
+    }
+  ],
+  "steps": [
+    {
+      "name": "harness_auth",
+      "at": "2026-11-13T01:10:26.753Z",
+      "ok": true,
+      "detail": "✓ Logged in as REDACTED"
+    },
+    {
+      "name": "fixtures",
+      "at": "2026-11-13T01:10:27.122Z",
+      "a": {
+        "repo": "/tmp/v36-proj-a-1oysAC",
+        "commit": "eb58da665d8a401cd65053874a8dbf94abd1b955",
+        "pretest": 1
+      },
+      "b": {
+        "repo": "/tmp/v36-proj-b-u8pmNV",
+        "commit": "5966e206784590e40d6e8eda86edde3442125795",
+        "pretest": 1
+      }
+    },
+    {
+      "name": "project_register",
+      "at": "2026-11-13T01:10:27.441Z",
+      "ok": true,
+      "a": "proj-dc79e8ca74d4",
+      "b": "proj-8b34dfd4e596",
+      "paths": [
+        "/tmp/v36-proj-a-1oysAC",
+        "/tmp/v36-proj-b-u8pmNV"
+      ]
+    },
+    {
+      "name": "workflows_submitted",
+      "at": "2026-11-13T01:10:28.193Z",
+      "A1": "wf-b4868cba-1b28-440a-86fe-7ffcfff5206a",
+      "A2": "wf-614df707-e028-44cd-9db5-d4dd011dc242",
+      "B1": "wf-0b8757a2-5f05-4e84-81e3-12a857b94954"
+    },
+    {
+      "name": "admission_capacity",
+      "at": "2026-11-13T01:10:28.867Z",
+      "admitted": 2,
+      "skipped": 1,
+      "active": 2,
+      "queue_depth": 1,
+      "resources": {
+        "capacity": 8,
+        "held": 2,
+        "available": 6
+      }
+    },
+    {
+      "name": "coordinator_start",
+      "at": "2026-11-13T01:10:33.199Z",
+      "project": "proj-dc79e8ca74d4",
+      "exit": 0
+    },
+    {
+      "name": "coordinator_start",
+      "at": "2026-11-13T01:10:37.460Z",
+      "project": "proj-8b34dfd4e596",
+      "exit": 0
+    },
+    {
+      "name": "parallel_launch",
+      "at": "2026-11-13T01:10:38.547Z",
+      "workflow_ids": [
+        "wf-b4868cba-1b28-440a-86fe-7ffcfff5206a",
+        "wf-0b8757a2-5f05-4e84-81e3-12a857b94954"
+      ],
+      "labels": [
+        "A1",
+        "B1"
+      ]
+    },
+    {
+      "name": "ops_tui",
+      "at": "2026-11-13T01:10:43.583Z",
+      "ok": true
+    },
+    {
+      "name": "isolation_deny",
+      "at": "2026-11-13T01:10:43.583Z",
+      "allowed": false,
+      "reason": "CROSS_PROJECT_ACCESS_DENIED"
+    },
+    {
+      "name": "controlled_failure",
+      "at": "2026-11-13T01:10:55.585Z",
+      "mode": "queue_sibling_fail",
+      "workflow_id": "wf-614df707-e028-44cd-9db5-d4dd011dc242",
+      "label": "A2",
+      "others_preserved": true,
+      "preserved_running": [
+        "wf-b4868cba-1b28-440a-86fe-7ffcfff5206a",
+        "wf-0b8757a2-5f05-4e84-81e3-12a857b94954"
+      ],
+      "peer_states_at_failure": [
+        {
+          "workflow_id": "wf-b4868cba-1b28-440a-86fe-7ffcfff5206a",
+          "label": "A1",
+          "state": "RUNNING",
+          "sessions": [
+            {
+              "session_id": "sess-8ec5a744-d436-4c36-bea4-15f5380e7f95",
+              "status": "running",
+              "pid": 1558640,
+              "started_at": "2026-11-13T01:10:39.630Z"
+            }
+          ]
+        },
+        {
+          "workflow_id": "wf-0b8757a2-5f05-4e84-81e3-12a857b94954",
+          "label": "B1",
+          "state": "RUNNING",
+          "sessions": [
+            {
+              "session_id": "sess-de931908-dc14-42f4-b405-83c6d4d1e917",
+              "status": "running",
+              "pid": 1558779,
+              "started_at": "2026-11-13T01:10:40.669Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "parallel_complete",
+      "at": "2026-11-13T01:12:32.698Z",
+      "elapsed_ms": 114151,
+      "outcomes": [
+        {
+          "id": "wf-b4868cba-1b28-440a-86fe-7ffcfff5206a",
+          "label": "A1",
+          "test": 0,
+          "code": "PROCESS_COMPLETED",
+          "started_at": "2026-11-13T01:10:38.573Z",
+          "completed_at": "2026-11-13T01:12:29.157Z"
+        },
+        {
+          "id": "wf-0b8757a2-5f05-4e84-81e3-12a857b94954",
+          "label": "B1",
+          "test": 0,
+          "code": "PROCESS_COMPLETED",
+          "started_at": "2026-11-13T01:10:39.631Z",
+          "completed_at": "2026-11-13T01:12:32.601Z"
+        }
+      ]
+    },
+    {
+      "name": "overlap_proof",
+      "at": "2026-11-13T01:12:32.699Z",
+      "overlap": true,
+      "count": 2
+    },
+    {
+      "name": "admission_after_release",
+      "at": "2026-11-13T01:12:32.950Z",
+      "admitted": 0,
+      "active": 0
+    },
+    {
+      "name": "recover",
+      "at": "2026-11-13T01:12:33.077Z",
+      "examined": 3
+    },
+    {
+      "name": "coordinator_restart",
+      "at": "2026-11-13T01:12:37.478Z",
+      "ok": true
+    },
+    {
+      "name": "primary_repos_intact",
+      "at": "2026-11-13T01:12:37.488Z",
+      "project_a_primary_clean": true,
+      "project_b_primary_clean": true,
+      "a_head": "eb58da665d8a401cd65053874a8dbf94abd1b955",
+      "b_head": "5966e206784590e40d6e8eda86edde3442125795"
+    }
+  ],
+  "finished_at": "2026-11-13T01:12:37.611Z",
+  "summary": {
+    "projects": [
+      "proj-dc79e8ca74d4",
+      "proj-8b34dfd4e596"
+    ],
+    "workflows": [
+      "wf-b4868cba-1b28-440a-86fe-7ffcfff5206a",
+      "wf-614df707-e028-44cd-9db5-d4dd011dc242",
+      "wf-0b8757a2-5f05-4e84-81e3-12a857b94954"
+    ],
+    "live_successes": [
+      "A1",
+      "B1"
+    ],
+    "overlap": true,
+    "failure": {
+      "mode": "queue_sibling_fail",
+      "workflow_id": "wf-614df707-e028-44cd-9db5-d4dd011dc242",
+      "label": "A2",
+      "others_preserved": true,
+      "preserved_running": [
+        "wf-b4868cba-1b28-440a-86fe-7ffcfff5206a",
+        "wf-0b8757a2-5f05-4e84-81e3-12a857b94954"
+      ],
+      "peer_states_at_failure": [
+        {
+          "workflow_id": "wf-b4868cba-1b28-440a-86fe-7ffcfff5206a",
+          "label": "A1",
+          "state": "RUNNING",
+          "sessions": [
+            {
+              "session_id": "sess-8ec5a744-d436-4c36-bea4-15f5380e7f95",
+              "status": "running",
+              "pid": 1558640,
+              "started_at": "2026-11-13T01:10:39.630Z"
+            }
+          ]
+        },
+        {
+          "workflow_id": "wf-0b8757a2-5f05-4e84-81e3-12a857b94954",
+          "label": "B1",
+          "state": "RUNNING",
+          "sessions": [
+            {
+              "session_id": "sess-de931908-dc14-42f4-b405-83c6d4d1e917",
+              "status": "running",
+              "pid": 1558779,
+              "started_at": "2026-11-13T01:10:40.669Z"
+            }
+          ]
+        }
+      ]
+    },
+    "e2e_live": "PASS"
+  }
+}

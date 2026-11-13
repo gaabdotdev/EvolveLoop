@@ -1,0 +1,17 @@
+{
+  "failure": {
+    "mode": "queue_fail",
+    "workflow_id": "wf-8af3d375-b716-4ccd-94a1-f102d8ab52bd",
+    "others_preserved": true
+  },
+  "midSessions": [
+    {
+      "workflow_id": "wf-963a4687-68a6-4358-8cc1-e4b948db0115",
+      "sessions": []
+    },
+    {
+      "workflow_id": "wf-3946e0e7-af02-4c89-9047-7e173687d5a7",
+      "sessions": []
+    }
+  ]
+}

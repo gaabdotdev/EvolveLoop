@@ -1,0 +1,14 @@
+{
+  "projA": {
+    "name": "project-a",
+    "repo": "/tmp/v36-proj-a-f1VN1H",
+    "initial_commit": "e68456eb2cd2777482e11ed372d19f73abfaa293",
+    "pretest_exit": 1
+  },
+  "projB": {
+    "name": "project-b",
+    "repo": "/tmp/v36-proj-b-Ph1Jzy",
+    "initial_commit": "8baafd908f43d5cb37aee92c19e57e235113df80",
+    "pretest_exit": 1
+  }
+}

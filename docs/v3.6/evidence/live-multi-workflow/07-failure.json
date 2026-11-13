@@ -1,0 +1,68 @@
+{
+  "failure": {
+    "mode": "queue_sibling_fail",
+    "workflow_id": "wf-614df707-e028-44cd-9db5-d4dd011dc242",
+    "label": "A2",
+    "others_preserved": true,
+    "preserved_running": [
+      "wf-b4868cba-1b28-440a-86fe-7ffcfff5206a",
+      "wf-0b8757a2-5f05-4e84-81e3-12a857b94954"
+    ],
+    "peer_states_at_failure": [
+      {
+        "workflow_id": "wf-b4868cba-1b28-440a-86fe-7ffcfff5206a",
+        "label": "A1",
+        "state": "RUNNING",
+        "sessions": [
+          {
+            "session_id": "sess-8ec5a744-d436-4c36-bea4-15f5380e7f95",
+            "status": "running",
+            "pid": 1558640,
+            "started_at": "2026-11-13T01:10:39.630Z"
+          }
+        ]
+      },
+      {
+        "workflow_id": "wf-0b8757a2-5f05-4e84-81e3-12a857b94954",
+        "label": "B1",
+        "state": "RUNNING",
+        "sessions": [
+          {
+            "session_id": "sess-de931908-dc14-42f4-b405-83c6d4d1e917",
+            "status": "running",
+            "pid": 1558779,
+            "started_at": "2026-11-13T01:10:40.669Z"
+          }
+        ]
+      }
+    ]
+  },
+  "midSessions": [
+    {
+      "workflow_id": "wf-b4868cba-1b28-440a-86fe-7ffcfff5206a",
+      "label": "A1",
+      "state": "RUNNING",
+      "sessions": [
+        {
+          "session_id": "sess-8ec5a744-d436-4c36-bea4-15f5380e7f95",
+          "status": "running",
+          "pid": 1558640,
+          "started_at": "2026-11-13T01:10:39.630Z"
+        }
+      ]
+    },
+    {
+      "workflow_id": "wf-0b8757a2-5f05-4e84-81e3-12a857b94954",
+      "label": "B1",
+      "state": "RUNNING",
+      "sessions": [
+        {
+          "session_id": "sess-de931908-dc14-42f4-b405-83c6d4d1e917",
+          "status": "running",
+          "pid": 1558779,
+          "started_at": "2026-11-13T01:10:40.669Z"
+        }
+      ]
+    }
+  ]
+}
