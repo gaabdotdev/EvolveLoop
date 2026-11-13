@@ -1,0 +1,25 @@
+{
+  "kind": "GateSecurityEvidence",
+  "feature_id": "v36-multi-workflow",
+  "cycle_id": "v36-20261112-001",
+  "submitted_at": "2026-11-12T21:48:00-03:00",
+  "verdict": "passed",
+  "confidence": "high",
+  "command": "vitest isolation + admission fail-closed assertions",
+  "artifacts": [
+    { "path": "orchestrator/src/v3/ops/isolation.ts" },
+    { "path": "docs/v3.6/adr/ADR-V36-0005-cross-project-deny.md" },
+    { "path": "docs/v3.6/adr/ADR-V36-0001-global-scheduler-authority.md" }
+  ],
+  "checks": [
+    "cross-project path deny-by-default",
+    "cross-project dependency requires artifact + policy",
+    "priority does not grant authority",
+    "scheduler does not spawn harnesses",
+    "UNAVAILABLE usage not treated as measured",
+    "historical tags untouched"
+  ],
+  "residual_risks": [
+    "Operator must still run project workloads under V3.5 sandbox profiles for OS confinement"
+  ]
+}

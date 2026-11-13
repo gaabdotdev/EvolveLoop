@@ -1,0 +1,63 @@
+{
+  "kind": "KnowledgeGroundingEvidence",
+  "feature_id": "v36-multi-workflow",
+  "cycle_id": "v36-20261112-001",
+  "submitted_at": "2026-11-12T21:30:00-03:00",
+  "verdict": "conditional",
+  "confidence": "medium",
+  "knowledge_grounding": "applied",
+  "graphify_skill_status": "blocked",
+  "graphify_skill_reason": "CLI /tmp/graphify-skill-hardgate-venv/bin/graphify missing; wiki proceeded",
+  "readiness": {
+    "state": "pronto",
+    "script": "/home/gaab/Downloads/EvolveLoop/scripts/v23/readiness.py --live",
+    "note": "scripts/v23/readiness.py absent in this worktree; used AGENTS_ROOT copy"
+  },
+  "baseline": {
+    "branch": "feature/v3.6-multi-workflow",
+    "head": "0992cd248ad2df556fa620c64a2899ccb1aca3cd",
+    "v3_complete": "6b69c3f8dfde36b0f0282accff3aae3595dcc6fd",
+    "v35_runtime_tag": "07973fe67a790eab6d0c824d574cc201097fae93",
+    "v35_operational": "0992cd248ad2df556fa620c64a2899ccb1aca3cd",
+    "bench_obs_branch": "feature/bench-obs-v1@92a8f3e (not incorporated)"
+  },
+  "sources": [
+    {
+      "id": "vault-log",
+      "path": "EvolveLoop/log.md",
+      "note": "V3→V3.5 operational events; hybrid search EvolveLoop-specific returned no_hits"
+    },
+    {
+      "id": "repo-arch",
+      "path": "docs/v3.5/ARCHITECTURE.md"
+    },
+    {
+      "id": "repo-adr-coord",
+      "path": "docs/v3.5/adr/ADR-V35-0003-coordinator-daemon.md"
+    },
+    {
+      "id": "code-audit",
+      "path": "orchestrator/src/v3/** (explore PDA 2026-11-12)"
+    },
+    {
+      "id": "user-spec",
+      "path": "EVOLVELOOP_V3.6_GOALS_AND_ARCHITECTURE_v1.0 (user message)"
+    }
+  ],
+  "contracts": [
+    "Global Scheduler = admission/control-plane only; Execution Plane = Coordinator/Core V3.5",
+    "One authority per concern — no second Coordinator/EventBus/ApprovalBroker/sandbox",
+    "Persistence before optimism; RUNNING only after process/session reconcile",
+    "Project boundaries are security boundaries (deny-by-default cross-project)",
+    "Metrics UNAVAILABLE stay UNAVAILABLE — no invented usage"
+  ],
+  "gaps": [
+    "GAP: wiki hybrid search no_hits for EvolveLoop-specific queries; pack evolveloop PACK_NOT_FOUND",
+    "GAP: WIKI_ROOT unset in agents.env (session used vault from wiki-env-keep backup)",
+    "GAP: no Core multi-project / global queue prior to V3.6",
+    "GAP: no SQLite/migrations — continue atomic JSON + JSONL",
+    "GAP: feature/bench-obs-v1 not integrated — Measurement Plane optional by contract"
+  ],
+  "method": "ground.sh search/scout + vault log fallback + code explore audit",
+  "handoff": "Implement Global Ops Plane under orchestrator/src/v3/ops; attach to existing Coordinator without duplicating authority"
+}

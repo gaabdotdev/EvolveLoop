@@ -1,0 +1,18 @@
+{
+  "kind": "GatePoReviewEvidence",
+  "feature_id": "v36-multi-workflow",
+  "cycle_id": "v36-20261112-001",
+  "submitted_at": "2026-11-12T21:50:00-03:00",
+  "verdict": "conditional",
+  "confidence": "high",
+  "summary": "Deterministic multi-workflow ops platform implemented against Goals & Architecture v1.0. Global release incomplete while live LLM E2E is BLOCKED and V3.6 tag NOT_RUN.",
+  "accepted": [
+    "Global admission/control-plane without second Coordinator",
+    "Three-project fixture isolation + fairness/deps/resources/ops TUI",
+    "ADRs 0001–0008 and acceptance matrix honesty"
+  ],
+  "conditions": [
+    "Unblock live harness E2E with consent+credential before declaring V3.6 complete",
+    "Human approval required before creating v3.6 tag"
+  ]
+}

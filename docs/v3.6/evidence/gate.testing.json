@@ -1,0 +1,18 @@
+{
+  "kind": "GateTestingEvidence",
+  "feature_id": "v36-multi-workflow",
+  "cycle_id": "v36-20261112-001",
+  "submitted_at": "2026-11-12T21:48:00-03:00",
+  "verdict": "passed",
+  "confidence": "high",
+  "command": "npx vitest run tests/unit/v36-ops-core.test.ts tests/integration/v36-multi-workflow.e2e.test.ts && npm run build && npx vitest run tests/integration/v35-coordinator-daemon.test.ts",
+  "artifacts": [
+    { "path": "orchestrator/tests/unit/v36-ops-core.test.ts", "note": "4/4 pass" },
+    { "path": "orchestrator/tests/integration/v36-multi-workflow.e2e.test.ts", "note": "1/1 pass" },
+    { "path": "orchestrator/tests/integration/v35-coordinator-daemon.test.ts", "note": "3/3 pass after build" }
+  ],
+  "notes": [
+    "tsc --noEmit clean",
+    "Live LLM harness portion of E2E not executed (consent/auth absent)"
+  ]
+}

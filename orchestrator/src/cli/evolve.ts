@@ -80,6 +80,7 @@ import { scheduleReadyTasks, listReadyTasks } from "../v3/parallel/index.js";
 import { runFailureBattery, runEngineeringFailureBattery } from "../v3/failure-injection/index.js";
 import type { ProviderMode } from "./provider-bootstrap.js";
 import { handleV35Command, V35_USAGE_GROUPS } from "./v35-commands.js";
+import { handleV36Command, V36_USAGE_GROUPS } from "./v36-commands.js";
 
 function parseArgs(argv: string[]) {
   const group = argv[2] ?? "help";
@@ -119,7 +120,7 @@ function print(obj: unknown) {
 function usage() {
   print({
     name: "evolve",
-    version: "3.5.0-runtime",
+    version: "3.6.0-multi-workflow",
     groups: {
       grill: ["apply", "validate"],
       goal: ["create", "show", "evaluate", "criterion"],
@@ -130,6 +131,7 @@ function usage() {
       continuity: ["handoff", "apply", "show"],
       exec: ["run"],
       coordinator: ["start", "stop", "tick", "status"],
+      ...V36_USAGE_GROUPS,
       ...V35_USAGE_GROUPS,
       events: ["list"],
       ledger: ["show", "rebuild"],
@@ -207,6 +209,13 @@ async function main() {
   }
 
   try {
+    // V3.6 Global Operations Center (ops-dir; does not require --data-dir)
+    const v36Groups = new Set(Object.keys(V36_USAGE_GROUPS));
+    if (v36Groups.has(args.group)) {
+      const handled = await handleV36Command(args);
+      if (handled) return;
+    }
+
     // V3.5 operational groups (service/runtime/sandbox/harness/workspace/approvals)
     const v35Groups = new Set([
       "service",

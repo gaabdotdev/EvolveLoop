@@ -1,0 +1,16 @@
+{
+  "kind": "SpawnTree",
+  "feature_id": "v36-multi-workflow",
+  "cycle_id": "v36-20261112-001",
+  "max_spawns": 12,
+  "spawn_count": 1,
+  "spawns": [
+    {
+      "id": "explore-audit",
+      "role": "explore",
+      "spawn_depth": 1,
+      "status": "completed",
+      "summary": "V3.5 component audit + attachment point for Global Ops"
+    }
+  ]
+}

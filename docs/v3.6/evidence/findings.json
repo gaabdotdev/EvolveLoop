@@ -1,0 +1,35 @@
+{
+  "kind": "CriticFindings",
+  "feature_id": "v36-multi-workflow",
+  "cycle_id": "v36-20261112-001",
+  "submitted_at": "2026-11-12T21:48:00-03:00",
+  "role": "critic",
+  "findings": [
+    {
+      "id": "F1",
+      "severity": "medium",
+      "title": "Live LLM E2E BLOCKED",
+      "detail": "Integral E2E gate cannot be PASS without harness consent+credential; deterministic suite covers multi-project ops."
+    },
+    {
+      "id": "F2",
+      "severity": "low",
+      "title": "Preemption limited",
+      "detail": "No arbitrary process kill; pause/checkpoint path only — matches spec non-goal of unsafe preemption."
+    },
+    {
+      "id": "F3",
+      "severity": "low",
+      "title": "Ops Service not auto-ticking inside CoordinatorDaemon",
+      "detail": "Admission via evolve scheduler tick / evaluateAdmission; daemon remains execution authority. Intentional per ADR-0001."
+    },
+    {
+      "id": "F4",
+      "severity": "info",
+      "title": "Wiki pack missing",
+      "detail": "EvolveLoop wiki pack PACK_NOT_FOUND; grounding used vault log + repo docs."
+    }
+  ],
+  "verdict": "conditional_continue",
+  "blocks_testing": false
+}

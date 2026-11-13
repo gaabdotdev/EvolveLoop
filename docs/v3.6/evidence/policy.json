@@ -1,0 +1,28 @@
+{
+  "kind": "PolicyEngineDecision",
+  "feature_id": "v36-multi-workflow",
+  "cycle_id": "v36-20261112-001",
+  "submitted_at": "2026-11-12T21:30:00-03:00",
+  "risk_tier": "sensitive",
+  "workflow_mode": "sensitive",
+  "topology": "supervisor-loop",
+  "budget": {
+    "max_tokens": "gates-first",
+    "max_spawns": 12,
+    "max_wallclock": "6h",
+    "max_spawn_depth": 3,
+    "max_outer_cycles": 5
+  },
+  "require": [
+    "knowledge_grounding",
+    "tests",
+    "security",
+    "po-review",
+    "grill-me"
+  ],
+  "notes": [
+    "Multi-project isolation, authority, sandbox, and Approval Broker surface → sensitive",
+    "User delivered EVOLVELOOP_V3.6_GOALS_AND_ARCHITECTURE_v1.0 as implementation authority",
+    "Base: feature/v3.6-multi-workflow @ 0992cd2 (V3.5 operational hardening)"
+  ]
+}
