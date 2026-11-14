@@ -2,16 +2,19 @@
 
 **Generated:** 2026-11-14T01:08Z (approx)  
 **Candidate:** `recovery/pre-v37-cert`  
-**HEAD:** see `git rev-parse HEAD` on worktree `/tmp/evolveloop-recovery`  
+**HEAD:** `49448833204faeb21b8249ca5907c7185e8c0515`  
+**Worktree:** `/tmp/evolveloop-recovery`  
 **Immutable audit pack:** `/home/gaab/Downloads/EvolveLoop-AUDIT-PRE-V37-20261113/final/` (unchanged)
 
 ## Global verdict
 
-### `BLOCKED` (toward FAIL if blocks lift without remaining defects)
+### `BLOCKED`
 
-Not `TRUE_FULL_PASS`. Not yet safe for merge to `main` / tag / push.
+Not `TRUE_FULL_PASS`. Not safe for merge to `main` / tag / push.
 
 Primary external block: **G17 multi-host E2E** — only one online Linux Tailscale node (`gaab`); `gaab-1` offline.
+
+Integration tip (post-merge): **23 passed / 1 failed→fixed (session continuity) / 1 skipped (Graphify)** on prior full integration run; continuity re-run green after JOB-INTEGRITY fix.
 
 ## Answers to mandatory executive questions
 
