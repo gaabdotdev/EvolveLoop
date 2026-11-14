@@ -56,6 +56,17 @@ function buildBwrapArgs(req: SandboxExecRequest, bwrapPath: string): { args: str
 
   if (profile.network.mode === "deny") {
     args.push("--unshare-net");
+  } else if (profile.network.mode === "allowlist") {
+    // ISSUE-SEC-H04-NET: host allowlist filtering is not implemented in bwrap backend.
+    // Fail-closed unless operator explicitly opts into unrestricted ("*") allowlist.
+    const list = profile.network.allowlist ?? [];
+    const unrestricted = list.length === 1 && list[0] === "*";
+    if (!unrestricted) {
+      throw new Error(
+        "SANDBOX_ALLOWLIST_UNIMPLEMENTED: network.mode=allowlist without allowlist=['*'] is fail-closed until host filtering exists",
+      );
+    }
+    // unrestricted "*": network shared with host — never claim per-host filtering
   }
 
   // Debian/Ubuntu merged-/usr: bind /usr then recreate /bin,/lib,/lib64,/sbin as symlinks.

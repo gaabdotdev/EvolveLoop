@@ -3,6 +3,7 @@
  * Fail-closed for unknown actions. Integrates with AuthorityContext flags.
  */
 
+import { sep } from "node:path";
 import type { AuthorityContext } from "../../authority/capability-authority.js";
 import {
   pathEscapesWorkspace,
@@ -14,6 +15,10 @@ import type {
   SandboxProfile,
   SecurityDecision,
 } from "./types.js";
+
+function resourceMatchesScope(resource: string, scope: string): boolean {
+  return resource === scope || resource.startsWith(scope.endsWith(sep) ? scope : scope + sep);
+}
 
 function nowIso(): string {
   return new Date().toISOString();
@@ -29,7 +34,7 @@ function grantFor(
   if (!resource) {
     return matches.find((g) => !g.scope) ?? matches[0];
   }
-  const scoped = matches.find((g) => g.scope && resource.startsWith(g.scope));
+  const scoped = matches.find((g) => g.scope && resourceMatchesScope(resource, g.scope));
   if (scoped) return scoped;
   return matches.find((g) => !g.scope);
 }

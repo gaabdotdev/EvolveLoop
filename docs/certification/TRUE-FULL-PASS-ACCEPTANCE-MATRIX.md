@@ -1,0 +1,36 @@
+# EvolveLoop TRUE_FULL_PASS Acceptance Matrix
+
+**Candidate branch:** `recovery/pre-v37-cert`  
+**Baseline:** `6dee950` + remediations (see git log)  
+**V3.7 fabric tip (not yet merged here):** `c89949a`  
+**Rule:** TRUE_FULL_PASS requires all mandatory gates PASS. BLOCKED/PARTIAL/FAIL/NOT_RUN/UNVERIFIED on mandatory gates forbid TRUE_FULL_PASS.
+
+| Gate | Content | Status | Notes |
+|------|---------|--------|-------|
+| G0 | Git lineage, baseline, integration integrity | PARTIAL | Content co-present at 6dee950; functional tip revalidation in progress |
+| G1 | Genesis + master requirements reconciled | PASS | R0: 62 IDs; 62vs53 resolved (9=DEPRECATED+SUPERSEDED+UNKNOWN) |
+| G2 | Core/Engineering Loop/Goal/Grill-Me/TaskGraph | UNVERIFIED | Pending R3 battery on tip |
+| G3 | Hierarchy, planner, delegation, shared memory | UNVERIFIED | |
+| G4 | Handoff, continuity, recovery | UNVERIFIED | |
+| G5 | Harness/provider + local-first | PARTIAL | Live harness outside bwrap documented; REQUIRE_HARNESS_SANDBOX fail-closed |
+| G6 | Security, Authority, sandbox, approvals | PARTIAL | C01/H03/H04 remediated in unit; independent re-audit pending; C02 claims narrowed not fully OS-wrapped |
+| G7 | V3.5 Runtime + V3.6 GlobalOps on integrated tip | NOT_RUN | R3 in progress |
+| G8 | Measurement Plane, benchmark, evidence integrity | PARTIAL | EventBus adapter wired; token efficiency meta unproven |
+| G9 | V3.7 Node Identity/Trust | NOT_RUN | Fabric not on this tip yet |
+| G10 | V3.7 Worker Runtime | NOT_RUN | |
+| G11 | V3.7 scheduling/pools | NOT_RUN | |
+| G12 | V3.7 artifacts/workspaces | NOT_RUN | |
+| G13 | V3.7 leases/fencing/stale rejection | NOT_RUN | |
+| G14 | V3.7 topology/steal | NOT_RUN | |
+| G15 | V3.7 speculative execution | NOT_RUN | |
+| G16 | V3.7 cross-node Measurement/Fleet | NOT_RUN | |
+| G17 | Multi-host live E2E | BLOCKED | Tailscale `gaab-1` offline; need second independent Linux host |
+| G18 | Token efficiency ≥30% median | UNVERIFIED | Meta proposed in V3 v0.5; not proven |
+| G19 | Install/CLI/TUI/doctor/docs | PARTIAL | Doctor honesty checks added |
+| G20 | Full regression + independent re-audit + release readiness | NOT_RUN | |
+
+## Global verdict (current)
+
+**`FAIL` / progressing toward `CONDITIONAL_PASS` or `BLOCKED`** — **not** `TRUE_FULL_PASS`.
+
+Mandatory blockers still open: G17 multi-host, G7 tip revalidation incomplete, G9–G16 fabric integration, G18 efficiency unproven, residual G6 independent audit.
