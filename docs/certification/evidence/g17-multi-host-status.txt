@@ -5,3 +5,4 @@ gaab_online=true
 gaab1_online=false
 wiki_root=unset
 verdict=BLOCKED_G17
+gaab-1 still offline 2026-11-14T01:52:03Z

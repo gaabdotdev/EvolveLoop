@@ -16,6 +16,7 @@ export * from "./steal/work-steal.js";
 export * from "./speculative/engine.js";
 export * from "./control-plane/service.js";
 export * from "./ops-center/doctor.js";
+export * from "./ops-center/fleet-report.js";
 export * from "./protocol/framing.js";
 export * from "./protocol/messages.js";
 export * from "./protocol/client.js";

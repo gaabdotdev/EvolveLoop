@@ -23,7 +23,7 @@
 | G13 | V3.7 leases/fencing/stale rejection | PARTIAL | Unit/adversarial PASS; multi-host missing |
 | G14 | V3.7 topology/steal | PARTIAL | Unit PASS; multi-host missing |
 | G15 | V3.7 speculative execution | PARTIAL | Unit covered; multi-host missing |
-| G16 | V3.7 cross-node Measurement/Fleet | UNVERIFIED | Fleet reports incomplete historically |
+| G16 | V3.7 cross-node Measurement/Fleet | PARTIAL | fleet-report + MP correlation on tip; LIVE cross-node still needs G17 |
 | G17 | Multi-host live E2E | BLOCKED | Tailscale `gaab-1` offline; need second independent Linux host |
 | G18 | Token efficiency ≥30% median | UNVERIFIED | Meta proposed in V3 v0.5; not proven (freeze ≠ efficiency claim) |
 | G19 | Install/CLI/TUI/doctor/docs | PARTIAL | Doctor: wiki BLOCKED, graphify UNAVAILABLE, broker live PASS |

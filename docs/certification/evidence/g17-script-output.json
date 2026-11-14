@@ -1,1 +1,1 @@
-{"state":"BLOCKED","reason":"WORKER_HOSTS unset; need >=2 independent Linux hosts"}
+{"gaab1_hint": "100.121.169.97", "reason": "WORKER_HOSTS unset; need >=2 independent Linux hosts", "state": "BLOCKED"}

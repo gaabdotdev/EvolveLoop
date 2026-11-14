@@ -23,6 +23,7 @@ export const V37_USAGE_GROUPS: Record<string, string[]> = {
     "pool-list",
     "dispatch",
     "doctor",
+    "fleet-report",
     "worker-run",
   ],
 };
@@ -160,6 +161,14 @@ export async function handleV37Command(args: Record<string, string>): Promise<bo
     const checks = doctorControlPlane(cp);
     if (args["worker-dir"]) checks.push(...doctorWorkerNode(resolve(args["worker-dir"])));
     console.log(JSON.stringify({ summary: summarizeDoctor(checks), checks }, null, 2));
+    return true;
+  }
+
+  if (args.command === "fleet-report") {
+    const { buildFleetReport } = await import("../v3/fabric/ops-center/fleet-report.js");
+    const cp = new ControlPlaneService(dir);
+    const report = buildFleetReport(cp);
+    console.log(JSON.stringify(report, null, 2));
     return true;
   }
 

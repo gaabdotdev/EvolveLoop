@@ -6,6 +6,10 @@
 **Worktree:** `/tmp/evolveloop-recovery`  
 **Immutable audit pack:** `/home/gaab/Downloads/EvolveLoop-AUDIT-PRE-V37-20261113/final/` (unchanged)
 
+## Latest tip note
+
+Gate O: `evolve fabric fleet-report` ships correlation fields locally (G16 PARTIAL). G17 still BLOCKED (`gaab-1` offline).
+
 ## Global verdict
 
 ### `BLOCKED`

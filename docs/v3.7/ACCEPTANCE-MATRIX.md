@@ -12,7 +12,7 @@ States: PASS | FAIL | BLOCKED | NOT_RUN | PARTIAL
 | Gate F | Lease fencing / steal revoke | PASS | fabric-core + protocol-flow |
 | Gate T | Team topology versioning | PASS | fabric-core teams |
 | Gate R | Work steal + speculative policy | PASS | fabric-core |
-| Gate O | Doctor + MP correlation fields | PARTIAL | doctor code + MP types additive; fleet reports incomplete |
+| Gate O | Doctor + MP correlation fields | PARTIAL | `fabric fleet-report` emits control_plane_id/worker_node_id/lease/fencing/remote_trace (+ unit); LIVE cross-host still G17 BLOCKED |
 | Gate E2E | ≥2 real Linux hosts concurrent | BLOCKED | Tailscale `gaab-1` offline at run time |
 | Gate Release | All required gates PASS | NOT_RUN | blocked on E2E |
 
