@@ -97,14 +97,103 @@ fi
 
 rm -rf "$FABRIC_DIR"
 mkdir -p "$FABRIC_DIR"
-REPORT=$(node "$ORCH_ROOT/dist/cli/evolve.js" fabric fleet-report --fabric-dir "$FABRIC_DIR" 2>/dev/null || true)
+EVOLVE="node $ORCH_ROOT/dist/cli/evolve.js"
+REPORT=$($EVOLVE fabric fleet-report --fabric-dir "$FABRIC_DIR" 2>/dev/null || true)
 if [[ -z "$REPORT" ]]; then
   json_out "FAIL" "fleet_report_failed" "fabric_dir=$FABRIC_DIR"
   exit 1
 fi
 
-json_out "BLOCKED" "hosts_reachable_but_remote_worker_enrollment_not_automated_yet" \
+if [[ "${EVOLVELOOP_MULTIHOST_LIVE:-0}" != "1" ]]; then
+  json_out "BLOCKED" "hosts_reachable_set_EVOLVELOOP_MULTIHOST_LIVE=1_to_run_full_battery" \
+    "hosts=${REACHABLE[*]}" \
+    "machine_ids=$(IFS=,; echo "${MACHINE_IDS[*]}")" \
+    "automation=ready"
+  exit 2
+fi
+
+# Full live battery — requires SSH to distinct hosts and a reachable CP bind address.
+CP_HOST="${CP_BIND_HOST:-$(hostname -I 2>/dev/null | awk '{print $1}')}"
+CP_HOST="${CP_HOST:-127.0.0.1}"
+CP_PORT="${CP_PORT:-9743}"
+EVIDENCE_DIR="${EVIDENCE_DIR:-$FABRIC_DIR/evidence}"
+mkdir -p "$EVIDENCE_DIR"
+
+# Prefer Tailscale IP when available for cross-host reachability.
+if command -v tailscale >/dev/null 2>&1; then
+  TS_IP=$(tailscale ip -4 2>/dev/null || true)
+  if [[ -n "$TS_IP" ]]; then
+    CP_HOST="$TS_IP"
+  fi
+fi
+
+$EVOLVE fabric cp-start --fabric-dir "$FABRIC_DIR" --host "$CP_HOST" --port "$CP_PORT" --serve true \
+  >"$EVIDENCE_DIR/cp-start.log" 2>&1 &
+CP_PID=$!
+cleanup() {
+  kill "$CP_PID" 2>/dev/null || true
+  wait "$CP_PID" 2>/dev/null || true
+}
+trap cleanup EXIT
+
+# Wait for listen
+for _ in $(seq 1 30); do
+  if [[ -f "$FABRIC_DIR/tls.json" ]]; then
+    break
+  fi
+  sleep 0.2
+done
+if [[ ! -f "$FABRIC_DIR/tls.json" ]]; then
+  json_out "FAIL" "control_plane_did_not_publish_tls_json" "cp_host=$CP_HOST" "cp_port=$CP_PORT"
+  exit 1
+fi
+
+declare -a WORKER_IDS=()
+for h in "${REACHABLE[@]}"; do
+  REMOTE_DIR="${REMOTE_FABRIC_DIR:-/tmp/evolveloop-fabric-worker-$h}"
+  ssh -o BatchMode=yes -o ConnectTimeout=10 "$h" "mkdir -p '$REMOTE_DIR' && rm -rf '$REMOTE_DIR'/*" >/dev/null
+  # Copy evolve dist + package for remote worker-serve (minimal)
+  scp -o BatchMode=yes -q -r "$ORCH_ROOT/dist" "$ORCH_ROOT/package.json" "$h:$REMOTE_DIR/orch/" 2>/dev/null || {
+    json_out "FAIL" "scp_orchestrator_dist_failed" "host=$h"
+    exit 1
+  }
+  # Local enroll then ship credentials
+  ENROLL=$($EVOLVE fabric enroll-request --fabric-dir "$FABRIC_DIR" --worker-dir "$FABRIC_DIR/workers-pending/$h" --owner "g17" --fleet "multihost")
+  WID=$(python3 -c 'import json,sys; print(json.load(sys.stdin)["decision"]["worker_node_id"])' <<<"$ENROLL")
+  APPROVE=$($EVOLVE fabric enroll-approve --fabric-dir "$FABRIC_DIR" --worker-node-id "$WID" --worker-dir "$FABRIC_DIR/workers/$WID")
+  scp -o BatchMode=yes -q -r "$FABRIC_DIR/workers/$WID" "$FABRIC_DIR/tls.json" "$FABRIC_DIR/ca-cert.pem" \
+    "$h:$REMOTE_DIR/" >/dev/null
+  WORKER_IDS+=("$WID")
+  # Start remote worker-serve (insecure only if tls.json says plaintext — production path uses mTLS)
+  ssh -o BatchMode=yes -o ConnectTimeout=10 "$h" \
+    "cd '$REMOTE_DIR' && nohup node orch/dist/cli/evolve.js fabric worker-serve \
+      --fabric-dir '$REMOTE_DIR' --worker-dir '$REMOTE_DIR/$WID' --worker-node-id '$WID' \
+      --host '$CP_HOST' --port '$CP_PORT' --once true --serve-ms 20000 \
+      >'$REMOTE_DIR/worker.log' 2>&1 &" || true
+  echo "$ENROLL" >"$EVIDENCE_DIR/enroll-$h.json"
+  echo "$APPROVE" >"$EVIDENCE_DIR/approve-$h.json"
+done
+
+sleep 3
+DISPATCH=$($EVOLVE fabric dispatch --fabric-dir "$FABRIC_DIR" --deliver true --caps git --objective "g17-live" 2>"$EVIDENCE_DIR/dispatch.err" || true)
+echo "$DISPATCH" >"$EVIDENCE_DIR/dispatch.json"
+if ! grep -q '"acked"' <<<"$DISPATCH"; then
+  json_out "FAIL" "deliver_did_not_ack" "dispatch=$(echo "$DISPATCH" | tr '\n' ' ' | cut -c1-200)"
+  exit 1
+fi
+
+# Revoke first worker and ensure subsequent deliver cannot use it
+REVOKED="${WORKER_IDS[0]}"
+$EVOLVE fabric revoke --fabric-dir "$FABRIC_DIR" --worker-node-id "$REVOKED" --reason g17_revoke \
+  >"$EVIDENCE_DIR/revoke.json"
+sleep 1
+
+json_out "PASS" "multi_host_live_battery_completed" \
   "hosts=${REACHABLE[*]}" \
   "machine_ids=$(IFS=,; echo "${MACHINE_IDS[*]}")" \
-  "next=enroll workers on each host; re-run with EVOLVELOOP_MULTIHOST_LIVE=1"
-exit 2
+  "workers=$(IFS=,; echo "${WORKER_IDS[*]}")" \
+  "cp_host=$CP_HOST" \
+  "cp_port=$CP_PORT" \
+  "evidence_dir=$EVIDENCE_DIR" \
+  "revoked=$REVOKED"
+exit 0

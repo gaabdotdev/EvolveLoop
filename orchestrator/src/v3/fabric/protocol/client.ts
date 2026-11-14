@@ -11,6 +11,10 @@ export interface FabricClientOptions {
   host: string;
   port: number;
   ca?: string | Buffer;
+  /** Worker client certificate (mTLS). */
+  cert?: string | Buffer;
+  /** Worker client private key (mTLS). */
+  key?: string | Buffer;
   rejectUnauthorized?: boolean;
   tls?: boolean;
   sessionToken: string;
@@ -30,13 +34,16 @@ export class FabricProtocolClient {
       if (this.opts.tls === false) {
         this.socket = netConnect({ host: this.opts.host, port: this.opts.port }, () => resolve());
       } else {
+        const requireAuth = this.opts.rejectUnauthorized ?? Boolean(this.opts.ca);
         this.socket = tlsConnect(
           {
             host: this.opts.host,
             port: this.opts.port,
             ca: this.opts.ca,
-            rejectUnauthorized: this.opts.rejectUnauthorized ?? Boolean(this.opts.ca),
-            servername: this.opts.host,
+            cert: this.opts.cert,
+            key: this.opts.key,
+            rejectUnauthorized: requireAuth,
+            servername: this.opts.host === "127.0.0.1" ? "localhost" : this.opts.host,
           },
           () => resolve(),
         );

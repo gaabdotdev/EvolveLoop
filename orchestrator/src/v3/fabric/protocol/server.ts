@@ -23,10 +23,19 @@ export interface FabricServerOptions {
   requestCert?: boolean;
   /** When false, bind plain TCP (lab/unit only). Default true. */
   tls?: boolean;
+  /** Require authorized client cert (mTLS). Ignored when tls===false. */
+  requireClientCert?: boolean;
+  /** Optional binder: peer cert CN/fingerprint must match session worker. */
+  verifyPeerIdentity?: (
+    peer: { cn?: string; fingerprint?: string },
+    workerNodeId: string,
+  ) => { ok: true } | { ok: false; reason: string };
   cpSecret: Buffer;
   handler: MessageHandler;
   maxFramesPerSec?: number;
   verifySession?: (token: string) => { ok: true; claims: { worker_node_id: string; token_id: string } } | { ok: false; reason: string };
+  onAuthenticated?: (workerNodeId: string, socket: Socket | TLSSocket) => void;
+  onDisconnect?: (workerNodeId: string, socket: Socket | TLSSocket) => void;
 }
 
 export class FabricProtocolServer {
@@ -45,16 +54,21 @@ export class FabricProtocolServer {
     };
 
     if (this.opts.tls === false) {
+      if (this.opts.requireClientCert) {
+        throw new Error("mtls_requires_tls:insecure_plaintext_cannot_require_client_cert");
+      }
       this.server = createNetServer(onConn);
     } else {
       if (!this.opts.key || !this.opts.cert) throw new Error("tls_materials_required");
+      const requireClient = this.opts.requireClientCert === true || this.opts.requestCert === true;
+      if (requireClient && !this.opts.ca) throw new Error("mtls_requires_ca");
       this.server = createTlsServer(
         {
           key: this.opts.key,
           cert: this.opts.cert,
           ca: this.opts.ca,
-          requestCert: this.opts.requestCert ?? false,
-          rejectUnauthorized: Boolean(this.opts.ca),
+          requestCert: requireClient,
+          rejectUnauthorized: requireClient ? true : Boolean(this.opts.ca),
         },
         (socket) => onConn(socket as TLSSocket),
       );
@@ -91,6 +105,29 @@ export class FabricProtocolServer {
     let worker_node_id: string | undefined;
     let sessionToken: string | undefined;
     let processing = Promise.resolve();
+
+    if (this.opts.tls !== false && this.opts.requireClientCert) {
+      const tlsSock = socket as TLSSocket;
+      if (!tlsSock.authorized) {
+        try {
+          socket.write(
+            encodeFrame(
+              envelope("control", "error", {
+                reason: `mtls_unauthorized:${tlsSock.authorizationError ?? "no_client_cert"}`,
+              }),
+            ),
+          );
+        } catch {
+          /* ignore */
+        }
+        socket.destroy();
+        return;
+      }
+    }
+
+    socket.on("close", () => {
+      if (worker_node_id) this.opts.onDisconnect?.(worker_node_id, socket);
+    });
 
     socket.on("data", (chunk) => {
       processing = processing.then(async () => {
@@ -135,8 +172,27 @@ export class FabricProtocolServer {
                 ? this.opts.verifySession(token)
                 : verifySessionToken(this.opts.cpSecret, token);
               if (!v.ok) throw new Error(`auth_failed:${v.reason}`);
+              if (this.opts.tls !== false && this.opts.requireClientCert) {
+                const tlsSock = socket as TLSSocket;
+                const peer = tlsSock.getPeerCertificate(true);
+                if (!peer || Object.keys(peer).length === 0) {
+                  throw new Error("mtls_missing_peer_cert");
+                }
+                const subject = peer.subject as { CN?: string } | undefined;
+                const peerId = {
+                  cn: subject?.CN,
+                  fingerprint: peer.fingerprint256?.replace(/:/g, "").toLowerCase(),
+                };
+                if (this.opts.verifyPeerIdentity) {
+                  const id = this.opts.verifyPeerIdentity(peerId, v.claims.worker_node_id);
+                  if (!id.ok) throw new Error(`mtls_identity:${id.reason}`);
+                } else if (peerId.cn && peerId.cn !== v.claims.worker_node_id) {
+                  throw new Error(`mtls_identity:identity_mismatch:cn=${peerId.cn}`);
+                }
+              }
               worker_node_id = v.claims.worker_node_id;
               sessionToken = token;
+              this.opts.onAuthenticated?.(worker_node_id, socket);
               socket.write(
                 encodeFrame(
                   envelope(

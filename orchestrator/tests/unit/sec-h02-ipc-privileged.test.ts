@@ -16,6 +16,7 @@ async function rawIpc(
   dataDir: string,
   method: string,
   token: string,
+  extra: Record<string, unknown> = {},
 ): Promise<{ ok: boolean; error?: string }> {
   const sockPath = ipcSocketPath(dataDir);
   const id = randomBytes(4).toString("hex");
@@ -27,7 +28,17 @@ async function rawIpc(
     }, 3000);
     let buf = "";
     socket.on("connect", () => {
-      socket.write(JSON.stringify({ id, method, params: {}, token }) + "\n");
+      socket.write(
+        JSON.stringify({
+          id,
+          method,
+          params: {},
+          token,
+          nonce: randomBytes(12).toString("hex"),
+          issued_at: Date.now(),
+          ...extra,
+        }) + "\n",
+      );
     });
     socket.on("data", (chunk) => {
       buf += chunk.toString("utf-8");
@@ -60,9 +71,10 @@ describe("ISSUE-SEC-H02-IPC privileged method split", () => {
     }
   });
 
-  it("lists privileged methods", () => {
+  it("lists privileged methods including tick", () => {
     expect(IPC_PRIVILEGED_METHODS.has("approvals.approve")).toBe(true);
     expect(IPC_PRIVILEGED_METHODS.has("shutdown")).toBe(true);
+    expect(IPC_PRIVILEGED_METHODS.has("tick")).toBe(true);
     expect(IPC_PRIVILEGED_METHODS.has("ping")).toBe(false);
   });
 
@@ -78,6 +90,10 @@ describe("ISSUE-SEC-H02-IPC privileged method split", () => {
     expect(denied.ok).toBe(false);
     expect(denied.error).toBe("unauthorized_privileged_method");
 
+    const tickDenied = await rawIpc(dir, "tick", op);
+    expect(tickDenied.ok).toBe(false);
+    expect(tickDenied.error).toBe("unauthorized_privileged_method");
+
     const ping = await rawIpc(dir, "ping", op);
     expect(ping.ok).toBe(true);
 
@@ -88,5 +104,22 @@ describe("ISSUE-SEC-H02-IPC privileged method split", () => {
     const privGate = await rawIpc(dir, "approvals.approve", priv);
     expect(privGate.error).not.toBe("unauthorized_privileged_method");
     expect(privGate.error).not.toBe("unauthorized");
+    expect(privGate.error).not.toBe("nonce_required");
+  });
+
+  it("rejects privileged replay of the same nonce", async () => {
+    dir = mkdtempSync(join(tmpdir(), "el-h02-replay-"));
+    daemon = new CoordinatorDaemon(dir);
+    await daemon.start();
+    const priv = ensureIpcPrivilegedToken(dir);
+    const nonce = randomBytes(12).toString("hex");
+    const first = await rawIpc(dir, "approvals.list", priv); // list is not privileged
+    expect(first.ok).toBe(true);
+
+    const a = await rawIpc(dir, "tick", priv, { nonce, issued_at: Date.now() });
+    expect(a.error).not.toBe("unauthorized_privileged_method");
+    const b = await rawIpc(dir, "tick", priv, { nonce, issued_at: Date.now() });
+    expect(b.ok).toBe(false);
+    expect(b.error).toBe("replay_nonce");
   });
 });

@@ -25,6 +25,7 @@ export const V37_USAGE_GROUPS: Record<string, string[]> = {
     "doctor",
     "fleet-report",
     "worker-run",
+    "worker-serve",
   ],
 };
 
@@ -106,7 +107,23 @@ export async function handleV37Command(args: Record<string, string>): Promise<bo
     const cp = new ControlPlaneService(dir, { mode: "attach" });
     if (!args["worker-node-id"]) throw new Error("Required: --worker-node-id");
     const decision = cp.nodes.authorizeEnrollment(args["worker-node-id"]);
-    console.log(JSON.stringify(decision, null, 2));
+    const work = resolve(
+      args["worker-dir"] ?? join(dir, "workers", args["worker-node-id"]),
+    );
+    mkdirSync(work, { recursive: true });
+    if (decision.session_token) {
+      writeFileSync(join(work, "session.token"), decision.session_token, { mode: 0o600 });
+    }
+    if (decision.client_cert_pem && decision.client_key_pem) {
+      writeFileSync(join(work, "client-cert.pem"), decision.client_cert_pem, { mode: 0o600 });
+      writeFileSync(join(work, "client-key.pem"), decision.client_key_pem, { mode: 0o600 });
+    }
+    if (decision.ca_cert_pem) {
+      writeFileSync(join(work, "ca-cert.pem"), decision.ca_cert_pem);
+    }
+    // Do not print private key material to stdout in operator logs.
+    const { client_key_pem: _k, ...safe } = decision;
+    console.log(JSON.stringify({ ...safe, worker_dir: work, client_key_written: Boolean(_k) }, null, 2));
     return true;
   }
 
@@ -144,10 +161,29 @@ export async function handleV37Command(args: Record<string, string>): Promise<bo
   }
 
   if (args.command === "dispatch") {
-    if (args.deliver === "true") {
-      throw new Error("live_task_delivery_not_implemented: dispatch currently creates a contract and lease but does not deliver to a remote worker");
-    }
     const cp = new ControlPlaneService(dir, { mode: "attach" });
+    if (args.deliver === "true") {
+      const { fabricAdminCall } = await import("../v3/fabric/control-plane/admin-ipc.js");
+      if (!cp.state.listen) {
+        throw new Error("control_plane_not_serving: start with fabric cp-start --serve true before --deliver");
+      }
+      const res = await fabricAdminCall(
+        dir,
+        "deliver",
+        {
+          workflow_id: args.workflow ?? `wf_${randomUUID()}`,
+          task_id: args.task ?? `task_${randomUUID()}`,
+          required_capabilities: args.caps ? args.caps.split(",") : ["git"],
+          project_id: args.project ?? "local",
+          inputs: { objective: args.objective ?? "noop" },
+        },
+        "fabric.deliver",
+        cp.state.epoch,
+      );
+      if (!res.ok) throw new Error(`deliver_failed:${res.error}`);
+      console.log(JSON.stringify(res.result, null, 2));
+      return true;
+    }
     const result = cp.dispatchTask({
       workflow_id: args.workflow ?? `wf_${randomUUID()}`,
       task_id: args.task ?? `task_${randomUUID()}`,
@@ -186,6 +222,99 @@ export async function handleV37Command(args: Record<string, string>): Promise<bo
     });
     const result = await rt.execute(contract);
     console.log(JSON.stringify(result, null, 2));
+    return true;
+  }
+
+  if (args.command === "worker-serve") {
+    const { FabricProtocolClient } = await import("../v3/fabric/protocol/client.js");
+    const { envelope } = await import("../v3/fabric/protocol/messages.js");
+    const work = resolve(args["worker-dir"] ?? "");
+    if (!work) throw new Error("Required: --worker-dir");
+    const workerNodeId = args["worker-node-id"] ?? JSON.parse(readFileSync(join(work, "identity.json"), "utf8")).worker_node_id;
+    const sessionToken = readFileSync(join(work, "session.token"), "utf8").trim();
+    const tlsInfo = JSON.parse(readFileSync(join(dir, "tls.json"), "utf8")) as {
+      host: string;
+      port: number;
+      plaintext?: boolean;
+      ca?: string | null;
+    };
+    const insecure = args.insecure === "true" || tlsInfo.plaintext === true;
+    const client = new FabricProtocolClient({
+      host: args.host ?? tlsInfo.host,
+      port: Number(args.port ?? tlsInfo.port),
+      tls: insecure ? false : true,
+      ca: insecure ? undefined : readFileSync(join(work, "ca-cert.pem")),
+      cert: insecure ? undefined : readFileSync(join(work, "client-cert.pem")),
+      key: insecure ? undefined : readFileSync(join(work, "client-key.pem")),
+      rejectUnauthorized: !insecure,
+      sessionToken,
+      worker_node_id: workerNodeId,
+    });
+    const rt = new WorkerRuntime({
+      worker_node_id: workerNodeId,
+      workRoot: work,
+      slots: Number(args.slots ?? "2"),
+    });
+    await client.connect();
+    const inv = rt.inventory();
+    await client.request(
+      envelope("health", "health.heartbeat", {
+        capabilities: inv.caps,
+        resources: inv.resources,
+      }),
+      "health.heartbeat_ack",
+    );
+    client.onMessage(async (msg) => {
+      if (msg.type !== "task.offer") return;
+      const payload = msg.payload as { contract: any; lease_id: string };
+      try {
+        client.send(
+          envelope("task", "task.ack", { lease_id: payload.lease_id, task_id: payload.contract.task_id }, {
+            ack_of: msg.request_id,
+            worker_node_id: workerNodeId,
+          }),
+        );
+        client.send(
+          envelope("task", "task.progress", { task_id: payload.contract.task_id, phase: "executing" }, {
+            worker_node_id: workerNodeId,
+          }),
+        );
+        const result = await rt.execute(payload.contract);
+        await client.request(
+          envelope(
+            "task",
+            "task.result",
+            {
+              task_id: payload.contract.task_id,
+              lease_id: payload.contract.lease_id,
+              fencing_epoch: payload.contract.fencing_epoch,
+              status: result.status,
+              stdout: result.stdout,
+            },
+            { worker_node_id: workerNodeId },
+          ),
+          undefined,
+          30_000,
+        );
+      } catch (err) {
+        client.send(
+          envelope(
+            "task",
+            "task.reject",
+            { reason: err instanceof Error ? err.message : String(err) },
+            { ack_of: msg.request_id, worker_node_id: workerNodeId },
+          ),
+        );
+      }
+    });
+    console.log(JSON.stringify({ ok: true, worker_node_id: workerNodeId, serving: true }, null, 2));
+    if (args.once === "true") {
+      // wait briefly for a single offer cycle then exit
+      await new Promise((r) => setTimeout(r, Number(args["serve-ms"] ?? "5000")));
+      client.close();
+      return true;
+    }
+    await new Promise(() => {});
     return true;
   }
 

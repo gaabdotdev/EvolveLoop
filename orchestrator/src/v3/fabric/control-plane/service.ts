@@ -5,6 +5,8 @@
 import { randomUUID } from "node:crypto";
 import { closeSync, existsSync, openSync, readFileSync, unlinkSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
+import type { Socket } from "node:net";
+import type { TLSSocket } from "node:tls";
 import { atomicWriteJson, nowIso } from "../../ops/atomic.js";
 import { resolveFabricDataPaths, type FabricDataPaths } from "../paths.js";
 import { NodeRegistry } from "../node-registry/registry.js";
@@ -17,11 +19,17 @@ import { WorkStealer } from "../steal/work-steal.js";
 import { SpeculativeEngine } from "../speculative/engine.js";
 import { generateCpSecret } from "../trust/session.js";
 import { FabricProtocolServer } from "../protocol/server.js";
-import { generateDevTlsMaterials } from "../protocol/tls-util.js";
+import { encodeFrame } from "../protocol/framing.js";
 import { envelope, type ProtocolEnvelope } from "../protocol/messages.js";
 import { buildContract } from "../worker-runtime/runtime.js";
 import type { ExecutionContract, PlacementDecision } from "../types.js";
 import { verifySessionToken } from "../trust/session.js";
+import {
+  assertPeerMatchesWorker,
+  ensureFabricCa,
+  issueSignedCert,
+} from "../trust/ca.js";
+import { FabricAdminServer } from "./admin-ipc.js";
 
 export interface ControlPlaneState {
   control_plane_id: string;
@@ -45,8 +53,14 @@ export class ControlPlaneService {
   readonly stealer: WorkStealer;
   readonly speculative: SpeculativeEngine;
   private server?: FabricProtocolServer;
+  private admin?: FabricAdminServer;
   private lockPath?: string;
   private readonly mode: "active" | "attach";
+  private readonly connections = new Map<string, Socket | TLSSocket>();
+  private readonly pendingAcks = new Map<
+    string,
+    { resolve: (m: ProtocolEnvelope) => void; reject: (e: Error) => void; timer: ReturnType<typeof setTimeout> }
+  >();
 
   constructor(
     fabricDir: string,
@@ -96,71 +110,225 @@ export class ControlPlaneService {
     this.state.epoch = (previous?.epoch ?? 0) + 1;
     this.state.started_at = nowIso();
     this.state.active = true;
-    let tls: ReturnType<typeof generateDevTlsMaterials> | null = null;
+    let serverCert: { key: Buffer; cert: Buffer; fingerprint: string; ca?: Buffer } | null = null;
     let listen: { host: string; port: number };
     try {
-      tls = opts?.insecurePlaintext ? null : generateDevTlsMaterials(this.state.control_plane_id);
+      if (!opts?.insecurePlaintext) {
+        const ca = ensureFabricCa(this.paths.root, this.state.control_plane_id);
+        const issued = issueSignedCert(this.paths.root, this.state.control_plane_id, {
+          kind: "server",
+          days: 30,
+        });
+        serverCert = {
+          key: issued.keyPem,
+          cert: issued.certPem,
+          fingerprint: issued.fingerprint,
+          ca: ca.caCertPem,
+        };
+      }
       this.server = new FabricProtocolServer({
-      host,
-      port,
-      tls: opts?.insecurePlaintext ? false : true,
-      key: tls?.key,
-      cert: tls?.cert,
-      cpSecret: this.cpSecret,
-      verifySession: (token) => this.verifyWorkerSession(token),
-      handler: async (msg: ProtocolEnvelope, ctx: { socket: import("node:net").Socket; worker_node_id?: string }) => {
-        if (msg.type === "health.heartbeat") {
-          if (!ctx.worker_node_id) throw new Error("unauthenticated");
-          const payload = msg.payload as { capabilities: any; resources: any };
-          this.nodes.heartbeat(ctx.worker_node_id, payload.capabilities, payload.resources);
-          return envelope("health", "health.heartbeat_ack", { ok: true }, { ack_of: msg.request_id });
-        }
-        if (msg.type === "task.result") {
-          return this.handleResult(msg.payload as any, ctx.worker_node_id!, msg.request_id);
-        }
-        if (msg.type === "lease.renew") {
-          const p = msg.payload as { lease_id: string; ttl_ms: number };
-          const lease = this.leases.renew(p.lease_id, ctx.worker_node_id!, p.ttl_ms);
-          return envelope("control", "lease.renew_ok", { lease }, { ack_of: msg.request_id });
-        }
-        return envelope("control", "error", { reason: `unknown_type:${msg.type}` }, { ack_of: msg.request_id });
-      },
-    });
+        host,
+        port,
+        tls: opts?.insecurePlaintext ? false : true,
+        key: serverCert?.key,
+        cert: serverCert?.cert,
+        ca: serverCert?.ca,
+        requireClientCert: !opts?.insecurePlaintext,
+        requestCert: !opts?.insecurePlaintext,
+        cpSecret: this.cpSecret,
+        verifySession: (token) => this.verifyWorkerSession(token),
+        verifyPeerIdentity: (peer, workerNodeId) =>
+          assertPeerMatchesWorker(this.paths.root, peer, workerNodeId),
+        onAuthenticated: (workerNodeId, socket) => {
+          this.connections.set(workerNodeId, socket);
+        },
+        onDisconnect: (workerNodeId, socket) => {
+          const cur = this.connections.get(workerNodeId);
+          if (cur === socket) this.connections.delete(workerNodeId);
+        },
+        handler: async (msg: ProtocolEnvelope, ctx: { socket: Socket; worker_node_id?: string }) => {
+          if (msg.type === "health.heartbeat") {
+            if (!ctx.worker_node_id) throw new Error("unauthenticated");
+            const payload = msg.payload as { capabilities: any; resources: any };
+            this.nodes.heartbeat(ctx.worker_node_id, payload.capabilities, payload.resources);
+            return envelope("health", "health.heartbeat_ack", { ok: true }, { ack_of: msg.request_id });
+          }
+          if (msg.type === "task.ack" || msg.type === "task.reject") {
+            const pend = this.pendingAcks.get(msg.ack_of ?? msg.request_id);
+            if (pend) {
+              this.pendingAcks.delete(msg.ack_of ?? msg.request_id);
+              clearTimeout(pend.timer);
+              pend.resolve(msg);
+            }
+            return;
+          }
+          if (msg.type === "task.progress") {
+            atomicWriteJson(join(this.paths.auditDir, `progress-${Date.now()}.json`), {
+              worker_node_id: ctx.worker_node_id,
+              payload: msg.payload,
+              at: nowIso(),
+            });
+            return envelope("task", "task.progress_ack", { ok: true }, { ack_of: msg.request_id });
+          }
+          if (msg.type === "task.result") {
+            return this.handleResult(msg.payload as any, ctx.worker_node_id!, msg.request_id);
+          }
+          if (msg.type === "lease.renew") {
+            const p = msg.payload as { lease_id: string; ttl_ms: number };
+            const lease = this.leases.renew(p.lease_id, ctx.worker_node_id!, p.ttl_ms);
+            return envelope("control", "lease.renew_ok", { lease }, { ack_of: msg.request_id });
+          }
+          return envelope("control", "error", { reason: `unknown_type:${msg.type}` }, { ack_of: msg.request_id });
+        },
+      });
       listen = await this.server.listen();
+      this.admin = new FabricAdminServer(this.paths.root, () => this.state.epoch, async (req) => {
+        if (req.method === "status" || req.method === "fabric.status") {
+          return {
+            state: this.state,
+            connected_workers: [...this.connections.keys()],
+          };
+        }
+        if (req.method === "deliver" || req.method === "fabric.deliver") {
+          const p = req.params ?? {};
+          return this.deliverTask({
+            workflow_id: String(p.workflow_id ?? `wf_${randomUUID()}`),
+            task_id: String(p.task_id ?? `task_${randomUUID()}`),
+            required_capabilities: Array.isArray(p.required_capabilities)
+              ? (p.required_capabilities as string[])
+              : ["git"],
+            project_id: String(p.project_id ?? "local"),
+            inputs: (p.inputs as Record<string, unknown>) ?? { objective: "noop" },
+            ttl_ms: typeof p.ttl_ms === "number" ? p.ttl_ms : undefined,
+            offer_timeout_ms: typeof p.offer_timeout_ms === "number" ? p.offer_timeout_ms : 10_000,
+          });
+        }
+        if (req.method === "revoke" || req.method === "fabric.revoke") {
+          const id = String((req.params ?? {}).worker_node_id ?? "");
+          if (!id) throw new Error("worker_node_id_required");
+          return this.nodes.revoke(id, String((req.params ?? {}).reason ?? "admin_revoke"));
+        }
+        if (req.method === "shutdown" || req.method === "fabric.shutdown") {
+          await this.stop();
+          return { stopped: true };
+        }
+        throw new Error(`unknown_admin_method:${req.method}`);
+      });
+      await this.admin.start();
     } catch (error) {
       await this.server?.close().catch(() => undefined);
+      await this.admin?.stop().catch(() => undefined);
       this.server = undefined;
+      this.admin = undefined;
       this.releaseProcessLock();
       throw error;
     }
     try {
       this.state.listen = listen;
-      this.state.tls_fingerprint = tls?.fingerprint;
+      this.state.tls_fingerprint = serverCert?.fingerprint;
       atomicWriteJson(this.paths.cpStateFile, this.state);
       atomicWriteJson(join(this.paths.root, "tls.json"), {
         plaintext: Boolean(opts?.insecurePlaintext),
-        cert: tls ? tls.cert.toString("utf8") : null,
-        fingerprint: tls?.fingerprint ?? null,
+        mtls: !opts?.insecurePlaintext,
+        cert: serverCert ? serverCert.cert.toString("utf8") : null,
+        ca: serverCert?.ca ? serverCert.ca.toString("utf8") : null,
+        fingerprint: serverCert?.fingerprint ?? null,
         host: listen.host,
         port: listen.port,
       });
-      if (tls) {
-        writeFileSync(join(this.paths.root, "cp-cert.pem"), tls.cert);
-        writeFileSync(join(this.paths.root, "cp-key.pem"), tls.key, { mode: 0o600 });
+      if (serverCert) {
+        writeFileSync(join(this.paths.root, "cp-cert.pem"), serverCert.cert);
+        writeFileSync(join(this.paths.root, "cp-key.pem"), serverCert.key, { mode: 0o600 });
+        if (serverCert.ca) writeFileSync(join(this.paths.root, "ca-cert.pem"), serverCert.ca);
       }
       return this.state;
     } catch (error) {
       await this.server?.close().catch(() => undefined);
+      await this.admin?.stop().catch(() => undefined);
       this.server = undefined;
+      this.admin = undefined;
       this.releaseProcessLock();
       throw error;
     }
   }
 
   async stop(): Promise<void> {
+    for (const [, pend] of this.pendingAcks) {
+      clearTimeout(pend.timer);
+      pend.reject(new Error("control_plane_stopped"));
+    }
+    this.pendingAcks.clear();
+    this.connections.clear();
+    await this.admin?.stop().catch(() => undefined);
+    this.admin = undefined;
     await this.server?.close();
     this.server = undefined;
     this.releaseProcessLock();
+  }
+
+  connectedWorkers(): string[] {
+    return [...this.connections.keys()];
+  }
+
+  /**
+   * Live delivery: place → lease → offer → wait ack.
+   * Requires worker socket registered via authenticated protocol connection.
+   */
+  async deliverTask(input: {
+    workflow_id: string;
+    task_id: string;
+    required_capabilities: string[];
+    project_id: string;
+    inputs?: Record<string, unknown>;
+    ttl_ms?: number;
+    offer_timeout_ms?: number;
+  }): Promise<{
+    decision: PlacementDecision;
+    contract?: ExecutionContract;
+    lease_id?: string;
+    delivery?: { status: "acked" | "rejected" | "timeout"; ack?: ProtocolEnvelope };
+  }> {
+    if (!this.server) throw new Error("control_plane_not_serving");
+    const placed = this.dispatchTask(input);
+    if (!placed.contract || !placed.lease_id) {
+      return placed;
+    }
+    const workerId = placed.contract.worker_node_id;
+    const socket = this.connections.get(workerId);
+    if (!socket || socket.destroyed) {
+      this.leases.release(placed.lease_id, workerId);
+      throw new Error(`worker_not_connected:${workerId}`);
+    }
+    const offer = envelope(
+      "task",
+      "task.offer",
+      { contract: placed.contract, lease_id: placed.lease_id },
+      { worker_node_id: workerId, correlation_id: placed.contract.contract_id },
+    );
+    const timeoutMs = input.offer_timeout_ms ?? 10_000;
+    const ackPromise = new Promise<ProtocolEnvelope>((resolve, reject) => {
+      const timer = setTimeout(() => {
+        this.pendingAcks.delete(offer.request_id);
+        reject(new Error("offer_timeout"));
+      }, timeoutMs);
+      this.pendingAcks.set(offer.request_id, { resolve, reject, timer });
+    });
+    socket.write(encodeFrame(offer));
+    try {
+      const ack = await ackPromise;
+      if (ack.type === "task.reject") {
+        this.leases.release(placed.lease_id, workerId);
+        return { ...placed, delivery: { status: "rejected", ack } };
+      }
+      return { ...placed, delivery: { status: "acked", ack } };
+    } catch (err) {
+      this.pendingAcks.delete(offer.request_id);
+      if (err instanceof Error && err.message === "offer_timeout") {
+        this.leases.release(placed.lease_id, workerId);
+        return { ...placed, delivery: { status: "timeout" } };
+      }
+      throw err;
+    }
   }
 
   private acquireProcessLock(): void {

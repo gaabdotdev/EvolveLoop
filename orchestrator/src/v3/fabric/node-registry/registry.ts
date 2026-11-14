@@ -18,6 +18,7 @@ import type {
 } from "../types.js";
 import { createSessionToken } from "../trust/session.js";
 import { toIdentityRecord, type NodeKeyMaterial } from "../trust/identity.js";
+import { issueSignedCert, revokeCertificate } from "../trust/ca.js";
 
 function nodePath(paths: FabricDataPaths, id: string): string {
   return join(paths.nodesDir, `${id}.json`);
@@ -144,7 +145,12 @@ export class NodeRegistry {
     };
   }
 
-  authorizeEnrollment(workerNodeId: string, ttlMs = 3_600_000): EnrollmentDecision {
+  authorizeEnrollment(workerNodeId: string, ttlMs = 3_600_000): EnrollmentDecision & {
+    client_cert_pem?: string;
+    client_key_pem?: string;
+    ca_cert_pem?: string;
+    cert_fingerprint?: string;
+  } {
     const rec = this.get(workerNodeId);
     if (!rec) throw new Error(`unknown_node:${workerNodeId}`);
     if (rec.status === "REVOKED") throw new Error("node_revoked");
@@ -153,6 +159,8 @@ export class NodeRegistry {
       expires_at: Date.now() + ttlMs,
       control_plane_id: this.controlPlaneId,
     });
+    const issued = issueSignedCert(this.paths.root, workerNodeId, { kind: "client", days: 30 });
+    const caCertPem = readFileSync(join(this.paths.root, "ca", "ca-cert.pem"), "utf8");
     rec.status = "ONLINE";
     rec.trust = "trusted";
     rec.enrolled_at = rec.enrolled_at ?? nowIso();
@@ -160,6 +168,7 @@ export class NodeRegistry {
       session_token_id: claims.token_id,
       expires_at: new Date(claims.expires_at).toISOString(),
       rotated_at: nowIso(),
+      cert_fingerprint: issued.fingerprint,
     };
     rec.updated_at = nowIso();
     this.save(rec);
@@ -168,8 +177,22 @@ export class NodeRegistry {
       token_id: claims.token_id,
       expires_at: claims.expires_at,
       revoked: false,
+      cert_fingerprint: issued.fingerprint,
+      cert_serial: issued.serial,
     });
-    const decision: EnrollmentDecision = {
+    atomicWriteJson(join(this.paths.credentialsDir, `cert-${workerNodeId}.json`), {
+      worker_node_id: workerNodeId,
+      fingerprint: issued.fingerprint,
+      serial: issued.serial,
+      not_after: issued.not_after,
+      issued_at: nowIso(),
+    });
+    const decision: EnrollmentDecision & {
+      client_cert_pem?: string;
+      client_key_pem?: string;
+      ca_cert_pem?: string;
+      cert_fingerprint?: string;
+    } = {
       kind: "EnrollmentDecision",
       request_id: `authz-${workerNodeId}`,
       approved: true,
@@ -177,13 +200,27 @@ export class NodeRegistry {
       session_token: token,
       session_expires_at: new Date(claims.expires_at).toISOString(),
       decided_at: nowIso(),
+      client_cert_pem: issued.certPem.toString("utf8"),
+      client_key_pem: issued.keyPem.toString("utf8"),
+      ca_cert_pem: caCertPem,
+      cert_fingerprint: issued.fingerprint,
     };
-    audit(this.paths, { type: "enrollment.authorized", worker_node_id: workerNodeId, token_id: claims.token_id });
+    audit(this.paths, {
+      type: "enrollment.authorized",
+      worker_node_id: workerNodeId,
+      token_id: claims.token_id,
+      cert_fingerprint: issued.fingerprint,
+    });
     return decision;
   }
 
   revoke(workerNodeId: string, reason: string): WorkerNodeRecord {
     const rec = this.transition(workerNodeId, "REVOKED", reason);
+    try {
+      revokeCertificate(this.paths.root, workerNodeId, reason);
+    } catch {
+      /* cert may not exist for pre-mTLS enrollments */
+    }
     // Invalidate sessions
     for (const f of readdirSync(this.paths.credentialsDir)) {
       if (!f.endsWith(".json")) continue;

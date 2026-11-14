@@ -187,7 +187,9 @@ export class CoordinatorDaemon {
     }
 
     this.service.start();
-    this.ipc = new CoordinatorIpcServer(this.paths.root, (req) => this.handleIpc(req));
+    this.ipc = new CoordinatorIpcServer(this.paths.root, (req) => this.handleIpc(req), {
+      epochProvider: () => this.lifecycle.getGeneration(),
+    });
     const socket_path = await this.ipc.start();
     this.reconcileProcesses();
 
