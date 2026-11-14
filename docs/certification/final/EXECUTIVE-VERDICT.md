@@ -2,11 +2,13 @@
 
 **Status: `BLOCKED`**
 
-**Generated:** 2026-11-14T23:35Z (approx)  
+Independent auditor ([Independent V3.7 security audit](0aa07618-d923-4145-9fcb-1df051431b31)): **`REJECT`** of any APPROVED/TRUE_FULL_PASS claim. Findings addressed in follow-up commits; G17 external block remains.
+
+**Generated:** 2026-11-14T23:45Z (approx)  
 **Certified tree:** `/home/gaab/Downloads/EvolveLoop-v37-cert`  
 **Branch:** `recovery/v37-full-cert`  
-**Code hash (tip):** `2868de13987776ed0e7eaecc3655cd582c78f7a1`
-**Baseline:** `7468a40` + ZIP overlay `b693c0e` + structural `29db8cf` + tiktoken resolver + cert package commits.  
+**Code hash (tip):** `aea5941f30093a0867faa929bec140b169022e41`
+**Baseline:** `7468a40` + ZIP overlay + structural remediations + audit follow-up  
 **Immutable historical refs:** preserved per `docs/recovery/PRESERVED-REFS.txt` (no rewrite of `main`, `feature/bench-obs-v1`, tags).
 
 ## Why not APPROVED
