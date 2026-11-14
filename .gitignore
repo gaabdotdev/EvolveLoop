@@ -15,6 +15,7 @@ build/
 coverage/
 agent-setup/.venv/
 agent-setup/.pytest_cache/
+orchestrator/.venv-measure/
 .tools/
 **/__pycache__/
 *.pyc

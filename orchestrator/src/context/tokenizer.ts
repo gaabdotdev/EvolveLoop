@@ -1,4 +1,7 @@
 import { spawnSync } from "node:child_process";
+import { existsSync } from "node:fs";
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
 
 export type TokenizerLabel = "tiktoken:cl100k_base" | "PROXY:whitespace_split";
 
@@ -7,6 +10,28 @@ let cachedLabel: TokenizerLabel | null = null;
 
 function whitespaceProxy(text: string): number {
   return text.split(/\s+/).filter(Boolean).length;
+}
+
+/** Prefer EVOLVELOOP_PYTHON, then orchestrator/.venv-measure, else python3. */
+export function resolveMeasurePython(): string {
+  if (process.env.EVOLVELOOP_PYTHON && existsSync(process.env.EVOLVELOOP_PYTHON)) {
+    return process.env.EVOLVELOOP_PYTHON;
+  }
+  try {
+    const here = dirname(fileURLToPath(import.meta.url));
+    const candidates = [
+      join(here, "..", "..", ".venv-measure", "bin", "python"),
+      join(here, "..", "..", ".venv-measure", "bin", "python3"),
+      join(process.cwd(), ".venv-measure", "bin", "python"),
+      join(process.cwd(), ".venv-measure", "bin", "python3"),
+    ];
+    for (const c of candidates) {
+      if (existsSync(c)) return c;
+    }
+  } catch {
+    /* CJS fallback path */
+  }
+  return "python3";
 }
 
 function loadTiktokenViaPython(): ((text: string) => number) | null {
@@ -20,7 +45,8 @@ try:
 except Exception as e:
     print(json.dumps({"error": str(e)}))
 `;
-  const probe = spawnSync("python3", ["-c", script], {
+  const python = resolveMeasurePython();
+  const probe = spawnSync(python, ["-c", script], {
     input: "probe",
     encoding: "utf-8",
     maxBuffer: 1024 * 1024,
@@ -34,11 +60,11 @@ except Exception as e:
   }
 
   return (text: string) => {
-    const run = spawnSync("python3", ["-c", script], {
-      input: text,
-      encoding: "utf-8",
-      maxBuffer: 16 * 1024 * 1024,
-    });
+  const run = spawnSync(python, ["-c", script], {
+    input: text,
+    encoding: "utf-8",
+    maxBuffer: 16 * 1024 * 1024,
+  });
     if (run.status !== 0 || !run.stdout) return whitespaceProxy(text);
     try {
       const out = JSON.parse(run.stdout.trim()) as { tokens?: number };
@@ -95,7 +121,7 @@ if not isinstance(data, list):
     sys.exit(2)
 print(json.dumps({"tokens": [len(enc.encode(t)) for t in data], "tokenizer": "tiktoken:cl100k_base"}))
 `;
-  const run = spawnSync("python3", ["-c", script], {
+  const run = spawnSync(resolveMeasurePython(), ["-c", script], {
     input: JSON.stringify(texts),
     encoding: "utf-8",
     maxBuffer: 64 * 1024 * 1024,
