@@ -107,11 +107,16 @@ export function createMeasurementEvent(input: CreateEventInput): MeasurementEven
 
 function sanitizeCorrelation(c: CorrelationIds): CorrelationIds {
   const out: CorrelationIds = {};
-  for (const [k, v] of Object.entries(c) as Array<[keyof CorrelationIds, string | undefined]>) {
+  for (const [k, v] of Object.entries(c) as Array<[keyof CorrelationIds, CorrelationIds[keyof CorrelationIds]]>) {
     if (v === undefined || v === null) continue;
+    if (typeof v === "number" && Number.isFinite(v)) {
+      // Additive V3.7 numeric correlation fields (epochs) — copy as provided, never invent
+      (out as Record<string, unknown>)[k as string] = v;
+      continue;
+    }
     if (typeof v !== "string" || v.trim() === "") continue;
     // Never invent IDs — only copy provided non-empty strings
-    out[k] = v;
+    (out as Record<string, unknown>)[k as string] = v;
   }
   return out;
 }

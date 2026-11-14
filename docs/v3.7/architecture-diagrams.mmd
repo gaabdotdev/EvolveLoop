@@ -1,0 +1,161 @@
+%% Architecture diagrams — EvolveLoop audit 2026-11-13
+%% Only relationships verified in code (or explicitly marked HYP).
+
+%% ========== 1. General architecture ==========
+flowchart TB
+  subgraph Control["Coordination / Ops Plane"]
+    OPS["GlobalOpsService<br/>V3.6 branch only"]
+    COORD["CoordinatorService + Daemon<br/>Daemon = V3.5 branch"]
+    GOAL["GoalContract"]
+    TASK["TaskGraph"]
+    AGENT["AgentRegistry"]
+  end
+  subgraph Kernel["V2 Execution Kernel — HEAD"]
+    ENG["ExecutionEngine"]
+    IR["Capability IR / GraphStore"]
+    SCH["Scheduler"]
+    PROV["Providers"]
+  end
+  subgraph Runtime["V3.5 Runtime — branch only"]
+    SAND["Sandbox / bwrap"]
+    APPR["ApprovalBroker"]
+    HARN["Harness adapters"]
+  end
+  subgraph Measure["Measurement Plane — HEAD"]
+    MP["Collector / Metrics / Bench"]
+  end
+  OPS -->|admit + registerWork| COORD
+  COORD --> GOAL
+  COORD --> TASK
+  COORD --> AGENT
+  COORD -->|bridge| ENG
+  ENG --> IR --> SCH --> PROV
+  PROV --> SAND
+  HARN --> APPR
+  MP -.->|partial wire| ENG
+
+%% ========== 2. Engineering Loop ==========
+flowchart LR
+  IN[INTAKE] --> CT[CONTRACT]
+  CT --> AN[ANALYZE]
+  AN --> PL[PLAN]
+  PL --> IM[IMPLEMENT]
+  IM --> TE[TEST]
+  TE --> RV[REVIEW]
+  RV --> VF[VERIFY]
+  VF --> DN[DONE / TRUE_FULL_PASS]
+  TE -->|fail| DG[DIAGNOSE]
+  DG --> RP[REPLAN]
+  RP --> FX[FIX]
+  FX --> TE
+  %% Source: orchestrator/src/v3/engineering/loop.ts + types.ts
+
+%% ========== 3. Agent lifecycle ==========
+stateDiagram-v2
+  [*] --> INITIALIZING
+  INITIALIZING --> ACTIVE
+  ACTIVE --> STALE: lease/heartbeat miss
+  ACTIVE --> COMPLETED
+  ACTIVE --> LIMIT_REACHED
+  STALE --> ORPHANED
+  STALE --> ACTIVE: adopt/replace
+  ORPHANED --> ACTIVE: recover
+  COMPLETED --> [*]
+  LIMIT_REACHED --> [*]
+  %% Source: v3/agent-registry/types.ts + store.ts
+
+%% ========== 4. Hierarchical delegation ==========
+flowchart TB
+  M[master] --> L[leader domain]
+  L --> P[planner]
+  P -->|plan_approved| W[worker implement]
+  L --> V[verifier]
+  L --> X[auxiliary]
+  M -.->|DelegationContract permissions ⊆ parent| L
+  L -.->|budget inherit| W
+
+%% ========== 5. Harness execution ==========
+flowchart LR
+  CLI[evolve / consent env] --> DRV[CliProcessAdapterDriver]
+  DRV -->|dry-run default| DRY[dry_run result]
+  DRV -->|real + consent| SP[spawn CLI process]
+  SP --> PSS[ProcessSessionStore]
+  PSS -->|SIGTERM if Core-owned PID| CX[cancel]
+  %% V3.5: harness often OUTSIDE bwrap for provider auth
+
+%% ========== 6. Sandbox and Authority ==========
+flowchart TB
+  REQ[capability request] --> CA[CapabilityAuthority]
+  CA -->|deny/confirm/allow| DEC{decision}
+  DEC -->|allow + require_os_sandbox| SM[SandboxManager]
+  SM --> BW[BubblewrapBackend]
+  BW -->|unshare-net / binds| PROC[sandboxed process]
+  DEC -->|no OS sandbox on HEAD| HOST[host with scrubbed env]
+  %% OS sandbox only on V3.5 branch
+
+%% ========== 7. Coordinator and persistence ==========
+flowchart TB
+  DAE[CoordinatorDaemon] --> LL[LeaderLock]
+  DAE --> IPC[Unix IPC sock + token]
+  DAE --> SVC[CoordinatorService.tick]
+  SVC --> FS[(data-dir JSON/JSONL)]
+  FS --> TG[(task-graphs)]
+  FS --> AG[(agents)]
+  FS --> LK[(locks)]
+  FS --> LD[(work-ledger)]
+  FS --> EV[(events)]
+
+%% ========== 8. GlobalOps and Scheduler ==========
+flowchart TB
+  PA[project add] --> PR[ProjectRegistry]
+  WS[workflow submit] --> WR[WorkflowRegistry]
+  WR --> Q[queue]
+  TICK[scheduler tick] --> ADM[evaluateAdmission]
+  ADM --> DEP[deps]
+  ADM --> CAP[concurrency + reserve]
+  ADM --> BIND[Goal + Coordinator.registerWork]
+  BIND --> RUN[V3.5 execution plane]
+  %% single-host only
+
+%% ========== 9. Workspace and Git ==========
+flowchart LR
+  WT[WorktreeManager] --> GIT[git worktree]
+  OWN[OwnershipLedger V3.5] --> PATHS[path claims]
+  INT[workspace integration] --> MERGE[merge / rollback]
+  POST[post-merge] --> GATES[npm test/build/typecheck]
+
+%% ========== 10. Recovery and Handoff ==========
+flowchart TB
+  FAIL[agent STALE / leader loss] --> REC[subtree recovery]
+  REC --> HO[HandoffPackage]
+  HO --> BRG[AdapterHandoffBridge]
+  OPSR[Ops reconcile V3.6] --> PAUSE[RECOVERING → PAUSED]
+  %% no exactly-once
+
+%% ========== 11. Measurement Plane ==========
+flowchart LR
+  SRC[live runner / engineering-bridge / bench] --> COL[Collector]
+  COL --> EST[(measurement EventStore)]
+  EST --> TR[Trace builder]
+  EST --> MET[Metrics engine]
+  EST --> ROI[Delegation ROI]
+  EST --> BEN[BenchmarkRunner A/B/C]
+  EB2[EventBus] -.->|not auto-wired| COL
+
+%% ========== 12. Control vs Execution ==========
+flowchart TB
+  subgraph CP["Control Plane"]
+    GOPS[GlobalOps admission]
+    CDAE[Coordinator daemon]
+    POL[policies / budgets / locks]
+  end
+  subgraph EP["Execution Plane"]
+    LOOP[EngineeringLoop / TaskGraph]
+    KERNEL[ExecutionEngine]
+    SAND2[Sandbox / Harness]
+  end
+  GOPS -->|admit| CDAE
+  CDAE --> LOOP
+  LOOP --> KERNEL
+  KERNEL --> SAND2
+  SAND2 -->|evidence/events| CP

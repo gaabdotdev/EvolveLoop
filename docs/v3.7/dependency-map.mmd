@@ -1,0 +1,112 @@
+%% EvolveLoop dependency map — audited 2026-11-13
+%% Solid edges = verified in code. Dashed = present only on sibling branches (not HEAD 92a8f3e).
+%% Hypotheses labeled HYP.
+
+flowchart TB
+  subgraph HEAD["HEAD feature/bench-obs-v1 @ 92a8f3e"]
+    CLI["cli/evolve.ts"]
+    EE["ExecutionEngine"]
+    GS["GraphStore"]
+    SCH["Scheduler V2"]
+    EB["EventBus"]
+    PE["PolicyEngine"]
+    REG["RegistryClient / Capability Registry"]
+    PROV["Providers"]
+    AUTH["CapabilityAuthority"]
+    EV["evidence-bus"]
+    KB["KnowledgeBackend"]
+    MEM["MemoryStore"]
+    CP["jobs/checkpoint"]
+
+    GC["GoalContractStore"]
+    TG["TaskGraphStore"]
+    AR["AgentRegistryStore"]
+    CS["CoordinatorService"]
+    EL["EngineeringLoopService"]
+    WL["WorkLedgerStore"]
+    CEL["CoordinationEventLog"]
+    LOCK["WorkLockStore"]
+    BUD["budget trackers"]
+    HIER["hierarchy/spawn"]
+    BR["execution/bridge"]
+    WT["WorktreeManager"]
+    AD["adapters / process-sessions"]
+
+    MP["measurement-plane"]
+    MPC["Collector / EventStore"]
+    MPR["BenchmarkRunner"]
+    MPE["EvaluationEngine MP"]
+
+    CLI --> CS
+    CLI --> EL
+    CLI --> MP
+    EL --> GC
+    EL --> TG
+    EL --> AR
+    EL --> CS
+    EL --> HIER
+    EL --> WL
+    CS --> TG
+    CS --> AR
+    CS --> LOCK
+    CS --> BUD
+    CS --> CEL
+    BR --> EE
+    EE --> GS
+    EE --> SCH
+    EE --> EB
+    EE --> PE
+    EE --> REG
+    SCH --> PROV
+    PROV --> AUTH
+    EE --> EV
+    EE --> CP
+    EE --> MEM
+    EE --> KB
+    MP --> MPC
+    MP --> MPR
+    MP --> MPE
+    MPC -.->|ADAPTER_READY not auto-wired| EB
+  end
+
+  subgraph V35["Branch feature/v3.5-runtime @ 0992cd2 — NOT in HEAD"]
+    DAE["CoordinatorDaemon"]
+    IPC["CoordinatorIpc"]
+    LL["LeaderLock"]
+    SB["SandboxManager / Bubblewrap"]
+    SEC["security enforcer"]
+    APB["ApprovalBroker"]
+    DOC["runtime doctor"]
+    WSO["workspace ownership"]
+    HR["harness runtime facade"]
+
+    DAE --> CS
+    DAE --> IPC
+    DAE --> LL
+    DAE --> APB
+    SB --> SEC
+    HR --> AD
+  end
+
+  subgraph V36["Branch feature/v3.6-multi-workflow @ 5c1df88 — NOT in HEAD"]
+    GOS["GlobalOpsService"]
+    PR["ProjectRegistry"]
+    WR["WorkflowRegistry"]
+    GRM["GlobalResourceManager"]
+    SP["SchedulerPolicy"]
+    ISO["ProjectIsolationGuard"]
+    OTUI["ops-tui"]
+
+    GOS --> PR
+    GOS --> WR
+    GOS --> GRM
+    GOS --> SP
+    GOS --> ISO
+    GOS -->|bindExecutionPlane| CS
+    GOS -->|bindExecutionPlane| GC
+    OTUI --> GOS
+  end
+
+  V36 -.->|includes| V35
+  HEAD -.->|HYP merge needed| V36
+  HEAD -.->|HYP merge needed| V35

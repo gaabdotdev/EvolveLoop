@@ -81,6 +81,7 @@ import { runFailureBattery, runEngineeringFailureBattery } from "../v3/failure-i
 import type { ProviderMode } from "./provider-bootstrap.js";
 import { handleV35Command, V35_USAGE_GROUPS } from "./v35-commands.js";
 import { handleV36Command, V36_USAGE_GROUPS } from "./v36-commands.js";
+import { handleV37Command, V37_USAGE_GROUPS } from "./v37-commands.js";
 import {
   handleBenchmarkCommand,
   handleTelemetryCommand,
@@ -150,6 +151,7 @@ function usage() {
       coordinator: ["start", "stop", "tick", "status"],
       ...V36_USAGE_GROUPS,
       ...V35_USAGE_GROUPS,
+      ...V37_USAGE_GROUPS,
       events: ["list"],
       ledger: ["show", "rebuild"],
       adapters: [
@@ -225,6 +227,7 @@ function usage() {
       "engineering run executes V3.4 Engineering Loop against a real --workspace (deterministic workers).",
       "harness matrix classifies adapters as SUPPORTED|PARTIAL|DRY_RUN|PROBE_ONLY|BLOCKED|UNSUPPORTED.",
       "telemetry/benchmark are the Measurement Plane CLIs (local-first; never invent tokens).",
+      "V3.7 fabric: `evolve fabric …` — Control Plane / enrollment / pools / doctor (single active CP).",
       "benchmark strategies: A_single_agent | B_evolveloop_no_delegation | C_evolveloop_adaptive.",
       "eval live-suite exercises LLM path when EVOLVELOOP_HARNESS_CONSENT=true + provider auth; else BLOCKED dry plumbing.",
     ],
@@ -251,6 +254,12 @@ async function main() {
   }
 
   try {
+    // V3.7 Distributed Fabric (fabric-dir; Control Plane authority)
+    if (args.group === "fabric") {
+      const handled = await handleV37Command(args);
+      if (handled) return;
+    }
+
     // V3.6 Global Operations Center (ops-dir; does not require --data-dir)
     const v36Groups = new Set(Object.keys(V36_USAGE_GROUPS));
     if (v36Groups.has(args.group)) {
