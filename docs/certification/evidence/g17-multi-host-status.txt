@@ -1,0 +1,7 @@
+checked_at=2026-11-14T01:08:49Z
+head=77b1aab3f8d192fa2a8d4a77b6f05259f505974d
+branch=recovery/pre-v37-cert
+gaab_online=true
+gaab1_online=false
+wiki_root=unset
+verdict=BLOCKED_G17

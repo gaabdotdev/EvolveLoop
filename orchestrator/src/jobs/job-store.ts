@@ -90,7 +90,13 @@ export class JobStore {
   listPending(options?: { key?: Buffer }): SkillJob[] {
     if (!existsSync(this.jobsDir)) return [];
     return readdirSync(this.jobsDir)
-      .filter((f) => f.endsWith(".json") && !f.endsWith(".result.json") && !f.startsWith("."))
+      .filter((f) => {
+        // ISSUE-JOB-INTEGRITY-001: only primary job envelopes — never treat
+        // *.result.json / *.evidence.json / sidecar JSON as SkillJob payloads.
+        if (!f.endsWith(".json") || f.startsWith(".")) return false;
+        if (f.endsWith(".result.json") || f.endsWith(".evidence.json")) return false;
+        return true;
+      })
       .map((f) => this.readJob(f.replace(/\.json$/, ""), options))
       .filter((j): j is SkillJob => j !== null && j.status === "pending");
   }
