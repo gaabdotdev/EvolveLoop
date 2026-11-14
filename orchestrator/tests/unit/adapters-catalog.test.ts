@@ -26,8 +26,9 @@ describe("Agent adapter catalog + handoff bridge", () => {
     ]);
     expect(getAdapterContract("cursor").execution_bridge).toBe("jobs_pickup");
     expect(getAdapterContract("claude-code").execution_bridge).toBe("cli_process");
-    expect(getAdapterContract("codex").execution_bridge).toBe("none");
-    expect(getAdapterContract("antigravity").execution_bridge).toBe("none");
+    // ISSUE-FUNC-CATALOG-DRIFT-001: align with CliProcessAdapterDriver
+    expect(getAdapterContract("codex").execution_bridge).toBe("cli_process");
+    expect(getAdapterContract("antigravity").execution_bridge).toBe("cli_process");
     expect(isAdapterId("cursor")).toBe(true);
     expect(isAdapterId("gpt")).toBe(false);
     for (const a of list) {

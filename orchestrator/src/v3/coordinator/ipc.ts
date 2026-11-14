@@ -1,6 +1,9 @@
 /**
  * Local Unix-socket IPC for Coordinator service.
  * Auth: peer must present shared token from data-dir (mode 0600 file).
+ *
+ * ISSUE-SEC-H02-IPC: privileged methods require the privileged token
+ * (ipc.privileged.token), not the operator/read token alone.
  */
 
 import {
@@ -36,6 +39,14 @@ export interface IpcResponse {
 
 export type IpcHandler = (req: IpcRequest) => Promise<unknown> | unknown;
 
+/** Methods that mutate approvals / lifecycle — require privileged token. */
+export const IPC_PRIVILEGED_METHODS = new Set([
+  "approvals.approve",
+  "approvals.reject",
+  "approvals.gate",
+  "shutdown",
+]);
+
 export function ensureIpcToken(dataDir: string): string {
   const tokenPath = join(dataDir, "coordinator", "ipc.token");
   mkdirSync(dirname(tokenPath), { recursive: true });
@@ -52,8 +63,36 @@ export function ensureIpcToken(dataDir: string): string {
   return token;
 }
 
+export function ensureIpcPrivilegedToken(dataDir: string): string {
+  const tokenPath = join(dataDir, "coordinator", "ipc.privileged.token");
+  mkdirSync(dirname(tokenPath), { recursive: true });
+  if (existsSync(tokenPath)) {
+    return readFileSync(tokenPath, "utf-8").trim();
+  }
+  const token = randomBytes(32).toString("hex");
+  writeFileSync(tokenPath, token, { mode: 0o600 });
+  try {
+    chmodSync(tokenPath, 0o600);
+  } catch {
+    /* windows noop */
+  }
+  return token;
+}
+
 export function ipcSocketPath(dataDir: string): string {
   return join(dataDir, "coordinator", "ipc.sock");
+}
+
+function authorizeIpc(dataDir: string, method: string, token: string): boolean {
+  const op = ensureIpcToken(dataDir);
+  if (IPC_PRIVILEGED_METHODS.has(method)) {
+    const priv = ensureIpcPrivilegedToken(dataDir);
+    // Privileged token alone is enough; operator token alone is not.
+    return token === priv;
+  }
+  // Non-privileged: operator token OR privileged token.
+  const priv = ensureIpcPrivilegedToken(dataDir);
+  return token === op || token === priv;
 }
 
 export class CoordinatorIpcServer {
@@ -74,8 +113,10 @@ export class CoordinatorIpcServer {
         /* */
       }
     }
-    const token = ensureIpcToken(this.dataDir);
-    this.server = createServer((socket) => this.onConnection(socket, token));
+    // Ensure both tokens exist at start.
+    ensureIpcToken(this.dataDir);
+    ensureIpcPrivilegedToken(this.dataDir);
+    this.server = createServer((socket) => this.onConnection(socket));
     await new Promise<void>((resolve, reject) => {
       this.server!.once("error", reject);
       this.server!.listen(sock, () => resolve());
@@ -88,7 +129,7 @@ export class CoordinatorIpcServer {
     return sock;
   }
 
-  private onConnection(socket: Socket, token: string): void {
+  private onConnection(socket: Socket): void {
     let buf = "";
     socket.on("data", async (chunk) => {
       buf += chunk.toString("utf-8");
@@ -105,8 +146,14 @@ export class CoordinatorIpcServer {
           continue;
         }
         let res: IpcResponse;
-        if (req.token !== token) {
-          res = { id: req.id, ok: false, error: "unauthorized" };
+        if (!authorizeIpc(this.dataDir, req.method, req.token)) {
+          res = {
+            id: req.id,
+            ok: false,
+            error: IPC_PRIVILEGED_METHODS.has(req.method)
+              ? "unauthorized_privileged_method"
+              : "unauthorized",
+          };
         } else {
           try {
             const result = await this.handler(req);
@@ -142,8 +189,12 @@ export async function ipcCall(
   method: string,
   params: Record<string, unknown> = {},
   timeoutMs = 5000,
+  opts?: { privileged?: boolean },
 ): Promise<IpcResponse> {
-  const token = ensureIpcToken(dataDir);
+  const needPriv = opts?.privileged === true || IPC_PRIVILEGED_METHODS.has(method);
+  const token = needPriv
+    ? ensureIpcPrivilegedToken(dataDir)
+    : ensureIpcToken(dataDir);
   const sockPath = ipcSocketPath(dataDir);
   const id = randomBytes(8).toString("hex");
   const req: IpcRequest = { id, method, params, token };

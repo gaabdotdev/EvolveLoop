@@ -3,4 +3,11 @@ export { CoordinatorService, CoordinatorError, type CoordinatorTickResult } from
 export { CoordinatorDaemon, type DaemonDurableState } from "./daemon.js";
 export { ServiceLifecycle, LifecycleError, allowedTransitions, type ServiceLifecycleState } from "./lifecycle.js";
 export { LeaderLock, type LeaderLockPayload } from "./leader-lock.js";
-export { CoordinatorIpcServer, ipcCall, ipcSocketPath, ensureIpcToken } from "./ipc.js";
+export {
+  CoordinatorIpcServer,
+  ipcCall,
+  ipcSocketPath,
+  ensureIpcToken,
+  ensureIpcPrivilegedToken,
+  IPC_PRIVILEGED_METHODS,
+} from "./ipc.js";

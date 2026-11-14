@@ -2,7 +2,7 @@
 
 **Generated:** 2026-11-14T01:08Z (approx)  
 **Candidate:** `recovery/pre-v37-cert`  
-**HEAD:** `49448833204faeb21b8249ca5907c7185e8c0515`  
+**HEAD:** see `git rev-parse HEAD` (tip advances; was 4944883 at earlier draft)  
 **Worktree:** `/tmp/evolveloop-recovery`  
 **Immutable audit pack:** `/home/gaab/Downloads/EvolveLoop-AUDIT-PRE-V37-20261113/final/` (unchanged)
 

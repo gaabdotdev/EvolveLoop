@@ -253,6 +253,66 @@ export async function runtimeDoctor(dataDir: string): Promise<{
     required: false,
   });
 
+  // Hard-gate wiki: never PASS when vault unset (knowledge grounding)
+  {
+    const wiki = (process.env.WIKI_ROOT ?? process.env.RAG_REPO_ROOT ?? "").trim();
+    if (!wiki) {
+      checks.push({
+        id: "wiki_vault",
+        status: "BLOCKED",
+        detail: "WIKI_ROOT/RAG_REPO_ROOT unset — knowledge grounding cannot be applied",
+        required: false,
+      });
+    } else if (!existsSync(wiki)) {
+      checks.push({
+        id: "wiki_vault",
+        status: "FAIL",
+        detail: `WIKI_ROOT path missing: ${wiki}`,
+        required: false,
+      });
+    } else {
+      checks.push({
+        id: "wiki_vault",
+        status: "PASS",
+        detail: `readable vault at ${wiki}`,
+        required: false,
+      });
+    }
+  }
+
+  // Graphify: UNAVAILABLE ≠ PASS
+  {
+    const g = spawnSync(process.env.GRAPHIFY_BIN?.trim() || "graphify", ["--version"], {
+      encoding: "utf-8",
+      timeout: 3000,
+    });
+    checks.push({
+      id: "graphify_cli",
+      status: g.status === 0 ? "PASS" : "UNAVAILABLE",
+      detail:
+        g.status === 0
+          ? (g.stdout || g.stderr || "graphify present").trim().slice(0, 120)
+          : "graphify CLI absent — graphify gates must skip/UNAVAILABLE, never empty PASS",
+      required: false,
+    });
+  }
+
+  // ISSUE-SEC-H02: privileged IPC token must exist distinctly from operator token
+  {
+    const privPath = join(paths.coordinatorDir, "ipc.privileged.token");
+    const opPath = join(paths.coordinatorDir, "ipc.token");
+    checks.push({
+      id: "ipc_privileged_token",
+      status: "WARNING",
+      detail: existsSync(privPath)
+        ? "ipc.privileged.token present — required for approve/reject/shutdown/gate"
+        : existsSync(opPath)
+          ? "operator ipc.token present; privileged token created on daemon start"
+          : "IPC tokens created on coordinator service start (operator vs privileged split)",
+      required: false,
+    });
+  }
+
   if (process.env.EVOLVELOOP_ALLOW_HOST_FALLBACK === "true") {
     checks.push({
       id: "insecure_host_fallback",
