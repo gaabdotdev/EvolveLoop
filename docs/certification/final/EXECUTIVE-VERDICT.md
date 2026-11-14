@@ -5,8 +5,8 @@
 **Generated:** 2026-11-14T23:35Z (approx)  
 **Certified tree:** `/home/gaab/Downloads/EvolveLoop-v37-cert`  
 **Branch:** `recovery/v37-full-cert`  
-**Code hash (tip):** run `git rev-parse HEAD` in that worktree (expected tip after measure docs commit).  
-**Baseline:** `7468a40` + ZIP overlay `b693c0e` + structural `29db8cf` + tiktoken resolver commits.  
+**Code hash (tip):** `4142948510646818786b028cb87aa8e98c50a18e`  
+**Baseline:** `7468a40` + ZIP overlay `b693c0e` + structural `29db8cf` + tiktoken resolver + cert package commits.  
 **Immutable historical refs:** preserved per `docs/recovery/PRESERVED-REFS.txt` (no rewrite of `main`, `feature/bench-obs-v1`, tags).
 
 ## Why not APPROVED
