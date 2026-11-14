@@ -9,6 +9,26 @@ import { FabricProtocolClient } from "../../../src/v3/fabric/protocol/client.js"
 import { envelope } from "../../../src/v3/fabric/protocol/messages.js";
 
 describe("V3.7 protocol flow", () => {
+  it("attach mode preserves the persisted epoch and active listener metadata", async () => {
+    const dir = mkdtempSync(join(tmpdir(), "el-epoch-"));
+    const cp = new ControlPlaneService(dir);
+    const state = await cp.startServer("127.0.0.1", 0, { insecurePlaintext: true });
+    const attached = new ControlPlaneService(dir, { mode: "attach" });
+    expect(attached.state.epoch).toBe(state.epoch);
+    expect(attached.state.listen).toEqual(state.listen);
+    await expect(attached.startServer()).rejects.toThrow("control_plane_attach_cannot_start_server");
+    await cp.stop();
+  });
+
+  it("prevents a second active control plane process from acquiring the same fabric directory", async () => {
+    const dir = mkdtempSync(join(tmpdir(), "el-lock-"));
+    const first = new ControlPlaneService(dir);
+    await first.startServer("127.0.0.1", 0, { insecurePlaintext: true });
+    const second = new ControlPlaneService(dir);
+    await expect(second.startServer("127.0.0.1", 0, { insecurePlaintext: true })).rejects.toThrow(/control_plane_already_locked/);
+    await first.stop();
+  });
+
   it("full flow", async () => {
     const dir = mkdtempSync(join(tmpdir(), "el-dbg2-"));
     const cp = new ControlPlaneService(dir);
@@ -70,6 +90,13 @@ describe("V3.7 protocol flow", () => {
     expect(accepted.type).toBe("task.result_accepted");
     cp.nodes.revoke(pending.worker_node_id!, "test");
     expect(cp.verifyWorkerSession(auth.session_token!).ok).toBe(false);
+    await expect(
+      client.request(
+        envelope("health", "health.heartbeat", { capabilities: caps, resources }),
+        "health.heartbeat_ack",
+        5000,
+      ),
+    ).rejects.toThrow(/session_invalid:revoked/);
     client.close();
     await cp.stop();
   }, 30_000);

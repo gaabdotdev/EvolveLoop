@@ -20,7 +20,7 @@ export interface FabricClientOptions {
 export class FabricProtocolClient {
   private socket?: Socket;
   private decoder = new FrameDecoder();
-  private pending = new Map<string, { resolve: (m: ProtocolEnvelope) => void; reject: (e: Error) => void }>();
+  private pending = new Map<string, { resolve: (m: ProtocolEnvelope) => void; reject: (e: Error) => void; timer: ReturnType<typeof setTimeout> }>();
   private bufferHandlers: Array<(m: ProtocolEnvelope) => void> = [];
 
   constructor(private readonly opts: FabricClientOptions) {}
@@ -43,14 +43,17 @@ export class FabricProtocolClient {
       }
       this.socket.once("error", reject);
     });
+    this.socket!.on("error", (error) => this.rejectPending(error));
+    this.socket!.on("close", () => this.rejectPending(new Error("connection_closed")));
     this.socket!.on("data", (chunk) => {
       try {
-        for (const raw of this.decoder.push(chunk)) {
+        for (const raw of this.decoder.push(typeof chunk === "string" ? Buffer.from(chunk) : chunk)) {
           const msg = raw as ProtocolEnvelope;
           if (msg.type === "error" || msg.type.startsWith("error.")) {
             const reason = String((msg.payload as { reason?: string })?.reason ?? msg.type);
             for (const [id, p] of this.pending) {
               this.pending.delete(id);
+              clearTimeout(p.timer);
               p.reject(new Error(reason));
             }
             continue;
@@ -72,8 +75,7 @@ export class FabricProtocolClient {
           }
         }
       } catch (e) {
-        for (const [, p] of this.pending) p.reject(e as Error);
-        this.pending.clear();
+        this.rejectPending(e as Error);
       }
     });
     const auth = envelope(
@@ -83,6 +85,14 @@ export class FabricProtocolClient {
       { worker_node_id: this.opsWorker() },
     );
     await this.request(auth, "control.auth_ok");
+  }
+
+  private rejectPending(error: Error): void {
+    for (const [id, pending] of this.pending) {
+      clearTimeout(pending.timer);
+      pending.reject(error);
+      this.pending.delete(id);
+    }
   }
 
   private opsWorker(): string {
@@ -101,6 +111,7 @@ export class FabricProtocolClient {
         reject(new Error("request_timeout"));
       }, timeoutMs);
       this.pending.set(msg.request_id, {
+        timer: t,
         resolve: (m) => {
           clearTimeout(t);
           if (expectType && m.type !== expectType) {
@@ -109,10 +120,18 @@ export class FabricProtocolClient {
           }
           resolve(m);
         },
-        reject,
+        reject: (e) => { clearTimeout(t); reject(e); },
       });
     });
-    this.socket.write(encodeFrame(msg));
+    try {
+      this.socket.write(encodeFrame(msg));
+    } catch (error) {
+      const pending = this.pending.get(msg.request_id);
+      if (pending) {
+        this.pending.delete(msg.request_id);
+        pending.reject(error instanceof Error ? error : new Error(String(error)));
+      }
+    }
     return result;
   }
 
@@ -124,5 +143,6 @@ export class FabricProtocolClient {
   close(): void {
     this.socket?.destroy();
     this.socket = undefined;
+    this.rejectPending(new Error("connection_closed"));
   }
 }

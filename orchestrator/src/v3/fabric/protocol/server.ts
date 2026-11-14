@@ -6,7 +6,7 @@ import { createServer as createTlsServer, type Server as TlsServer, type TLSSock
 import { createServer as createNetServer, type Server as NetServer, type Socket } from "node:net";
 import { createHash, randomBytes } from "node:crypto";
 import { FrameDecoder, encodeFrame } from "./framing.js";
-import { assertProtocolVersion, envelope, type ProtocolEnvelope } from "./messages.js";
+import { assertProtocolEnvelope, envelope, type ProtocolEnvelope } from "./messages.js";
 import { verifySessionToken } from "../trust/session.js";
 
 export type MessageHandler = (
@@ -26,6 +26,7 @@ export interface FabricServerOptions {
   cpSecret: Buffer;
   handler: MessageHandler;
   maxFramesPerSec?: number;
+  verifySession?: (token: string) => { ok: true; claims: { worker_node_id: string; token_id: string } } | { ok: false; reason: string };
 }
 
 export class FabricProtocolServer {
@@ -88,11 +89,13 @@ export class FabricProtocolServer {
     let windowStart = Date.now();
     let windowCount = 0;
     let worker_node_id: string | undefined;
+    let sessionToken: string | undefined;
+    let processing = Promise.resolve();
 
     socket.on("data", (chunk) => {
-      void (async () => {
+      processing = processing.then(async () => {
         try {
-          const msgs = decoder.push(chunk);
+          const msgs = decoder.push(typeof chunk === "string" ? Buffer.from(chunk) : chunk);
           for (const raw of msgs) {
             const now = Date.now();
             if (now - windowStart > 1000) {
@@ -105,8 +108,14 @@ export class FabricProtocolServer {
               socket.destroy();
               return;
             }
+            assertProtocolEnvelope(raw);
             const msg = raw as ProtocolEnvelope;
-            assertProtocolVersion(msg.protocol_version);
+            if (this.seenRequestIds.size > 0) {
+              for (const [id, seenAt] of this.seenRequestIds) {
+                if (now - seenAt >= 600_000) this.seenRequestIds.delete(id);
+              }
+            }
+            if (this.seenRequestIds.size >= 100_000) throw new Error("request_id_cache_full");
             const prev = this.seenRequestIds.get(msg.request_id);
             if (prev && now - prev < 600_000) {
               socket.write(
@@ -119,11 +128,15 @@ export class FabricProtocolServer {
             this.seenRequestIds.set(msg.request_id, now);
 
             if (msg.type === "control.auth") {
+              if (worker_node_id) throw new Error("already_authenticated");
               const token = (msg.payload as { session_token?: string }).session_token;
               if (!token) throw new Error("missing_token");
-              const v = verifySessionToken(this.opts.cpSecret, token);
+              const v = this.opts.verifySession
+                ? this.opts.verifySession(token)
+                : verifySessionToken(this.opts.cpSecret, token);
               if (!v.ok) throw new Error(`auth_failed:${v.reason}`);
               worker_node_id = v.claims.worker_node_id;
+              sessionToken = token;
               socket.write(
                 encodeFrame(
                   envelope(
@@ -140,6 +153,15 @@ export class FabricProtocolServer {
             if (!worker_node_id && msg.type !== "control.hello") {
               throw new Error("unauthenticated");
             }
+            if (worker_node_id && msg.type !== "control.auth") {
+              if (!sessionToken) throw new Error("missing_session_context");
+              const current = this.opts.verifySession
+                ? this.opts.verifySession(sessionToken)
+                : verifySessionToken(this.opts.cpSecret, sessionToken);
+              if (!current.ok || current.claims.worker_node_id !== worker_node_id) {
+                throw new Error(`session_invalid:${current.ok ? "identity_changed" : current.reason}`);
+              }
+            }
 
             const reply = await this.opts.handler(msg, { socket, worker_node_id });
             if (reply) socket.write(encodeFrame(reply));
@@ -153,7 +175,15 @@ export class FabricProtocolServer {
           }
           socket.destroy();
         }
-      })();
+      }).catch((err) => {
+        const reason = err instanceof Error ? err.message : String(err);
+        try {
+          socket.write(encodeFrame(envelope("control", "error", { reason })));
+        } catch {
+          /* ignore */
+        }
+        socket.destroy();
+      });
     });
   }
 }

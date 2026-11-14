@@ -53,7 +53,7 @@ export async function handleV37Command(args: Record<string, string>): Promise<bo
   }
 
   if (args.command === "cp-status") {
-    const cp = new ControlPlaneService(dir);
+    const cp = new ControlPlaneService(dir, { mode: "attach" });
     console.log(
       JSON.stringify(
         {
@@ -74,7 +74,7 @@ export async function handleV37Command(args: Record<string, string>): Promise<bo
   }
 
   if (args.command === "enroll-request") {
-    const cp = new ControlPlaneService(dir);
+    const cp = new ControlPlaneService(dir, { mode: "attach" });
     const km = generateNodeIdentity();
     const work = resolve(args["worker-dir"] ?? join(dir, "workers", km.worker_node_id));
     mkdirSync(work, { recursive: true });
@@ -103,7 +103,7 @@ export async function handleV37Command(args: Record<string, string>): Promise<bo
   }
 
   if (args.command === "enroll-approve") {
-    const cp = new ControlPlaneService(dir);
+    const cp = new ControlPlaneService(dir, { mode: "attach" });
     if (!args["worker-node-id"]) throw new Error("Required: --worker-node-id");
     const decision = cp.nodes.authorizeEnrollment(args["worker-node-id"]);
     console.log(JSON.stringify(decision, null, 2));
@@ -111,14 +111,14 @@ export async function handleV37Command(args: Record<string, string>): Promise<bo
   }
 
   if (args.command === "revoke") {
-    const cp = new ControlPlaneService(dir);
+    const cp = new ControlPlaneService(dir, { mode: "attach" });
     if (!args["worker-node-id"]) throw new Error("Required: --worker-node-id");
     console.log(JSON.stringify(cp.nodes.revoke(args["worker-node-id"], args.reason ?? "operator_revoke"), null, 2));
     return true;
   }
 
   if (args.command === "pool-create") {
-    const cp = new ControlPlaneService(dir);
+    const cp = new ControlPlaneService(dir, { mode: "attach" });
     const pool = cp.pools.create({
       name: args.name ?? "default",
       selectors: {
@@ -137,14 +137,17 @@ export async function handleV37Command(args: Record<string, string>): Promise<bo
   }
 
   if (args.command === "pool-list") {
-    const cp = new ControlPlaneService(dir);
+    const cp = new ControlPlaneService(dir, { mode: "attach" });
     cp.pools.reconcileMembership(cp.nodes.list());
     console.log(JSON.stringify(cp.pools.list(), null, 2));
     return true;
   }
 
   if (args.command === "dispatch") {
-    const cp = new ControlPlaneService(dir);
+    if (args.deliver === "true") {
+      throw new Error("live_task_delivery_not_implemented: dispatch currently creates a contract and lease but does not deliver to a remote worker");
+    }
+    const cp = new ControlPlaneService(dir, { mode: "attach" });
     const result = cp.dispatchTask({
       workflow_id: args.workflow ?? `wf_${randomUUID()}`,
       task_id: args.task ?? `task_${randomUUID()}`,
@@ -157,7 +160,7 @@ export async function handleV37Command(args: Record<string, string>): Promise<bo
   }
 
   if (args.command === "doctor") {
-    const cp = new ControlPlaneService(dir);
+    const cp = new ControlPlaneService(dir, { mode: "attach" });
     const checks = doctorControlPlane(cp);
     if (args["worker-dir"]) checks.push(...doctorWorkerNode(resolve(args["worker-dir"])));
     console.log(JSON.stringify({ summary: summarizeDoctor(checks), checks }, null, 2));
@@ -166,7 +169,7 @@ export async function handleV37Command(args: Record<string, string>): Promise<bo
 
   if (args.command === "fleet-report") {
     const { buildFleetReport } = await import("../v3/fabric/ops-center/fleet-report.js");
-    const cp = new ControlPlaneService(dir);
+    const cp = new ControlPlaneService(dir, { mode: "attach" });
     const report = buildFleetReport(cp);
     console.log(JSON.stringify(report, null, 2));
     return true;

@@ -46,6 +46,7 @@ export interface FleetReport {
 }
 
 const CORRELATION_FIELDS: (keyof CorrelationIds)[] = [
+  "run_id",
   "control_plane_id",
   "control_plane_epoch",
   "worker_node_id",
@@ -53,9 +54,6 @@ const CORRELATION_FIELDS: (keyof CorrelationIds)[] = [
   "pool_id",
   "lease_id",
   "fencing_epoch",
-  "artifact_transfer_id",
-  "remote_trace_id",
-  "remote_span_id",
 ];
 
 export function buildFleetReport(
@@ -70,12 +68,10 @@ export function buildFleetReport(
   const collector = new TelemetryCollector(store, { mode: "normal", runId: run_id });
   let accepted = 0;
 
-  const remote_trace_id = `trace_${randomUUID().replace(/-/g, "").slice(0, 16)}`;
   const baseCorr: CorrelationIds = {
     run_id,
     control_plane_id: cp.state.control_plane_id,
     control_plane_epoch: cp.state.epoch,
-    remote_trace_id,
   };
 
   const ingest = (
@@ -104,7 +100,6 @@ export function buildFleetReport(
     const pool_ids = poolsAll
       .filter((p) => p.member_worker_node_ids.includes(worker_node_id))
       .map((p) => p.pool_id);
-    const remote_span_id = `span_${randomUUID().replace(/-/g, "").slice(0, 12)}`;
     const inventory_fresh = isInventoryFresh(n.resources.sampled_at, { max_age_ms: 300_000 });
     ingest(
       "fleet.node.snapshot",
@@ -113,7 +108,6 @@ export function buildFleetReport(
         worker_node_id,
         node_session_id: n.credential.session_token_id,
         pool_id: pool_ids[0],
-        remote_span_id,
       },
       { trust: n.trust, status: n.status, inventory_fresh },
     );
@@ -135,9 +129,8 @@ export function buildFleetReport(
         worker_node_id: l.owner_worker_node_id,
         lease_id: l.lease_id,
         fencing_epoch: l.fencing_epoch,
-        task_id: l.task_id,
       },
-      { status: l.status },
+      { status: l.status, task_id: l.task_id },
     );
     return {
       lease_id: l.lease_id,
@@ -146,15 +139,6 @@ export function buildFleetReport(
       task_id: l.task_id,
     };
   });
-
-  ingest(
-    "fleet.artifact.transfer_template",
-    {
-      ...baseCorr,
-      artifact_transfer_id: `xfer_${randomUUID().replace(/-/g, "").slice(0, 12)}`,
-    },
-    { note: "template_for_schema_coverage" },
-  );
 
   const pools = poolsAll.map((p) => ({
     pool_id: p.pool_id,
@@ -183,6 +167,8 @@ export function buildFleetReport(
       correlation_fields_emitted: CORRELATION_FIELDS,
     },
     limitations: [
+      "Remote trace/span correlation is unavailable until real worker events carry those identifiers",
+      "Artifact transfer correlation is unavailable until a real transfer event is observed",
       "Cross-host LIVE traces require Gate G17 multi-host E2E",
       "Same-host dual-process is SIMULATED_NOT_MULTI_HOST",
       "Usage/cost fields omitted unless provider provenance present",

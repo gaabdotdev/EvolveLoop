@@ -2,9 +2,16 @@ import { describe, it, expect, afterEach } from "vitest";
 import { FabricProtocolServer } from "../../../src/v3/fabric/protocol/server.js";
 import { FabricProtocolClient } from "../../../src/v3/fabric/protocol/client.js";
 import { createSessionToken, generateCpSecret } from "../../../src/v3/fabric/trust/session.js";
-import { envelope } from "../../../src/v3/fabric/protocol/messages.js";
+import { assertProtocolEnvelope, envelope } from "../../../src/v3/fabric/protocol/messages.js";
 
 describe("protocol roundtrip", () => {
+  it("rejects malformed protocol envelopes before dispatch", () => {
+    const valid = envelope("control", "hello", { ping: true });
+    expect(() => assertProtocolEnvelope(valid)).not.toThrow();
+    expect(() => assertProtocolEnvelope({ ...valid, request_id: "" })).toThrow("invalid_envelope:request_id");
+    expect(() => assertProtocolEnvelope({ ...valid, channel: "root" })).toThrow("invalid_envelope:channel");
+    expect(() => assertProtocolEnvelope({ ...valid, issued_at: "not-a-date" })).toThrow("invalid_envelope:issued_at");
+  });
   let server: FabricProtocolServer | undefined;
 
   afterEach(async () => {

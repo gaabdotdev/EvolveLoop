@@ -84,6 +84,17 @@ describe("V3.7 adversarial", () => {
     expect(cp.verifyWorkerSession(token).ok).toBe(false);
   });
 
+  it("rejects a valid token issued for another control plane", () => {
+    const secret = Buffer.alloc(32, 7);
+    const { token } = createSessionToken(secret, {
+      worker_node_id: "wn",
+      expires_at: Date.now() + 10_000,
+      control_plane_id: "different-cp",
+    });
+    const cp = new ControlPlaneService(mkdtempSync(join(tmpdir(), "adv-cp-")), { cpSecret: secret, control_plane_id: "expected-cp" });
+    expect(cp.verifyWorkerSession(token)).toEqual({ ok: false, reason: "wrong_control_plane" });
+  });
+
   it("forged session mac fails", () => {
     const secret = Buffer.alloc(32, 1);
     const { token } = createSessionToken(secret, {

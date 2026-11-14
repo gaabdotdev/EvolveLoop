@@ -3,7 +3,7 @@
  */
 
 import { randomUUID } from "node:crypto";
-import { existsSync, readFileSync, writeFileSync } from "node:fs";
+import { closeSync, existsSync, openSync, readFileSync, unlinkSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { atomicWriteJson, nowIso } from "../../ops/atomic.js";
 import { resolveFabricDataPaths, type FabricDataPaths } from "../paths.js";
@@ -45,24 +45,30 @@ export class ControlPlaneService {
   readonly stealer: WorkStealer;
   readonly speculative: SpeculativeEngine;
   private server?: FabricProtocolServer;
+  private lockPath?: string;
+  private readonly mode: "active" | "attach";
 
-  constructor(fabricDir: string, opts?: { control_plane_id?: string; cpSecret?: Buffer }) {
+  constructor(
+    fabricDir: string,
+    opts?: { control_plane_id?: string; cpSecret?: Buffer; mode?: "active" | "attach" },
+  ) {
     this.paths = resolveFabricDataPaths(fabricDir);
-    if (existsSync(this.paths.cpStateFile)) {
-      const prev = JSON.parse(readFileSync(this.paths.cpStateFile, "utf8")) as ControlPlaneState;
-      // V3.7: single active CP — restart increments epoch, same id preferred
-      this.state = {
-        control_plane_id: opts?.control_plane_id ?? prev.control_plane_id,
-        epoch: prev.epoch + 1,
-        active: true,
-        started_at: nowIso(),
-      };
+    const mode = opts?.mode ?? "active";
+    this.mode = mode;
+    const previous = existsSync(this.paths.cpStateFile)
+      ? (JSON.parse(readFileSync(this.paths.cpStateFile, "utf8")) as ControlPlaneState)
+      : undefined;
+    if (mode === "attach" && previous) {
+      // CLI attach must not increment or rewrite the active CP epoch.
+      this.state = { ...previous };
     } else {
       this.state = {
-        control_plane_id: opts?.control_plane_id ?? `cp_${randomUUID()}`,
-        epoch: 1,
+        control_plane_id: opts?.control_plane_id ?? previous?.control_plane_id ?? `cp_${randomUUID()}`,
+        epoch: mode === "active" ? (previous?.epoch ?? 0) + 1 : previous?.epoch ?? 0,
         active: true,
-        started_at: nowIso(),
+        started_at: previous?.started_at ?? nowIso(),
+        ...(previous?.listen ? { listen: previous.listen } : {}),
+        ...(previous?.tls_fingerprint ? { tls_fingerprint: previous.tls_fingerprint } : {}),
       };
     }
     this.cpSecret = opts?.cpSecret ?? loadOrCreateSecret(this.paths);
@@ -74,7 +80,6 @@ export class ControlPlaneService {
     this.teams = new TeamRegistry(this.paths);
     this.stealer = new WorkStealer(this.leases);
     this.speculative = new SpeculativeEngine();
-    atomicWriteJson(this.paths.cpStateFile, this.state);
   }
 
   async startServer(
@@ -82,14 +87,27 @@ export class ControlPlaneService {
     port = 0,
     opts?: { insecurePlaintext?: boolean },
   ): Promise<ControlPlaneState> {
-    const tls = opts?.insecurePlaintext ? null : generateDevTlsMaterials(this.state.control_plane_id);
-    this.server = new FabricProtocolServer({
+    if (this.mode !== "active") throw new Error("control_plane_attach_cannot_start_server");
+    if (this.server) throw new Error("control_plane_already_started");
+    this.acquireProcessLock();
+    const previous = existsSync(this.paths.cpStateFile)
+      ? (JSON.parse(readFileSync(this.paths.cpStateFile, "utf8")) as ControlPlaneState)
+      : undefined;
+    this.state.epoch = (previous?.epoch ?? 0) + 1;
+    this.state.started_at = nowIso();
+    this.state.active = true;
+    let tls: ReturnType<typeof generateDevTlsMaterials> | null = null;
+    let listen: { host: string; port: number };
+    try {
+      tls = opts?.insecurePlaintext ? null : generateDevTlsMaterials(this.state.control_plane_id);
+      this.server = new FabricProtocolServer({
       host,
       port,
       tls: opts?.insecurePlaintext ? false : true,
       key: tls?.key,
       cert: tls?.cert,
       cpSecret: this.cpSecret,
+      verifySession: (token) => this.verifyWorkerSession(token),
       handler: async (msg: ProtocolEnvelope, ctx: { socket: import("node:net").Socket; worker_node_id?: string }) => {
         if (msg.type === "health.heartbeat") {
           if (!ctx.worker_node_id) throw new Error("unauthenticated");
@@ -108,26 +126,77 @@ export class ControlPlaneService {
         return envelope("control", "error", { reason: `unknown_type:${msg.type}` }, { ack_of: msg.request_id });
       },
     });
-    const listen = await this.server.listen();
-    this.state.listen = listen;
-    this.state.tls_fingerprint = tls?.fingerprint;
-    atomicWriteJson(this.paths.cpStateFile, this.state);
-    atomicWriteJson(join(this.paths.root, "tls.json"), {
-      plaintext: Boolean(opts?.insecurePlaintext),
-      cert: tls ? tls.cert.toString("utf8") : null,
-      fingerprint: tls?.fingerprint ?? null,
-      host: listen.host,
-      port: listen.port,
-    });
-    if (tls) {
-      writeFileSync(join(this.paths.root, "cp-cert.pem"), tls.cert);
-      writeFileSync(join(this.paths.root, "cp-key.pem"), tls.key, { mode: 0o600 });
+      listen = await this.server.listen();
+    } catch (error) {
+      await this.server?.close().catch(() => undefined);
+      this.server = undefined;
+      this.releaseProcessLock();
+      throw error;
     }
-    return this.state;
+    try {
+      this.state.listen = listen;
+      this.state.tls_fingerprint = tls?.fingerprint;
+      atomicWriteJson(this.paths.cpStateFile, this.state);
+      atomicWriteJson(join(this.paths.root, "tls.json"), {
+        plaintext: Boolean(opts?.insecurePlaintext),
+        cert: tls ? tls.cert.toString("utf8") : null,
+        fingerprint: tls?.fingerprint ?? null,
+        host: listen.host,
+        port: listen.port,
+      });
+      if (tls) {
+        writeFileSync(join(this.paths.root, "cp-cert.pem"), tls.cert);
+        writeFileSync(join(this.paths.root, "cp-key.pem"), tls.key, { mode: 0o600 });
+      }
+      return this.state;
+    } catch (error) {
+      await this.server?.close().catch(() => undefined);
+      this.server = undefined;
+      this.releaseProcessLock();
+      throw error;
+    }
   }
 
   async stop(): Promise<void> {
     await this.server?.close();
+    this.server = undefined;
+    this.releaseProcessLock();
+  }
+
+  private acquireProcessLock(): void {
+    const lockPath = join(this.paths.root, "control-plane.lock");
+    const create = () => {
+      const fd = openSync(lockPath, "wx", 0o600);
+      try { writeFileSync(fd, `${process.pid}\n`, "utf8"); } finally { closeSync(fd); }
+    };
+    try {
+      create();
+      this.lockPath = lockPath;
+      return;
+    } catch (error) {
+      if ((error as NodeJS.ErrnoException).code !== "EEXIST") throw error;
+    }
+    let ownerPid = 0;
+    try { ownerPid = Number(readFileSync(lockPath, "utf8").trim()); } catch { /* malformed lock */ }
+    if (Number.isInteger(ownerPid) && ownerPid > 0) {
+      try { process.kill(ownerPid, 0); throw new Error(`control_plane_already_locked:pid=${ownerPid}`); }
+      catch (error) {
+        if (error instanceof Error && error.message.startsWith("control_plane_already_locked:")) throw error;
+        if ((error as NodeJS.ErrnoException).code !== "ESRCH") throw error;
+      }
+    }
+    unlinkSync(lockPath);
+    create();
+    this.lockPath = lockPath;
+  }
+
+  private releaseProcessLock(): void {
+    if (!this.lockPath) return;
+    try {
+      const owner = Number(readFileSync(this.lockPath, "utf8").trim());
+      if (owner === process.pid) unlinkSync(this.lockPath);
+    } catch { /* already released */ }
+    this.lockPath = undefined;
   }
 
   dispatchTask(input: {
@@ -207,6 +276,9 @@ export class ControlPlaneService {
   verifyWorkerSession(token: string) {
     const v = verifySessionToken(this.cpSecret, token);
     if (!v.ok) return v;
+    if (v.claims.control_plane_id !== this.state.control_plane_id) {
+      return { ok: false as const, reason: "wrong_control_plane" };
+    }
     if (this.nodes.isSessionRevoked(v.claims.token_id)) return { ok: false as const, reason: "revoked" };
     const node = this.nodes.get(v.claims.worker_node_id);
     if (!node || node.status === "REVOKED" || node.status === "QUARANTINED") {

@@ -46,3 +46,35 @@ export function assertProtocolVersion(v: string): void {
     throw new Error(`protocol_version_mismatch:got=${v}`);
   }
 }
+
+export function assertProtocolEnvelope(value: unknown): asserts value is ProtocolEnvelope {
+  if (!value || typeof value !== "object" || Array.isArray(value)) {
+    throw new Error("invalid_envelope:object_required");
+  }
+  const msg = value as Record<string, unknown>;
+  assertProtocolVersion(String(msg.protocol_version ?? ""));
+  if (!(["control", "task", "telemetry", "artifact", "health"] as unknown[]).includes(msg.channel)) {
+    throw new Error("invalid_envelope:channel");
+  }
+  if (typeof msg.type !== "string" || msg.type.length < 1 || msg.type.length > 128) {
+    throw new Error("invalid_envelope:type");
+  }
+  if (typeof msg.request_id !== "string" || msg.request_id.length < 1 || msg.request_id.length > 128) {
+    throw new Error("invalid_envelope:request_id");
+  }
+  if (typeof msg.correlation_id !== "string" || msg.correlation_id.length < 1 || msg.correlation_id.length > 128) {
+    throw new Error("invalid_envelope:correlation_id");
+  }
+  if (typeof msg.issued_at !== "string" || !Number.isFinite(Date.parse(msg.issued_at))) {
+    throw new Error("invalid_envelope:issued_at");
+  }
+  if (msg.deadline_at !== undefined && (typeof msg.deadline_at !== "string" || !Number.isFinite(Date.parse(msg.deadline_at)))) {
+    throw new Error("invalid_envelope:deadline_at");
+  }
+  if (msg.seq !== undefined && (!Number.isSafeInteger(msg.seq) || Number(msg.seq) < 0)) {
+    throw new Error("invalid_envelope:seq");
+  }
+  if (!Object.prototype.hasOwnProperty.call(msg, "payload")) {
+    throw new Error("invalid_envelope:payload_missing");
+  }
+}

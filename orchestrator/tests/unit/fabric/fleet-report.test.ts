@@ -41,14 +41,18 @@ describe("Gate O fleet-report correlation", () => {
     expect(report.measurement.events_accepted).toBeGreaterThan(0);
     expect(report.measurement.correlation_fields_emitted).toContain("worker_node_id");
     expect(report.measurement.correlation_fields_emitted).toContain("fencing_epoch");
-    expect(report.measurement.correlation_fields_emitted).toContain("artifact_transfer_id");
+    expect(report.measurement.correlation_fields_emitted).not.toContain("artifact_transfer_id");
+    expect(report.measurement.correlation_fields_emitted).not.toContain("remote_trace_id");
+    expect(report.measurement.correlation_fields_emitted).not.toContain("remote_span_id");
 
     const files = readdirSync(report.measurement.events_dir).filter((f) => f.endsWith(".jsonl"));
     expect(files.length).toBeGreaterThan(0);
-    const body = readFileSync(join(report.measurement.events_dir, files[0]!), "utf-8");
+    const body = files.map((f) => readFileSync(join(report.measurement.events_dir, f), "utf-8")).join("\n");
     expect(body).toContain("control_plane_id");
     expect(body).toContain("worker_node_id");
-    expect(body).toContain("remote_trace_id");
+    expect(body).not.toContain("remote_trace_id");
+    expect(body).not.toContain("remote_span_id");
+    expect(body).not.toContain("artifact_transfer_id");
     expect(body).not.toMatch(/"node_id":\s*"wn_/);
   });
 });
