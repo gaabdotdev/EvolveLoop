@@ -207,8 +207,14 @@ export class ExecutionEngine {
           collector,
           runId: featureId,
         });
-      } catch {
-        /* measurement observe-only must never break run() */
+      } catch (err) {
+        // Observe-only must not abort orchestration, but must not fail silently
+        // (independent re-audit residual on empty catch).
+        const msg = err instanceof Error ? err.message : String(err);
+        if (process.env.EVOLVELOOP_MP_ATTACH_STRICT === "true") {
+          throw err;
+        }
+        console.warn(`[measurement-plane] attachEventBusAdapter failed: ${msg}`);
       }
     }
 

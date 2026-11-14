@@ -213,12 +213,36 @@ export async function runtimeDoctor(dataDir: string): Promise<{
     required: false,
   });
 
-  checks.push({
-    id: "approval_broker_production",
-    status: "PASS",
-    detail: "CoordinatorDaemon wires ApprovalBroker + SandboxManager.gateAction (IPC approvals.gate)",
-    required: true,
-  });
+  // Probe live wiring — do not claim PASS from documentation alone (independent re-audit residual).
+  try {
+    const { CoordinatorDaemon } = await import("../coordinator/daemon.js");
+    const probeDir = mkdtempSync(join(tmpdir(), "el-doctor-broker-"));
+    const daemon = new CoordinatorDaemon(probeDir);
+    const wired =
+      !!daemon.broker && daemon.sandbox.status().approval_broker_wired === true;
+    const gate = daemon.sandbox.gateAction(
+      agentWorkspaceProfile(probeDir),
+      "package.install",
+      { work_id: "doctor", resource: "npm:probe", justification: "doctor_probe" },
+    );
+    const gateOk = gate.status === "pending_approval" || gate.status === "deny";
+    rmSync(probeDir, { recursive: true, force: true });
+    checks.push({
+      id: "approval_broker_production",
+      status: wired && gateOk ? "PASS" : "FAIL",
+      detail: wired && gateOk
+        ? `broker wired; gateAction=${gate.status}`
+        : `broker_wired=${wired} gateAction=${gate.status}`,
+      required: true,
+    });
+  } catch (err) {
+    checks.push({
+      id: "approval_broker_production",
+      status: "FAIL",
+      detail: `probe_failed:${String(err)}`,
+      required: true,
+    });
+  }
 
   checks.push({
     id: "control_plane_dual_evolve",

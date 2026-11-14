@@ -253,6 +253,18 @@ async function main() {
     return;
   }
 
+  // ISSUE-ARCH-DUAL-EVOLVE-001: product CLI declares its plane (honesty → usable default).
+  {
+    const { resolveControlPlane } = await import("../v3/entrypoints/control-plane.js");
+    const plane = resolveControlPlane();
+    if (!plane.explicit) {
+      process.env.EVOLVELOOP_CONTROL_PLANE = "v3_product_cli";
+      if (plane.warning) {
+        console.error(`[evolve] ${plane.warning}; defaulting this process to v3_product_cli`);
+      }
+    }
+  }
+
   try {
     // V3.7 Distributed Fabric (fabric-dir; Control Plane authority)
     if (args.group === "fabric") {

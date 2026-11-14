@@ -97,3 +97,19 @@ For each CRITICAL/HIGH in R2:
 ## Note on counts
 
 Executive approximate CRITICAL≈5 HIGH≈13 is **not final**. This register is the living enumeration; update after each remediation batch.
+
+
+## Independent re-audit batch 1
+
+Source: `docs/certification/RE-AUDIT-REPORT.md` (agent 29f4c363).
+
+| Issue | Independent verdict | Follow-up applied |
+|-------|---------------------|-------------------|
+| SEC-H03-PATH | PASS | — |
+| SEC-C01 | PASS | Doctor now live-probes broker+gateAction |
+| SEC-C02 | PASS (narrowed) | Dedicated unit test added |
+| SEC-H04-NET | PASS | — |
+| CI-NO-BUILD | PASS | CI run on GitHub still pending |
+| GRAPHIFY-EMPTY-PASS | PASS | — |
+| MP-EVENTBUS-UNWIRED | PASS | Attach failures warn (strict opt-in) |
+| ARCH-DUAL-EVOLVE | PASS (honesty) | `evolve` CLI defaults plane to v3_product_cli |
