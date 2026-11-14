@@ -126,6 +126,13 @@ export function assertAllowed(
   if (d.decision === "deny") {
     throw new SecurityPolicyError("DENIED", `${action}: ${d.reason}`);
   }
+  // Fail-closed: require_approval is not silent allow (ISSUE-SEC-C01).
+  if (d.decision === "require_approval") {
+    throw new SecurityPolicyError(
+      "REQUIRES_APPROVAL",
+      `${action}: ${d.reason} — obtain grant via ApprovalBroker before proceeding`,
+    );
+  }
   return d;
 }
 

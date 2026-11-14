@@ -51,3 +51,4 @@ profiles/*/local.override.yaml
 # V3.6 live run ephemeral data-dir
 orchestrator/v36-live-ops/
 orchestrator/v36-live-run/
+node_modules

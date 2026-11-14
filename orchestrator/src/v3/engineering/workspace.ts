@@ -13,7 +13,7 @@ import {
   writeFileSync,
   appendFileSync,
 } from "node:fs";
-import { dirname, join, resolve } from "node:path";
+import { dirname, join, resolve, sep } from "node:path";
 import { spawnSync } from "node:child_process";
 
 export class WorkspaceError extends Error {
@@ -24,6 +24,11 @@ export class WorkspaceError extends Error {
     super(`${code}: ${message}`);
     this.name = "WorkspaceError";
   }
+}
+
+/** True iff child is root or a path under root+sep (blocks `/tmp/ws` vs `/tmp/ws-evil`). */
+export function isPathInsideRoot(child: string, root: string): boolean {
+  return child === root || child.startsWith(root + sep);
 }
 
 export class EngineeringWorkspace {
@@ -38,13 +43,17 @@ export class EngineeringWorkspace {
     const candidate = resolve(this.root, relOrAbs);
     if (existsSync(candidate)) {
       const real = realpathSync(candidate);
-      if (!real.startsWith(this.root)) throw new WorkspaceError("ESCAPE", real);
+      if (!isPathInsideRoot(real, this.root)) throw new WorkspaceError("ESCAPE", real);
       return real;
+    }
+    // Lexical confinement before mkdir (ISSUE-SEC-H03-PATH): reject prefix escapes.
+    if (!isPathInsideRoot(candidate, this.root)) {
+      throw new WorkspaceError("ESCAPE", candidate);
     }
     const parent = dirname(candidate);
     mkdirSync(parent, { recursive: true });
     const parentReal = realpathSync(parent);
-    if (!parentReal.startsWith(this.root)) throw new WorkspaceError("ESCAPE", parentReal);
+    if (!isPathInsideRoot(parentReal, this.root)) throw new WorkspaceError("ESCAPE", parentReal);
     return candidate;
   }
 
@@ -100,7 +109,7 @@ export class EngineeringWorkspace {
   }
 
   relativeFromRoot(absPath: string): string {
-    return absPath.startsWith(this.root) ? absPath.slice(this.root.length + 1) : absPath;
+    return isPathInsideRoot(absPath, this.root) ? absPath.slice(this.root.length + 1) : absPath;
   }
 }
 

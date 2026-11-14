@@ -51,6 +51,15 @@ jobs:
         working-directory: orchestrator
         run: npm ci
 
+      # ISSUE-CI-NO-BUILD-001: typecheck + emit dist/ before tests that load CLI binaries
+      - name: npm run build (typecheck + emit dist)
+        working-directory: orchestrator
+        run: |
+          npm run build
+          test -f dist/cli/evolve.js
+          test -f dist/cli/run-engine.js
+          test -f dist/index.js
+
       - name: npm test
         working-directory: orchestrator
         run: npm test

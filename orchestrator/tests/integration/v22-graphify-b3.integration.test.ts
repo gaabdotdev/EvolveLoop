@@ -19,10 +19,17 @@ function graphifyOnPath(): boolean {
 }
 
 describe("GOAL-008 B3 graphify harness (integration)", () => {
-  it("runs single-task smoke when graphify CLI and monorepo graph exist", () => {
-    if (!graphifyOnPath()) return;
+  it("runs single-task smoke when graphify CLI and monorepo graph exist", (ctx) => {
+    // ISSUE-TEST-SILENT-SKIP-001 / GRAPHIFY-EMPTY-PASS: never PASS via empty early return
+    if (!graphifyOnPath()) {
+      ctx.skip();
+      return;
+    }
     const graph = join(repoRoot, "graphify-out/graph.json");
-    if (!existsSync(graph)) return;
+    if (!existsSync(graph)) {
+      ctx.skip();
+      return;
+    }
     const out = execFileSync(
       "python3",
       [

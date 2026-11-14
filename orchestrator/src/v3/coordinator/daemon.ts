@@ -12,6 +12,10 @@ import { resolveV3DataPaths, type V3DataPaths } from "../paths.js";
 import { ProcessSessionStore } from "../adapters/drivers/process-sessions.js";
 import { listOrphans, type SupervisedProcessIdentity } from "../sandbox/process-supervisor.js";
 import { ApprovalStore } from "../approvals/store.js";
+import { ApprovalBroker } from "../approvals/broker.js";
+import { SandboxManager } from "../sandbox/manager.js";
+import { agentWorkspaceProfile } from "../security/profiles.js";
+import type { CapabilityAction } from "../security/types.js";
 
 export interface DaemonDurableState {
   kind: "CoordinatorDaemonState";
@@ -34,6 +38,9 @@ export class CoordinatorDaemon {
   readonly service: CoordinatorService;
   readonly lifecycle = new ServiceLifecycle();
   readonly approvals: ApprovalStore;
+  /** Production ApprovalBroker — wired for IPC gate (ISSUE-SEC-C01). */
+  readonly broker: ApprovalBroker;
+  readonly sandbox: SandboxManager;
   private leader: LeaderLock;
   private ipc: CoordinatorIpcServer | null = null;
   private heartbeatTimer: NodeJS.Timeout | null = null;
@@ -45,6 +52,8 @@ export class CoordinatorDaemon {
     this.paths = resolveV3DataPaths(dataDir);
     this.service = new CoordinatorService(this.paths);
     this.approvals = new ApprovalStore(this.paths.approvalsDir);
+    this.broker = new ApprovalBroker(this.approvals);
+    this.sandbox = new SandboxManager(undefined, this.broker);
     this.leader = new LeaderLock(join(this.paths.coordinatorDir, "leader.lock"));
     this.durablePath = join(this.paths.coordinatorDir, "daemon.json");
   }
@@ -105,6 +114,24 @@ export class CoordinatorDaemon {
         const id = String(req.params?.approval_id ?? "");
         const actor = String(req.params?.actor ?? "cli");
         return this.approvals.reject(id, actor, req.params?.note ? String(req.params.note) : undefined);
+      }
+      case "approvals.gate": {
+        // Production gate: sensitive ops must pass ApprovalBroker (SEC-C01).
+        const workId = String(req.params?.work_id ?? "");
+        const action = String(req.params?.action ?? "") as CapabilityAction;
+        const resource = String(req.params?.resource ?? "");
+        const justification = String(req.params?.justification ?? "ipc_gate");
+        const approvalId = req.params?.approval_id ? String(req.params.approval_id) : undefined;
+        if (!workId || !action || !resource) throw new Error("work_id_action_resource_required");
+        const profile = agentWorkspaceProfile(this.paths.root);
+        return this.sandbox.gateAction(profile, action, {
+          work_id: workId,
+          resource,
+          justification,
+          approval_id: approvalId,
+          task_id: req.params?.task_id ? String(req.params.task_id) : undefined,
+          agent_id: req.params?.agent_id ? String(req.params.agent_id) : undefined,
+        });
       }
       case "shutdown":
         setImmediate(() => {

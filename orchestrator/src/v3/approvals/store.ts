@@ -7,7 +7,7 @@ import {
   unlinkSync,
   writeFileSync,
 } from "node:fs";
-import { join } from "node:path";
+import { join, sep } from "node:path";
 import { randomUUID } from "node:crypto";
 import type { ApprovalCreateInput, ApprovalRequest, ApprovalState } from "./types.js";
 
@@ -201,8 +201,13 @@ export class ApprovalStore {
     if (rec.operation !== operation) return { ok: false, reason: "operation_mismatch" };
     if (rec.resource !== resource) {
       // Allow prefix scope when path_prefix set.
-      if (rec.scope.path_prefix && resource.startsWith(rec.scope.path_prefix)) {
-        /* ok */
+      if (rec.scope.path_prefix) {
+        const prefix = rec.scope.path_prefix;
+        // Boundary-aware prefix (same class of bug as ISSUE-SEC-H03-PATH)
+        const ok =
+          resource === prefix ||
+          resource.startsWith(prefix.endsWith(sep) ? prefix : prefix + sep);
+        if (!ok) return { ok: false, reason: "resource_mismatch" };
       } else {
         return { ok: false, reason: "resource_mismatch" };
       }

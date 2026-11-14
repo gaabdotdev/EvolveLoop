@@ -87,6 +87,12 @@ export interface ExecutionEngineOptions {
    * RunInput and agent requests cannot set this.
    */
   acceptSimulatedEvidence?: boolean;
+  /**
+   * Opt-in Measurement Plane wiring (ISSUE-MP-WIRING-001).
+   * When true and dataPaths set, attaches EventBus→TelemetryCollector adapter.
+   * Default: true whenever dataPaths is present (observe-only; never mutates orchestration).
+   */
+  measurementPlane?: boolean | { enabled?: boolean; dataDir?: string };
 }
 
 export class ExecutionEngine {
@@ -107,6 +113,8 @@ export class ExecutionEngine {
   private evolveScope?: AnalysisScope;
   private evolveCoordinator?: LiveAnalysisCoordinator;
   private acceptSimulatedEvidence: boolean;
+  private measurementPlaneEnabled: boolean;
+  private measurementDataDir?: string;
 
   private orchestratorDecision: OrchestratorDecision | null = null;
   private blockedReason: string | null = null;
@@ -138,6 +146,17 @@ export class ExecutionEngine {
     this.evolveScope = options.evolveScope;
     this.evolveCoordinator = options.evolveCoordinator;
     this.acceptSimulatedEvidence = options.acceptSimulatedEvidence === true;
+    if (options.measurementPlane === false) {
+      this.measurementPlaneEnabled = false;
+    } else if (options.measurementPlane === true) {
+      this.measurementPlaneEnabled = true;
+    } else if (options.measurementPlane && typeof options.measurementPlane === "object") {
+      this.measurementPlaneEnabled = options.measurementPlane.enabled !== false;
+      this.measurementDataDir = options.measurementPlane.dataDir;
+    } else {
+      // Default ON when dataPaths present — closes dead-adapter gap without requiring callers to know.
+      this.measurementPlaneEnabled = !!options.dataPaths;
+    }
     this.registry = new RegistryClient(options.registry, this.contracts);
   }
 
@@ -156,10 +175,41 @@ export class ExecutionEngine {
     const eventBus = new EventBus();
     let detachPersister: (() => void) | undefined;
     let detachObserver: (() => void) | undefined;
+    let detachMeasurement: (() => void) | undefined;
 
     if (this.persistEvents && this.dataPaths) {
       const persister = new JsonlEventPersister(this.dataPaths.eventsDir);
       detachPersister = persister.attach(eventBus, featureId);
+    }
+
+    if (this.measurementPlaneEnabled && this.dataPaths) {
+      try {
+        const { resolveMeasurementPaths } = await import(
+          "../telemetry/measurement-plane/paths.js"
+        );
+        const { MeasurementEventStore } = await import(
+          "../telemetry/measurement-plane/event-store.js"
+        );
+        const { TelemetryCollector } = await import(
+          "../telemetry/measurement-plane/collector.js"
+        );
+        const { attachEventBusAdapter } = await import(
+          "../telemetry/measurement-plane/adapters/event-bus-adapter.js"
+        );
+        const mpRoot = this.measurementDataDir ?? this.dataPaths.root;
+        const mpPaths = resolveMeasurementPaths(mpRoot);
+        const store = new MeasurementEventStore(mpPaths);
+        const collector = new TelemetryCollector(store, {
+          mode: "normal",
+          runId: featureId,
+        });
+        detachMeasurement = attachEventBusAdapter(eventBus, {
+          collector,
+          runId: featureId,
+        });
+      } catch {
+        /* measurement observe-only must never break run() */
+      }
     }
 
     if (this.evolveLoop && this.evolveScope) {
@@ -488,6 +538,11 @@ export class ExecutionEngine {
       }
       try {
         detachPersister?.();
+      } catch {
+        /* detach must not throw */
+      }
+      try {
+        detachMeasurement?.();
       } catch {
         /* detach must not throw */
       }

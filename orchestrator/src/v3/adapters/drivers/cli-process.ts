@@ -118,6 +118,24 @@ export class CliProcessAdapterDriver implements AgentAdapterDriver {
       };
     }
 
+    // ISSUE-SEC-C02: live harness is outside bubblewrap by design (session auth / HOME).
+    // Fail-closed when operator demands OS sandbox for harness path.
+    if (process.env.EVOLVELOOP_REQUIRE_HARNESS_SANDBOX === "true") {
+      return {
+        kind: "AdapterInvokeResult",
+        adapter_id: this.adapter_id,
+        status: "blocked",
+        code: "HARNESS_OUTSIDE_BWRAP_FORBIDDEN",
+        message:
+          "Live harness spawn is outside bubblewrap; set EVOLVELOOP_REQUIRE_HARNESS_SANDBOX=false to acknowledge, or use SandboxManager for non-auth workloads",
+        limitations: [
+          ...notes,
+          "harness_provider_path_outside_bwrap_session_auth",
+          "os_isolation_claim_must_not_pass_for_this_path",
+        ],
+      };
+    }
+
     const args = this.cfg.buildArgs(promptPath, request);
     const stdoutPath = join(promptDir, `${session_id}.stdout.log`);
     const stderrPath = join(promptDir, `${session_id}.stderr.log`);

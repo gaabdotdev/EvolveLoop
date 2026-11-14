@@ -18,6 +18,15 @@ export interface SandboxExecRequest {
   /** Injected secrets (never logged). */
   secrets?: Record<string, string>;
   stdin?: string;
+  /**
+   * Optional approval grant for actions that evaluate to require_approval.
+   * Without a matching grant, SandboxManager fail-closes (ISSUE-SEC-C01).
+   */
+  approval_id?: string;
+  work_id?: string;
+  /** Capability being authorized when approval_id is supplied (default process.spawn). */
+  approval_operation?: string;
+  approval_resource?: string;
 }
 
 export interface SandboxExecResult {

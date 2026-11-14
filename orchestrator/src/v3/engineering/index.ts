@@ -5,7 +5,12 @@ export type {
   EngineeringRun,
   EngineeringLoopResult,
 } from "./types.js";
-export { EngineeringWorkspace, walkRelFiles, WorkspaceError } from "./workspace.js";
+export {
+  EngineeringWorkspace,
+  walkRelFiles,
+  WorkspaceError,
+  isPathInsideRoot,
+} from "./workspace.js";
 export {
   EngineeringLoopService,
   type EngineeringLoopInput,

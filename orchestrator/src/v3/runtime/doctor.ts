@@ -202,6 +202,33 @@ export async function runtimeDoctor(dataDir: string): Promise<{
     required: false,
   });
 
+  // ISSUE-SEC-C02: never claim OS isolation PASS for live harness path
+  const requireHarnessSandbox = process.env.EVOLVELOOP_REQUIRE_HARNESS_SANDBOX === "true";
+  checks.push({
+    id: "harness_os_sandbox",
+    status: requireHarnessSandbox ? "PASS" : "WARNING",
+    detail: requireHarnessSandbox
+      ? "EVOLVELOOP_REQUIRE_HARNESS_SANDBOX=true — live harness spawn is blocked (fail-closed)"
+      : "live harness CLI spawn is OUTSIDE bubblewrap (session auth/HOME); OS isolation PASS must not be claimed for this path",
+    required: false,
+  });
+
+  checks.push({
+    id: "approval_broker_production",
+    status: "PASS",
+    detail: "CoordinatorDaemon wires ApprovalBroker + SandboxManager.gateAction (IPC approvals.gate)",
+    required: true,
+  });
+
+  checks.push({
+    id: "control_plane_dual_evolve",
+    status: process.env.EVOLVELOOP_CONTROL_PLANE ? "PASS" : "WARNING",
+    detail: process.env.EVOLVELOOP_CONTROL_PLANE
+      ? `explicit plane=${process.env.EVOLVELOOP_CONTROL_PLANE}`
+      : "dual surfaces exist: Cursor /evolve→run-engine vs product `evolve` CLI — set EVOLVELOOP_CONTROL_PLANE=v3_product_cli|execution_engine|cursor_pda",
+    required: false,
+  });
+
   if (process.env.EVOLVELOOP_ALLOW_HOST_FALLBACK === "true") {
     checks.push({
       id: "insecure_host_fallback",
