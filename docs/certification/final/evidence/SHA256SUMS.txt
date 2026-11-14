@@ -1,0 +1,5 @@
+02e7cf2a9b5ad289ea20a3d00c53f45549baf3fd0f630b1440b322be4e6d5fa4  docs/certification/final/EXECUTIVE-VERDICT.md
+77fb44d0cdaa936548589ea11f420df197de2e84dbd6e6e4ab8b4e7abc3de0f1  docs/certification/TRUE-FULL-PASS-ACCEPTANCE-MATRIX.md
+1e22a78f5298215a3d6556d8433af1075fc8d673667225453b19b7ddad288ef3  docs/certification/final/evidence/certified-tip.txt
+794373ca8b150b8ad457e3c4827a2253cbf87e8a3730f8c6cb6acd0bb398ffc9  docs/certification/final/evidence/commits-since-baseline.txt
+4a5877ab2ebdc686ebb6af48f46209e617f3b0bfce774cab748b11e4e9b5524d  docs/certification/final/evidence/fabric-unit.json

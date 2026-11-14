@@ -1,0 +1,4 @@
+e3b41eb docs(certification): document measure Python venv for tiktoken gates
+6aec138 fix(measure): resolve tiktoken via project .venv-measure or EVOLVELOOP_PYTHON
+29db8cf feat(v3.7): mTLS, remote delivery, IPC hardening, sandbox wiring
+b693c0e chore(recovery): import ZIP corrections as cert baseline
