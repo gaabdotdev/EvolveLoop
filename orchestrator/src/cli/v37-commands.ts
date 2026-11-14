@@ -2,7 +2,7 @@
  * V3.7 Fabric CLI surface — fleet ops (does not own execution).
  */
 
-import { mkdirSync, writeFileSync, readFileSync } from "node:fs";
+import { existsSync, mkdirSync, writeFileSync, readFileSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { ControlPlaneService } from "../v3/fabric/control-plane/service.js";
 import { generateNodeIdentity } from "../v3/fabric/trust/identity.js";
@@ -130,7 +130,23 @@ export async function handleV37Command(args: Record<string, string>): Promise<bo
   if (args.command === "revoke") {
     const cp = new ControlPlaneService(dir, { mode: "attach" });
     if (!args["worker-node-id"]) throw new Error("Required: --worker-node-id");
-    console.log(JSON.stringify(cp.nodes.revoke(args["worker-node-id"], args.reason ?? "operator_revoke"), null, 2));
+    // Prefer live admin revoke so connected sockets are destroyed immediately (AUD-MTLS-03).
+    if (cp.state.listen && existsSync(join(dir, "admin", "admin.sock"))) {
+      const { fabricAdminCall } = await import("../v3/fabric/control-plane/admin-ipc.js");
+      const res = await fabricAdminCall(
+        dir,
+        "revoke",
+        { worker_node_id: args["worker-node-id"], reason: args.reason ?? "operator_revoke" },
+        "fabric.revoke",
+        cp.state.epoch,
+      );
+      if (!res.ok) throw new Error(`revoke_failed:${res.error}`);
+      console.log(JSON.stringify(res.result, null, 2));
+      return true;
+    }
+    console.log(
+      JSON.stringify(cp.nodes.revoke(args["worker-node-id"], args.reason ?? "operator_revoke"), null, 2),
+    );
     return true;
   }
 

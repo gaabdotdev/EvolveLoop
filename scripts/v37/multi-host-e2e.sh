@@ -177,16 +177,30 @@ done
 sleep 3
 DISPATCH=$($EVOLVE fabric dispatch --fabric-dir "$FABRIC_DIR" --deliver true --caps git --objective "g17-live" 2>"$EVIDENCE_DIR/dispatch.err" || true)
 echo "$DISPATCH" >"$EVIDENCE_DIR/dispatch.json"
-if ! grep -q '"acked"' <<<"$DISPATCH"; then
-  json_out "FAIL" "deliver_did_not_ack" "dispatch=$(echo "$DISPATCH" | tr '\n' ' ' | cut -c1-200)"
+# AUD-G17-02: ack alone is insufficient — require result_accepted
+if ! grep -q '"result_accepted"' <<<"$DISPATCH"; then
+  json_out "FAIL" "deliver_did_not_result_accept" "dispatch=$(echo "$DISPATCH" | tr '\n' ' ' | cut -c1-240)"
   exit 1
 fi
 
-# Revoke first worker and ensure subsequent deliver cannot use it
+# Revoke first worker and assert subsequent deliver cannot use it (AUD-G17-01)
 REVOKED="${WORKER_IDS[0]}"
 $EVOLVE fabric revoke --fabric-dir "$FABRIC_DIR" --worker-node-id "$REVOKED" --reason g17_revoke \
   >"$EVIDENCE_DIR/revoke.json"
 sleep 1
+
+POST_REVOKE=$($EVOLVE fabric dispatch --fabric-dir "$FABRIC_DIR" --deliver true --caps git --objective "g17-post-revoke" 2>"$EVIDENCE_DIR/post-revoke.err" || true)
+echo "$POST_REVOKE" >"$EVIDENCE_DIR/post-revoke-dispatch.json"
+# Must not accept a completed delivery owned by the revoked worker.
+if grep -q "\"selected_worker_node_id\": \"$REVOKED\"" <<<"$POST_REVOKE" && grep -q '"result_accepted"' <<<"$POST_REVOKE"; then
+  json_out "FAIL" "revoked_worker_still_accepted_delivery" "revoked=$REVOKED"
+  exit 1
+fi
+# If placement still selects revoked node, that is also FAIL
+if grep -q "\"selected_worker_node_id\": \"$REVOKED\"" <<<"$POST_REVOKE"; then
+  json_out "FAIL" "revoked_worker_still_selected" "revoked=$REVOKED"
+  exit 1
+fi
 
 json_out "PASS" "multi_host_live_battery_completed" \
   "hosts=${REACHABLE[*]}" \
@@ -195,5 +209,6 @@ json_out "PASS" "multi_host_live_battery_completed" \
   "cp_host=$CP_HOST" \
   "cp_port=$CP_PORT" \
   "evidence_dir=$EVIDENCE_DIR" \
-  "revoked=$REVOKED"
+  "revoked=$REVOKED" \
+  "delivery_status=result_accepted"
 exit 0

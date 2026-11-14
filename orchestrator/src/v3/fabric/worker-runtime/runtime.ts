@@ -163,6 +163,8 @@ export class WorkerRuntime {
       supervision.pgid = result.pgid;
       supervision.exit_code = result.exit_code;
       supervision.tree_state = result.blocked ? "unknown" : "exited";
+      // Note (AUD-SBX-02): SandboxManager.exec is awaited to completion; mid-flight
+      // cancel requires a future async supervision handle. Host-path cancel works via this.processes.
       this.slotsFree += 1;
       if (result.blocked) {
         supervision.correlation_ids.reject = result.block_reason ?? "sandbox_blocked";
@@ -205,9 +207,19 @@ export class WorkerRuntime {
       };
     }
 
+    // Host path only for explicit sandbox_profile=none lab contracts.
+    // Never inherit the full process environment (AUD-SBX-01).
+    const scrubbedEnv: Record<string, string> = {
+      PATH: process.env.PATH ?? "/usr/bin:/bin",
+      HOME: ws,
+      TMPDIR: "/tmp",
+      EL_TASK_ID: contract.task_id,
+      EL_WORKER_NODE_ID: this.opts.worker_node_id,
+      ...(opts?.env ?? {}),
+    };
     const child = spawn(cmd[0], cmd.slice(1), {
       cwd: ws,
-      env: { ...process.env, ...opts?.env, EL_TASK_ID: contract.task_id, EL_WORKER_NODE_ID: this.opts.worker_node_id },
+      env: scrubbedEnv,
       detached: true,
     });
     supervision.pid = child.pid;

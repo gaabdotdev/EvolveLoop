@@ -61,6 +61,10 @@ export class ControlPlaneService {
     string,
     { resolve: (m: ProtocolEnvelope) => void; reject: (e: Error) => void; timer: ReturnType<typeof setTimeout> }
   >();
+  private readonly pendingResults = new Map<
+    string,
+    { resolve: (m: ProtocolEnvelope) => void; reject: (e: Error) => void; timer: ReturnType<typeof setTimeout> }
+  >();
 
   constructor(
     fabricDir: string,
@@ -171,7 +175,15 @@ export class ControlPlaneService {
             return envelope("task", "task.progress_ack", { ok: true }, { ack_of: msg.request_id });
           }
           if (msg.type === "task.result") {
-            return this.handleResult(msg.payload as any, ctx.worker_node_id!, msg.request_id);
+            const reply = this.handleResult(msg.payload as any, ctx.worker_node_id!, msg.request_id);
+            const taskId = String((msg.payload as { task_id?: string })?.task_id ?? "");
+            const pend = this.pendingResults.get(taskId);
+            if (pend) {
+              this.pendingResults.delete(taskId);
+              clearTimeout(pend.timer);
+              pend.resolve(reply as ProtocolEnvelope);
+            }
+            return reply;
           }
           if (msg.type === "lease.renew") {
             const p = msg.payload as { lease_id: string; ttl_ms: number };
@@ -201,12 +213,14 @@ export class ControlPlaneService {
             inputs: (p.inputs as Record<string, unknown>) ?? { objective: "noop" },
             ttl_ms: typeof p.ttl_ms === "number" ? p.ttl_ms : undefined,
             offer_timeout_ms: typeof p.offer_timeout_ms === "number" ? p.offer_timeout_ms : 10_000,
+            result_timeout_ms: typeof p.result_timeout_ms === "number" ? p.result_timeout_ms : 30_000,
+            wait_for_result: p.wait_for_result !== false,
           });
         }
         if (req.method === "revoke" || req.method === "fabric.revoke") {
           const id = String((req.params ?? {}).worker_node_id ?? "");
           if (!id) throw new Error("worker_node_id_required");
-          return this.nodes.revoke(id, String((req.params ?? {}).reason ?? "admin_revoke"));
+          return this.revokeWorker(id, String((req.params ?? {}).reason ?? "admin_revoke"));
         }
         if (req.method === "shutdown" || req.method === "fabric.shutdown") {
           await this.stop();
@@ -258,6 +272,11 @@ export class ControlPlaneService {
       pend.reject(new Error("control_plane_stopped"));
     }
     this.pendingAcks.clear();
+    for (const [, pend] of this.pendingResults) {
+      clearTimeout(pend.timer);
+      pend.reject(new Error("control_plane_stopped"));
+    }
+    this.pendingResults.clear();
     this.connections.clear();
     await this.admin?.stop().catch(() => undefined);
     this.admin = undefined;
@@ -270,9 +289,33 @@ export class ControlPlaneService {
     return [...this.connections.keys()];
   }
 
+  /** Revoke trust and immediately destroy any live protocol socket (AUD-MTLS-03). */
+  revokeWorker(workerNodeId: string, reason: string) {
+    const rec = this.nodes.revoke(workerNodeId, reason);
+    this.disconnectWorker(workerNodeId, `revoked:${reason}`);
+    return rec;
+  }
+
+  disconnectWorker(workerNodeId: string, reason: string): boolean {
+    const socket = this.connections.get(workerNodeId);
+    this.connections.delete(workerNodeId);
+    if (!socket || socket.destroyed) return false;
+    try {
+      socket.write(encodeFrame(envelope("control", "error", { reason: `disconnected:${reason}` })));
+    } catch {
+      /* ignore */
+    }
+    try {
+      socket.destroy();
+    } catch {
+      /* ignore */
+    }
+    return true;
+  }
+
   /**
-   * Live delivery: place → lease → offer → wait ack.
-   * Requires worker socket registered via authenticated protocol connection.
+   * Live delivery: place → lease → offer → ack → (optional) wait result_accepted.
+   * `acked` ≠ `completed`. Set wait_for_result=true for certification path (AUD-DEL-01).
    */
   async deliverTask(input: {
     workflow_id: string;
@@ -282,28 +325,36 @@ export class ControlPlaneService {
     inputs?: Record<string, unknown>;
     ttl_ms?: number;
     offer_timeout_ms?: number;
+    result_timeout_ms?: number;
+    wait_for_result?: boolean;
   }): Promise<{
     decision: PlacementDecision;
     contract?: ExecutionContract;
     lease_id?: string;
-    delivery?: { status: "acked" | "rejected" | "timeout"; ack?: ProtocolEnvelope };
+    delivery?: {
+      status: "acked" | "rejected" | "timeout" | "result_accepted" | "result_rejected" | "result_timeout";
+      ack?: ProtocolEnvelope;
+      result?: ProtocolEnvelope;
+    };
   }> {
     if (!this.server) throw new Error("control_plane_not_serving");
     const placed = this.dispatchTask(input);
     if (!placed.contract || !placed.lease_id) {
       return placed;
     }
-    const workerId = placed.contract.worker_node_id;
+    const contract = placed.contract;
+    const leaseId = placed.lease_id;
+    const workerId = contract.worker_node_id;
     const socket = this.connections.get(workerId);
     if (!socket || socket.destroyed) {
-      this.leases.release(placed.lease_id, workerId);
+      this.leases.release(leaseId, workerId);
       throw new Error(`worker_not_connected:${workerId}`);
     }
     const offer = envelope(
       "task",
       "task.offer",
-      { contract: placed.contract, lease_id: placed.lease_id },
-      { worker_node_id: workerId, correlation_id: placed.contract.contract_id },
+      { contract, lease_id: leaseId },
+      { worker_node_id: workerId, correlation_id: contract.contract_id },
     );
     const timeoutMs = input.offer_timeout_ms ?? 10_000;
     const ackPromise = new Promise<ProtocolEnvelope>((resolve, reject) => {
@@ -313,18 +364,45 @@ export class ControlPlaneService {
       }, timeoutMs);
       this.pendingAcks.set(offer.request_id, { resolve, reject, timer });
     });
+    const waitResult = input.wait_for_result !== false;
+    const resultTimeout = input.result_timeout_ms ?? 30_000;
+    let resultPromise: Promise<ProtocolEnvelope> | undefined;
+    if (waitResult) {
+      resultPromise = new Promise<ProtocolEnvelope>((resolve, reject) => {
+        const timer = setTimeout(() => {
+          this.pendingResults.delete(contract.task_id);
+          reject(new Error("result_timeout"));
+        }, resultTimeout);
+        this.pendingResults.set(contract.task_id, { resolve, reject, timer });
+      });
+    }
     socket.write(encodeFrame(offer));
     try {
       const ack = await ackPromise;
       if (ack.type === "task.reject") {
-        this.leases.release(placed.lease_id, workerId);
+        this.pendingResults.delete(contract.task_id);
+        this.leases.release(leaseId, workerId);
         return { ...placed, delivery: { status: "rejected", ack } };
       }
-      return { ...placed, delivery: { status: "acked", ack } };
+      if (!waitResult || !resultPromise) {
+        return { ...placed, delivery: { status: "acked", ack } };
+      }
+      try {
+        const result = await resultPromise;
+        const status =
+          result.type === "task.result_accepted" ? "result_accepted" : "result_rejected";
+        return { ...placed, delivery: { status, ack, result } };
+      } catch (err) {
+        if (err instanceof Error && err.message === "result_timeout") {
+          return { ...placed, delivery: { status: "result_timeout", ack } };
+        }
+        throw err;
+      }
     } catch (err) {
       this.pendingAcks.delete(offer.request_id);
+      this.pendingResults.delete(contract.task_id);
       if (err instanceof Error && err.message === "offer_timeout") {
-        this.leases.release(placed.lease_id, workerId);
+        this.leases.release(leaseId, workerId);
         return { ...placed, delivery: { status: "timeout" } };
       }
       throw err;

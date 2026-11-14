@@ -136,14 +136,16 @@ describe("V3.7 mTLS identity", () => {
     await expect(client.connect()).rejects.toThrow(/mtls_identity|identity_mismatch|ECONNRESET|error/i);
   });
 
-  it("rejects revoked worker certificates after revoke", async () => {
-    const dir = mkdtempSync(join(tmpdir(), "el-mtls-revoke-"));
+  it("rejects when cert is on app-layer denylist even if session token still valid", async () => {
+    const dir = mkdtempSync(join(tmpdir(), "el-mtls-crl-"));
     dirs.push(dir);
     const cp = new ControlPlaneService(dir);
     cps.push(cp);
     const state = await cp.startServer("127.0.0.1", 0);
     const { workerNodeId, decision, work } = await enrollWorker(cp, dir);
-    cp.nodes.revoke(workerNodeId, "test_revoke");
+    // Cert-only revoke — do NOT mark session revoked (AUD-MTLS-02).
+    const { revokeCertificate } = await import("../../../src/v3/fabric/trust/ca.js");
+    revokeCertificate(dir, workerNodeId, "cert_only_revoke");
     const client = new FabricProtocolClient({
       host: state.listen!.host,
       port: state.listen!.port,
@@ -155,6 +157,31 @@ describe("V3.7 mTLS identity", () => {
       sessionToken: decision.session_token!,
       worker_node_id: workerNodeId,
     });
-    await expect(client.connect()).rejects.toThrow();
+    await expect(client.connect()).rejects.toThrow(/mtls_identity:cert_revoked|cert_revoked|ECONNRESET|error/i);
+  });
+
+  it("destroys live socket on revokeWorker", async () => {
+    const dir = mkdtempSync(join(tmpdir(), "el-mtls-disc-"));
+    dirs.push(dir);
+    const cp = new ControlPlaneService(dir);
+    cps.push(cp);
+    const state = await cp.startServer("127.0.0.1", 0);
+    const { workerNodeId, decision, work } = await enrollWorker(cp, dir);
+    const client = new FabricProtocolClient({
+      host: state.listen!.host,
+      port: state.listen!.port,
+      tls: true,
+      ca: readFileSync(join(work, "ca-cert.pem")),
+      cert: readFileSync(join(work, "client-cert.pem")),
+      key: readFileSync(join(work, "client-key.pem")),
+      rejectUnauthorized: true,
+      sessionToken: decision.session_token!,
+      worker_node_id: workerNodeId,
+    });
+    await client.connect();
+    expect(cp.connectedWorkers()).toContain(workerNodeId);
+    cp.revokeWorker(workerNodeId, "live_disconnect");
+    expect(cp.connectedWorkers()).not.toContain(workerNodeId);
+    client.close();
   });
 });

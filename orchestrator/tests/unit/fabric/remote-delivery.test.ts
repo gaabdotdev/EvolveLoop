@@ -1,5 +1,5 @@
 import { describe, expect, it, afterEach } from "vitest";
-import { mkdtempSync, mkdirSync, rmSync, writeFileSync } from "node:fs";
+import { mkdtempSync, mkdirSync, rmSync, writeFileSync, readFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { randomUUID } from "node:crypto";
@@ -20,12 +20,13 @@ describe("V3.7 remote task delivery", () => {
     for (const d of dirs.splice(0)) rmSync(d, { recursive: true, force: true });
   });
 
-  async function bootPlainWithWorker() {
+  async function bootWithWorker(opts?: { mtls?: boolean }) {
     const dir = mkdtempSync(join(tmpdir(), "el-deliver-"));
     dirs.push(dir);
     const cp = new ControlPlaneService(dir);
     cps.push(cp);
-    const state = await cp.startServer("127.0.0.1", 0, { insecurePlaintext: true });
+    const insecure = opts?.mtls !== true;
+    const state = await cp.startServer("127.0.0.1", 0, insecure ? { insecurePlaintext: true } : undefined);
     const km = generateNodeIdentity();
     const pending = cp.nodes.submitEnrollment({
       kind: "EnrollmentRequest",
@@ -44,18 +45,26 @@ describe("V3.7 remote task delivery", () => {
     const work = join(dir, "workers", pending.worker_node_id!);
     mkdirSync(work, { recursive: true });
     writeFileSync(join(work, "session.token"), decision.session_token!, { mode: 0o600 });
+    if (!insecure) {
+      writeFileSync(join(work, "client-cert.pem"), decision.client_cert_pem!, { mode: 0o600 });
+      writeFileSync(join(work, "client-key.pem"), decision.client_key_pem!, { mode: 0o600 });
+      writeFileSync(join(work, "ca-cert.pem"), decision.ca_cert_pem!);
+    }
     const rt = new WorkerRuntime({
       worker_node_id: pending.worker_node_id!,
       workRoot: work,
       slots: 2,
-      // plaintext delivery unit focuses on offer/ack/result path
       allowHostFallback: true,
       requireOsSandbox: false,
     });
     const client = new FabricProtocolClient({
       host: state.listen!.host,
       port: state.listen!.port,
-      tls: false,
+      tls: !insecure,
+      ca: insecure ? undefined : readFileSync(join(work, "ca-cert.pem")),
+      cert: insecure ? undefined : readFileSync(join(work, "client-cert.pem")),
+      key: insecure ? undefined : readFileSync(join(work, "client-key.pem")),
+      rejectUnauthorized: !insecure,
       sessionToken: decision.session_token!,
       worker_node_id: pending.worker_node_id!,
     });
@@ -69,6 +78,7 @@ describe("V3.7 remote task delivery", () => {
       "health.heartbeat_ack",
     );
     let lastExec: Promise<unknown> = Promise.resolve();
+    let lastError: unknown;
     client.onMessage((msg) => {
       if (msg.type !== "task.offer") return;
       const payload = msg.payload as { contract: any };
@@ -92,7 +102,10 @@ describe("V3.7 remote task delivery", () => {
         const result = await rt.execute(payload.contract, {
           command: [process.execPath, "-e", "console.log('delivered:'+process.env.EL_TASK_ID)"],
         });
-        await client.request(
+        if (result.status !== "completed") {
+          throw new Error(`worker_exec_failed:${result.status}:${result.stdout ?? ""}`);
+        }
+        const reply = await client.request(
           envelope(
             "task",
             "task.result",
@@ -104,8 +117,16 @@ describe("V3.7 remote task delivery", () => {
             },
             { worker_node_id: pending.worker_node_id! },
           ),
+          "task.result_accepted",
+          30_000,
         );
-      })().catch(() => undefined);
+        if (reply.type !== "task.result_accepted") {
+          throw new Error(`unexpected_result_reply:${reply.type}`);
+        }
+      })().catch((err) => {
+        lastError = err;
+        throw err;
+      });
     });
     return {
       cp,
@@ -113,12 +134,15 @@ describe("V3.7 remote task delivery", () => {
       client,
       workerNodeId: pending.worker_node_id!,
       dir,
-      drain: () => lastExec,
+      drain: async () => {
+        await lastExec;
+        if (lastError) throw lastError;
+      },
     };
   }
 
-  it("delivers offer and receives ack from connected worker", async () => {
-    const { cp, workerNodeId, drain, client } = await bootPlainWithWorker();
+  it("delivers offer and awaits result_accepted", async () => {
+    const { cp, workerNodeId, drain, client } = await bootWithWorker();
     expect(cp.connectedWorkers()).toContain(workerNodeId);
     const delivered = await cp.deliverTask({
       workflow_id: `wf_${randomUUID()}`,
@@ -126,15 +150,16 @@ describe("V3.7 remote task delivery", () => {
       required_capabilities: ["git"],
       project_id: "local",
       inputs: { objective: "deliver-unit" },
+      wait_for_result: true,
     });
     expect(delivered.contract).toBeTruthy();
-    expect(delivered.delivery?.status).toBe("acked");
+    expect(delivered.delivery?.status).toBe("result_accepted");
     await drain();
     client.close();
   });
 
-  it("admin IPC deliver reaches live control plane", async () => {
-    const { cp, dir, workerNodeId, drain, client } = await bootPlainWithWorker();
+  it("admin IPC deliver reaches live control plane with result_accepted", async () => {
+    const { cp, dir, workerNodeId, drain, client } = await bootWithWorker();
     expect(cp.connectedWorkers()).toContain(workerNodeId);
     const res = await fabricAdminCall(
       dir,
@@ -145,13 +170,30 @@ describe("V3.7 remote task delivery", () => {
         required_capabilities: ["git"],
         project_id: "local",
         inputs: { objective: "admin-deliver" },
+        wait_for_result: true,
       },
       "fabric.deliver",
       cp.state.epoch,
+      30_000,
     );
     expect(res.ok).toBe(true);
     const body = res.result as { delivery?: { status: string } };
-    expect(body.delivery?.status).toBe("acked");
+    expect(body.delivery?.status).toBe("result_accepted");
+    await drain();
+    client.close();
+  });
+
+  it("completes offer→result under mTLS", async () => {
+    const { cp, workerNodeId, drain, client } = await bootWithWorker({ mtls: true });
+    expect(cp.connectedWorkers()).toContain(workerNodeId);
+    const delivered = await cp.deliverTask({
+      workflow_id: `wf_${randomUUID()}`,
+      task_id: `task_${randomUUID()}`,
+      required_capabilities: ["git"],
+      project_id: "local",
+      wait_for_result: true,
+    });
+    expect(delivered.delivery?.status).toBe("result_accepted");
     await drain();
     client.close();
   });

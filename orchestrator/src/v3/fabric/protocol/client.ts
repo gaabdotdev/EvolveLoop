@@ -68,14 +68,22 @@ export class FabricProtocolClient {
           if (msg.ack_of && this.pending.has(msg.ack_of)) {
             const pend = this.pending.get(msg.ack_of)!;
             this.pending.delete(msg.ack_of);
+            clearTimeout(pend.timer);
             pend.resolve(msg);
           } else if (this.pending.has(msg.request_id)) {
             const pend = this.pending.get(msg.request_id)!;
             this.pending.delete(msg.request_id);
+            clearTimeout(pend.timer);
             pend.resolve(msg);
-          } else if (this.pending.size === 1 && /(_ok|_accepted|_ack)$/.test(msg.type)) {
+          } else if (
+            this.pending.size === 1 &&
+            /(_ok|_accepted)$/.test(msg.type) &&
+            !msg.type.endsWith("_ack")
+          ) {
+            // Narrow loose match: never steal with generic *_ack (e.g. progress_ack).
             const [id, pend] = [...this.pending.entries()][0]!;
             this.pending.delete(id);
+            clearTimeout(pend.timer);
             pend.resolve(msg);
           } else {
             for (const h of this.bufferHandlers) h(msg);
