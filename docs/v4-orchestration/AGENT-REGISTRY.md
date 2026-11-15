@@ -18,7 +18,7 @@
 | A-M00-1b | M00 | Task subagent ADRs | Opus | same | Task `1ee521ac-…` | FAILED — Opus quota |
 | A-M00-2 | M00 | Cursor Task `generalPurpose` | `gpt-5.6-sol-medium` | same | Task `0376e09f-…` | FAILED — model quota |
 | A-M00-3 | M00 | Cursor Task `generalPurpose` | `claude-sonnet-5-5-high` | `/home/gaab/Downloads/EvolveLoop-v4-m00` | Task `ec2e2c6f-…` | FAILED — Sonnet quota |
-| A-M00-4 | M00 | Cursor Task `generalPurpose` | `cursor-grok-4.6-high-fast` | same | Task `768f1aa4-…` | Likely authored `0a88109`–`1dea128` before quota death |
+| A-M00-4 | M00 | Cursor Task `generalPurpose` | `cursor-grok-4.6-high-fast` | same | Task `768f1aa4-8b46-4f79-a744-8b9edd4ec01c` | COMPLETE — authored `0a88109`–`1dea128`; package ACCEPTED |
 | A-M00-5 | M00 | `cursor-agent` CLI | `composer-2.5` | same | killed | STOPPED |
 | A-M00-6 | M00 | Cursor Task `generalPurpose` | `gemini-4-hydrogen-high` | same | Task `532fab4b-…` | FAILED — Gemini quota (after package already on branch) |
 | A-M00-* | M00 | — | — | tip `1dea128` | — | Package ACCEPTED; freeze-review blocked on quota |
