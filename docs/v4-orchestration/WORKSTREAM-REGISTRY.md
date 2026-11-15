@@ -21,7 +21,7 @@ States: `PENDING` | `DISCOVERY` | `CONTRACT_REVIEW` | `READY` | `RUNNING` | `REV
 | M14 | Agent & Runtime Ecosystem | 7 | — | — | — | PENDING | No marketplace |
 | M15 | Control Center, CLI, SDK & APIs | 2→7 | — | — | — | PENDING | CLI early |
 | M16 | Autonomous Engineering & Impossible Handoff | 6 | — | — | — | PENDING | |
-| M17 | Benchmarks & Economic Proof | cross | — | — | — | PENDING | |
+| M17 | Benchmarks & Economic Proof | cross | `feature/v4/m17-benchmarks-early` | `/home/gaab/Downloads/EvolveLoop-v4-m17` | — | **RUNNING** | Wave 4 early |
 | M18 | Security & Adversarial Assurance | cross | `feature/v4/m18-security` | `/home/gaab/Downloads/EvolveLoop-v4-m18` | Task `bd6eecf1-…` | **INTEGRATED** (Wave 1) | Tip `47155ec` → `2fc17c2`; later waves PENDING |
 | M19 | Integration & Release | 8 | `feature/v4-integration` | `/home/gaab/Downloads/EvolveLoop-v4-integration` | Task `09412815-…` | **INTEGRATED** Wave4 | HEAD `0f7f626`; 284/284; M17 next |
 | M20 | Independent Final Audit | 8 | — | — | — | PENDING | Separate context |
