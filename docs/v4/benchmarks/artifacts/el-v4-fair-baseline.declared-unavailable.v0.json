@@ -1,0 +1,159 @@
+{
+  "kind": "FairBaselineArtifact",
+  "schema_version": "0.1.0",
+  "artifact_id": "el-v4-fba-declared-unavailable-v0",
+  "suite_id": "el-v4-fair-baseline",
+  "suite_version": "0.1.0",
+  "workload": {
+    "suite_id": "el-v4-fair-baseline",
+    "suite_version": "0.1.0",
+    "work_category": "software.engineering",
+    "task_kind": "verified_delivery",
+    "comparator_class": "v4_non_adaptive",
+    "cases": [
+      {
+        "case_id": "FBC-SE-01",
+        "description": "Small verified code change against a Goal Contract",
+        "run_status": "DECLARED_NOT_RUN"
+      },
+      {
+        "case_id": "FBC-SE-02",
+        "description": "Same change after a controlled executor kill / handoff",
+        "run_status": "DECLARED_NOT_RUN"
+      },
+      {
+        "case_id": "FBC-SE-03",
+        "description": "Same change with cost ledger including retries and verification",
+        "run_status": "DECLARED_NOT_RUN"
+      }
+    ],
+    "acceptance_criteria": [
+      "Goal Contract criteria are independently evaluated; SELF_REPORTED completion is not verified completion",
+      "Cost includes execution, retries, coordination, verification, recovery, and platform overhead",
+      "Missing measurements are UNAVAILABLE, never OBSERVED",
+      "Case set is frozen for this suite_version"
+    ]
+  },
+  "harness": {
+    "harness_id": "el-v4-bench-harness",
+    "harness_version": "0.1.0",
+    "role": "schema_validator"
+  },
+  "environment": {
+    "class": "local-first",
+    "os": { "value": null, "provenance": "UNAVAILABLE" },
+    "runtime": { "value": null, "provenance": "UNAVAILABLE" },
+    "model_identity": { "value": null, "provenance": "UNAVAILABLE" }
+  },
+  "metrics": [
+    {
+      "metric": "cost_per_verified_result",
+      "status": "DECLARED_UNAVAILABLE",
+      "value": null,
+      "unit": "USD",
+      "provenance": "UNAVAILABLE",
+      "source_refs": ["el-v4-fair-baseline.protocol@0.1.0"],
+      "quality_proof": false,
+      "reason": "canonical suite has not been executed in this cut"
+    },
+    {
+      "metric": "validated_quality",
+      "status": "DECLARED_UNAVAILABLE",
+      "value": null,
+      "unit": "1",
+      "provenance": "UNAVAILABLE",
+      "source_refs": ["el-v4-fair-baseline.protocol@0.1.0"],
+      "quality_proof": false,
+      "reason": "canonical suite has not been executed in this cut"
+    },
+    {
+      "metric": "verified_completion",
+      "status": "DECLARED_UNAVAILABLE",
+      "value": null,
+      "unit": "1",
+      "provenance": "UNAVAILABLE",
+      "source_refs": ["el-v4-fair-baseline.protocol@0.1.0"],
+      "quality_proof": false,
+      "reason": "canonical suite has not been executed in this cut"
+    },
+    {
+      "metric": "success_rate",
+      "status": "DECLARED_UNAVAILABLE",
+      "value": null,
+      "unit": "1",
+      "provenance": "UNAVAILABLE",
+      "source_refs": ["el-v4-fair-baseline.protocol@0.1.0"],
+      "quality_proof": false,
+      "reason": "canonical suite has not been executed in this cut"
+    },
+    {
+      "metric": "recovery_rate",
+      "status": "DECLARED_UNAVAILABLE",
+      "value": null,
+      "unit": "1",
+      "provenance": "UNAVAILABLE",
+      "source_refs": ["el-v4-fair-baseline.protocol@0.1.0"],
+      "quality_proof": false,
+      "reason": "canonical suite has not been executed in this cut"
+    },
+    {
+      "metric": "handoff_success_rate",
+      "status": "DECLARED_UNAVAILABLE",
+      "value": null,
+      "unit": "1",
+      "provenance": "UNAVAILABLE",
+      "source_refs": ["el-v4-fair-baseline.protocol@0.1.0"],
+      "quality_proof": false,
+      "reason": "canonical suite has not been executed in this cut"
+    }
+  ],
+  "cost": {
+    "amount": null,
+    "currency": "USD",
+    "provenance": "UNAVAILABLE",
+    "includes": [
+      "execution",
+      "retries",
+      "coordination",
+      "verification",
+      "recovery",
+      "platform_overhead"
+    ]
+  },
+  "comparison_scope": {
+    "compared": [
+      "same suite_id and suite_version",
+      "same case set",
+      "same work_category and task_kind",
+      "same environment.class",
+      "sample policy declared before the run",
+      "cost inclusion list constitution §13.2"
+    ],
+    "not_compared": [
+      "different work_category or task_kind",
+      "undisclosed model or provider version change",
+      "post-hoc case filtering",
+      "benchmarks/bench-obs mock suite",
+      "V3.7 cert evidence",
+      "PROVIDER_REPORTED treated as CP-observed",
+      "SELF_REPORTED executor scores",
+      "global_score / rank / overall_score",
+      "L2/L3 routing preference by score"
+    ]
+  },
+  "methodology_note": {
+    "m08_methodology_id": "cprof-methodology.provisional.v0",
+    "m08_methodology_version": "0.1.0",
+    "m08_methodology_status": "PROVISIONAL",
+    "this_artifact_stamps_methodology_accepted": false
+  },
+  "production_scores": "ABSENT",
+  "computed_at": "2026-11-15T15:36:00.000Z",
+  "limitations": [
+    "Early Wave 4 cut: protocol and schema only; no workload execution",
+    "No production scores exist; slots are DECLARED_UNAVAILABLE",
+    "M08 methodology remains PROVISIONAL; M17 does not stamp ACCEPTED",
+    "Numeric improvement floors are UNAVAILABLE",
+    "This artifact must not drive L2/L3 routing"
+  ]
+}
