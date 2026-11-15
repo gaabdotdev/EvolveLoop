@@ -2,11 +2,12 @@ import { describe, expect, it } from "vitest";
 import {
   ScoreRoutingForbidden,
   adviseExecutorPreference,
+  assembleProfile,
   metricMayDriveRouting,
   preferExecutorByScore,
   profilesWithoutScoreOrder,
+  sequentialProfileId,
 } from "../../../src/v4/capability/index.js";
-import { assembleProfile, sequentialProfileId } from "../../../src/v4/capability/index.js";
 import { CONTEXT, EXECUTOR_A, EXECUTOR_B, LATER, NOW, observedEstimate } from "./fixtures.js";
 
 function pair() {
