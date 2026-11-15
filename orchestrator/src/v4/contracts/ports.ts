@@ -81,10 +81,15 @@ export interface CapsuleServicePort {
   verify(capsule: ExecutionCapsule, opts: { now: IsoTimestamp; trusted_key_ids: string[] }): Promise<ValidationResult>;
   /**
    * Accept a verified capsule. Implementations MUST:
-   * 1. fail-closed on any verify failure;
-   * 2. re-derive effective grants from current policy (never copy `delegable_grants` as authority);
-   * 3. read Work/Task state from the Event Ledger at `base_checkpoint.event_seq` (never from `task_refs`);
-   * 4. consume anti-replay / single-use token.
+   * 1. fail-closed on any verify failure (verify the *raw* object so nested forbidden
+   *    authority/control fields fail INV-CAP-07 at any depth);
+   * 2. allowlist-parse known fields only (`allowlistParseExecutionCapsule`) — unknown
+   *    keys are dropped and MUST NOT be forwarded to executor context, Policy, or Work State;
+   * 3. re-derive effective grants from current policy (never copy `delegable_grants` as authority);
+   * 4. read Work/Task state from the Event Ledger at `base_checkpoint.event_seq` (never from `task_refs`);
+   * 5. consume anti-replay / single-use token.
+   *
+   * `seal` MUST emit only allowlisted fields (never copy caller extras into the sealed body).
    */
   accept(
     capsule: ExecutionCapsule,

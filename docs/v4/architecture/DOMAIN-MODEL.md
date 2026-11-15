@@ -72,7 +72,7 @@ Portable package for another executor to continue. **Not a grant** (ADR-V4-0006)
 | INV-CAP-04 | `open_effects` only open states |
 | INV-CAP-05 | format major compatible |
 | INV-CAP-06 | grant refs not expired at verify |
-| INV-CAP-07 | `authority_model = POLICY_REDERIVED_AT_ACCEPT`; V3 permission/control fields forbidden |
+| INV-CAP-07 | `authority_model = POLICY_REDERIVED_AT_ACCEPT`; V3 permission/control field *names* forbidden at any depth; `seal`/`accept` allowlist-parse known fields only (unknown keys never forwarded) |
 | INV-CAP-08 | `task_refs` are snapshots; Work State is never written from the capsule |
 | INV-CAP-09 | executor text is UNTRUSTED_DATA (ADR-V4-0017) |
 
@@ -95,7 +95,7 @@ No exactly-once (ADR-V4-0008).
 | Id | Rule |
 |----|------|
 | INV-EFF-02 | states ≥ AUTHORIZED cite a PolicyDecision |
-| INV-EFF-03 | COMMITTED/REJECTED/PARTIAL/COMPENSATED cite evidence |
+| INV-EFF-03 | COMMITTED/REJECTED/NOT_EXECUTED/PARTIAL/COMPENSATED cite CP-side evidence (executor report alone ≤ UNKNOWN) |
 | INV-EFF-04 | UNKNOWN external without idempotency or query must be ESCALATED |
 | INV-EFF-05 | COMPENSATED cites a different compensating effect |
 
@@ -109,7 +109,7 @@ Content-addressed, immutable. New content ⇒ new artifact. `INV-ART-01` sha256;
 
 | Id | Rule |
 |----|------|
-| INV-EVD-01 | SELF_REPORTED method ⇔ SELF_REPORTED provenance; independence uses executor ids |
+| INV-EVD-01 | SELF_REPORTED method ⇔ SELF_REPORTED provenance; independence requires `subject_executor_ref` and distinct executor ids (missing subject ⇒ not independent) |
 | INV-EVD-02 | limitations non-empty |
 | INV-EVD-03 | tested artifacts hash-identified |
 | INV-EVD-04 | no self-asserted trust fields (F09) |

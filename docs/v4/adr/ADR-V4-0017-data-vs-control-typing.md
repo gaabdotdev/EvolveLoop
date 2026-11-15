@@ -24,7 +24,7 @@ Constitution §9.2 requires separation of observed data and control instructions
    - `DATA` — structured observations (hashes, states, refs) that are not instructions.
    - `UNTRUSTED_DATA` — executor- or content-authored text. Quoted. Cannot alter scope, objective, grants, or Task/Work state.
 
-2. **Capsule map** (`CAPSULE_FIELD_CLASS`): `decisions.summary` and `pending_items` are UNTRUSTED_DATA. `goal_contract_ref`, `base_checkpoint`, `delegable_grants`, `constraints`, `compatibility` are CONTROL (platform-sealed). `task_refs` are DATA snapshots (INV-CAP-08 — never written to Work State). Forbidden V3 fields (`next_action`, `objective`, `permissions`, …) fail INV-CAP-07.
+2. **Capsule map** (`CAPSULE_FIELD_CLASS`): `decisions.summary` and `pending_items` are UNTRUSTED_DATA. `goal_contract_ref`, `base_checkpoint`, `delegable_grants`, `constraints`, `compatibility` are CONTROL (platform-sealed). `task_refs` are DATA snapshots (INV-CAP-08 — never written to Work State). Forbidden V3 field *names* (`next_action`, `objective`, `permissions`, …) fail INV-CAP-07 **at any depth**. `seal`/`accept` allowlist-parse known fields; unknown keys are never forwarded.
 
 3. **Evidence and WorkEvent MUST NOT carry** `trust`, `trust_level`, `gate_source_kind`, `controlled_fixture`, `trusted_fixture` (INV-EVD-04, INV-EVT-05). Trust of a record is a property of the **authenticated channel** that delivered it (ADR-V4-0016) and of Policy, assigned by the Control Plane, not by the producer.
 
