@@ -11,8 +11,8 @@ States: `PENDING` | `DISCOVERY` | `CONTRACT_REVIEW` | `READY` | `RUNNING` | `REV
 | M04 | Capsule, Handoff & Recovery | 3 | `feature/v4/m04-continuity` | `/home/gaab/Downloads/EvolveLoop-v4-m04` | Task `b79ded28-…` | **INTEGRATED** | tip `14aa02b` → `26831b0` |
 | M05 | Time Travel, Replay & Fork | 3 | `feature/v4/m05-timetravel` | `/home/gaab/Downloads/EvolveLoop-v4-m05` | Task `85d22360-…` | **INTEGRATED** | tip `b27b2cb` → `33229c5` |
 | M06 | WorkProof & Independent Verifier | 2→6 | `feature/v4/m06-workproof-min` | `/home/gaab/Downloads/EvolveLoop-v4-m06` | — | **INTEGRATED** | tip `2728695` → `8c801ae` |
-| M07 | Dynamic Planning Engine | 4 | `feature/v4/m07-planning` | `/home/gaab/Downloads/EvolveLoop-v4-m07` | Task `53020ad6-…` | **ACCEPTED** | tip `0e9b581`; 254/254 |
-| M08 | Capability Intelligence | 4 | `feature/v4/m08-capability` | `/home/gaab/Downloads/EvolveLoop-v4-m08` | Task `1ccdd7c6-…` | **ACCEPTED** | tip `13fac49`; 266/266 |
+| M07 | Dynamic Planning Engine | 4 | `feature/v4/m07-planning` | `/home/gaab/Downloads/EvolveLoop-v4-m07` | Task `53020ad6-…` | **INTEGRATED** | tip `0e9b581` → `cfead01` |
+| M08 | Capability Intelligence | 4 | `feature/v4/m08-capability` | `/home/gaab/Downloads/EvolveLoop-v4-m08` | Task `1ccdd7c6-…` | **INTEGRATED** | tip `13fac49` → `07bd808`; methodology PROVISIONAL |
 | M09 | Adaptive Execution Intelligence | 4 | — | — | — | PENDING | |
 | M10 | Policy Engine, Trust & Governance | 2→5 | `feature/v4/m10-policy-foundations` | `/home/gaab/Downloads/EvolveLoop-v4-m10` | — | **INTEGRATED** | tip `78fa4bc` → `32ec793` |
 | M11 | Trust & Provenance Graph | 5 | — | — | — | PENDING | |
@@ -23,7 +23,7 @@ States: `PENDING` | `DISCOVERY` | `CONTRACT_REVIEW` | `READY` | `RUNNING` | `REV
 | M16 | Autonomous Engineering & Impossible Handoff | 6 | — | — | — | PENDING | |
 | M17 | Benchmarks & Economic Proof | cross | — | — | — | PENDING | |
 | M18 | Security & Adversarial Assurance | cross | `feature/v4/m18-security` | `/home/gaab/Downloads/EvolveLoop-v4-m18` | Task `bd6eecf1-…` | **INTEGRATED** (Wave 1) | Tip `47155ec` → `2fc17c2`; later waves PENDING |
-| M19 | Integration & Release | 8 | `feature/v4-integration` | `/home/gaab/Downloads/EvolveLoop-v4-integration` | Task `dd8b3b45-…` | **INTEGRATED** Wave3 | HEAD `3da3af5`; 234/234; Continuity gate next |
+| M19 | Integration & Release | 8 | `feature/v4-integration` | `/home/gaab/Downloads/EvolveLoop-v4-integration` | Task `09412815-…` | **INTEGRATED** Wave4 | HEAD `0f7f626`; 284/284; M17 next |
 | M20 | Independent Final Audit | 8 | — | — | — | PENDING | Separate context |
 
 ## Ownership roots (initial — M00 must refine)

@@ -34,7 +34,7 @@
 | A-M19-5 | M19 Continuity vertical gate | Cursor Task | `cursor-grok-4.6-high-fast` | `/home/gaab/Downloads/EvolveLoop-v4-integration` | Task `27547ced-35e8-4c0d-9ccc-a7e2e317f77f` | COMPLETE — ACCEPTED @ `81abcbd`; 236/236 |
 | A-M07-1 | M07 Dynamic Planning | Cursor Task | `cursor-grok-4.6-high-fast` | `/home/gaab/Downloads/EvolveLoop-v4-m07` | Task `53020ad6-71ce-44bb-bbd4-98b5f1183b38` | COMPLETE — ACCEPTED @ `0e9b581` |
 | A-M08-1 | M08 Capability Intelligence | Cursor Task | `cursor-grok-4.6-high-fast` | `/home/gaab/Downloads/EvolveLoop-v4-m08` | Task `1ccdd7c6-8f00-47c7-9174-581f570f0890` | COMPLETE — ACCEPTED @ `13fac49` |
-| A-M19-6 | M19 Wave4 integrate M07/M08 | Cursor Task | `cursor-grok-4.6-high-fast` | `/home/gaab/Downloads/EvolveLoop-v4-integration` | Task `09412815-2697-4f6d-92e9-93b1cc733534` | RUNNING — Wave 4 merge |
+| A-M19-6 | M19 Wave4 integrate M07/M08 | Cursor Task | `cursor-grok-4.6-high-fast` | `/home/gaab/Downloads/EvolveLoop-v4-integration` | Task `09412815-2697-4f6d-92e9-93b1cc733534` | COMPLETE — INTEGRATED @ `0f7f626`; 284/284 |
 | A-M18-1 | M18 | Cursor Task `generalPurpose` | `claude-opus-5-5-medium` | `/home/gaab/Downloads/EvolveLoop-v4-m18` | Task `bd6eecf1-9665-452f-ad08-55df9e01de55` | COMPLETE — Wave 1 ACCEPTED by orchestrator |
 
 ### Runtime notes

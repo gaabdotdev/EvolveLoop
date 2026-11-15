@@ -5,11 +5,12 @@
 
 | Meta | Focus | Status | Notes |
 |------|-------|--------|-------|
-| M07 | Dynamic Planning Engine | **ACCEPTED** | tip `0e9b581`; 18/18 + 254/254 |
-| M08 | Capability Intelligence | **ACCEPTED** | tip `13fac49`; 30/30 + 266/266 |
+| M07 | Dynamic Planning Engine | **INTEGRATED** | merge `cfead01` |
+| M08 | Capability Intelligence | **INTEGRATED** | merge `07bd808`; methodology PROVISIONAL |
 | M09 | Adaptive Execution Intelligence | BLOCKED | depends M08 + M17 provenance |
 | M12-pred | Observability predictive | PENDING | after M07/M08 land |
-| M17 | Benchmarks & Economic Proof (early) | PENDING | fair baseline for M09 |
+| M19 | Wave 4 first-cut integrate | **INTEGRATED** | HEAD `0f7f626`; 284/284 |
+| M17 | Benchmarks & Economic Proof (early) | **NEXT** | unblocks M09 + methodology ACCEPTED path |
 
 ## Hard edges (DEPENDENCY-GRAPH)
 

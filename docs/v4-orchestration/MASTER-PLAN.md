@@ -1,6 +1,6 @@
 # EvolveLoop V4 — Master Plan (Orchestrator)
 
-**Status:** Phase 3 (V4.1 Continuity) **COMPLETE** — Continuity vertical **ACCEPTED** (`81abcbd`, 236/236); Phase 4 READY  
+**Status:** Phase 4 (V4.2) first-cut **INTEGRATED** — M07/M08 @ `0f7f626` (284/284); M17 early next (M09 blocked)  
 **Provisional baseline:** `03937c175368715e893193fcfad09aac8474286b` (`recovery/v37-full-cert` tip; V3.7 **BLOCKED** on G17)  
 **Integration branch:** `feature/v4-integration`  
 **Thesis:** Work belongs to the system — not the agent, model, provider, or host.
