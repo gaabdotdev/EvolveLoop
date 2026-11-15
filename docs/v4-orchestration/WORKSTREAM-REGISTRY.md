@@ -5,18 +5,18 @@ States: `PENDING` | `DISCOVERY` | `CONTRACT_REVIEW` | `READY` | `RUNNING` | `REV
 | Meta | Name | Phase | Branch | Worktree | Owner runtime | Status | Notes |
 |------|------|-------|--------|----------|---------------|--------|-------|
 | M00 | Architecture & Domain Contracts | 1 | `feature/v4/m00-architecture` | `/home/gaab/Downloads/EvolveLoop-v4-m00` | Grok `768f1aa4-…` | **INTEGRATED** | tip `1dea128` → integration `e44252f`; freeze pending |
-| M01 | Goal Compiler & Work State | 2 | — | — | — | PENDING | After M00 freeze |
-| M02 | Event Ledger, Persistence & Checkpoints | 2 | — | — | — | PENDING | |
-| M03 | Effect Ledger | 2→3 | — | — | — | PENDING | |
+| M01 | Goal Compiler & Work State | 2 | `feature/v4/m01-goal-work` | `/home/gaab/Downloads/EvolveLoop-v4-m01` | — | READY | Awaiting CONTRACT-FREEZE |
+| M02 | Event Ledger, Persistence & Checkpoints | 2 | `feature/v4/m02-ledger-checkpoints` | `/home/gaab/Downloads/EvolveLoop-v4-m02` | — | READY | Awaiting CONTRACT-FREEZE |
+| M03 | Effect Ledger | 2→3 | `feature/v4/m03-effect-ledger` | `/home/gaab/Downloads/EvolveLoop-v4-m03` | — | READY | Awaiting CONTRACT-FREEZE |
 | M04 | Capsule, Handoff & Recovery | 3 | — | — | — | PENDING | |
 | M05 | Time Travel, Replay & Fork | 3 | — | — | — | PENDING | |
-| M06 | WorkProof & Independent Verifier | 2→6 | — | — | — | PENDING | Min in V4.0 |
+| M06 | WorkProof & Independent Verifier | 2→6 | `feature/v4/m06-workproof-min` | `/home/gaab/Downloads/EvolveLoop-v4-m06` | — | READY | Awaiting CONTRACT-FREEZE |
 | M07 | Dynamic Planning Engine | 4 | — | — | — | PENDING | |
 | M08 | Capability Intelligence | 4 | — | — | — | PENDING | |
 | M09 | Adaptive Execution Intelligence | 4 | — | — | — | PENDING | |
-| M10 | Policy Engine, Trust & Governance | 2→5 | — | — | — | PENDING | Foundations early |
+| M10 | Policy Engine, Trust & Governance | 2→5 | `feature/v4/m10-policy-foundations` | `/home/gaab/Downloads/EvolveLoop-v4-m10` | — | READY | Awaiting CONTRACT-FREEZE |
 | M11 | Trust & Provenance Graph | 5 | — | — | — | PENDING | |
-| M12 | Predictive Observability & CE | 2→7 | — | — | — | PENDING | |
+| M12 | Predictive Observability & CE | 2→7 | `feature/v4/m12-obs-init` | `/home/gaab/Downloads/EvolveLoop-v4-m12` | — | READY | Awaiting CONTRACT-FREEZE |
 | M13 | Elastic Compute Fabric | 7 | — | — | — | PENDING | |
 | M14 | Agent & Runtime Ecosystem | 7 | — | — | — | PENDING | No marketplace |
 | M15 | Control Center, CLI, SDK & APIs | 2→7 | — | — | — | PENDING | CLI early |
