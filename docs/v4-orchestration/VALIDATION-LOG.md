@@ -28,6 +28,7 @@
 | 2026-11-15T15:44Z | M17 Benchmarks early | **ACCEPTED** | tip `69d15ce` (harness `add40aa`); ownership `docs/v4/benchmarks/**` + `benchmarks/**`; vitest **22/22** + full **306/306** | Soft gap: uncommitted pin line in DELIVERY; methodology still PROVISIONAL — M09 stays blocked for score routing |
 | 2026-11-15T15:46Z | M19 integrate M17 | **ACCEPTED / INTEGRATED** | merge `0daf462`; HEAD `04ed782`; orch recheck **306/306** | Phase 4 exit still blocked (no observed baseline run) |
 | 2026-11-15T15:50Z | Phase 4 exit gate | **PARTIAL** | `PHASE4-EXIT.md`; M07/M08/M17 INTEGRATED; no observed metrics; methodology PROVISIONAL | Wave 5 M11 launched; M09 remains BLOCKED |
+| 2026-11-15T15:52Z | Wave 5 M11 launch | RUNNING | worktree `EvolveLoop-v4-m11` @ `89b3c89`; Task `7dace8cc-f5a4-4a81-aa6e-020e55d8af76` | awaiting DELIVERED |
 
 Validation outcomes for metas: `ACCEPTED` | `REWORK` | `BLOCKED` | `REJECTED` only.
 
