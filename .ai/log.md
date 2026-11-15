@@ -27,3 +27,12 @@
 - V3.4: EngineeringLoopService + harness matrix; unit 2/2 + E2E 1/1; evidence docs/v3/evidence/gate.v34-engineering.json; ADR-0009
 - TRUE_FULL_PASS only via evaluator; harness dry-run not SUPPORTED
 - 2026-11-11T19:36:19-03:00 V3_COMPLETE
+
+## 2026-11-15T14:12:00Z — V4 M10 policy foundations (Wave 2)
+
+- Deny-by-default `PolicyDecisionPort` in `orchestrator/src/v4/policy/**`.
+- L0–L3 contextual (work ∩ ceiling); F02 adapter has no CLI store fallback; grants expire/revoke/CAS.
+- R4/R8/R13/R14 honoured without editing frozen M00 contracts.
+- Tests: `npx vitest run tests/v4/policy tests/v4/contracts tests/v4/conformance` → 63 passed.
+- Wiki: GAP (`WIKI_ROOT` unset). Delivery: `docs/v4/policy/M10-WAVE2-DELIVERY.md`.
+- No merge, no npm install, no V3.7 cert edits.
