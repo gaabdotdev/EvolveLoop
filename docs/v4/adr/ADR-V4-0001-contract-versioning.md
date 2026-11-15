@@ -17,7 +17,7 @@ Shared V4 contracts must evolve without silent breakage. Constitution examples a
 1. Every persisted/transferred object carries `kind` + `schema_version` (semver).
 2. **Catalog** `CONTRACT_CATALOG` (v1.0.0) is the registry: kind → version, producer meta, stability, validator.
 3. Stability: `PROPOSED` (this wave) → `FROZEN` after orchestrator ACCEPTED + independent architecture review → `DEPRECATED` with a successor.
-4. Compatibility: same **major** is readable (`isReadableVersion`). Minors add optional fields only. Readers **must ignore** unknown optional fields. Incompatible changes = major bump **or** new `type_version` on events.
+4. Compatibility: same **major** is readable (`isReadableVersion`). Minors add optional fields only. Readers **must ignore** unknown optional fields for *readability* (do not fail the schema solely because a newer minor added a key). Ignoring is **not** forwarding: unknown keys MUST NOT become authority, control instructions, or executor context. ExecutionCapsule `seal`/`accept` MUST allowlist-parse known fields (ADR-V4-0006, INV-CAP-07). Incompatible changes = major bump **or** new `type_version` on events.
 5. Adding a contract kind or event type = catalog minor. Removing a kind = major + deprecation ADR.
 6. After freeze, semantic changes require an RFC that names the ADR it supersedes. Experimental events use `x.<meta>.<name>` and are non-authoritative.
 

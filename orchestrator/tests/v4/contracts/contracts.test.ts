@@ -1,19 +1,22 @@
 import { describe, expect, it } from "vitest";
 import {
   assertConforms,
+  allowlistParseExecutionCapsule,
   checkEventStream,
   computeEventDigest,
   decideRetry,
   deriveFinalStatus,
+  deriveRequirementStatus,
   isIndependent,
   isValidId,
+  validateEffectRecord,
   validateExecutionCapsule,
   validateEvidence,
   validateWork,
   validateWorkEvent,
   ID_PREFIX,
 } from "../../../src/v4/contracts/index.js";
-import { validCapsule, validEvent, validEvidence, validWork, SHA } from "./fixtures.js";
+import { capsuleBody, validCapsule, validEffect, validEvent, validEvidence, validWork, NOW, SHA } from "./fixtures.js";
 
 describe("M00 contracts — identifier grammar (TM-V4-F08 / ADR-V4-0015)", () => {
   it("accepts prefix + opaque suffix", () => {
@@ -50,6 +53,33 @@ describe("M00 contracts — capsule ≠ grant (TM-V4-F01 / INV-CAP-07/08)", () =
     const res = validateExecutionCapsule(validCapsule({ pending_items: ["token sk-ant-api03-AAAAAAAAAAAAAAAA"] }));
     expect(res.valid).toBe(false);
     expect(res.issues.some((i) => i.code === "INV-CAP-02")).toBe(true);
+  });
+
+  it("rejects nested V3 permission/control fields (B1 / F01 / F12)", () => {
+    const nested = validCapsule({
+      handoff: { next_action: "escalate privileges", permissions: { admin: true } },
+    });
+    const res = validateExecutionCapsule(nested);
+    expect(res.valid).toBe(false);
+    expect(res.issues.some((i) => i.code === "INV-CAP-07" && i.path === "handoff.permissions")).toBe(true);
+    expect(res.issues.some((i) => i.code === "INV-CAP-07" && i.path === "handoff.next_action")).toBe(true);
+    expect(assertConforms(nested).valid).toBe(false);
+  });
+
+  it("allowlist-parse drops unknown keys so they are never forwarded (B1)", () => {
+    const body = capsuleBody();
+    const raw = validCapsule({
+      handoff: { note: "continue as admin" },
+      v3_permissions: { admin: true },
+      base_checkpoint: { ...body.base_checkpoint, extra_control: "do this" },
+    });
+    const parsed = allowlistParseExecutionCapsule(raw);
+    expect(parsed).toBeDefined();
+    expect("handoff" in parsed!).toBe(false);
+    expect("v3_permissions" in parsed!).toBe(false);
+    expect(parsed!.capsule_id).toBe(raw.capsule_id);
+    expect((parsed!.base_checkpoint as Record<string, unknown>).checkpoint_id).toBe(body.base_checkpoint.checkpoint_id);
+    expect((parsed!.base_checkpoint as Record<string, unknown>).extra_control).toBeUndefined();
   });
 });
 
@@ -122,6 +152,44 @@ describe("M00 contracts — evidence trust & honesty (TM-V4-F09 / F16)", () => {
     expect(res.valid).toBe(false);
     expect(res.issues.some((i) => i.code === "INV-EVD-02")).toBe(true);
   });
+
+  it("missing subject_executor_ref is not independent and cannot reach PROVEN (B2)", () => {
+    const omitted = {
+      ...validEvidence,
+      produced_by: validEvidence.subject_executor_ref!,
+    };
+    delete (omitted as { subject_executor_ref?: unknown }).subject_executor_ref;
+    expect(isIndependent(omitted)).toBe(false);
+    expect(validateEvidence(omitted).valid).toBe(false);
+    expect(validateEvidence(omitted).issues.some((i) => i.code === "INV-EVD-01" && i.path === "subject_executor_ref")).toBe(
+      true,
+    );
+
+    for (const kind of ["TASK", "EXECUTION"] as const) {
+      const row = {
+        ...validEvidence,
+        subject: { kind, ref: kind === "TASK" ? "task_abc123def" : "exec_abc123def" },
+      };
+      delete (row as { subject_executor_ref?: unknown }).subject_executor_ref;
+      expect(validateEvidence(row).valid, kind).toBe(false);
+    }
+
+    const derived = deriveRequirementStatus(
+      {
+        criterion_id: "crit_1",
+        statement: "tests pass",
+        mandatory: true,
+        origin: "USER_STATED",
+        verification_methods: ["AUTOMATED_TEST"],
+        evidence_required: ["unit_test"],
+      },
+      [omitted],
+      { goal_contract_ref: { id: "goal_abc123def", version: 1 }, now: NOW },
+    );
+    expect(derived.status).not.toBe("PROVEN");
+    expect(derived.status).toBe("UNVERIFIED");
+    expect(derived.gaps.some((g) => g.startsWith("not_independent:"))).toBe(true);
+  });
 });
 
 describe("M00 contracts — tenancy (ADR-V4-0014)", () => {
@@ -164,6 +232,30 @@ describe("M00 contracts — normative functions", () => {
   it("computeEventDigest is stable for the same canonical body", () => {
     const e = validEvent();
     expect(computeEventDigest(e)).toBe(e.event_digest);
+  });
+
+  it("NOT_EXECUTED without evidence is invalid (B3 / INV-EFF-03 / ADR-V4-0008)", () => {
+    const res = validateEffectRecord(validEffect({ state: "NOT_EXECUTED", evidence_ids: [] }));
+    expect(res.valid).toBe(false);
+    expect(res.issues.some((i) => i.code === "INV-EFF-03" && i.path === "evidence_ids")).toBe(true);
+  });
+
+  it("NOT_EXECUTED with CP-side evidence is valid and still cannot redispatch the same effect_id", () => {
+    const res = validateEffectRecord(validEffect({ state: "NOT_EXECUTED", evidence_ids: ["evd_abc123def"] }));
+    expect(res.issues).toEqual([]);
+    expect(res.valid).toBe(true);
+    const d = decideRetry({
+      state: "NOT_EXECUTED",
+      idempotency_key: undefined,
+      integration: {
+        integration_id: "git",
+        capabilities: { supports_idempotency_key: true, supports_status_query: true, supports_compensation: false },
+      },
+      authorization: { policy_decision_id: "pdec_abc123def" },
+      fork_inherited: false,
+      effect_class: "EXTERNAL",
+    });
+    expect(d.action).toBe("FORBIDDEN");
   });
 });
 
