@@ -9,7 +9,13 @@
 | 2026-11-15T13:54Z | M00 contract freeze | **REWORK** | Review `e1b6764` **FREEZE_REJECTED** B1–B3 | Wave 2 blocked |
 | 2026-11-15T14:00Z | M00 freeze rework B1–B3 | **ACCEPTED** (rework scope) | `af118a0`/`842c4c6`; vitest **28/28** | — |
 | 2026-11-15T14:03Z | M00 freeze re-review #2 | **ACCEPTED** | `a78321e` FREEZE_APPROVED_WITH_RESERVATIONS; stamp `e4fb8ad`/`4fbadf8` | R1–R16 binding |
-| 2026-11-15T14:09Z | M19 merge CONTRACT-FREEZE | **ACCEPTED** | merge `061dbd4`; HEAD `3b78241`; vitest **28/28**; ancestor `4fbadf8`; cert untouched | Wave 2 implementers RUNNING |
+| 2026-11-15T14:09Z | M19 merge CONTRACT-FREEZE | **ACCEPTED** | merge `061dbd4`; HEAD `3b78241`; vitest **28/28** | — |
+| 2026-11-15T14:14Z | M03 Effect Ledger | **ACCEPTED** | `91dbdf3`; ownership `effects/**` only; vitest **54/54** | Soft gap: no M03-DELIVERY.md |
+| 2026-11-15T14:14Z | M10 Policy foundations | **ACCEPTED** | `00e03df`+`78fa4bc`; vitest **63/63**; F02/R13/R14/R15-related foundations | Local types for Grant/Approval (R8) |
+| 2026-11-15T14:14Z | M12 Observability init | **ACCEPTED** | `4491d82`+`72c5f5b`; vitest **59/59**; R15 defaults | MP wrap only |
+| 2026-11-15T14:16Z | M01 Goal/Work | **ACCEPTED** | `8d14e2b`+`f72ad76`; ownership `goal/**`+`work/**`; vitest **44/44** | Isolated buffer ≠ M02 ledger |
+| 2026-11-15T14:16Z | M06 WorkProof-min | **ACCEPTED** | `3dd5463`+`2728695`; ownership `proof/**`; vitest **54/54** | Honesty/independence guards |
+| 2026-11-15T14:17Z | M02 Ledger/Checkpoints | **ACCEPTED** | `9291d24`+`374769d`; ownership ledger/checkpoint/artifacts/+`adapters/v37/ledger.ts`; vitest **66/66** | Watch merge conflict `adapters/v37/index.ts` vs M10 |
 
 Validation outcomes for metas: `ACCEPTED` | `REWORK` | `BLOCKED` | `REJECTED` only.
 
