@@ -55,3 +55,38 @@ Full findings from that review remain historically valid as the reason APPROVED 
 ### Auditor summary (abridged)
 
 Most CRITICAL/HIGH code fixes from the historical audit are real at `ac13116`. Mid-flight cancel is substantially implemented. G17 remains externally blocked. Unit/integration green does **not** make V3.7 APPROVED. Do not promote.
+
+---
+
+## Audit C (final closure review)
+
+**AUDIT_ID:** `0999f8bc-4686-43bd-8598-2baabd9302d2`  
+**Auditor:** Independent read-only (agent `b4cd5d7e-1b50-4190-b789-6a3f7b7d97a0`)  
+**AUDITED_COMMIT:** `8a09d22b57a8777aacee3c5af9b62b07d66b3bf0` (cancel code `ff78d45`)  
+**DATE_UTC:** 2026-11-15T12:26:40Z  
+**VERDICT:** `ACCEPT_WITH_RESERVATIONS`  
+**GLOBAL_CERT_RECOMMENDATION:** `BLOCKED`
+
+### Reservations tracking (Audit C)
+
+| ID | Status | Notes |
+|----|--------|-------|
+| AUD-V37B-05 | **RESOLVED** | Protocol cancel E2E 7/7 reproduced by auditor |
+| AUD-V37B-05-SOFT | ACCEPTED_LIMIT | Soft edges on scenarios 1/9 / near-completion race |
+| AUD-V37C-01 | FIXED in packaging follow-up | Executive/summary/checksums sync |
+| AUD-V37B-06 SEC-H02 | ACCEPTED_BOUNDARY | ADR-0003 |
+| G17 | **OPEN / BLOCKED** | Second host offline |
+| HIST-REJECT | Historical | Preserved |
+
+### Claim validation (Audit C)
+
+| Claim | Result |
+|-------|--------|
+| 1 Cancel protocol E2E | VALID |
+| 2 Integration skip optional | VALID |
+| 3 Suite counts 499/62+1/64 | VALID (reproduced); packaging refreshed |
+| 4 SEC-H02 honesty | VALID |
+| 5 G17 still BLOCKED | VALID |
+| 6 Prior CRITICAL/HIGH holds | VALID |
+
+**APPROVED illegitimate until G17 PASS + fresh audit.**

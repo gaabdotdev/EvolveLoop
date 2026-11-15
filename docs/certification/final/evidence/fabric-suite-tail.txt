@@ -1,0 +1,58 @@
+
+ RUN  v2.1.9 /home/gaab/Downloads/EvolveLoop-v37-cert/orchestrator
+
+ ✓ tests/unit/fabric/worker-sandbox.test.ts (4 tests) 110ms
+ ✓ tests/unit/sec-h02-trust-boundary.test.ts (3 tests) 19ms
+ ✓ tests/unit/sec-h02-ipc-privileged.test.ts (3 tests) 26ms
+ ✓ tests/unit/fabric/protocol-roundtrip.test.ts (2 tests) 28ms
+ ✓ tests/unit/fabric/tls-materials.test.ts (1 test) 122ms
+ ✓ tests/unit/fabric/protocol-flow.test.ts (3 tests) 1265ms
+   ✓ V3.7 protocol flow > full flow 1247ms
+ ✓ tests/unit/fabric/fleet-report.test.ts (1 test) 1734ms
+   ✓ Gate O fleet-report correlation > emits fabric correlation fields into Measurement Plane events 1733ms
+ ✓ tests/unit/fabric/cancel-midflight.test.ts (7 tests) 3210ms
+   ✓ V3.7 cancel mid-flight > escalates to SIGKILL when process ignores SIGTERM 406ms
+   ✓ V3.7 cancel mid-flight > honors cancel force timeout (grace then kill) within force_after_ms bound 339ms
+   ✓ V3.7 cancel mid-flight > cancels while worker is disconnected: lease revoked, cancel_pushed false, late commit fenced 1195ms
+   ✓ V3.7 cancel mid-flight > rejects late result commit after lease revoke/cancel at control plane 994ms
+ ✓ tests/unit/fabric/adversarial.test.ts (7 tests) 4176ms
+   ✓ V3.7 adversarial > revoked node cannot authorize new leases via dispatch selection 2162ms
+   ✓ V3.7 adversarial > duplicate result after revoke is fenced 1086ms
+   ✓ V3.7 adversarial > replayed session after revoke fails verifyWorkerSession 857ms
+ ✓ tests/unit/fabric/remote-delivery.test.ts (4 tests) 7066ms
+   ✓ V3.7 remote task delivery > delivers offer and awaits result_accepted 2197ms
+   ✓ V3.7 remote task delivery > admin IPC deliver reaches live control plane with result_accepted 1918ms
+   ✓ V3.7 remote task delivery > completes offer→result under mTLS 1972ms
+   ✓ V3.7 remote task delivery > fails deliver when worker is not connected 978ms
+ ✓ tests/unit/fabric/mtls.test.ts (6 tests) 7599ms
+   ✓ V3.7 mTLS identity > accepts enrolled worker over mTLS with matching client cert 1370ms
+   ✓ V3.7 mTLS identity > rejects connection without client certificate 1084ms
+   ✓ V3.7 mTLS identity > rejects foreign CA client certificate 1288ms
+   ✓ V3.7 mTLS identity > rejects identity mismatch between cert CN and session worker 1897ms
+   ✓ V3.7 mTLS identity > rejects when cert is on app-layer denylist even if session token still valid 948ms
+   ✓ V3.7 mTLS identity > destroys live socket on revokeWorker 1010ms
+ ✓ tests/unit/fabric/fabric-core.test.ts (16 tests) 12562ms
+   ✓ V3.7 fabric core > enrollment starts untrusted and authorize issues session 1219ms
+   ✓ V3.7 fabric core > rejects incomplete enrollment 904ms
+   ✓ V3.7 fabric core > revoke blocks heartbeat and new trust 1785ms
+   ✓ V3.7 fabric core > hard constraints beat soft ranking; stale inventory rejected 980ms
+   ✓ V3.7 fabric core > placement selects trusted node with fresh inventory 1597ms
+   ✓ V3.7 fabric core > pools membership by selectors 1711ms
+   ✓ V3.7 fabric core > leases fencing rejects stale epoch and double booking 919ms
+   ✓ V3.7 fabric core > artifact hash verify and cross-project deny 798ms
+   ✓ V3.7 fabric core > worker runtime validates contract hash and executes 929ms
+   ✓ V3.7 fabric core > work stealing requires eligibility and issues new fencing 1650ms
+ ✓ tests/unit/fabric/cancel-protocol-e2e.test.ts (7 tests) 13781ms
+   ✓ V3.7 cancel protocol E2E (AUD-V37B-05) > 1: cancel before start yields cancelled and fenced lease 2191ms
+   ✓ V3.7 cancel protocol E2E (AUD-V37B-05) > 2+5+7+8: cancel mid-flight over protocol kills PID, TERM→KILL path, late commit fenced 2213ms
+   ✓ V3.7 cancel protocol E2E (AUD-V37B-05) > 3: cancel near completion — honest race; fencing if revoke wins 1893ms
+   ✓ V3.7 cancel protocol E2E (AUD-V37B-05) > 4: process ignoring SIGTERM still dies via force kill over protocol 1984ms
+   ✓ V3.7 cancel protocol E2E (AUD-V37B-05) > 6: worker disconnect during cancel — cancel_pushed false, fence holds 1672ms
+   ✓ V3.7 cancel protocol E2E (AUD-V37B-05) > sandbox: cancel through bubblewrap SandboxManager kills tree over protocol 2161ms
+   ✓ V3.7 cancel protocol E2E (AUD-V37B-05) > 9: cancel one task while sibling continues to result_accepted 1665ms
+
+ Test Files  13 passed (13)
+      Tests  64 passed (64)
+   Start at  09:23:00
+   Duration  14.40s (transform 978ms, setup 225ms, collect 3.13s, tests 51.70s, environment 3ms, prepare 1.22s)
+

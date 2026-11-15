@@ -1,3 +1,9 @@
+8a09d22 docs(certification): pin cancel-E2E evidence to code tip
+ff78d45 fix(v3.7): protocol cancel E2E loop closes AUD-V37B-05
+d6b3f84 docs(certification): pin audited code tip distinct from docs HEAD
+89b1ac6 docs(certification): sync executive verdict tip identity
+197c0c7 docs(certification): pin certified-tip SHA after packaging commit
+a85ca5b docs(certification): packaging tip after re-audit B
 ac13116 fix(v3.7): SEC-H02 trust boundary, mid-flight cancel, cert hardening
 18833eb docs(certification): record auditor REJECT and post-fix tip
 aea5941 fix(v3.7): address independent audit CRITICAL/HIGH findings

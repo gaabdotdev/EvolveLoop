@@ -1,7 +1,9 @@
-regen_utc=2026-11-15T01:09:36Z
-unit: 115 files / 491 tests PASS (npm ci clean)
-integration: 24 files / 62 PASS / 1 skipped (graphify CLI absent)
-fabric+IPC+cancel+sec-h02+scrub: 57/57 PASS
-G17: BLOCKED (gaab-1 offline; AUTO_DETECT_TAILSCALE=1)
-re-audit_B: be8ca586-25b3-466b-afba-b6cb20769cc6 ACCEPT_WITH_RESERVATIONS / GLOBAL BLOCKED
+regen_utc=2026-11-15T12:28:04Z
+unit: 116 files / 499 tests PASS (npm ci clean)
+integration: 24 files / 62 PASS / 1 skipped (graphify optional — see INTEGRATION-SKIP-INVESTIGATION.md)
+fabric+IPC+cancel+sec-h02: 13 files / 64 PASS
+cancel-protocol-e2e: 7/7 PASS (AUD-V37B-05 RESOLVED)
+G17: BLOCKED (gaab-1 offline)
+audit_C: 0999f8bc-4686-43bd-8598-2baabd9302d2 ACCEPT_WITH_RESERVATIONS / GLOBAL BLOCKED
 historical_REJECT: preserved @ 4142948
+re-audit_B: preserved be8ca586 @ ac13116

@@ -17,7 +17,7 @@
 | G7 | V3.5 Runtime + V3.6 GlobalOps on integrated tip | PASS | Integration v35 + v36 e2e PASS on tip (clean suites) |
 | G8 | Measurement Plane, benchmark, evidence integrity | PARTIAL | tiktoken `.venv-measure`; measure units PASS; G18 −30% UNVERIFIED |
 | G9 | V3.7 Node Identity/Trust | PARTIAL | mTLS unit PASS; multi-host live missing |
-| G10 | V3.7 Worker Runtime | PARTIAL | Sandbox + cancel mid-flight unit PASS; multi-host missing |
+| G10 | V3.7 Worker Runtime | PARTIAL | Sandbox + cancel protocol E2E PASS; multi-host missing |
 | G11 | V3.7 scheduling/pools | PARTIAL | Unit PASS; multi-host missing |
 | G12 | V3.7 artifacts/workspaces | PARTIAL | Unit PASS; multi-host missing |
 | G13 | V3.7 leases/fencing/stale rejection | PARTIAL | Unit/adversarial + cancel fence PASS; multi-host missing |
@@ -27,7 +27,7 @@
 | G17 | Multi-host live E2E | BLOCKED | `gaab-1` offline; automation requires post-revoke `result_accepted` |
 | G18 | Token efficiency ≥30% median | UNVERIFIED | Meta proposed; not proven on tip |
 | G19 | Install/CLI/TUI/doctor/docs | PARTIAL | CLI deliver/worker-serve added; doctor wiki still env-dependent |
-| G20 | Full regression + independent re-audit + release readiness | PARTIAL | Suites green + re-audit B `ACCEPT_WITH_RESERVATIONS`; blocked on G17 for APPROVED |
+| G20 | Full regression + independent re-audit + release readiness | PARTIAL | Suites 499/62+skip; Audit C ACCEPT_WITH_RESERVATIONS; **G17 BLOCKED** forbids APPROVED |
 
 ## Global verdict (current)
 
