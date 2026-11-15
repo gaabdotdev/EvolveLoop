@@ -17,7 +17,10 @@
 | A-M00-1a | M00 | Task subagent contracts | Opus | same | Task `d3d244f4-…` | FAILED — Opus quota |
 | A-M00-1b | M00 | Task subagent ADRs | Opus | same | Task `1ee521ac-…` | FAILED — Opus quota |
 | A-M00-2 | M00 | Cursor Task `generalPurpose` | `gpt-5.6-sol-medium` | same | Task `0376e09f-…` | FAILED — model quota |
-| A-M00-3 | M00 | Cursor Task `generalPurpose` | `claude-sonnet-5-5-high` | `/home/gaab/Downloads/EvolveLoop-v4-m00` | Task `ec2e2c6f-e19a-46da-acb1-6bf9dc557272` | RUNNING — complete M00 + M18 §9 |
+| A-M00-3 | M00 | Cursor Task `generalPurpose` | `claude-sonnet-5-5-high` | `/home/gaab/Downloads/EvolveLoop-v4-m00` | Task `ec2e2c6f-…` | FAILED — Sonnet quota |
+| A-M00-4 | M00 | Cursor Task `generalPurpose` | `cursor-grok-4.6-high-fast` | same | Task `768f1aa4-8b46-4f79-a744-8b9edd4ec01c` | RUNNING/unknown |
+| A-M00-5 | M00 | `cursor-agent` CLI | `composer-2.5` | same | log `logs/m00-composer.log` | LAUNCHING (Codex/Opus/Sonnet exhausted) |
+| A-M00-6 | M00 | Cursor Task `generalPurpose` | `gemini-4-hydrogen-high` | same | Task (gemini relaunch) | LAUNCHING |
 | A-M18-1 | M18 | Cursor Task `generalPurpose` | `claude-opus-5-5-medium` | `/home/gaab/Downloads/EvolveLoop-v4-m18` | Task `bd6eecf1-9665-452f-ad08-55df9e01de55` | COMPLETE — Wave 1 ACCEPTED by orchestrator |
 
 ### Runtime notes
