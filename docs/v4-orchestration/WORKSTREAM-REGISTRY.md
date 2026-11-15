@@ -22,7 +22,7 @@ States: `PENDING` | `DISCOVERY` | `CONTRACT_REVIEW` | `READY` | `RUNNING` | `REV
 | M15 | Control Center, CLI, SDK & APIs | 2→7 | — | — | — | PENDING | CLI early |
 | M16 | Autonomous Engineering & Impossible Handoff | 6 | — | — | — | PENDING | |
 | M17 | Benchmarks & Economic Proof | cross | `feature/v4/m17-benchmarks-early` | reclaimable | Task `1dc1e92f-…` | **INTEGRATED** | tip `69d15ce` → `0daf462`; baseline DECLARED_UNAVAILABLE |
-| M18 | Security & Adversarial Assurance | cross | `feature/v4/m18-security` | `/home/gaab/Downloads/EvolveLoop-v4-m18` | Task `bd6eecf1-…` | **INTEGRATED** (Wave 1) | Tip `47155ec` → `2fc17c2`; later waves PENDING |
+| M18 | Security & Adversarial Assurance | cross | `feature/v4/m18-wave5-ro` | `/home/gaab/Downloads/EvolveLoop-v4-m18` | Task `59382dcb-…` | **ACCEPTED** Wave5 | tip `5e8bc70`; Wave1 still at `47155ec` |
 | M19 | Integration & Release | 8 | `feature/v4-integration` | `/home/gaab/Downloads/EvolveLoop-v4-integration` | Task `ad99f775-…` | **INTEGRATED** M11 | HEAD `111b933`; 337/337; Wave5 M18 next |
 | M20 | Independent Final Audit | 8 | — | — | — | PENDING | Separate context |
 
