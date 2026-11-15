@@ -3,7 +3,7 @@
 **Status:** PASS (protocol E2E reproduced)  
 **Date (UTC):** 2026-11-15T12:21:36Z  
 **Branch:** recovery/v37-full-cert  
-**Pre-commit tip at evidence draft:** `d6b3f8410afb3debb1ca7c41ddeae038337c5f08` (evidence re-pinned after commit)  
+****Code tip:** `ff78d4577ab8cc1cd8fc5ef954d7842032fb3dbb`
 **Test file:** `orchestrator/tests/unit/fabric/cancel-protocol-e2e.test.ts`  
 **Implementation:** `orchestrator/src/v3/fabric/worker-runtime/protocol-loop.ts` + `cancelTask` + SandboxManager AbortSignal
 
