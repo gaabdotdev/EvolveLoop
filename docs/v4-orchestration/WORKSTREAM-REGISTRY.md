@@ -4,7 +4,7 @@ States: `PENDING` | `DISCOVERY` | `CONTRACT_REVIEW` | `READY` | `RUNNING` | `REV
 
 | Meta | Name | Phase | Branch | Worktree | Owner runtime | Status | Notes |
 |------|------|-------|--------|----------|---------------|--------|-------|
-| M00 | Architecture & Domain Contracts | 1 | `feature/v4/m00-architecture` | `/home/gaab/Downloads/EvolveLoop-v4-m00` | Grok `768f1aa4-…` | **REWORK** (freeze) | Package integrated; freeze REJECTED `e1b6764` B1–B3 |
+| M00 | Architecture & Domain Contracts | 1 | `feature/v4/m00-architecture` | `/home/gaab/Downloads/EvolveLoop-v4-m00` | rework `a76596e8-…` | **REVIEW** (freeze #2) | B1–B3 fixed `af118a0`; awaiting FREEZE-REVIEW-2 |
 | M01 | Goal Compiler & Work State | 2 | `feature/v4/m01-goal-work` | `/home/gaab/Downloads/EvolveLoop-v4-m01` | — | READY | Awaiting CONTRACT-FREEZE |
 | M02 | Event Ledger, Persistence & Checkpoints | 2 | `feature/v4/m02-ledger-checkpoints` | `/home/gaab/Downloads/EvolveLoop-v4-m02` | — | READY | Awaiting CONTRACT-FREEZE |
 | M03 | Effect Ledger | 2→3 | `feature/v4/m03-effect-ledger` | `/home/gaab/Downloads/EvolveLoop-v4-m03` | — | READY | Awaiting CONTRACT-FREEZE |
