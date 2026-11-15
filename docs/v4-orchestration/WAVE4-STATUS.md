@@ -5,8 +5,8 @@
 
 | Meta | Focus | Status | Notes |
 |------|-------|--------|-------|
-| M07 | Dynamic Planning Engine | PENDING_LAUNCH | `planning/**` |
-| M08 | Capability Intelligence | PENDING_LAUNCH | `capability/**`; no invented scores |
+| M07 | Dynamic Planning Engine | **RUNNING** | worktree @ a5c7777; Task 53020ad6-… |
+| M08 | Capability Intelligence | **RUNNING** | worktree @ a5c7777; Task 1ccdd7c6-… |
 | M09 | Adaptive Execution Intelligence | BLOCKED | depends M08 + M17 provenance |
 | M12-pred | Observability predictive | PENDING | after M07/M08 land |
 | M17 | Benchmarks & Economic Proof (early) | PENDING | fair baseline for M09 |

@@ -31,7 +31,9 @@
 | A-M04-1 | M04 Continuity capsule | Cursor Task | `cursor-grok-4.6-high-fast` | `/home/gaab/Downloads/EvolveLoop-v4-m04` | Task `b79ded28-b98b-4460-bf5a-fb2fc5e34efb` | COMPLETE — ACCEPTED @ `14aa02b` |
 | A-M05-1 | M05 Timetravel/fork/replay | Cursor Task | `cursor-grok-4.6-high-fast` | `/home/gaab/Downloads/EvolveLoop-v4-m05` | Task `85d22360-efad-45a7-8d82-97c048bbc56b` | COMPLETE — ACCEPTED @ `b27b2cb` |
 | A-M19-4 | M19 Wave3 integrate M04/M05 | Cursor Task | `cursor-grok-4.6-high-fast` | `/home/gaab/Downloads/EvolveLoop-v4-integration` | Task `dd8b3b45-3c3c-4ca5-8753-381708174371` | COMPLETE — INTEGRATED @ `3da3af5`; 234/234 |
-| A-M19-5 | M19 Continuity vertical gate | Cursor Task | `cursor-grok-4.6-high-fast` | `/home/gaab/Downloads/EvolveLoop-v4-integration` | Task `27547ced-35e8-4c0d-9ccc-a7e2e317f77f` | RUNNING — Phase 3 gate |
+| A-M19-5 | M19 Continuity vertical gate | Cursor Task | `cursor-grok-4.6-high-fast` | `/home/gaab/Downloads/EvolveLoop-v4-integration` | Task `27547ced-35e8-4c0d-9ccc-a7e2e317f77f` | COMPLETE — ACCEPTED @ `81abcbd`; 236/236 |
+| A-M07-1 | M07 Dynamic Planning | Cursor Task | `cursor-grok-4.6-high-fast` | `/home/gaab/Downloads/EvolveLoop-v4-m07` | Task `53020ad6-71ce-44bb-bbd4-98b5f1183b38` | RUNNING — Wave 4 |
+| A-M08-1 | M08 Capability Intelligence | Cursor Task | `cursor-grok-4.6-high-fast` | `/home/gaab/Downloads/EvolveLoop-v4-m08` | Task `1ccdd7c6-8f00-47c7-9174-581f570f0890` | RUNNING — Wave 4 |
 | A-M18-1 | M18 | Cursor Task `generalPurpose` | `claude-opus-5-5-medium` | `/home/gaab/Downloads/EvolveLoop-v4-m18` | Task `bd6eecf1-9665-452f-ad08-55df9e01de55` | COMPLETE — Wave 1 ACCEPTED by orchestrator |
 
 ### Runtime notes
