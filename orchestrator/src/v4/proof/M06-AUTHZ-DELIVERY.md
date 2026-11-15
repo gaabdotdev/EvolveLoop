@@ -17,7 +17,7 @@
 | Self-assessed status | **DELIVERED for orchestrator / independent review** — M06 does not mark itself ACCEPTED, APPROVED, or F02/D13 globally closed |
 | Knowledge | Wiki GAP (`WIKI_ROOT` / `RAG_REPO_ROOT` unset) |
 
-Engine commit is stamped after first land (see §1). Orchestrator tip = `git rev-parse feature/v4/m06-authz`.
+Engine commit: `57680fd7d58ce79da5ee9220ae3b06b25db0e7f1`. Orchestrator tip = `git rev-parse feature/v4/m06-authz`.
 
 This note does **not** rewrite `M06-DELIVERY.md` (V4.0 min) as APPROVED.
 
@@ -27,7 +27,7 @@ On `feature/v4/m06-authz` (no merge to integration):
 
 | Hash | Message |
 |------|---------|
-| *(stamped after land)* | feat(v4/m06): cap WorkProof PROVEN without verifiable EXTERNAL authz (D13) |
+| `57680fd7d58ce79da5ee9220ae3b06b25db0e7f1` | feat(v4/m06): cap WorkProof PROVEN without verifiable EXTERNAL authz (D13) |
 
 ## 2. What was implemented
 
