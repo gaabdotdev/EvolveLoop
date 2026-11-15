@@ -1,6 +1,6 @@
 # EvolveLoop V4 — Master Plan (Orchestrator)
 
-**Status:** Phase 1 closing → freeze review + M19 integrate in flight; Wave 2 gated on FROZEN  
+**Status:** Phase 2 (V4.0) **RUNNING** — contracts FROZEN with reservations; M01/M02/M03/M06/M10/M12 launched  
 **Provisional baseline:** `03937c175368715e893193fcfad09aac8474286b` (`recovery/v37-full-cert` tip; V3.7 **BLOCKED** on G17)  
 **Integration branch:** `feature/v4-integration`  
 **Thesis:** Work belongs to the system — not the agent, model, provider, or host.
