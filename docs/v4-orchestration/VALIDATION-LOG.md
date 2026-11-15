@@ -7,7 +7,9 @@
 | 2026-11-15T13:20Z | M00 Architecture & Contracts | **ACCEPTED** (freeze deferred) | tip `1dea128`; vitest `tests/v4` **23/23 PASS**; ADRs 0001–0017; M18 §9 table | Independent review same-context → freeze not granted |
 | 2026-11-15T13:51Z | M19 Wave 1 integrate M00+M18 | **ACCEPTED** | HEAD `5967f7b`; merges `e44252f`/`2fc17c2`; ancestors `1dea128`+`47155ec`; orchestrator re-ran vitest **23/23**; cert `03937c1` untouched | — |
 | 2026-11-15T13:54Z | M00 contract freeze | **REWORK** | Review `e1b6764` **FREEZE_REJECTED** B1–B3 | Wave 2 blocked |
-| 2026-11-15T14:00Z | M00 freeze rework B1–B3 | **ACCEPTED** (rework scope) | `af118a0`/`842c4c6`; vitest **28/28**; delivery `M00-FREEZE-REWORK-DELIVERY.md` | Not FROZEN yet — re-review dispatched |
+| 2026-11-15T14:00Z | M00 freeze rework B1–B3 | **ACCEPTED** (rework scope) | `af118a0`/`842c4c6`; vitest **28/28** | — |
+| 2026-11-15T14:03Z | M00 freeze re-review #2 | **ACCEPTED** | `a78321e` FREEZE_APPROVED_WITH_RESERVATIONS; stamp `e4fb8ad`/`4fbadf8` | R1–R16 binding |
+| 2026-11-15T14:09Z | M19 merge CONTRACT-FREEZE | **ACCEPTED** | merge `061dbd4`; HEAD `3b78241`; vitest **28/28**; ancestor `4fbadf8`; cert untouched | Wave 2 implementers RUNNING |
 
 Validation outcomes for metas: `ACCEPTED` | `REWORK` | `BLOCKED` | `REJECTED` only.
 

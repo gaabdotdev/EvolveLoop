@@ -1,7 +1,7 @@
 # Wave 2 status
 
 **Gate:** CONTRACT-FREEZE **FROZEN** with reservations (`e4fb8ad`; review `a78321e` / `FREEZE_APPROVED_WITH_RESERVATIONS`)  
-**M19 merge freeze:** Task `d4bd1559-84b0-46d3-b839-7608c5a4b6b8`
+**M19 merge freeze:** Task `d4bd1559-…` → **ACCEPTED** (`061dbd4` / HEAD `3b78241`, 28/28)
 
 ## Running implementers
 
