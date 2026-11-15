@@ -4,7 +4,7 @@
 
 | Meta | Focus | Status | Notes |
 |------|-------|--------|-------|
-| M11 | Trust & Provenance Graph | READY | worktree `EvolveLoop-v4-m11`; `provenance/**` |
+| M11 | Trust & Provenance Graph | RUNNING | Task `7dace8cc-…`; worktree `EvolveLoop-v4-m11` |
 | M10-full | Policy full | PENDING | after M11/M18 cues |
 | M06-authz | WorkProof authz | PENDING | |
 | M18 | Adversarial RO review | PENDING | parallel later |
