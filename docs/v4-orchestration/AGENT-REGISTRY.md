@@ -57,4 +57,4 @@
 | A-M10-2 | M10 Policy full F02 | Cursor Task | `cursor-grok-4.6-high-fast` | `/home/gaab/Downloads/EvolveLoop-v4-m10` | Task `198291f9-cd41-4775-81ac-a212bdf985fb` | COMPLETE — ACCEPTED @ `fd8adf7`; 343/343 |
 | A-M19-10 | M19 integrate M10-full | Cursor Task | `cursor-grok-4.6-high-fast` | `/home/gaab/Downloads/EvolveLoop-v4-integration` | Task `f42b0b73-bdee-4e2e-8343-caee8118fc6c` | COMPLETE — INTEGRATED @ `04a104b` / HEAD `9cc1a56`; 343/343 |
 | A-M15-1 | M15 Wave5 F02 daemon | Cursor Task | `cursor-grok-4.6-high-fast` | `/home/gaab/Downloads/EvolveLoop-v4-m15` | Task `d5a42771-5469-41aa-a616-2c890c26329e` | COMPLETE — ACCEPTED @ `cbb38d2`; 353/353 |
-| A-M19-11 | M19 integrate M15 F02 | Cursor Task | `cursor-grok-4.6-high-fast` | `/home/gaab/Downloads/EvolveLoop-v4-integration` | PENDING_LAUNCH | |
+| A-M19-11 | M19 integrate M15 F02 | Cursor Task | `cursor-grok-4.6-high-fast` | `/home/gaab/Downloads/EvolveLoop-v4-integration` | Task `394e7629-65be-4b87-aef4-49707657c872` | RUNNING — M15 F02 merge |
