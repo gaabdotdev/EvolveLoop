@@ -1,6 +1,6 @@
 # EvolveLoop V4 — Master Plan (Orchestrator)
 
-**Status:** Phase 2 (V4.0) **RUNNING** — contracts FROZEN with reservations; M01/M02/M03/M06/M10/M12 launched  
+**Status:** Phase 2 (V4.0) **INTEGRATING** — Wave 2 tips ACCEPTED; M19 merge in flight  
 **Provisional baseline:** `03937c175368715e893193fcfad09aac8474286b` (`recovery/v37-full-cert` tip; V3.7 **BLOCKED** on G17)  
 **Integration branch:** `feature/v4-integration`  
 **Thesis:** Work belongs to the system — not the agent, model, provider, or host.
@@ -29,22 +29,33 @@
 
 ## Current wave
 
-**Wave 1 (closing):**
+**Wave 1 (closed):**
 
-- **M00** — ACCEPTED @ `1dea128` (package)
+- **M00** — ACCEPTED @ `1dea128`; freeze **FROZEN** @ `e4fb8ad` (R1–R16)
 - **M18** — ACCEPTED Wave 1 @ `47155ec`
-- **Freeze review** — RUNNING (`8cd94458-…`)
-- **M19** — integrating M00+M18 into `feature/v4-integration` (`d1472461-…`)
+- **M19** — Wave1 + freeze merge done (`061dbd4`)
 
-**Wave 2** — READY to launch only after `CONTRACT-FREEZE.md` = FROZEN (or formal waiver)
+**Wave 2 (integrating):**
+
+| Meta | Tip | Status |
+|------|-----|--------|
+| M01 | `f72ad76` | ACCEPTED |
+| M02 | `374769d` | ACCEPTED |
+| M03 | `91dbdf3` | ACCEPTED |
+| M06 | `2728695` | ACCEPTED |
+| M10 | `78fa4bc` | ACCEPTED |
+| M12 | `72c5f5b` | ACCEPTED |
+| M19 | Task `a67420b0-…` | merging tips → integration |
+
+Gate to Phase 3: vertical Intent→WorkProof on integration HEAD + M19 INTEGRATED.
 
 ## Exit criteria for Wave 1
 
 - [x] M00 delivers domain model, versioned contracts, ADR register, ownership, conformance hooks
-- [ ] Independent architecture review of M00 (separate agent/context) — in flight
+- [x] Independent architecture freeze review (FREEZE_APPROVED_WITH_RESERVATIONS)
 - [x] M18 delivers initial threat model
 - [x] Orchestrator validation → M00/M18 ACCEPTED
-- [ ] Contracts frozen for Wave 2 (V4.0)
+- [x] Contracts frozen for Wave 2 (V4.0)
 
 ## Known external blocker (final APPROVED)
 
