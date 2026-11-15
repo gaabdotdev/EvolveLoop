@@ -20,7 +20,9 @@
 | A-M00-3 | M00 | Cursor Task `generalPurpose` | `claude-sonnet-5-5-high` | `/home/gaab/Downloads/EvolveLoop-v4-m00` | Task `ec2e2c6f-…` | FAILED — Sonnet quota |
 | A-M00-4 | M00 | Cursor Task `generalPurpose` | `cursor-grok-4.6-high-fast` | same | Task `768f1aa4-…` | YIELD — not single-writer |
 | A-M00-5 | M00 | `cursor-agent` CLI | `composer-2.5` | same | killed pid 344434 | STOPPED — avoid dual-write |
-| A-M00-6 | M00 | Cursor Task `generalPurpose` | `gemini-4-hydrogen-high` | same | Task `532fab4b-0a94-4503-bf51-27161334ec49` | ACTIVE single-writer |
+| A-M00-6 | M00 | Cursor Task `generalPurpose` | `gemini-4-hydrogen-high` | same | Task `532fab4b-…` | FAILED — Gemini quota |
+| A-M00-* | M00 | — | — | tip `1dea128` | — | Package ACCEPTED; no further M00 impl agents; freeze-review blocked on quota |
+| A-M00-4 | note | Likely completed package under quota churn | grok?/composer? | `0a88109`–`1dea128` | — | Artifacts validated by orchestrator; Gemini `532fab4b` failed after |
 | A-M18-1 | M18 | Cursor Task `generalPurpose` | `claude-opus-5-5-medium` | `/home/gaab/Downloads/EvolveLoop-v4-m18` | Task `bd6eecf1-9665-452f-ad08-55df9e01de55` | COMPLETE — Wave 1 ACCEPTED by orchestrator |
 
 ### Runtime notes

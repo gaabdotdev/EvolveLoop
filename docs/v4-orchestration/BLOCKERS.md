@@ -6,6 +6,7 @@
 | B-DISK | HIGH (ops) | Environment | Root FS ~99% full (~2.4 GiB). Limits worktrees/`npm install`. | OPEN | Constrain parallelism; reuse symlinked `node_modules` |
 | B-WIKI | MEDIUM | Grounding | `WIKI_ROOT` unset | OPEN | Knowledge grounding GAP for all waves |
 | B-LINEAGE | MEDIUM | Baseline | Historical V3.5/V3.6 tips diverge from bench-obs; V4 uses cert tip as provisional spine | MITIGATED | Provisional baseline documented |
-| B-QUOTA-M00 | CRITICAL (ops) | Agent quota | Pro limits hit Opus, Sol, Sonnet mid-M00 | OPEN → mitigating | Partial `55a810a`; Sonnet `ec2e2c6f` failed; Grok Task `768f1aa4` + CLI fallback pending; freeze blocked |
+| B-QUOTA-M00 | HIGH (ops) | Agent quota | Pro limits exhausted mid-flight (Opus/Sol/Sonnet/Codex/Gemini) | OPEN | M00 package completed anyway (tip `1dea128`); blocks **separate-context freeze review** + Wave 2 agents until Spend Limit / reset 2026-12-04 |
+| B-M00-FREEZE-REVIEW | HIGH | Process | True separate-context architecture review of M00 not run (same-context note in `M00-INDEPENDENT-REVIEW.md`) | OPEN | Contracts stay PROPOSED; no FROZEN stamp; Wave 2 consolidation blocked |
 
-M18 Wave 1 ACCEPTED. M00 contract freeze blocked until M00 ACCEPTED.
+M18 Wave 1 ACCEPTED. M00 package **ACCEPTED**; **contract freeze deferred**.

@@ -4,7 +4,7 @@ States: `PENDING` | `DISCOVERY` | `CONTRACT_REVIEW` | `READY` | `RUNNING` | `REV
 
 | Meta | Name | Phase | Branch | Worktree | Owner runtime | Status | Notes |
 |------|------|-------|--------|----------|---------------|--------|-------|
-| M00 | Architecture & Domain Contracts | 1 | `feature/v4/m00-architecture` | `/home/gaab/Downloads/EvolveLoop-v4-m00` | cursor-agent | RUNNING | Wave 1 |
+| M00 | Architecture & Domain Contracts | 1 | `feature/v4/m00-architecture` | `/home/gaab/Downloads/EvolveLoop-v4-m00` | (completed under quota churn) | **ACCEPTED** | tip `1dea128`; freeze deferred pending separate-context review |
 | M01 | Goal Compiler & Work State | 2 | — | — | — | PENDING | After M00 freeze |
 | M02 | Event Ledger, Persistence & Checkpoints | 2 | — | — | — | PENDING | |
 | M03 | Effect Ledger | 2→3 | — | — | — | PENDING | |
