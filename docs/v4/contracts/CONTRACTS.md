@@ -4,7 +4,7 @@
 |-------|-------|
 | Catalog version | `1.0.0` (`CONTRACT_CATALOG_VERSION`) |
 | Canonical source | `orchestrator/src/v4/contracts/` (TypeScript) |
-| Stability | **PROPOSED** until orchestrator ACCEPTED + freeze (ADR-V4-0001) |
+| Stability | **FROZEN** at tip `e4fb8ad` / CONTRACT-FREEZE.md (ADR-V4-0001) |
 | Consumer import | `import { assertConforms, type Work } from "<repo>/orchestrator/src/v4/contracts/index.js"` |
 
 This document is a **catalog**, not a second schema. If it disagrees with TypeScript, TypeScript wins and this file is a GAP.
