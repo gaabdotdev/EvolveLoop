@@ -1,0 +1,37 @@
+# Workstream Registry
+
+States: `PENDING` | `DISCOVERY` | `CONTRACT_REVIEW` | `READY` | `RUNNING` | `REVIEW` | `REWORK` | `ACCEPTED` | `INTEGRATED` | `BLOCKED`
+
+| Meta | Name | Phase | Branch | Worktree | Owner runtime | Status | Notes |
+|------|------|-------|--------|----------|---------------|--------|-------|
+| M00 | Architecture & Domain Contracts | 1 | `feature/v4/m00-architecture` | `/home/gaab/Downloads/EvolveLoop-v4-m00` | cursor-agent | RUNNING | Wave 1 |
+| M01 | Goal Compiler & Work State | 2 | — | — | — | PENDING | After M00 freeze |
+| M02 | Event Ledger, Persistence & Checkpoints | 2 | — | — | — | PENDING | |
+| M03 | Effect Ledger | 2→3 | — | — | — | PENDING | |
+| M04 | Capsule, Handoff & Recovery | 3 | — | — | — | PENDING | |
+| M05 | Time Travel, Replay & Fork | 3 | — | — | — | PENDING | |
+| M06 | WorkProof & Independent Verifier | 2→6 | — | — | — | PENDING | Min in V4.0 |
+| M07 | Dynamic Planning Engine | 4 | — | — | — | PENDING | |
+| M08 | Capability Intelligence | 4 | — | — | — | PENDING | |
+| M09 | Adaptive Execution Intelligence | 4 | — | — | — | PENDING | |
+| M10 | Policy Engine, Trust & Governance | 2→5 | — | — | — | PENDING | Foundations early |
+| M11 | Trust & Provenance Graph | 5 | — | — | — | PENDING | |
+| M12 | Predictive Observability & CE | 2→7 | — | — | — | PENDING | |
+| M13 | Elastic Compute Fabric | 7 | — | — | — | PENDING | |
+| M14 | Agent & Runtime Ecosystem | 7 | — | — | — | PENDING | No marketplace |
+| M15 | Control Center, CLI, SDK & APIs | 2→7 | — | — | — | PENDING | CLI early |
+| M16 | Autonomous Engineering & Impossible Handoff | 6 | — | — | — | PENDING | |
+| M17 | Benchmarks & Economic Proof | cross | — | — | — | PENDING | |
+| M18 | Security & Adversarial Assurance | cross | `feature/v4/m18-security` | `/home/gaab/Downloads/EvolveLoop-v4-m18` | cursor-agent | RUNNING | Wave 1 threat model |
+| M19 | Integration & Release Engineering | 8 | `feature/v4-integration` | `/home/gaab/Downloads/EvolveLoop-v4-integration` | — | READY | Integrator only merges |
+| M20 | Independent Final Audit | 8 | — | — | — | PENDING | Separate context |
+
+## Ownership roots (initial — M00 must refine)
+
+| Area | Provisional owner |
+|------|-------------------|
+| `docs/v4/architecture/**`, `docs/v4/adr/**`, `docs/v4/contracts/**` | M00 |
+| `docs/v4/security/**` | M18 (findings); owners fix code |
+| `docs/v4-orchestration/**` | Orchestrator |
+| `orchestrator/src/v4/**` (to be created by M00 layout) | Split per meta after ownership map |
+| V3.7 fabric/registry/protocol/workers | **Do not modify** — adapters only |
