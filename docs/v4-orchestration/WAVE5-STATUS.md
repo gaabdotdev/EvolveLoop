@@ -1,10 +1,10 @@
 # Wave 5 status — V4.3 Trust
 
-**Context:** Wave 4 first-cut INTEGRATED (M07/M08/M17). Phase 4 **exit gate deferred** — fair baseline exists but all primary metrics `DECLARED_UNAVAILABLE` (no observed harness run); M08 methodology still **PROVISIONAL**; M09 score-routing remains blocked.
+**Context:** Wave 4 first-cut INTEGRATED (M07/M08/M17). M11 **INTEGRATED** @ `290b453` (337/337). Phase 4 **PARTIAL** — fair baseline exists but all primary metrics `DECLARED_UNAVAILABLE` (no observed harness run); M08 methodology still **PROVISIONAL**; M09 score-routing remains blocked.
 
 | Meta | Focus | Status | Notes |
 |------|-------|--------|-------|
-| M11 | Trust & Provenance Graph | **ACCEPTED** | tip `f1222f6`; awaiting M19 integrate |
+| M11 | Trust & Provenance Graph | **INTEGRATED** | tip `f1222f6`; merge `290b453a32d54f38e89ea41a537b85be7365a966`; orch vitest **337/337** (55 files; provenance 31) |
 | M10-full | Policy full | PENDING | after M11/M18 cues |
 | M06-authz | WorkProof authz | PENDING | |
 | M18 | Adversarial RO review | PENDING | parallel later |

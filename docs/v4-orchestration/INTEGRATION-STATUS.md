@@ -2,8 +2,8 @@
 
 **Branch:** `feature/v4-integration`  
 **Baseline:** `03937c175368715e893193fcfad09aac8474286b` (provisional — V3.7 **BLOCKED** G17; never claim APPROVED)  
-**Integrator (M19):** A-M19-1 (Wave 1) + freeze merge + Wave 2 integrate (2026-11-15T14:18Z) + Wave 3 integrate (2026-11-15T15:15Z) + Continuity vertical (A-M19-5) + Wave 4 integrate (2026-11-15T15:34Z) + M17 early integrate (2026-11-15T15:45Z)  
-**Integration HEAD at this record:** M17 status commit (this file); merge hash in M17 sequence below  
+**Integrator (M19):** A-M19-1 (Wave 1) + freeze merge + Wave 2 integrate (2026-11-15T14:18Z) + Wave 3 integrate (2026-11-15T15:15Z) + Continuity vertical (A-M19-5) + Wave 4 integrate (2026-11-15T15:34Z) + M17 early integrate (2026-11-15T15:45Z) + M11 integrate (2026-11-15T16:00Z)  
+**Integration HEAD at this record:** M11 status commit (this file); merge hash in M11 sequence below  
 **Knowledge:** `WIKI_ROOT` unset → GAP; grounding = repo docs + ACCEPTED tips only
 
 M19 may integrate **only** orchestrator-ACCEPTED deliveries. Shared catalog is **FROZEN** (ADR-V4-0001) as of the M00 CONTRACT-FREEZE stamp; semantic changes require RFC.
@@ -24,6 +24,7 @@ M19 may integrate **only** orchestrator-ACCEPTED deliveries. Shared catalog is *
 | M07 Dynamic Planning | **ACCEPTED** | `0e9b581fe275e82a56339b8cb9bf1173349f8795` on `feature/v4/m07-planning` | merge `cfead011364e1ae39fa613c6469dbfbb4c0e12b5` | `planning/**` |
 | M08 Capability Intelligence | **ACCEPTED** (delivery) | `13fac49fce6eb7f44d8628407111d5f305a6ae2a` on `feature/v4/m08-capability` | merge `07bd808f15f9662040b205948be304cd63889113` | `capability/**`; methodology `cprof-methodology.provisional.v0` remains **PROVISIONAL** |
 | M17 Benchmarks (early) | **INTEGRATED** | `69d15ce0ef553c13881a12e4e08f0b0effa3e79f` on `feature/v4/m17-benchmarks-early` | merge `0daf462ac967a632fd23faae62c82c4d376b9d99` | `docs/v4/benchmarks/**` + `benchmarks/**`; fair baseline DECLARED_UNAVAILABLE; M08 methodology still **PROVISIONAL**; M09 not launched; Phase 4 **PARTIAL** |
+| M11 Trust & Provenance | **INTEGRATED** | `f1222f6d518dffc030991a992cdcc9e5e5b5acfb` on `feature/v4/m11-provenance` | merge `290b453a32d54f38e89ea41a537b85be7365a966` | `provenance/**`; engine `9b56c81`; Wave 5; M09 not launched; Phase 4 **PARTIAL** |
 
 ## Merge sequence (2026-11-15) — Wave 1
 
@@ -308,6 +309,46 @@ Additive vs Wave 4 record: 284 tests / 46 files → 306 tests / 50 files. Delta 
 
 M09 **not launched** (directive: M08 methodology remains PROVISIONAL; M17 baseline is DECLARED_UNAVAILABLE and must not drive L2/L3 score routing).
 
+## Merge sequence (2026-11-15) — M11 provenance
+
+Pre-merge HEAD `7443609ee89ad68ddc6d2d9e5101a18fd3a58ed6`. Per `ORCHESTRATOR-DIRECTIVE-M19-M11-INTEGRATE.md`. Worktree `/home/gaab/Downloads/EvolveLoop-v4-m11` tip `f1222f6` (engine `9b56c81`).
+
+```text
+7443609  feature/v4-integration (pre-M11-merge)
+   + merge --no-ff f1222f6  →  290b453a32d54f38e89ea41a537b85be7365a966
+```
+
+| Step | Command | Result | Hash |
+|------|---------|--------|------|
+| 1 | `git merge --no-ff f1222f6d518dffc030991a992cdcc9e5e5b5acfb` | clean (ort); 14 files, +2288 | `290b453a32d54f38e89ea41a537b85be7365a966` |
+| 2 | `cd orchestrator && npx vitest run tests/v4` | **337/337 PASS** (55 files) | — |
+
+Ancestry after step 1: tip `f1222f6` is an ancestor of `feature/v4-integration`.
+
+## Conflicts resolved (M11)
+
+No git merge conflicts (ort, disjoint ownership: `orchestrator/src/v4/provenance/**` + `orchestrator/tests/v4/provenance/**`). No barrel union; `adapters/v37/index.ts` unchanged.
+
+## Landed coherently (M11)
+
+- `orchestrator/src/v4/provenance/**` (graph, extract, stream, refs, types, guarantees)
+- `orchestrator/tests/v4/provenance/**` (31 tests)
+
+## Test evidence (M11 integrate)
+
+```text
+RUN  v2.1.9  /home/gaab/Downloads/EvolveLoop-v4-integration/orchestrator
+Test Files  55 passed (55)
+     Tests  337 passed (337)
+Duration    2.43s
+```
+
+No `npm install`. `orchestrator/node_modules` remains the existing symlink to the V3.7-cert tree.
+
+Additive vs M17 record: 306 tests / 50 files → 337 tests / 55 files. Delta = M11 (31 tests / 5 files).
+
+M09 **not launched**. Phase 4 remains **PARTIAL**. V4 not APPROVED.
+
 ## Limitations / not claimed
 
 - V3.7 remains **BLOCKED** G17; baseline is provisional; **not APPROVED**.
@@ -315,7 +356,8 @@ M09 **not launched** (directive: M08 methodology remains PROVISIONAL; M17 baseli
 - Wave 2 ACCEPTED tips (M01, M02, M03, M06, M10, M12) **are** ancestors of `feature/v4-integration`.
 - Wave 3 ACCEPTED tips (M04, M05) **are** ancestors of `feature/v4-integration`.
 - Wave 4 ACCEPTED tips (M07, M08) **are** ancestors of `feature/v4-integration`.
-- M17 ACCEPTED tip (`69d15ce`) **is** an ancestor of `feature/v4-integration`. Other metas remain out of this integrate batch.
+- M17 ACCEPTED tip (`69d15ce`) **is** an ancestor of `feature/v4-integration`.
+- M11 ACCEPTED tip (`f1222f6`) **is** an ancestor of `feature/v4-integration`. Other metas remain out of this integrate batch.
 - Continuity vertical is **DELIVERED** for orchestrator validation (`CONTINUITY-SLICE-V41.md`); not self-ACCEPTED; not V4 APPROVED.
 - M08 engine status is **PROVISIONAL** (`cprof-methodology.provisional.v0`); not an ACCEPTED methodology; not evidence of executor quality or L2/L3 routing.
 - M17 canonical baseline is **DECLARED_UNAVAILABLE** (`el-v4-fair-baseline.declared-unavailable.v0`); honesty pins forbid production scores and L2/L3 routing.
