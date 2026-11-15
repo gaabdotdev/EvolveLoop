@@ -2,8 +2,8 @@
 
 **Branch:** `feature/v4-integration`  
 **Baseline:** `03937c175368715e893193fcfad09aac8474286b` (provisional — V3.7 **BLOCKED** G17; never claim APPROVED)  
-**Integrator (M19):** A-M19-1 (Wave 1) + freeze merge + Wave 2 integrate (2026-11-15T14:18Z) + Wave 3 integrate (2026-11-15T15:15Z) + Continuity vertical (A-M19-5)  
-**Integration HEAD at this record:** see `CONTINUITY-SLICE-V41.md` `git_tip` (status file may sit on that delivery commit)  
+**Integrator (M19):** A-M19-1 (Wave 1) + freeze merge + Wave 2 integrate (2026-11-15T14:18Z) + Wave 3 integrate (2026-11-15T15:15Z) + Continuity vertical (A-M19-5) + Wave 4 integrate (2026-11-15T15:34Z)  
+**Integration HEAD at this record:** Wave 4 status commit (this file); merge hashes in Wave 4 sequence below  
 **Knowledge:** `WIKI_ROOT` unset → GAP; grounding = repo docs + ACCEPTED tips only
 
 M19 may integrate **only** orchestrator-ACCEPTED deliveries. Shared catalog is **FROZEN** (ADR-V4-0001) as of the M00 CONTRACT-FREEZE stamp; semantic changes require RFC.
@@ -21,6 +21,8 @@ M19 may integrate **only** orchestrator-ACCEPTED deliveries. Shared catalog is *
 | M12 Observability init | **ACCEPTED** | `72c5f5b400e75e749bf45836e3bdd2c12903befb` on `feature/v4/m12-obs-init` | merge `df4fbf401b6dcad9b0e74d20109ab98bb87d0af0` | `observability/**` |
 | M04 Capsule/Handoff/Recovery | **ACCEPTED** | `14aa02b005528bf0e2637ec12d26c797260cbcd5` on `feature/v4/m04-continuity` | merge `26831b0065b32306f710d377b6db14002fd43265` | `continuity/**` |
 | M05 Time Travel | **ACCEPTED** | `b27b2cbc5936ff82be189ff4a16896517437c9d4` on `feature/v4/m05-timetravel` | merge `33229c590da3ce63b7208717fb32dbb7348f45c7` | `timetravel/**` |
+| M07 Dynamic Planning | **ACCEPTED** | `0e9b581fe275e82a56339b8cb9bf1173349f8795` on `feature/v4/m07-planning` | merge `cfead011364e1ae39fa613c6469dbfbb4c0e12b5` | `planning/**` |
+| M08 Capability Intelligence | **ACCEPTED** (delivery) | `13fac49fce6eb7f44d8628407111d5f305a6ae2a` on `feature/v4/m08-capability` | merge `07bd808f15f9662040b205948be304cd63889113` | `capability/**`; methodology `cprof-methodology.provisional.v0` remains **PROVISIONAL** |
 
 ## Merge sequence (2026-11-15) — Wave 1
 
@@ -219,12 +221,59 @@ Follow-on to Wave 3 per `ORCHESTRATOR-DIRECTIVE-CONTINUITY-GATE.md`. Composition
 | Slice record | `docs/v4-orchestration/CONTINUITY-SLICE-V41.md` |
 | npm install / V3.7 cert / self-ACCEPTED / V4 APPROVED | **none** |
 
+## Merge sequence (2026-11-15) — Wave 4
+
+Pre-merge HEAD `bddd9f1a19318f27609756b83863bc5ae97cc01f`. Order per `ORCHESTRATOR-DIRECTIVE-M19-WAVE4-INTEGRATE.md`. Both `git merge --no-ff` used full hashes from linked worktrees.
+
+```text
+bddd9f1  feature/v4-integration (pre-Wave-4-merge)
+   + merge --no-ff 0e9b581  →  cfead011364e1ae39fa613c6469dbfbb4c0e12b5
+   + merge --no-ff 13fac49  →  07bd808f15f9662040b205948be304cd63889113
+```
+
+| Step | Command | Result | Hash |
+|------|---------|--------|------|
+| 1 | `git merge --no-ff 0e9b581fe275e82a56339b8cb9bf1173349f8795` | clean (ort); 14 files, +1734 | `cfead011364e1ae39fa613c6469dbfbb4c0e12b5` |
+| 2 | `git merge --no-ff 13fac49fce6eb7f44d8628407111d5f305a6ae2a` | clean (ort); 18 files, +1595 | `07bd808f15f9662040b205948be304cd63889113` |
+| 3 | `cd orchestrator && npx vitest run tests/v4` | **284/284 PASS** (46 files) | — |
+
+Ancestry after step 2: tips `0e9b581` and `13fac49` are both ancestors of `feature/v4-integration`.
+
+## Conflicts resolved (Wave 4)
+
+No git merge conflicts on either `--no-ff` merge (ort, disjoint ownership trees: `planning/**` vs `capability/**`). No barrel union required; `adapters/v37/index.ts` unchanged (M02+M10 union from Wave 2).
+
+## Landed coherently (Wave 4)
+
+- `orchestrator/src/v4/planning/**` (PlanningEngine propose/accept/replan)
+- `orchestrator/tests/v4/planning/**` (18 tests)
+- `orchestrator/src/v4/capability/**` (store, ingest, routing-forbidden, PROVISIONAL methodology)
+- `orchestrator/tests/v4/capability/**` (30 tests)
+
+## Test evidence (Wave 4 integrate)
+
+```text
+RUN  v2.1.9  /home/gaab/Downloads/EvolveLoop-v4-integration/orchestrator
+Test Files  46 passed (46)
+     Tests  284 passed (284)
+Duration    2.10s
+```
+
+No `npm install`. `orchestrator/node_modules` remains the existing symlink to the V3.7-cert tree.
+
+Additive vs Continuity vertical record: 236 tests / 37 files → 284 tests / 46 files. Delta = M07 (18) + M08 (30).
+
+M09 **not launched** (directive: wait for M08 methodology + M17 baseline ACCEPTED). M08 methodology in this tree is still **PROVISIONAL**.
+
 ## Limitations / not claimed
 
 - V3.7 remains **BLOCKED** G17; baseline is provisional; **not APPROVED**.
 - `recovery/v37-full-cert` and V3.7 evidence **not** edited.
 - Wave 2 ACCEPTED tips (M01, M02, M03, M06, M10, M12) **are** ancestors of `feature/v4-integration`.
-- Wave 3 ACCEPTED tips (M04, M05) **are** ancestors of `feature/v4-integration`. Other metas remain out of this integrate batch.
+- Wave 3 ACCEPTED tips (M04, M05) **are** ancestors of `feature/v4-integration`.
+- Wave 4 ACCEPTED tips (M07, M08) **are** ancestors of `feature/v4-integration`. Other metas remain out of this integrate batch.
 - Continuity vertical is **DELIVERED** for orchestrator validation (`CONTINUITY-SLICE-V41.md`); not self-ACCEPTED; not V4 APPROVED.
+- M08 engine status is **PROVISIONAL** (`cprof-methodology.provisional.v0`); not an ACCEPTED methodology; not evidence of executor quality or L2/L3 routing.
+- M09 **not launched**.
 - Wiki CLI unavailable (`WIKI_ROOT` unset).
 - Freeze reservations R1–R16 in `CONTRACT-FREEZE.md` remain binding; do not claim they are encoded away.
