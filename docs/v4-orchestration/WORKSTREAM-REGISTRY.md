@@ -10,7 +10,7 @@ States: `PENDING` | `DISCOVERY` | `CONTRACT_REVIEW` | `READY` | `RUNNING` | `REV
 | M03 | Effect Ledger | 2→3 | `feature/v4/m03-effect-ledger` | `/home/gaab/Downloads/EvolveLoop-v4-m03` | — | **INTEGRATED** | tip `91dbdf3` → `d2c85d6` |
 | M04 | Capsule, Handoff & Recovery | 3 | `feature/v4/m04-continuity` | `/home/gaab/Downloads/EvolveLoop-v4-m04` | Task `b79ded28-…` | **INTEGRATED** | tip `14aa02b` → `26831b0` |
 | M05 | Time Travel, Replay & Fork | 3 | `feature/v4/m05-timetravel` | `/home/gaab/Downloads/EvolveLoop-v4-m05` | Task `85d22360-…` | **INTEGRATED** | tip `b27b2cb` → `33229c5` |
-| M06 | WorkProof & Independent Verifier | 2→6 | `feature/v4/m06-authz` | `/home/gaab/Downloads/EvolveLoop-v4-m06` | — | **READY** Wave5 | min INTEGRATED `8c801ae`; authz cut next |
+| M06 | WorkProof & Independent Verifier | 2→6 | `feature/v4/m06-authz` | `/home/gaab/Downloads/EvolveLoop-v4-m06` | Task `70066c69-…` | **RUNNING** Wave5 | min INTEGRATED `8c801ae`; authz cut |
 | M07 | Dynamic Planning Engine | 4 | `feature/v4/m07-planning` | `/home/gaab/Downloads/EvolveLoop-v4-m07` | Task `53020ad6-…` | **INTEGRATED** | tip `0e9b581` → `cfead01` |
 | M08 | Capability Intelligence | 4 | `feature/v4/m08-capability` | `/home/gaab/Downloads/EvolveLoop-v4-m08` | Task `1ccdd7c6-…` | **INTEGRATED** | tip `13fac49` → `07bd808`; methodology PROVISIONAL |
 | M09 | Adaptive Execution Intelligence | 4 | — | — | — | **BLOCKED** | wait methodology ACCEPTED + observed baseline |
@@ -19,11 +19,11 @@ States: `PENDING` | `DISCOVERY` | `CONTRACT_REVIEW` | `READY` | `RUNNING` | `REV
 | M12 | Predictive Observability & CE | 2→7 | `feature/v4/m12-obs-init` | `/home/gaab/Downloads/EvolveLoop-v4-m12` | — | **INTEGRATED** | tip `72c5f5b` → `df4fbf4` |
 | M13 | Elastic Compute Fabric | 7 | — | — | — | PENDING | |
 | M14 | Agent & Runtime Ecosystem | 7 | — | — | — | PENDING | No marketplace |
-| M15 | Control Center, CLI, SDK & APIs | 2→7 | `feature/v4/m15-f02-daemon` | `/home/gaab/Downloads/EvolveLoop-v4-m15` | Task `d5a42771-…` | **ACCEPTED** Wave5 | tip `cbb38d2`; F02 PARTIAL; 353/353 |
+| M15 | Control Center, CLI, SDK & APIs | 2→7 | `feature/v4/m15-f02-daemon` | reclaimable | Task `d5a42771-…` | **INTEGRATED** Wave5 | tip `cbb38d2` → `6e78bce`; F02 PARTIAL |
 | M16 | Autonomous Engineering & Impossible Handoff | 6 | — | — | — | PENDING | |
 | M17 | Benchmarks & Economic Proof | cross | `feature/v4/m17-benchmarks-early` | reclaimable | Task `1dc1e92f-…` | **INTEGRATED** | tip `69d15ce` → `0daf462`; baseline DECLARED_UNAVAILABLE |
 | M18 | Security & Adversarial Assurance | cross | `feature/v4/m18-wave5-ro` | reclaimable | Task `59382dcb-…` | **INTEGRATED** Wave5 | tip `5e8bc70` → `0c6d1c9` |
-| M19 | Integration & Release | 8 | `feature/v4-integration` | `/home/gaab/Downloads/EvolveLoop-v4-integration` | Task `f42b0b73-…` | **INTEGRATED** M10-full | HEAD `9cc1a56`; 343/343; M15 F02 next |
+| M19 | Integration & Release | 8 | `feature/v4-integration` | `/home/gaab/Downloads/EvolveLoop-v4-integration` | Task `394e7629-…` | **INTEGRATED** M15 F02 | HEAD `17a8889`; 353/353; M06-authz next |
 | M20 | Independent Final Audit | 8 | — | — | — | PENDING | Separate context |
 
 ## Ownership roots (initial — M00 must refine)

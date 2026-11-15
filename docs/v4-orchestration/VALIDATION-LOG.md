@@ -37,6 +37,7 @@
 | 2026-11-15T16:16Z | M19 integrate M10-full | **ACCEPTED / INTEGRATED** | merge `04a104b`; HEAD `9cc1a56`; orch recheck **343/343** | F02 PARTIAL; M15 daemon residual next |
 | 2026-11-15T16:22Z | M15 F02 daemon | **ACCEPTED** | tip `cbb38d2` (engine `c34367d`); orch **22/22** api+f02 + **353/353** full | Daemon actor refused; F02 still PARTIAL (no live PDP) |
 | 2026-11-15T16:24Z | M19 integrate M15 F02 | **ACCEPTED / INTEGRATED** | merge `6e78bce`; HEAD `17a8889`; orch recheck **353/353** | F02 PARTIAL; M06-authz next |
+| 2026-11-15T17:20Z | M06 WorkProof authz | RUNNING | Task `70066c69-8a20-41cb-8417-ad951f8ea86e`; worktree `EvolveLoop-v4-m06` | Continuation after interrupted launch; RR-W5-02/05 |
 
 Validation outcomes for metas: `ACCEPTED` | `REWORK` | `BLOCKED` | `REJECTED` only.
 
