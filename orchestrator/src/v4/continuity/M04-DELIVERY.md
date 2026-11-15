@@ -10,13 +10,22 @@
 | Merge to `feature/v4-integration` | **Not done** (forbidden; M19 only) |
 | npm install | **Not run** (`orchestrator/node_modules` already symlinked) |
 | V3.7 cert edits | **None** |
+| Engine commit | `3f7c40ef43bf89017ba022c1bd411e2a67ee0bb4` |
 | Self-assessed status | **DELIVERED for orchestrator validation** — M04 does not mark itself ACCEPTED or claim V4 APPROVED |
 
 ## Grounding
 
 Wiki: GAP (`WIKI_ROOT` / `RAG_REPO_ROOT` unset). Grounding = freeze + ADR-V4-0006 + `capsule.ts` / `ports.ts` (`CapsuleServicePort`) + constitution §4.3, §5 Capsule, §7.2, §15.2.
 
-## 1. What was implemented
+## 1. Commits
+
+On `feature/v4/m04-continuity` (no merge to integration):
+
+| Hash | Message |
+|------|---------|
+| `3f7c40e` | feat(v4/m04): implement CapsuleService seal/verify/accept and recovery |
+
+## 2. What was implemented
 
 `CapsuleService` realizes frozen `CapsuleServicePort`. Wave 2 engines are composed via ports only.
 
@@ -29,7 +38,7 @@ Wiki: GAP (`WIKI_ROOT` / `RAG_REPO_ROOT` unset). Grounding = freeze + ADR-V4-000
 | `handoffAccept` | accept + recovery; executor context is allowlisted fields only; C2 conformance fail-closed when a named executor is supplied. |
 | `InMemoryReplayStore` / `FileReplayStore` | Single-use anti-replay (D03). Path component = `work_id` only; `capsule_id` is an opaque field. |
 
-## 2. Reservations honored
+## 3. Reservations honored
 
 | ID | M04 action |
 |----|------------|
@@ -38,7 +47,7 @@ Wiki: GAP (`WIKI_ROOT` / `RAG_REPO_ROOT` unset). Grounding = freeze + ADR-V4-000
 | R6 | `assertConforms` is not the F01 gate. Accept = verify raw + allowlist-parse. ★ tests cover forged `task_refs`, nested handoff, unknown-key forwarding, capsule ≠ grant material. |
 | R14 | Signing uses M10 handles (`signerFromHandle`); `V37SignaturePort.sign(private_key_pem)` is not called. |
 
-## 3. Tests
+## 4. Tests
 
 ```bash
 cd orchestrator && npx vitest run tests/v4/continuity
@@ -58,7 +67,7 @@ cd orchestrator && npx vitest run tests/v4
 - unknown keys (`handoff`, `v3_permissions`, `extra_control`) dropped; not present in `lastExecutorContext`
 - capsule ≠ grant material (`grant_material` / `credentials` / nested `permissions` on grants rejected; `effective_grant_refs` are strings and only the policy-allowed subset)
 
-## 4. Files owned by M04
+## 5. Files owned by M04
 
 ```
 orchestrator/src/v4/continuity/**
@@ -67,7 +76,7 @@ orchestrator/tests/v4/continuity/**
 
 Not owned / not edited: `orchestrator/src/v4/contracts/**`, V3.7 cert surfaces, M01–M03/M06/M10/M12 trees, `feature/v4-integration`.
 
-## 5. Gaps / limitations
+## 6. Gaps / limitations
 
 - **Wiki** unset → GAP; no vault `log.md` update.
 - **M13 lease/epoch** is a stub port (`CapsuleLeaseBindPort`). When `lease_required` and the port is missing, accept fail-closes. M19 must wire the real Execution Gateway / V37 leases.
@@ -78,7 +87,7 @@ Not owned / not edited: `orchestrator/src/v4/contracts/**`, V3.7 cert surfaces, 
 - Pre-existing `tsc` error in `contracts/capsule.ts` is M00; not touched.
 - `scanForSecrets` is defence-in-depth, not proof of absence (INV-CAP-02 / F11).
 
-## 6. Commands run
+## 7. Commands run
 
 | Command | Result |
 |---------|--------|
@@ -88,7 +97,7 @@ Not owned / not edited: `orchestrator/src/v4/contracts/**`, V3.7 cert surfaces, 
 | merge to integration | **not run** |
 | V3.7 cert edits | **not done** |
 
-## 7. Acceptance self-check
+## 8. Acceptance self-check
 
 | Mission criterion | Status |
 |-------------------|--------|
