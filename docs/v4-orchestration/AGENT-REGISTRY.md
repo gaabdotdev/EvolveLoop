@@ -22,7 +22,8 @@
 | A-M00-5 | M00 | `cursor-agent` CLI | `composer-2.5` | same | killed | STOPPED |
 | A-M00-6 | M00 | Cursor Task `generalPurpose` | `gemini-4-hydrogen-high` | same | Task `532fab4b-…` | FAILED — Gemini quota (after package already on branch) |
 | A-M00-* | M00 | — | — | tip `1dea128` | — | Package ACCEPTED |
-| A-FREEZE-1 | M00 freeze review | Cursor Task | `cursor-grok-4.6-high-fast` | m00 or integration | Task `8cd94458-d2cb-4e30-9f93-79c4b7faeb30` | RUNNING |
+| A-FREEZE-1 | M00 freeze review | Cursor Task | `cursor-grok-4.6-high-fast` | m00 | Task `8cd94458-d2cb-4e30-9f93-79c4b7faeb30` | COMPLETE — **FREEZE_REJECTED** `e1b6764` |
+| A-M00-REWORK-1 | M00 freeze rework B1–B3 | Cursor Task | `cursor-grok-4.6-high-fast` | m00 | Task `a76596e8-8786-4138-bcde-102a6ca5384e` | RUNNING |
 | A-M19-1 | M19 Wave1 integrate | Cursor Task | `cursor-grok-4.6-high-fast` | `/home/gaab/Downloads/EvolveLoop-v4-integration` | Task `d1472461-b84a-4b4e-93fd-28a3e93873d6` | COMPLETE — Wave1 ACCEPTED @ `5967f7b` |
 | A-M18-1 | M18 | Cursor Task `generalPurpose` | `claude-opus-5-5-medium` | `/home/gaab/Downloads/EvolveLoop-v4-m18` | Task `bd6eecf1-9665-452f-ad08-55df9e01de55` | COMPLETE — Wave 1 ACCEPTED by orchestrator |
 
