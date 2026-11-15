@@ -1,5 +1,11 @@
-# M18 Wave 1 copies (read-only reference)
+# M18 security tree
 
-These three files are **copies** of `feature/v4/m18-security` commits `a733630` / `47155ec`, placed here so M00 can cite threat model §9 without editing the M18 branch.
+Canonical owner: **M18**. Do not “fix” findings here from other metas — file residuals on this tree.
 
-Canonical owner: **M18**. If they drift, M18 wins. Do not “fix” findings here — file them on the M18 worktree.
+| File | Role |
+|------|------|
+| `THREAT-MODEL-V4-INITIAL.md` | Wave 1 model; Appendix A is the Wave 5 disposition pointer |
+| `M18-WAVE1-DELIVERY.md` / `M18-WAVE1-INDEPENDENT-REVIEW.md` | Wave 1 record (from `feature/v4/m18-security` `a733630` / `47155ec`) |
+| `M18-WAVE5-RO.md` | Wave 5 Trust RO refresh (this worktree / `feature/v4/m18-wave5-ro`) |
+
+If they drift, M18 wins. Wave 5 does not rewrite Wave 1 IDs.

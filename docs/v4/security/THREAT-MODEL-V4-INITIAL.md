@@ -348,3 +348,24 @@ Each test must produce evidence (inputs, commit hash, environment, result) and m
 - M00 contracts are in progress in a separate worktree that M18 did not read (workspace rule for this launch). Findings must be re-checked against M00’s frozen contracts.
 - Wiki grounding unavailable (`WIKI_ROOT` unset).
 - V3.7 remains **BLOCKED**; the provisional baseline may change, which can invalidate line references.
+
+## Appendix A — Wave 5 RO refresh (V4.3 Trust)
+
+| Field | Value |
+|-------|-------|
+| Refresh | M18 Wave 5 read-only; **no** product-code edits; **no** APPROVED / ACCEPTED |
+| Note | `docs/v4/security/M18-WAVE5-RO.md` (normative for this wave) |
+| Analysed tip | `74c55c35eb43db08701124d5bd19cc2a2c5574c7` (M11 merge `290b453`) |
+
+Wave 1 IDs are unchanged. Disposition after INTEGRATED M11 (read-model) + M08/M17 honesty pins:
+
+| ID | Wave 5 disposition | Do not claim |
+|----|--------------------|--------------|
+| F02 | V4 PDP approve path PARTIALLY MITIGATED (token principal; no caller `decided_by`). V3 CLI `store.approve(actor)` **OPEN**. M11 cites ledger approvals; does not authenticate. | M11 closed self-approval |
+| F07 | V4 `FileEventLedger` + M11 fail-closed on INV-EVT-06 **PARTIALLY MITIGATED**. Hash chain ≠ non-repudiation (R1). V3 JSONL unchained. | Non-repudiation / F07 closed |
+| F14 | PDP records `policy_ref` version/epoch. M11 returns policy **id** only. Path matching is not symlink-canonical. V3 `denied_paths` `startsWith` **OPEN**. | Versioned path-accurate deny |
+| D13 | Independent, version-bound, hash-verified evidence fail-closed. Stale current-hash set optional; `proof_id` may be unanchored. | WorkProof unforgeable |
+| D16 | Authorship query fail-closed on integrity / uncorroborated origin. Publication fencing (F05) **OPEN**. | Publish is fenced |
+| D17 | Skill/provider **names** are not refs; bad pins fail-closed. Missing pins and unsigned `provider.yaml` last-wins **OPEN**. | Supply chain pinned |
+
+**Honesty pins that must not be inverted:** Phase 4 **PARTIAL**; M09 **BLOCKED**; M08 methodology **PROVISIONAL**; M17 canonical baseline **DECLARED_UNAVAILABLE**. No Adaptive / measurable-improvement / L2–L3 score-routing claim is supported. Score invention risks: `M18-WAVE5-RO.md` §2 (RR-W5-INV-*). Residual register: §4 (RR-W5-01…11).
