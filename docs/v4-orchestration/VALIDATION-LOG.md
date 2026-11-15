@@ -20,6 +20,7 @@
 | 2026-11-15T14:27Z | M19 vertical Intent→WorkProof | **ACCEPTED** | tip `cf37912` (slice `f52c980`); M02 `FileEventLedger`; honesty UNVERIFIED→PROVEN + PARTIAL cap; vitest **2/2** vertical + **202/202** full | Phase 2 gate green; G17 still blocks APPROVED |
 | 2026-11-15T15:13Z | M05 Timetravel/fork/replay | **ACCEPTED** | tip `b27b2cb` (feat `7635418`); ownership `timetravel/**` only; vitest **15/15** + full **217/217** | ADR-0007; no absolute determinism |
 | 2026-11-15T15:14Z | M04 Capsule/handoff/recovery | **ACCEPTED** | tip `14aa02b` (feat `3f7c40e`); ownership `continuity/**` only; vitest **17/17** + full **219/219** | F01 ★ + seal/verify/accept |
+| 2026-11-15T15:16Z | M19 Wave 3 integrate | **ACCEPTED / INTEGRATED** | merges `26831b0` (M04) + `33229c5` (M05); HEAD `3da3af5`; orch recheck **234/234** | Continuity vertical next |
 
 Validation outcomes for metas: `ACCEPTED` | `REWORK` | `BLOCKED` | `REJECTED` only.
 

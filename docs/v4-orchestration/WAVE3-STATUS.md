@@ -6,8 +6,9 @@
 
 | Meta | Focus | Status | Notes |
 |------|-------|--------|-------|
-| M04 | Capsule, Handoff & Recovery | **ACCEPTED** | tip `14aa02b`; 17/17 + 219/219 |
-| M05 | Time Travel, Replay & Fork | **ACCEPTED** | tip `b27b2cb`; 15/15 + 217/217 |
+| M04 | Capsule, Handoff & Recovery | **INTEGRATED** | merge `26831b0` |
+| M05 | Time Travel, Replay & Fork | **INTEGRATED** | merge `33229c5` |
+| M19 | Wave 3 integrate | **INTEGRATED** | HEAD `3da3af5`; 234/234 |
 | M03-full | Effect Ledger continuity extensions | PENDING | Only if M03 gaps remain after Wave 2 |
 | M06-handoff | WorkProof across capsule handoff | PENDING | After M04 |
 | M12-cont | Observability continuity | PENDING | After M04/M05 signals exist |

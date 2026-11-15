@@ -30,7 +30,7 @@
 | A-M19-3 | M19 vertical Intent→WorkProof | Cursor Task | `cursor-grok-4.6-high-fast` | `/home/gaab/Downloads/EvolveLoop-v4-integration` | Task `459d13f9-703e-4263-b345-ce399520d6dd` | COMPLETE — ACCEPTED @ `cf37912`; 202/202 |
 | A-M04-1 | M04 Continuity capsule | Cursor Task | `cursor-grok-4.6-high-fast` | `/home/gaab/Downloads/EvolveLoop-v4-m04` | Task `b79ded28-b98b-4460-bf5a-fb2fc5e34efb` | COMPLETE — ACCEPTED @ `14aa02b` |
 | A-M05-1 | M05 Timetravel/fork/replay | Cursor Task | `cursor-grok-4.6-high-fast` | `/home/gaab/Downloads/EvolveLoop-v4-m05` | Task `85d22360-efad-45a7-8d82-97c048bbc56b` | COMPLETE — ACCEPTED @ `b27b2cb` |
-| A-M19-4 | M19 Wave3 integrate M04/M05 | Cursor Task | `cursor-grok-4.6-high-fast` | `/home/gaab/Downloads/EvolveLoop-v4-integration` | Task `dd8b3b45-3c3c-4ca5-8753-381708174371` | RUNNING — Wave 3 merge |
+| A-M19-4 | M19 Wave3 integrate M04/M05 | Cursor Task | `cursor-grok-4.6-high-fast` | `/home/gaab/Downloads/EvolveLoop-v4-integration` | Task `dd8b3b45-3c3c-4ca5-8753-381708174371` | COMPLETE — INTEGRATED @ `3da3af5`; 234/234 |
 | A-M18-1 | M18 | Cursor Task `generalPurpose` | `claude-opus-5-5-medium` | `/home/gaab/Downloads/EvolveLoop-v4-m18` | Task `bd6eecf1-9665-452f-ad08-55df9e01de55` | COMPLETE — Wave 1 ACCEPTED by orchestrator |
 
 ### Runtime notes
