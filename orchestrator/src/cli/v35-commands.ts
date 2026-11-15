@@ -21,6 +21,10 @@ import { isAdapterId } from "../v3/adapters/catalog.js";
 import { ApprovalStore } from "../v3/approvals/store.js";
 import { IntegrationCoordinator } from "../v3/workspace/integration.js";
 import { WorktreeManager } from "../v3/worktrees/index.js";
+import {
+  applyCliApprovalStoreFallback,
+  F02_STORE_FALLBACK_REFUSED,
+} from "../v4/adapters/v37/policy.js";
 
 function print(obj: unknown) {
   console.log(JSON.stringify(obj, null, 2));
@@ -339,9 +343,20 @@ WantedBy=default.target
           return true;
         }
       } catch {
-        /* local */
+        /* IPC failure — V4 posture must not write the local store */
       }
-      print(store.approve(id, args.actor ?? "cli", args.note));
+      try {
+        print(
+          applyCliApprovalStoreFallback("approve", () => store.approve(id, args.actor ?? "cli", args.note)),
+        );
+      } catch (err) {
+        print({
+          error: F02_STORE_FALLBACK_REFUSED,
+          message: err instanceof Error ? err.message : String(err),
+          approval_id: id,
+        });
+        process.exit(1);
+      }
       return true;
     }
     if (command === "reject") {
@@ -361,9 +376,20 @@ WantedBy=default.target
           return true;
         }
       } catch {
-        /* local */
+        /* IPC failure — V4 posture must not write the local store */
       }
-      print(store.reject(id, args.actor ?? "cli", args.note));
+      try {
+        print(
+          applyCliApprovalStoreFallback("reject", () => store.reject(id, args.actor ?? "cli", args.note)),
+        );
+      } catch (err) {
+        print({
+          error: F02_STORE_FALLBACK_REFUSED,
+          message: err instanceof Error ? err.message : String(err),
+          approval_id: id,
+        });
+        process.exit(1);
+      }
       return true;
     }
   }

@@ -1,8 +1,15 @@
 /**
- * Rule matching + path canonicalization (TM-V4-F14).
+ * Rule matching + path canonicalization (TM-V4-F14 / RR-W5-04 partial).
  * R13: ALLOW rules may not use `*` on subjects, actions, or resources.
+ *
+ * Absolute filesystem resources without a glob are resolved with realpath
+ * (symlink-aware). Logical resources (`prod`, `network.egress`) stay lexical.
+ * This does not close F14: glob prefixes are not realpath'd; V3 `denied_paths`
+ * `startsWith` is unchanged.
  */
 
+import { existsSync, realpathSync } from "node:fs";
+import { basename, dirname, join } from "node:path";
 import type { ExecutorRef, PolicyRule, RiskLevel } from "../contracts/index.js";
 import { RISK_RANK } from "./types.js";
 
@@ -14,15 +21,36 @@ export function allowRuleHasWildcard(rule: PolicyRule): boolean {
   return rule.subjects.includes("*") || rule.actions.includes("*") || rule.resources.includes("*");
 }
 
+function looksLikeAbsoluteFsPath(value: string): boolean {
+  return value.startsWith("/") && !value.includes("*");
+}
+
+/** Symlink-aware resolve; fail-closed to undefined on unexpected IO errors. */
+function canonicalFsPath(value: string): string | undefined {
+  try {
+    if (existsSync(value)) return realpathSync(value);
+    const parent = dirname(value);
+    const base = basename(value);
+    if (parent !== value && existsSync(parent)) {
+      return join(realpathSync(parent), base);
+    }
+    return value;
+  } catch {
+    return undefined;
+  }
+}
+
 /**
  * Resource strings that cannot be matched safely (path traversal, encoding, NUL).
- * Fail-closed: undefined ⇒ no match ⇒ DENY.
+ * Absolute non-glob paths are realpath'd when the leaf or parent exists.
+ * Fail-closed: undefined ⇒ no match ⇒ DENY (deny-by-default).
  */
 export function canonicalizeResource(resource: string): string | undefined {
   if (typeof resource !== "string" || resource.length === 0) return undefined;
   if (resource.includes("\0") || resource.includes("%") || resource.includes("\\")) return undefined;
   if (resource.includes("..")) return undefined;
-  return resource;
+  if (!looksLikeAbsoluteFsPath(resource)) return resource;
+  return canonicalFsPath(resource);
 }
 
 export function resourceMatches(pattern: string, resource: string): boolean {
