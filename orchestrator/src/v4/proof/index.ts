@@ -5,6 +5,25 @@
  * `VerifierPort` and `WorkProofPort`. Wiring to other metas is M19.
  */
 
+export {
+  AUTHZ_STANDING_LIMITATIONS,
+  EMPTY_AUTHORIZATION_FOR_GAP_PREFIX,
+  GENERATED_BY_EQUALS_SUBJECT_GAP,
+  PROVENANCE_UNWIRED_LIMITATION,
+  UNAUTHORIZED_EXTERNAL_GAP_PREFIX,
+  applyProofCaps,
+  assessExternalAuthorization,
+  capProvenStatus,
+  collectCiteableRefs,
+  generatedByEqualsSubject,
+  isCiteableAuthzRef,
+  provenanceBackedEvidenceIds,
+  refsFromLedgerPolicyDecided,
+  requiresExternalAuthorization,
+  type AuthzPorts,
+  type EffectAuthzVerdict,
+  type WorkAuthzAssessment,
+} from "./authz.js";
 export { WorkProofBuilder, type ProofSources, type WorkProofBuilderDeps } from "./builder.js";
 export {
   DEFAULT_DETERMINISTIC_VERIFIER_ID,

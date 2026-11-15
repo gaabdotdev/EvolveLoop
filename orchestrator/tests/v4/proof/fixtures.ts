@@ -8,6 +8,7 @@ import {
   type GoalContract,
   type Task,
   type Work,
+  type WorkEvent,
 } from "../../../src/v4/contracts/index.js";
 import {
   TEST_REPORT_MEDIA_TYPE,
@@ -228,5 +229,59 @@ export function committedEffect(overrides: Partial<EffectRecord> = {}): EffectRe
     created_at: NOW,
     updated_at: NOW,
     ...overrides,
+  };
+}
+
+export function externalEffect(overrides: Partial<EffectRecord> = {}): EffectRecord {
+  return committedEffect({
+    effect_id: "eff_external01",
+    effect_class: "EXTERNAL",
+    intent: {
+      action: "git.push",
+      target_resource: "origin/main",
+      parameters_digest: CODE_SHA,
+      description: "push to origin",
+    },
+    integration: {
+      integration_id: "git",
+      capabilities: { supports_idempotency_key: true, supports_status_query: true, supports_compensation: false },
+    },
+    ...overrides,
+  });
+}
+
+export function policyDecidedEvent(input: {
+  event_id?: string;
+  decision_id?: string;
+  decision?: "ALLOW" | "DENY" | "REQUIRE_APPROVAL";
+  work_id?: string;
+  seq?: number;
+}): WorkEvent {
+  const payload: Record<string, unknown> = {
+    decision_id: input.decision_id ?? "pdec_abc123def",
+    work_id: input.work_id ?? WORK_ID,
+    action: "git.push",
+    resource: "origin/main",
+    decision: input.decision ?? "ALLOW",
+    policy_ref: { policy_id: "pol_abc123def", version: 1, epoch: 1 },
+    reason: "pdp",
+  };
+  return {
+    kind: "WorkEvent",
+    schema_version: "1.0.0",
+    tenant_id: DEFAULT_TENANT_ID,
+    event_id: input.event_id ?? "evt_policydec01",
+    work_id: input.work_id ?? WORK_ID,
+    seq: input.seq ?? 1,
+    type: "policy.decided",
+    type_version: 1,
+    occurred_at: NOW,
+    recorded_at: NOW,
+    actor: { kind: "POLICY_ENGINE", id: "v4-pdp" },
+    correlation_id: input.work_id ?? WORK_ID,
+    payload,
+    payload_digest: "aa".repeat(32),
+    prev_event_digest: "GENESIS",
+    event_digest: "bb".repeat(32),
   };
 }

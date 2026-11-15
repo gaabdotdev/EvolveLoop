@@ -28,12 +28,22 @@ import {
   type IsoTimestamp,
   type RequirementProof,
   type Task,
+  type ProvenanceQueryPort,
   type VerifierPort,
   type WorkEventDraft,
   type WorkProof,
   type WorkProofPort,
   type WorkRepositoryPort,
 } from "../contracts/index.js";
+import {
+  AUTHZ_STANDING_LIMITATIONS,
+  applyProofCaps,
+  assessExternalAuthorization,
+  generatedByEqualsSubject,
+  provenanceBackedEvidenceIds,
+  GENERATED_BY_EQUALS_SUBJECT_GAP,
+  type AuthzPorts,
+} from "./authz.js";
 import { PROOF_BUILDER_ID, PROOF_ENGINE_VERSION } from "./constants.js";
 import {
   AmbiguousSubjectExecutor,
@@ -70,6 +80,11 @@ export interface WorkProofBuilderDeps extends ProofSources {
   subjectExecutorId?: string;
   /** When true (default), run independent verifiers during `build`. */
   runVerifiersOnBuild?: boolean;
+  /**
+   * Optional M11 compose. Unwired → honest limitation, never a fake PASS.
+   * Empty `authorizationFor` / `evidenceForRequirement` refs fail closed.
+   */
+  provenance?: Partial<Pick<ProvenanceQueryPort, "authorizationFor" | "evidenceForRequirement">>;
 }
 
 export class WorkProofBuilder implements WorkProofPort {
@@ -88,6 +103,7 @@ export class WorkProofBuilder implements WorkProofPort {
   private readonly tenantId: string;
   private readonly pinnedSubject?: string;
   private readonly runVerifiersOnBuild: boolean;
+  private readonly provenance?: Partial<Pick<ProvenanceQueryPort, "authorizationFor" | "evidenceForRequirement">>;
 
   constructor(deps: WorkProofBuilderDeps) {
     this.works = deps.works;
@@ -105,6 +121,7 @@ export class WorkProofBuilder implements WorkProofPort {
     this.tenantId = deps.tenantId ?? DEFAULT_TENANT_ID;
     this.pinnedSubject = deps.subjectExecutorId;
     this.runVerifiersOnBuild = deps.runVerifiersOnBuild ?? true;
+    this.provenance = deps.provenance;
   }
 
   async build(work_id: string): Promise<WorkProof> {
@@ -128,6 +145,7 @@ export class WorkProofBuilder implements WorkProofPort {
       "V4.0 WorkProof-min does not execute HUMAN_REVIEW or INDEPENDENT_MODEL_REVIEW",
       "secret scan is heuristic defence-in-depth, not proof of absence (INV-PROOF-06)",
       "final_status is derived by deriveFinalStatus; generated_by is not a trust label",
+      ...AUTHZ_STANDING_LIMITATIONS,
     ];
 
     const subjectId = this.resolveSubject(work_id, executions);
@@ -147,19 +165,69 @@ export class WorkProofBuilder implements WorkProofPort {
       current_artifact_hashes: hashes,
     };
 
-    const requirements: RequirementProof[] = goal.acceptance_criteria.map((criterion) => {
+    const requirements: RequirementProof[] = [];
+    for (const criterion of goal.acceptance_criteria) {
       const derived = deriveRequirementStatus(criterion, recorded, ctx);
-      return {
+      const independentIds = derived.qualifying_evidence_ids.filter((id) => {
+        const ev = recorded.find((row) => row.evidence_id === id);
+        if (!ev) return false;
+        if (!isIndependent(ev)) return false;
+        if (subjectId && ev.produced_by.executor_id === subjectId) return false;
+        return true;
+      });
+      const evidencePort = this.provenance?.evidenceForRequirement
+        ? { evidenceForRequirement: this.provenance.evidenceForRequirement }
+        : undefined;
+      const provenanceGate = await provenanceBackedEvidenceIds(
+        evidencePort,
+        goal.goal_contract_id,
+        goal.version,
+        criterion.criterion_id,
+        independentIds,
+      );
+      const evidence_ids = provenanceGate.ids;
+      const gaps = [...derived.gaps];
+      if (evidencePort && provenanceGate.empty_port) {
+        gaps.push(`empty_evidenceForRequirement:${criterion.criterion_id}`);
+      } else if (evidencePort && independentIds.some((id) => !evidence_ids.includes(id))) {
+        gaps.push(`provenance_unconfirmed:${criterion.criterion_id}`);
+      }
+      let status = derived.status;
+      if (evidencePort && evidence_ids.length === 0 && derived.status === "PROVEN") {
+        status = "UNVERIFIED";
+        if (!gaps.includes("no_qualifying_pass")) gaps.push("no_qualifying_pass");
+      } else if (evidencePort && evidence_ids.length < independentIds.length && status === "PROVEN") {
+        status = "PARTIAL";
+      }
+      requirements.push({
         criterion_id: criterion.criterion_id,
         mandatory: criterion.mandatory,
-        status: derived.status,
-        evidence_ids: derived.qualifying_evidence_ids,
-        gaps: derived.gaps,
-      };
-    });
+        status,
+        evidence_ids,
+        gaps,
+      });
+    }
 
+    const authzPorts: AuthzPorts = {
+      authorization: this.provenance?.authorizationFor
+        ? { authorizationFor: this.provenance.authorizationFor }
+        : undefined,
+      ledger: this.ledger,
+    };
+    const authz = await assessExternalAuthorization(work_id, effects, authzPorts);
+    limitations.push(...authz.limitations);
+
+    const capGaps: string[] = [...authz.gaps];
+    if (generatedByEqualsSubject(this.builderId, subjectId)) {
+      capGaps.push(GENERATED_BY_EQUALS_SUBJECT_GAP);
+      limitations.push(
+        `RR-W5-05: generated_by.verifier_id equals subject executor ${subjectId}; proof cannot be PROVEN`,
+      );
+    }
+
+    const cappedRequirements = applyProofCaps(requirements, capGaps);
     const effectSnapshot = effects.map((e) => ({ effect_id: e.effect_id, state: e.state }));
-    const final_status = deriveFinalStatus(requirements, effectSnapshot);
+    const final_status = deriveFinalStatus(cappedRequirements, effectSnapshot);
 
     const previous = await this.proofs.latest(work_id);
     const execution_ids = unique([
@@ -175,11 +243,11 @@ export class WorkProofBuilder implements WorkProofPort {
       proof_id: this.ids.proof(),
       work_id,
       goal_contract_ref: { id: goal.goal_contract_id, version: goal.version },
-      requirements,
+      requirements: cappedRequirements,
       artifact_ids: artifacts.map((a) => a.artifact_id),
       execution_ids,
       effects: effectSnapshot,
-      provenance_refs: unique(requirements.flatMap((r) => r.evidence_ids)),
+      provenance_refs: unique([...cappedRequirements.flatMap((r) => r.evidence_ids), ...authz.refs]),
       limitations,
       final_status,
       generated_by: { verifier_id: this.builderId, verifier_version: this.builderVersion },

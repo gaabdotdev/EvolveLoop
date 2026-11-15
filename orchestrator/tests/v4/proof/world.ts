@@ -7,6 +7,7 @@ import {
   type GoalContract,
   type Task,
   type Work,
+  type ProvenanceQueryPort,
   type WorkEvent,
   type WorkEventDraft,
   type WorkRepositoryPort,
@@ -98,7 +99,15 @@ export class ProofWorld {
     });
   }
 
-  builder(opts: { verifiers?: DeterministicVerifier[]; runVerifiersOnBuild?: boolean; idsTag?: string } = {}): WorkProofBuilder {
+  builder(
+    opts: {
+      verifiers?: DeterministicVerifier[];
+      runVerifiersOnBuild?: boolean;
+      idsTag?: string;
+      builderId?: string;
+      provenance?: Partial<Pick<ProvenanceQueryPort, "authorizationFor" | "evidenceForRequirement">>;
+    } = {},
+  ): WorkProofBuilder {
     return new WorkProofBuilder({
       works: this.works,
       listArtifacts: this.listArtifacts,
@@ -112,6 +121,8 @@ export class ProofWorld {
       ids: createSequenceIdFactory(opts.idsTag ?? "bld"),
       subjectExecutorId: this.executions[0]?.executor_ref.executor_id,
       runVerifiersOnBuild: opts.runVerifiersOnBuild,
+      builderId: opts.builderId,
+      provenance: opts.provenance,
     });
   }
 }

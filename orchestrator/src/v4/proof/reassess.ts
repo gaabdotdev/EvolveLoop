@@ -16,6 +16,7 @@ import {
   type RequirementDerivation,
   type WorkProof,
 } from "../contracts/index.js";
+import { capProvenStatus, generatedByEqualsSubject } from "./authz.js";
 
 export interface Reassessment {
   derived_final: ProofStatus;
@@ -47,6 +48,10 @@ export function reassessProof(input: {
   evidence: readonly Evidence[];
   now: IsoTimestamp;
   current_artifact_hashes?: ReadonlySet<string>;
+  /** Subject under judgement; compared to `proof.generated_by.verifier_id` (RR-W5-05). */
+  subject_executor_id?: string;
+  /** EXTERNAL effects that lacked verifiable authorization refs (D13). */
+  unauthorized_external_effect_ids?: readonly string[];
 }): Reassessment {
   const coverage = checkProofCoverage(input.proof, input.goal);
   const ctx = {
@@ -69,12 +74,19 @@ export function reassessProof(input: {
     const crit = input.goal.acceptance_criteria.find((c) => c.criterion_id === r.criterion_id)!;
     return { mandatory: crit.mandatory, status: r.derived.status };
   });
-  const derived_final = deriveFinalStatus(derivedReqs, input.proof.effects);
+  let derived_final = deriveFinalStatus(derivedReqs, input.proof.effects);
+
+  const subjectId = input.subject_executor_id ?? inferUniqueSubject(input.evidence);
+  const selfGenerated = generatedByEqualsSubject(input.proof.generated_by.verifier_id, subjectId);
+  const unauthorized = (input.unauthorized_external_effect_ids ?? []).length > 0;
+  derived_final = capProvenStatus(derived_final, selfGenerated || unauthorized);
 
   const honest =
     coverage.length === 0 &&
     !moreOptimistic(input.proof.final_status, derived_final) &&
-    requirements.every((r) => !moreOptimistic(r.declared, r.derived.status));
+    requirements.every((r) => !moreOptimistic(r.declared, r.derived.status)) &&
+    !(selfGenerated && input.proof.final_status === "PROVEN") &&
+    !(unauthorized && input.proof.final_status === "PROVEN");
 
   return {
     derived_final,
@@ -84,4 +96,15 @@ export function reassessProof(input: {
     honest,
     qualifying_evidence_ids: [...new Set(qualifying_evidence_ids)],
   };
+}
+
+function inferUniqueSubject(evidence: readonly Evidence[]): string | undefined {
+  const ids = [
+    ...new Set(
+      evidence
+        .map((e) => e.subject_executor_ref?.executor_id)
+        .filter((id): id is string => typeof id === "string" && id.length > 0),
+    ),
+  ];
+  return ids.length === 1 ? ids[0] : undefined;
 }
