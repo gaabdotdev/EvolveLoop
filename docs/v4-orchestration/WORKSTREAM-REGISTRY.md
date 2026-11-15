@@ -19,7 +19,7 @@ States: `PENDING` | `DISCOVERY` | `CONTRACT_REVIEW` | `READY` | `RUNNING` | `REV
 | M12 | Predictive Observability & CE | 2→7 | `feature/v4/m12-obs-init` | `/home/gaab/Downloads/EvolveLoop-v4-m12` | — | **INTEGRATED** | tip `72c5f5b` → `df4fbf4` |
 | M13 | Elastic Compute Fabric | 7 | — | — | — | PENDING | |
 | M14 | Agent & Runtime Ecosystem | 7 | — | — | — | PENDING | No marketplace |
-| M15 | Control Center, CLI, SDK & APIs | 2→7 | `feature/v4/m15-f02-daemon` | `/home/gaab/Downloads/EvolveLoop-v4-m15` | — | **READY** Wave5 | F02 daemon actor residual RR-W5-01 |
+| M15 | Control Center, CLI, SDK & APIs | 2→7 | `feature/v4/m15-f02-daemon` | `/home/gaab/Downloads/EvolveLoop-v4-m15` | Task `d5a42771-…` | **ACCEPTED** Wave5 | tip `cbb38d2`; F02 PARTIAL; 353/353 |
 | M16 | Autonomous Engineering & Impossible Handoff | 6 | — | — | — | PENDING | |
 | M17 | Benchmarks & Economic Proof | cross | `feature/v4/m17-benchmarks-early` | reclaimable | Task `1dc1e92f-…` | **INTEGRATED** | tip `69d15ce` → `0daf462`; baseline DECLARED_UNAVAILABLE |
 | M18 | Security & Adversarial Assurance | cross | `feature/v4/m18-wave5-ro` | reclaimable | Task `59382dcb-…` | **INTEGRATED** Wave5 | tip `5e8bc70` → `0c6d1c9` |
