@@ -6,6 +6,7 @@
 | Worktree / branch | `/home/gaab/Downloads/EvolveLoop-v4-m00` · `feature/v4/m00-architecture` |
 | Trigger | `M00-FREEZE-REVIEW.md` verdict **FREEZE_REJECTED**; directive `ORCHESTRATOR-DIRECTIVE-M00-FREEZE-REWORK.md` |
 | Parent tip | `d1563d7` (REWORK directive) |
+| Rework commit | `af118a0309f0bd4514abbfad7c803f20112c2736` |
 | Freeze stamp | **Not requested.** Contracts remain `PROPOSED`. |
 | Merge to `feature/v4-integration` | **Not done** |
 | Engines | **Not implemented** (`orchestrator/src/v4/` = `contracts/**` only) |
@@ -79,7 +80,11 @@ Validation still fails (does not silently drop) when a forbidden name is present
 
 ## 3. Commits
 
-On `feature/v4/m00-architecture` (no merge to integration). Hash of the rework commit is the git object that introduces this file; see `git log -1 --oneline` after landing.
+On `feature/v4/m00-architecture` (no merge to integration):
+
+| Hash | Message |
+|------|---------|
+| `af118a0` | fix(v4/m00): close freeze B1–B3 in shared contracts |
 
 Scope:
 
