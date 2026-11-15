@@ -7,7 +7,7 @@
 | M11 | Trust & Provenance Graph | **INTEGRATED** | tip `f1222f6`; merge `290b453a32d54f38e89ea41a537b85be7365a966`; orch vitest **337/337** (55 files; provenance 31) |
 | M10-full | Policy full | PENDING | after M11/M18 cues |
 | M06-authz | WorkProof authz | PENDING | |
-| M18 | Adversarial RO review | PENDING | parallel later |
+| M18 | Adversarial RO review | READY | prompt `M18-WAVE5-RO.md`; rebase m18 → integration HEAD |
 | M09 | Adaptive (no score routing) | BLOCKED | wait methodology ACCEPTED + observed baseline |
 
 ## Hard edges

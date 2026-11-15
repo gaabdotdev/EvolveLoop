@@ -30,6 +30,7 @@
 | 2026-11-15T15:50Z | Phase 4 exit gate | **PARTIAL** | `PHASE4-EXIT.md`; M07/M08/M17 INTEGRATED; no observed metrics; methodology PROVISIONAL | Wave 5 M11 launched; M09 remains BLOCKED |
 | 2026-11-15T15:52Z | Wave 5 M11 launch | RUNNING | worktree `EvolveLoop-v4-m11` @ `89b3c89`; Task `7dace8cc-f5a4-4a81-aa6e-020e55d8af76` | awaiting DELIVERED |
 | 2026-11-15T15:58Z | M11 Provenance | **ACCEPTED** | tip `f1222f6` (engine `9b56c81`); ownership `provenance/**` only; orch vitest **31/31** + **337/337** | Four §4.12 queries + fail-closed; no trust score; GAPs noted (R1/R4/D17 wiring) |
+| 2026-11-15T16:00Z | M19 integrate M11 | **ACCEPTED / INTEGRATED** | merge `290b453`; HEAD `111b933`; orch recheck **337/337** | Wave 5 next: M18 RO |
 
 Validation outcomes for metas: `ACCEPTED` | `REWORK` | `BLOCKED` | `REJECTED` only.
 

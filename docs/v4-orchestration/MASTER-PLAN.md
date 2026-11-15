@@ -33,9 +33,9 @@
 
 | Meta | Status | Notes |
 |------|--------|-------|
-| M11 Provenance | RUNNING | Task `7dace8cc-…` @ `EvolveLoop-v4-m11` |
-| M10-full / M06-authz | PENDING | after M11 |
-| M18 Wave5 RO | PENDING | prompt `M18-WAVE5-RO.md` |
+| M11 Provenance | **INTEGRATED** | merge `290b453`; 337/337 |
+| M10-full / M06-authz | PENDING | after M18 cues |
+| M18 Wave5 RO | READY | prompt `M18-WAVE5-RO.md` |
 | M09 | BLOCKED | methodology PROVISIONAL + baseline UNAVAILABLE |
 
 **Closed waves (summary):**
