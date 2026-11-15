@@ -2,57 +2,78 @@
 
 **Status: `BLOCKED`**
 
-Independent auditor ([Independent V3.7 security audit](0aa07618-d923-4145-9fcb-1df051431b31)): **`REJECT`** of any APPROVED/TRUE_FULL_PASS claim. Findings addressed in follow-up commits; G17 external block remains.
+**Not APPROVED.** Preparation for certification ≠ certification concluded.
 
-**Generated:** 2026-11-14T23:45Z (approx)  
-**Certified tree:** `/home/gaab/Downloads/EvolveLoop-v37-cert`  
-**Branch:** `recovery/v37-full-cert`  
-**Code hash (tip):** `aea5941f30093a0867faa929bec140b169022e41`
-**Baseline:** `7468a40` + ZIP overlay + structural remediations + audit follow-up  
-**Immutable historical refs:** preserved per `docs/recovery/PRESERVED-REFS.txt` (no rewrite of `main`, `feature/bench-obs-v1`, tags).
+| Item | Value |
+|------|-------|
+| Generated | 2026-11-15T01:05Z (approx) |
+| Tree | `/home/gaab/Downloads/EvolveLoop-v37-cert` |
+| Branch | `recovery/v37-full-cert` |
+| Code tip (pre-packaging) | `ac1311626a1e389b2f9e4417c9a85951830e1d69` |
+| Packaging tip | *(this commit — see `evidence/certified-tip.txt` after commit)* |
+| Baseline | `7468a40` + ZIP overlay + remediations |
+| Historical audit | `REJECT` @ `4142948` — preserved |
+| Re-audit B | `ACCEPT_WITH_RESERVATIONS` / global **BLOCKED** — `be8ca586-25b3-466b-afba-b6cb20769cc6` @ `ac13116` |
 
-## Why not APPROVED
+Immutable historical refs preserved (no merge/push/tag/release).
+
+## Why BLOCKED (not APPROVED)
 
 Mandatory gate **G17 Multi-host E2E** remains **BLOCKED**:
 
 - Only one online Linux Tailscale node (`gaab`).
-- Peer `gaab-1` (`100.121.169.97`) offline.
-- SSH to a second distinct machine identity is not available from this environment.
-- Same-host containers/processes are explicitly **not** accepted as G17 evidence.
+- Peer historically `gaab-1` (`100.121.169.97`) **offline**.
+- Containers / dual local processes are **not** accepted.
+- Script exits `BLOCKED` without inventing PASS.
 
-Until a second independent Linux host is online and `EVOLVELOOP_MULTIHOST_LIVE=1 bash scripts/v37/multi-host-e2e.sh` returns PASS with distinct `/etc/machine-id` values, certification **cannot** be APPROVED.
+## Closure criteria vs current state
 
-## What was implemented and locally proven
+| Criterion | State |
+|-----------|--------|
+| Recent audit fixes reproduced | PASS (claims 1–4,6–8 VALID) |
+| SEC-H02 resolved or formal boundary | PASS — ADR-V37-0003 single-user trusted host |
+| Cancel mid-flight proven (7 unit scenarios) | PASS locally; residual AUD-V37B-05 (no full protocol e2e) |
+| Full unit suite | PASS — 115 files / **491** tests (clean `npm ci`) |
+| Integration | PASS — 24 files / **62** pass / 1 skip (graphify CLI absent) |
+| V3.5 / V3.6 / Measurement focus | PASS on tip |
+| Independent re-audit | `ACCEPT_WITH_RESERVATIONS` (not a cert APPROVED) |
+| G17 two real Linux hosts | **BLOCKED** |
+| Mandatory gates all PASS | **NO** |
 
-| Area | Evidence |
-|------|----------|
-| mTLS CA + client certs + revoke/mismatch/foreign CA | `tests/unit/fabric/mtls.test.ts` PASS |
-| Remote delivery offer→ack + admin IPC deliver | `tests/unit/fabric/remote-delivery.test.ts` PASS |
-| WorkerRuntime bubblewrap + fail-closed | `tests/unit/fabric/worker-sandbox.test.ts` PASS |
-| SEC-H02 privileged + nonce replay | `tests/unit/sec-h02-ipc-privileged.test.ts` PASS |
-| Fabric core + adversarial fencing | fabric unit suite PASS |
-| Honest fleet-report (no fabricated remote trace IDs) | ZIP overlay + fleet-report tests |
-| tiktoken measurement env | `.venv-measure` + tokenizer resolver; V22 P0 tests PASS |
+## Exact external action to finish G17
 
-## Commands (reproducible)
+1. Bring online a second authorized Linux host with distinct `/etc/machine-id` and SSH BatchMode from the CP host (e.g. `gaab-1` @ `100.121.169.97`).
+2. On CP host:
+
+```bash
+cd /home/gaab/Downloads/EvolveLoop-v37-cert/orchestrator && npm ci && npm run build
+WORKER_HOSTS=<hostA>,<hostB> \
+EVOLVELOOP_MULTIHOST_LIVE=1 \
+EVIDENCE_DIR=/tmp/g17-evidence \
+  bash ../scripts/v37/multi-host-e2e.sh
+```
+
+3. Require JSON `"state":"PASS"` with both `pre_revoke_delivery=result_accepted` and `post_revoke_delivery=result_accepted`.
+4. Archive evidence under `docs/certification/final/evidence/g17/`.
+5. Request a fresh independent audit on that tip before any APPROVED claim.
+
+## Locally proven (not substitutes for G17)
+
+- mTLS, remote delivery `result_accepted`, revoke socket destroy, cert denylist isolation
+- Host env scrub + regression test
+- Cancel mid-flight (before/during/near/ignore-TERM/timeout/disconnect/late fence)
+- SEC-H02 ADR + trust-boundary tests
+- Fabric+IPC unit **56/56**; full unit **491/491**; integration **62** pass
+
+## Reproducible commands
 
 ```bash
 cd /home/gaab/Downloads/EvolveLoop-v37-cert/orchestrator
 npm ci && npm run build
-python3 -m venv .venv-measure && .venv-measure/bin/pip install tiktoken
-npx vitest run tests/unit/fabric tests/unit/sec-h02-ipc-privileged.test.ts
+# measure env if needed:
+# python3 -m venv .venv-measure && .venv-measure/bin/pip install tiktoken
 npm run test:unit
-# G17 (expect BLOCKED without 2nd host):
-AUTO_DETECT_TAILSCALE=1 bash ../scripts/v37/multi-host-e2e.sh
+npm run test:integration
+npx vitest run tests/unit/fabric tests/unit/sec-h02-*.test.ts
+AUTO_DETECT_TAILSCALE=1 bash ../scripts/v37/multi-host-e2e.sh   # expect BLOCKED
 ```
-
-## Minimal action to unblock G17
-
-1. Bring online a second authorized Linux host with distinct machine-id (e.g. `gaab-1`).
-2. Ensure SSH BatchMode works to both hosts.
-3. `export WORKER_HOSTS=hostA,hostB EVOLVELOOP_MULTIHOST_LIVE=1`
-4. Re-run `scripts/v37/multi-host-e2e.sh` and archive evidence under `docs/certification/final/g17/`.
-
-## Independent audit
-
-Requested in parallel (read-only). Findings will be appended under `docs/certification/final/INDEPENDENT-AUDIT.md` when the auditor returns. **APPROVED remains forbidden** until G17 PASS **and** auditor critical/high findings are cleared.

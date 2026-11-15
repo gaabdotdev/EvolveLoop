@@ -1,3 +1,7 @@
-unit_suite: 479 passed / 0 failed (npm run test:unit @ 4142948 parent tip; reconfirm after this amend-note commit)
-fabric+sec-h02: 44 passed
-G17: BLOCKED
+regen_utc=2026-11-15T01:09:36Z
+unit: 115 files / 491 tests PASS (npm ci clean)
+integration: 24 files / 62 PASS / 1 skipped (graphify CLI absent)
+fabric+IPC+cancel+sec-h02+scrub: 57/57 PASS
+G17: BLOCKED (gaab-1 offline; AUTO_DETECT_TAILSCALE=1)
+re-audit_B: be8ca586-25b3-466b-afba-b6cb20769cc6 ACCEPT_WITH_RESERVATIONS / GLOBAL BLOCKED
+historical_REJECT: preserved @ 4142948

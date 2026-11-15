@@ -1,3 +1,9 @@
+ac13116 fix(v3.7): SEC-H02 trust boundary, mid-flight cancel, cert hardening
+18833eb docs(certification): record auditor REJECT and post-fix tip
+aea5941 fix(v3.7): address independent audit CRITICAL/HIGH findings
+d81160b docs(certification): sync certified tip to HEAD
+2868de1 docs(certification): pin BLOCKED tip hash and unit-suite summary
+4142948 docs(certification): record BLOCKED final package pending G17
 e3b41eb docs(certification): document measure Python venv for tiktoken gates
 6aec138 fix(measure): resolve tiktoken via project .venv-measure or EVOLVELOOP_PYTHON
 29db8cf feat(v3.7): mTLS, remote delivery, IPC hardening, sandbox wiring

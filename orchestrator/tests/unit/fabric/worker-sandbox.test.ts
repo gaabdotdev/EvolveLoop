@@ -119,4 +119,50 @@ describe("V3.7 worker runtime sandbox", () => {
     void secret;
     mkdirSync(root, { recursive: true });
   });
+
+  it("host path does not inherit full process.env (AUD-SBX-01 / AUD-V37B-04)", async () => {
+    const root = mkdtempSync(join(tmpdir(), "el-wsand-scrub-"));
+    const marker = `EL_SHOULD_NOT_LEAK_${Date.now()}`;
+    process.env[marker] = "LEAKED_SECRET";
+    try {
+      const rt = new WorkerRuntime({
+        worker_node_id: "wn_host",
+        workRoot: root,
+        slots: 1,
+        allowHostFallback: true,
+        requireOsSandbox: false,
+      });
+      const contract = buildContract({
+        workflow_id: "wf",
+        task_id: "scrub1",
+        inputs: {},
+        dependency_refs: [],
+        artifact_refs: [],
+        required_capabilities: [],
+        permissions: [],
+        budget: {},
+        deadline_at: new Date(Date.now() + 60_000).toISOString(),
+        sandbox_profile: "none",
+        network_policy: "deny",
+        worker_node_id: "wn_host",
+        lease_id: "lease_scrub",
+        fencing_epoch: 1,
+        evidence_requirements: [],
+        retry_policy: { max_retries: 0, backoff_ms: 0 },
+        cancel_policy: { graceful_ms: 500, force_after_ms: 1000 },
+      });
+      const result = await rt.execute(contract, {
+        command: [
+          process.execPath,
+          "-e",
+          `console.log('has=' + String(process.env[${JSON.stringify(marker)}] || 'absent'))`,
+        ],
+      });
+      expect(result.status).toBe("completed");
+      expect(result.stdout).toMatch(/has=absent/);
+      expect(result.stdout).not.toMatch(/LEAKED_SECRET/);
+    } finally {
+      delete process.env[marker];
+    }
+  });
 });

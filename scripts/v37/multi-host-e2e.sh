@@ -191,14 +191,21 @@ sleep 1
 
 POST_REVOKE=$($EVOLVE fabric dispatch --fabric-dir "$FABRIC_DIR" --deliver true --caps git --objective "g17-post-revoke" 2>"$EVIDENCE_DIR/post-revoke.err" || true)
 echo "$POST_REVOKE" >"$EVIDENCE_DIR/post-revoke-dispatch.json"
+# If placement still selects revoked node, that is FAIL
+if grep -q "\"selected_worker_node_id\": \"$REVOKED\"" <<<"$POST_REVOKE"; then
+  json_out "FAIL" "revoked_worker_still_selected" "revoked=$REVOKED"
+  exit 1
+fi
 # Must not accept a completed delivery owned by the revoked worker.
-if grep -q "\"selected_worker_node_id\": \"$REVOKED\"" <<<"$POST_REVOKE" && grep -q '"result_accepted"' <<<"$POST_REVOKE"; then
+if grep -q "\"worker_node_id\": \"$REVOKED\"" <<<"$POST_REVOKE" && grep -q '"result_accepted"' <<<"$POST_REVOKE"; then
   json_out "FAIL" "revoked_worker_still_accepted_delivery" "revoked=$REVOKED"
   exit 1
 fi
-# If placement still selects revoked node, that is also FAIL
-if grep -q "\"selected_worker_node_id\": \"$REVOKED\"" <<<"$POST_REVOKE"; then
-  json_out "FAIL" "revoked_worker_still_selected" "revoked=$REVOKED"
+# Remaining host must still complete a delivery (AUD-V37B-03): ack alone insufficient.
+if ! grep -q '"result_accepted"' <<<"$POST_REVOKE"; then
+  json_out "FAIL" "post_revoke_deliver_did_not_result_accept" \
+    "revoked=$REVOKED" \
+    "post_revoke=$(echo "$POST_REVOKE" | tr '\n' ' ' | cut -c1-240)"
   exit 1
 fi
 
@@ -210,5 +217,6 @@ json_out "PASS" "multi_host_live_battery_completed" \
   "cp_port=$CP_PORT" \
   "evidence_dir=$EVIDENCE_DIR" \
   "revoked=$REVOKED" \
-  "delivery_status=result_accepted"
+  "pre_revoke_delivery=result_accepted" \
+  "post_revoke_delivery=result_accepted"
 exit 0
