@@ -22,9 +22,9 @@ On `feature/v4/m10-policy-full` (no merge to integration):
 
 | Hash | Message |
 |------|---------|
-| *(implementation SHA stamped after first landing)* | feat(v4/m10): refuse V3 CLI store fallback under V4 posture (F02) |
+| `52b555c66dc9371c0fdbe0c6ba90f27a7157c78f` | feat(v4/m10): refuse V3 CLI store fallback under V4 posture (F02) |
 
-Orchestrator tip = `git rev-parse feature/v4/m10-policy-full` (stamped in a follow-up docs commit if present).
+Engine commit above is the implementation + tests + this record as first landed. This follow-up stamps that SHA. Orchestrator tip = `git rev-parse feature/v4/m10-policy-full`.
 
 ## 2. What was implemented
 
@@ -50,11 +50,13 @@ Orchestrator tip = `git rev-parse feature/v4/m10-policy-full` (stamped in a foll
 
 ```bash
 cd orchestrator && npx vitest run tests/v4/policy
-# 5 files, 41 passed
+# 5 files, 41 passed (12 F02 + 9 match/R13/R14 + 20 engine/grants/autonomy)
 cd orchestrator && npx vitest run tests/v4
 # 55 files, 343 passed
 # node_modules is a symlink — do not npm install
 ```
+
+Recorded at implementation SHA `52b555c`. Full `tests/v4` is 343 vs prior Wave 5 note of 337 — delta is this cut's new policy tests (no npm install).
 
 Locks: `SELF_APPROVAL_DENIED`, `CALLER_ASSERTED_IDENTITY_REJECTED` (all four keys, approve+reject), refused store fallback without invoking the writer, CLI source uses `applyCliApprovalStoreFallback`.
 
