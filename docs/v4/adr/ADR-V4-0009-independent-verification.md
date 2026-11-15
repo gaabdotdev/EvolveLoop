@@ -17,7 +17,7 @@ Honesty rule (§8.3): nothing may promote PARTIAL/UNVERIFIED to PROVEN from opin
 
 ## Decision
 
-1. **Independence (INV-EVD-01):** evidence is independent iff `method.kind ≠ SELF_REPORTED` **and** `produced_by.executor_id ≠ subject_executor_ref.executor_id`. Version changes do not create independence. `SELF_REPORTED` exists so self-assessment is recorded and **never qualifies**.
+1. **Independence (INV-EVD-01):** evidence is independent iff `method.kind ≠ SELF_REPORTED` **and** `subject_executor_ref` is present **and** `produced_by.executor_id ≠ subject_executor_ref.executor_id`. Missing `subject_executor_ref` **fails closed** (`isIndependent` → false; PROVEN unreachable). `validateEvidence` requires the field when `subject.kind` ∈ {CRITERION, TASK, EXECUTION}. Version changes do not create independence. `SELF_REPORTED` exists so self-assessment is recorded and **never qualifies**.
 2. **Trust is not a payload field** (ADR-V4-0017). No `trust` / `gate_source_kind` on Evidence.
 3. **No confidence constants or thresholds as proof** (F16). Status ∈ {PASS, FAIL, INCONCLUSIVE, ERROR} plus WorkProof `{PROVEN, PARTIAL, FAILED, UNVERIFIED}` derived by `deriveRequirementStatus` / `deriveFinalStatus`. Implementations may only be *more conservative*.
 4. **Method selection** is per `AcceptanceCriterion.verification_methods` (Goal Contract). Allowed kinds: DETERMINISTIC_RULE, AUTOMATED_TEST, STATIC_ANALYSIS, INDEPENDENT_MODEL_REVIEW, HUMAN_REVIEW, OBSERVATION. SELF_REPORTED is not acceptable on the Goal Contract.

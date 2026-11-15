@@ -15,7 +15,7 @@ This document is a **catalog**, not a second schema. If it disagrees with TypeSc
 2. Validate every object crossing a trust boundary with `assertConforms` or the per-kind `validate*`.
 3. Implement ports from `ports.ts`. Do not import another meta's concrete classes.
 4. Reach V3.7 only through adapters whose shapes are in `adapters-v37.ts` (ADR-V4-0002).
-5. Same major is readable; ignore unknown optional fields (ADR-V4-0001).
+5. Same major is readable; ignore unknown optional fields for readability (ADR-V4-0001). Capsules are the exception at the *forwarding* boundary: `allowlistParseExecutionCapsule` drops unknown keys (INV-CAP-07).
 
 Conformance tests (skeletons, runnable): `orchestrator/tests/v4/contracts/` and `orchestrator/tests/v4/conformance/`.
 
@@ -63,7 +63,8 @@ Each type has exactly one producing meta. Experimental: `x.mNN.name` (non-author
 |----------|-----------|
 | `decideRetry` | UNKNOWN/DISPATCHED retry policy; no exactly-once |
 | `deriveFinalStatus` / `deriveRequirementStatus` | honesty rule |
-| `isIndependent` | executor ≠ verifier |
+| `isIndependent` | executor ≠ verifier; missing subject fails closed |
+| `allowlistParseExecutionCapsule` | unknown keys never forwarded (F01) |
 | `computeCapsuleDigest` / `computeEventDigest` | integrity |
 | `checkEventStream` | seq + uniqueness + hash chain |
 | `validateTaskGraph` | acyclic, same work |
