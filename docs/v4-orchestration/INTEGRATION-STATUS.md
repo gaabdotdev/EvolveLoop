@@ -2,8 +2,8 @@
 
 **Branch:** `feature/v4-integration`  
 **Baseline:** `03937c175368715e893193fcfad09aac8474286b` (provisional — V3.7 **BLOCKED** G17; never claim APPROVED)  
-**Integrator (M19):** A-M19-1 (Wave 1) + freeze merge (2026-11-15T14:07Z)  
-**Integration HEAD at this record:** merge `061dbd4542c726ee90d4bda320c4fd3e703f332b` (status file may sit on a follow-up docs commit)  
+**Integrator (M19):** A-M19-1 (Wave 1) + freeze merge + Wave 2 integrate (2026-11-15T14:18Z)  
+**Integration HEAD at this record:** merge `df4fbf401b6dcad9b0e74d20109ab98bb87d0af0` (status file may sit on a follow-up docs commit)  
 **Knowledge:** `WIKI_ROOT` unset → GAP; grounding = repo docs + ACCEPTED tips only
 
 M19 may integrate **only** orchestrator-ACCEPTED deliveries. Shared catalog is **FROZEN** (ADR-V4-0001) as of the M00 CONTRACT-FREEZE stamp; semantic changes require RFC.
@@ -13,6 +13,12 @@ M19 may integrate **only** orchestrator-ACCEPTED deliveries. Shared catalog is *
 | M00 Architecture | **ACCEPTED** (package) | `1dea128` on `feature/v4/m00-architecture` | merge `e44252f` | contracts, ADRs 0001–0017, architecture, v4 tests |
 | M18 Wave 1 Security | **ACCEPTED** | `47155ec` on `feature/v4/m18-security` | merge `2fc17c2` | threat model + Wave 1 delivery; owner remains M18 |
 | M00 CONTRACT-FREEZE | **ACCEPTED** (FROZEN + R1–R16) | `4fbadf8` (includes stamp `e4fb8ad`) | merge `061dbd4` | `CONTRACT-FREEZE.md`; catalog stability **FROZEN**; B1–B3 closed |
+| M02 Ledger & Checkpoints | **ACCEPTED** | `374769d5baed65f41367a0a7f5deb48e1bb4b632` on `feature/v4/m02-ledger-checkpoints` | merge `780a622175bac06ed6d172d85c6b61d3632fae5c` | ledger, checkpoint, artifacts, `adapters/v37/ledger.ts` |
+| M01 Goal & Work | **ACCEPTED** | `f72ad763a57824abd2a31704342ddfa7b021e385` on `feature/v4/m01-goal-work` | merge `e815407b2fab074fb02691cea1b4ae434087fc4c` | `goal/**`, `work/**` |
+| M03 Effect Ledger | **ACCEPTED** | `91dbdf36b19dbe6e31367aff76d93ad1b03586d1` on `feature/v4/m03-effect-ledger` | merge `d2c85d674d7c25707677c4594f69d3b247ad3a79` | `effects/**` |
+| M06 WorkProof-min | **ACCEPTED** | `272869592f80a4964a9195083fbdea60ada15474` on `feature/v4/m06-workproof-min` | merge `8c801ae5fad9f161e4f503baefa077e64f78af95` | `proof/**` |
+| M10 Policy foundations | **ACCEPTED** | `78fa4bcf4d996970152d9c0878a30413619b33b9` on `feature/v4/m10-policy-foundations` | merge `32ec79398375aa453241acbb219b300d2df09d8f` | `policy/**`, `adapters/v37/{identity,policy}.ts`; barrel union `b5bdd01` |
+| M12 Observability init | **ACCEPTED** | `72c5f5b400e75e749bf45836e3bdd2c12903befb` on `feature/v4/m12-obs-init` | merge `df4fbf401b6dcad9b0e74d20109ab98bb87d0af0` | `observability/**` |
 
 ## Merge sequence (2026-11-15) — Wave 1
 
@@ -65,7 +71,7 @@ M00 already carried **byte-identical** copies of the three M18 Wave 1 docs (see 
 
 M18 merge records the canonical branch in history without rewriting those files.
 
-## Landed coherently
+## Landed coherently (Wave 1 + freeze)
 
 - `orchestrator/src/v4/contracts/**` (catalog **FROZEN**; B1–B3 capsule/evidence/effect fixes)
 - `orchestrator/tests/v4/{contracts,conformance}/**` (28 tests)
@@ -100,16 +106,68 @@ Attempted `git -C <worktree> merge --ff-only feature/v4-integration` after merge
 | EvolveLoop-v4-m10 | `8130064` import freeze `e4fb8ad` | **NO** | same |
 | EvolveLoop-v4-m12 | `8130064` import freeze `e4fb8ad` | **NO** | same |
 
-Worktrees already contain freeze tip `e4fb8ad` (local `--no-ff` import). They do **not** contain `4fbadf8` (CONTRACTS.md FROZEN note) nor integration merge `061dbd4`. No rebase/`--no-ff` was performed (M19 FF-only only).
+Worktrees already contain freeze tip `e4fb8ad` (local `--no-ff` import). They do **not** contain `4fbadf8` (CONTRACTS.md FROZEN note) nor integration merge `061dbd4`. No rebase/`--no-ff` was performed (M19 FF-only only). Integration used `--no-ff` of ACCEPTED tips (same object database) instead of rewriting implementer history.
 
-## Conflicts deferred
+## Merge sequence (2026-11-15) — Wave 2
 
-None on the freeze merge. No semantic domain disputes. No composition conflicts (paths/imports/docs index).
+Pre-merge HEAD `db0f6da67ff6192eded3e6c0a7eed7830104f258`. Order per `ORCHESTRATOR-DIRECTIVE-M19-WAVE2-INTEGRATE.md`. All six `git merge --no-ff` used full hashes from linked worktrees.
+
+```text
+db0f6da  feature/v4-integration (pre-Wave-2-merge)
+   + merge --no-ff 374769d5  →  780a622175bac06ed6d172d85c6b61d3632fae5c
+   + merge --no-ff f72ad763  →  e815407b2fab074fb02691cea1b4ae434087fc4c
+   + merge --no-ff 91dbdf36  →  d2c85d674d7c25707677c4594f69d3b247ad3a79
+   + merge --no-ff 27286959  →  8c801ae5fad9f161e4f503baefa077e64f78af95
+   + merge --no-ff 78fa4bcf  →  32ec79398375aa453241acbb219b300d2df09d8f
+   + barrel union (M10 lacked index.ts)
+   →  b5bdd01009044d91166e9e7ee69b09305d18862b
+   + merge --no-ff 72c5f5b4  →  df4fbf401b6dcad9b0e74d20109ab98bb87d0af0
+```
+
+| Step | Command | Result | Hash |
+|------|---------|--------|------|
+| 1 | `git merge --no-ff 374769d5baed65f41367a0a7f5deb48e1bb4b632` | clean (ort); 30 files, +2761 | `780a622175bac06ed6d172d85c6b61d3632fae5c` |
+| 2 | `git merge --no-ff f72ad763a57824abd2a31704342ddfa7b021e385` | clean (ort); 19 files, +2357 | `e815407b2fab074fb02691cea1b4ae434087fc4c` |
+| 3 | `git merge --no-ff 91dbdf36b19dbe6e31367aff76d93ad1b03586d1` | clean (ort); 11 files, +1759 | `d2c85d674d7c25707677c4594f69d3b247ad3a79` |
+| 4 | `git merge --no-ff 272869592f80a4964a9195083fbdea60ada15474` | clean (ort); 21 files, +2251 | `8c801ae5fad9f161e4f503baefa077e64f78af95` |
+| 5 | `git merge --no-ff 78fa4bcf4d996970152d9c0878a30413619b33b9` | clean (ort); 20 files, +1958 | `32ec79398375aa453241acbb219b300d2df09d8f` |
+| 5b | union `adapters/v37/index.ts` | no git conflict; M10 lacked barrel | `b5bdd01009044d91166e9e7ee69b09305d18862b` |
+| 6 | `git merge --no-ff 72c5f5b400e75e749bf45836e3bdd2c12903befb` | clean (ort); 13 files, +1330 | `df4fbf401b6dcad9b0e74d20109ab98bb87d0af0` |
+| 7 | `cd orchestrator && npx vitest run tests/v4` | **200/200 PASS** (29 files) | — |
+
+Ancestry after step 6: tips `374769d`, `f72ad76`, `91dbdf3`, `2728695`, `78fa4bc`, and `72c5f5b` are all ancestors of `feature/v4-integration`.
+
+## Conflicts resolved (Wave 2)
+
+No git merge conflicts on any of the six `--no-ff` merges (ort, disjoint ownership trees).
+
+**Composition (not a git conflict):** M10 did not ship `orchestrator/src/v4/adapters/v37/index.ts`. After merge `32ec793`, that path still held only the M02 ledger binding. Per directive: union exports — keep M02 `bindV37LedgerAdapters` / `V37LedgerBindings` **and** re-export M10 `identity` / `policy` modules (files present after merge). Commit `b5bdd01`. Implementer ownership trees were not rewritten.
+
+## Landed coherently (Wave 2)
+
+- `orchestrator/src/v4/ledger/**`, `checkpoint/**`, `artifacts/**`, `adapters/v37/ledger.ts`
+- `orchestrator/src/v4/goal/**`, `work/**`
+- `orchestrator/src/v4/effects/**`
+- `orchestrator/src/v4/proof/**`
+- `orchestrator/src/v4/policy/**`, `adapters/v37/{identity,policy}.ts`, `docs/v4/policy/**`
+- `orchestrator/src/v4/observability/**`
+- `orchestrator/src/v4/adapters/v37/index.ts` — union barrel (M02 + M10)
+
+## Test evidence (Wave 2 integrate)
+
+```text
+RUN  v2.1.9  /home/gaab/Downloads/EvolveLoop-v4-integration/orchestrator
+Test Files  29 passed (29)
+     Tests  200 passed (200)
+Duration    1.43s
+```
+
+No `npm install`. `orchestrator/node_modules` remains the existing symlink to the V3.7-cert tree.
 
 ## Limitations / not claimed
 
 - V3.7 remains **BLOCKED** G17; baseline is provisional; **not APPROVED**.
 - `recovery/v37-full-cert` and V3.7 evidence **not** edited.
-- Wave 2 engines not integrated (implementers RUNNING on diverged worktrees).
+- Wave 2 ACCEPTED tips (M01, M02, M03, M06, M10, M12) **are** ancestors of `feature/v4-integration`. Other metas remain out of this integrate batch.
 - Wiki CLI unavailable (`WIKI_ROOT` unset).
 - Freeze reservations R1–R16 in `CONTRACT-FREEZE.md` remain binding; do not claim they are encoded away.
