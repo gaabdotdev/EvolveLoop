@@ -10,7 +10,7 @@
 | Tree | `/home/gaab/Downloads/EvolveLoop-v37-cert` |
 | Branch | `recovery/v37-full-cert` |
 | Code tip (pre-packaging) | `ac1311626a1e389b2f9e4417c9a85951830e1d69` |
-| Packaging tip | *(this commit — see `evidence/certified-tip.txt` after commit)* |
+| Packaging tip | \`197c0c773cd91beebb03ddfe3f403b023678c48c\` |
 | Baseline | `7468a40` + ZIP overlay + remediations |
 | Historical audit | `REJECT` @ `4142948` — preserved |
 | Re-audit B | `ACCEPT_WITH_RESERVATIONS` / global **BLOCKED** — `be8ca586-25b3-466b-afba-b6cb20769cc6` @ `ac13116` |
