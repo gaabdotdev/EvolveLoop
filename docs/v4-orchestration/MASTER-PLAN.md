@@ -36,8 +36,8 @@
 | M11 Provenance | **INTEGRATED** | merge `290b453`; 337/337 |
 | M18 Wave5 RO | **INTEGRATED** | merge `0c6d1c9`; 337/337 |
 | M10-full (F02) | **INTEGRATED** | merge `04a104b`; F02 PARTIAL; 343/343 |
-| M15 F02 daemon | READY | prompt `M15-WAVE5-F02.md`; RR-W5-01 remainder |
-| M06-authz | PENDING | after M15 F02 |
+| M15 F02 daemon | **INTEGRATED** | merge `6e78bce`; F02 PARTIAL; 353/353 |
+| M06-authz | READY | prompt `M06-AUTHZ-MISSION.md` |
 | M09 | BLOCKED | methodology PROVISIONAL + baseline UNAVAILABLE |
 
 **Closed waves (summary):**

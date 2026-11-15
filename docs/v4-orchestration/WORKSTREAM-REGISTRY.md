@@ -10,7 +10,7 @@ States: `PENDING` | `DISCOVERY` | `CONTRACT_REVIEW` | `READY` | `RUNNING` | `REV
 | M03 | Effect Ledger | 2→3 | `feature/v4/m03-effect-ledger` | `/home/gaab/Downloads/EvolveLoop-v4-m03` | — | **INTEGRATED** | tip `91dbdf3` → `d2c85d6` |
 | M04 | Capsule, Handoff & Recovery | 3 | `feature/v4/m04-continuity` | `/home/gaab/Downloads/EvolveLoop-v4-m04` | Task `b79ded28-…` | **INTEGRATED** | tip `14aa02b` → `26831b0` |
 | M05 | Time Travel, Replay & Fork | 3 | `feature/v4/m05-timetravel` | `/home/gaab/Downloads/EvolveLoop-v4-m05` | Task `85d22360-…` | **INTEGRATED** | tip `b27b2cb` → `33229c5` |
-| M06 | WorkProof & Independent Verifier | 2→6 | `feature/v4/m06-workproof-min` | `/home/gaab/Downloads/EvolveLoop-v4-m06` | — | **INTEGRATED** | tip `2728695` → `8c801ae` |
+| M06 | WorkProof & Independent Verifier | 2→6 | `feature/v4/m06-authz` | `/home/gaab/Downloads/EvolveLoop-v4-m06` | — | **READY** Wave5 | min INTEGRATED `8c801ae`; authz cut next |
 | M07 | Dynamic Planning Engine | 4 | `feature/v4/m07-planning` | `/home/gaab/Downloads/EvolveLoop-v4-m07` | Task `53020ad6-…` | **INTEGRATED** | tip `0e9b581` → `cfead01` |
 | M08 | Capability Intelligence | 4 | `feature/v4/m08-capability` | `/home/gaab/Downloads/EvolveLoop-v4-m08` | Task `1ccdd7c6-…` | **INTEGRATED** | tip `13fac49` → `07bd808`; methodology PROVISIONAL |
 | M09 | Adaptive Execution Intelligence | 4 | — | — | — | **BLOCKED** | wait methodology ACCEPTED + observed baseline |
