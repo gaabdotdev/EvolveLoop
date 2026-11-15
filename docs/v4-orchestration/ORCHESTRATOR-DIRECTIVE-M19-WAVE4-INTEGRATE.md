@@ -5,10 +5,10 @@
 
 ## Tips (order)
 
-| Order | Meta | Ownership |
-|------:|------|-----------|
-| 1 | M07 | `orchestrator/src/v4/planning/**` |
-| 2 | M08 | `orchestrator/src/v4/capability/**` |
+| Order | Meta | Tip | Ownership |
+|------:|------|-----|-----------|
+| 1 | M07 | `0e9b581` (`/home/gaab/Downloads/EvolveLoop-v4-m07`) | `planning/**` |
+| 2 | M08 | `13fac49` (`/home/gaab/Downloads/EvolveLoop-v4-m08`) | `capability/**` |
 
 Merge `--no-ff` full hashes from worktrees. Ownership should be disjoint.
 

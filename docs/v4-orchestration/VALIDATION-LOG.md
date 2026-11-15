@@ -22,6 +22,8 @@
 | 2026-11-15T15:14Z | M04 Capsule/handoff/recovery | **ACCEPTED** | tip `14aa02b` (feat `3f7c40e`); ownership `continuity/**` only; vitest **17/17** + full **219/219** | F01 ★ + seal/verify/accept |
 | 2026-11-15T15:16Z | M19 Wave 3 integrate | **ACCEPTED / INTEGRATED** | merges `26831b0` (M04) + `33229c5` (M05); HEAD `3da3af5`; orch recheck **234/234** | Continuity vertical next |
 | 2026-11-15T15:25Z | M19 Continuity vertical | **ACCEPTED** | tip `81abcbd` (tests `6b130ac`); seal→accept→recover→fork→RECORDED; vitest vertical **4/4** + full **236/236** | Phase 3 gate green; G17 still blocks APPROVED |
+| 2026-11-15T15:32Z | M08 Capability Intelligence | **ACCEPTED** | tip `13fac49` (feat `059f1a4`); ownership `capability/**`; vitest **30/30** + full **266/266** | Methodology PROVISIONAL; no L2/L3 score routing |
+| 2026-11-15T15:33Z | M07 Dynamic Planning | **ACCEPTED** | tip `0e9b581` (feat `812c4ef`); ownership `planning/**`; vitest **18/18** + full **254/254** | Composes M01/M02; no score routing |
 
 Validation outcomes for metas: `ACCEPTED` | `REWORK` | `BLOCKED` | `REJECTED` only.
 
