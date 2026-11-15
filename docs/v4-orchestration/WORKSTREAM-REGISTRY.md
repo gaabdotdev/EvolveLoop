@@ -8,8 +8,8 @@ States: `PENDING` | `DISCOVERY` | `CONTRACT_REVIEW` | `READY` | `RUNNING` | `REV
 | M01 | Goal Compiler & Work State | 2 | `feature/v4/m01-goal-work` | `/home/gaab/Downloads/EvolveLoop-v4-m01` | — | **INTEGRATED** | tip `f72ad76` → `e815407` |
 | M02 | Event Ledger, Persistence & Checkpoints | 2 | `feature/v4/m02-ledger-checkpoints` | `/home/gaab/Downloads/EvolveLoop-v4-m02` | — | **INTEGRATED** | tip `374769d` → `780a622` |
 | M03 | Effect Ledger | 2→3 | `feature/v4/m03-effect-ledger` | `/home/gaab/Downloads/EvolveLoop-v4-m03` | — | **INTEGRATED** | tip `91dbdf3` → `d2c85d6` |
-| M04 | Capsule, Handoff & Recovery | 3 | — | — | — | PENDING | |
-| M05 | Time Travel, Replay & Fork | 3 | — | — | — | PENDING | |
+| M04 | Capsule, Handoff & Recovery | 3 | `feature/v4/m04-continuity` | `/home/gaab/Downloads/EvolveLoop-v4-m04` | — | READY | Wave 3 |
+| M05 | Time Travel, Replay & Fork | 3 | `feature/v4/m05-timetravel` | `/home/gaab/Downloads/EvolveLoop-v4-m05` | — | READY | Wave 3 |
 | M06 | WorkProof & Independent Verifier | 2→6 | `feature/v4/m06-workproof-min` | `/home/gaab/Downloads/EvolveLoop-v4-m06` | — | **INTEGRATED** | tip `2728695` → `8c801ae` |
 | M07 | Dynamic Planning Engine | 4 | — | — | — | PENDING | |
 | M08 | Capability Intelligence | 4 | — | — | — | PENDING | |
