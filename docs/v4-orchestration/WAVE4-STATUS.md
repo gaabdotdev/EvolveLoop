@@ -10,7 +10,7 @@
 | M09 | Adaptive Execution Intelligence | BLOCKED | depends M08 + M17 provenance |
 | M12-pred | Observability predictive | PENDING | after M07/M08 land |
 | M19 | Wave 4 first-cut integrate | **INTEGRATED** | HEAD `0f7f626`; 284/284 |
-| M17 | Benchmarks & Economic Proof (early) | **NEXT** | unblocks M09 + methodology ACCEPTED path |
+| M17 | Benchmarks & Economic Proof (early) | **ACCEPTED** | tip `69d15ce`; baselines defined; M08 still PROVISIONAL |
 
 ## Hard edges (DEPENDENCY-GRAPH)
 

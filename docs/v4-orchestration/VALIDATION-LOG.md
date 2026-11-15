@@ -25,6 +25,7 @@
 | 2026-11-15T15:32Z | M08 Capability Intelligence | **ACCEPTED** | tip `13fac49` (feat `059f1a4`); ownership `capability/**`; vitest **30/30** + full **266/266** | Methodology PROVISIONAL; no L2/L3 score routing |
 | 2026-11-15T15:33Z | M07 Dynamic Planning | **ACCEPTED** | tip `0e9b581` (feat `812c4ef`); ownership `planning/**`; vitest **18/18** + full **254/254** | Composes M01/M02; no score routing |
 | 2026-11-15T15:36Z | M19 Wave 4 integrate | **ACCEPTED / INTEGRATED** | merges `cfead01` (M07) + `07bd808` (M08); HEAD `0f7f626`; orch recheck **284/284** | M08 methodology still PROVISIONAL; M09 not launched |
+| 2026-11-15T15:44Z | M17 Benchmarks early | **ACCEPTED** | tip `69d15ce` (harness `add40aa`); ownership `docs/v4/benchmarks/**` + `benchmarks/**`; vitest **22/22** + full **306/306** | Soft gap: uncommitted pin line in DELIVERY; methodology still PROVISIONAL — M09 stays blocked for score routing |
 
 Validation outcomes for metas: `ACCEPTED` | `REWORK` | `BLOCKED` | `REJECTED` only.
 
