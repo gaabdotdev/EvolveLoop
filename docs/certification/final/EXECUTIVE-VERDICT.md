@@ -9,8 +9,9 @@
 | Generated | 2026-11-15T01:05Z (approx) |
 | Tree | `/home/gaab/Downloads/EvolveLoop-v37-cert` |
 | Branch | `recovery/v37-full-cert` |
+| Audited code tip (re-audit B) | `ac1311626a1e389b2f9e4417c9a85951830e1d69` |
 | Code tip (pre-packaging) | `ac1311626a1e389b2f9e4417c9a85951830e1d69` |
-| Packaging tip | \`197c0c773cd91beebb03ddfe3f403b023678c48c\` |
+| Packaging/docs HEAD | `89b1ac6e80199b0b96b2e6662ae46f1550a0def6` |
 | Baseline | `7468a40` + ZIP overlay + remediations |
 | Historical audit | `REJECT` @ `4142948` — preserved |
 | Re-audit B | `ACCEPT_WITH_RESERVATIONS` / global **BLOCKED** — `be8ca586-25b3-466b-afba-b6cb20769cc6` @ `ac13116` |
