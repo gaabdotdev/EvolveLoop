@@ -44,13 +44,13 @@ const KINDS: ContractKind[] = [
 ];
 
 describe("consumer conformance — catalog", () => {
-  it("catalog v1 lists every domain contract with a validator and PROPOSED stability", () => {
+  it("catalog v1 lists every domain contract with a validator and FROZEN stability", () => {
     expect(CONTRACT_CATALOG_VERSION).toBe("1.0.0");
     for (const kind of KINDS) {
       const entry = CONTRACT_CATALOG[kind];
       expect(entry.kind).toBe(kind);
       expect(entry.schema_version).toMatch(/^\d+\.\d+\.\d+$/);
-      expect(entry.stability).toBe("PROPOSED");
+      expect(entry.stability).toBe("FROZEN");
       expect(typeof entry.validate).toBe("function");
       expect(entry.producer.startsWith("M")).toBe(true);
     }
