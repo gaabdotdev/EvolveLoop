@@ -7,7 +7,7 @@
 | M11 | Trust & Provenance Graph | **INTEGRATED** | tip `f1222f6`; merge `290b453a32d54f38e89ea41a537b85be7365a966`; orch vitest **337/337** (55 files; provenance 31) |
 | M10-full | Policy full (F02) | **INTEGRATED** | tip `fd8adf7`; merge `04a104b68efd46e5f3b127fbaa3839f595166de8`; orch vitest **343/343** (55 files). F02 **PARTIALLY MITIGATED** (CLI store fallback refused under V4 posture). V3 daemon actor residual **OPEN** (RR-W5-01 remainder). RR-W5-02 **OPEN**. Do not claim F02 globally closed. |
 | M15 F02 daemon | V3 IPC actor residual | **INTEGRATED** | tip `cbb38d2`; merge `6e78bce4d5de768cbe714907393f6a9b85c4ff66`; orch vitest **353/353** (56 files). F02 **PARTIALLY MITIGATED** (daemon actor write refused under V4 posture). Live daemon has no in-process PDP; privileged IPC token not operator identity. Do not claim F02 globally closed. |
-| M06-authz | WorkProof authz | RUNNING | Task `70066c69-…`; prompt `M06-AUTHZ-MISSION.md` |
+| M06-authz | WorkProof authz | **ACCEPTED** | tip `a53419e`; awaiting M19 integrate; D13 issuance cap; RR-W5-02 OPEN |
 | M18 | Adversarial RO review | **INTEGRATED** | tip `5e8bc70`; merge `0c6d1c919eabce9e2065aec1d19efc0b0b048558`; docs-only `docs/v4/security/**`; orch vitest **337/337** (55 files, unchanged). OPEN residuals RR-W5-01..11 **not inverted** (F02 V3 CLI still OPEN at that cut; M10-full later refuses CLI fallback only). |
 | M09 | Adaptive (no score routing) | BLOCKED | wait methodology ACCEPTED + observed baseline |
 
