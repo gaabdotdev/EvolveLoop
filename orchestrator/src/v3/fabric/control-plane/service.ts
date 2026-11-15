@@ -225,6 +225,18 @@ export class ControlPlaneService {
           if (!id) throw new Error("worker_node_id_required");
           return this.revokeWorker(id, String((req.params ?? {}).reason ?? "admin_revoke"));
         }
+        if (req.method === "cancel" || req.method === "fabric.cancel") {
+          const p = req.params ?? {};
+          const leaseId = String(p.lease_id ?? "");
+          const taskId = String(p.task_id ?? "");
+          if (!leaseId || !taskId) throw new Error("lease_id_and_task_id_required");
+          return this.cancelTask({
+            lease_id: leaseId,
+            task_id: taskId,
+            worker_node_id: p.worker_node_id ? String(p.worker_node_id) : undefined,
+            reason: p.reason ? String(p.reason) : undefined,
+          });
+        }
         if (req.method === "shutdown" || req.method === "fabric.shutdown") {
           await this.stop();
           return { stopped: true };

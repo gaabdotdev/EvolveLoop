@@ -280,48 +280,11 @@ export async function handleV37Command(args: Record<string, string>): Promise<bo
       }),
       "health.heartbeat_ack",
     );
-    client.onMessage(async (msg) => {
-      if (msg.type !== "task.offer") return;
-      const payload = msg.payload as { contract: any; lease_id: string };
-      try {
-        client.send(
-          envelope("task", "task.ack", { lease_id: payload.lease_id, task_id: payload.contract.task_id }, {
-            ack_of: msg.request_id,
-            worker_node_id: workerNodeId,
-          }),
-        );
-        client.send(
-          envelope("task", "task.progress", { task_id: payload.contract.task_id, phase: "executing" }, {
-            worker_node_id: workerNodeId,
-          }),
-        );
-        const result = await rt.execute(payload.contract);
-        await client.request(
-          envelope(
-            "task",
-            "task.result",
-            {
-              task_id: payload.contract.task_id,
-              lease_id: payload.contract.lease_id,
-              fencing_epoch: payload.contract.fencing_epoch,
-              status: result.status,
-              stdout: result.stdout,
-            },
-            { worker_node_id: workerNodeId },
-          ),
-          undefined,
-          30_000,
-        );
-      } catch (err) {
-        client.send(
-          envelope(
-            "task",
-            "task.reject",
-            { reason: err instanceof Error ? err.message : String(err) },
-            { ack_of: msg.request_id, worker_node_id: workerNodeId },
-          ),
-        );
-      }
+    const { attachWorkerProtocolLoop } = await import("../v3/fabric/worker-runtime/protocol-loop.js");
+    attachWorkerProtocolLoop({
+      worker_node_id: workerNodeId,
+      client,
+      runtime: rt,
     });
     console.log(JSON.stringify({ ok: true, worker_node_id: workerNodeId, serving: true }, null, 2));
     if (args.once === "true") {

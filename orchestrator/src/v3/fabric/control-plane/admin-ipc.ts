@@ -24,12 +24,14 @@ export type FabricAdminCapability =
   | "fabric.status"
   | "fabric.deliver"
   | "fabric.revoke"
+  | "fabric.cancel"
   | "fabric.shutdown";
 
 export const FABRIC_ADMIN_CAPABILITIES: FabricAdminCapability[] = [
   "fabric.status",
   "fabric.deliver",
   "fabric.revoke",
+  "fabric.cancel",
   "fabric.shutdown",
 ];
 

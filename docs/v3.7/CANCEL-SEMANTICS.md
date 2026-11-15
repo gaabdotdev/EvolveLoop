@@ -31,6 +31,9 @@ WorkerRuntime.cancel(task_id)
 
 ## Covered scenarios (tests)
 
+Unit: `tests/unit/fabric/cancel-midflight.test.ts`  
+Protocol E2E (AUD-V37B-05): `tests/unit/fabric/cancel-protocol-e2e.test.ts` via `attachWorkerProtocolLoop` (also wired into CLI `fabric worker-serve`).
+
 | # | Scenario | Expected |
 |---|----------|----------|
 | 1 | Cancel before start (`AbortSignal` already aborted / pre-marked) | `status=cancelled`, no successful commit |
@@ -40,6 +43,8 @@ WorkerRuntime.cancel(task_id)
 | 5 | Cancel force timeout | Kill lands within `force_after_ms` / `cancel_grace_ms` bound |
 | 6 | Worker disconnected during cancel | `cancel_pushed=false`, lease `revoked`, fencing rejects submit |
 | 7 | Publish result after cancel | `assertFencing` → `lease_revoked` (no successful commit) |
+| 8 | Protocol path CP→`task.cancel`→runtime | E2E PASS; PID reaped; pending deliver → `result_rejected` when lease revoked mid-flight |
+| 9 | Cancel one task; sibling continues | Sibling can still `result_accepted`; unrelated lease intact |
 
 ## Guarantees (Linux + bubblewrap / host path)
 
