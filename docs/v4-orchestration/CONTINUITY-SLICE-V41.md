@@ -9,10 +9,10 @@
 | Self-status | **DELIVERED** (orchestrator validation; not self-ACCEPTED) |
 | V4 APPROVED | **not claimed** |
 | Pre-delivery HEAD | `9efa4d5490f014f3c817da1b005b16b67dad42e2` (`docs(v4/orch): draft Wave 4 status (blocked on Continuity gate)`) |
-| Delivery tip | `PENDING_COMMIT` |
+| Delivery tip | `6b130ace7bc6d3642300fc648937367fe0d2dcc1` |
 | Knowledge | Wiki **GAP** (`WIKI_ROOT` / `RAG_REPO_ROOT` unset); contracts from this repo |
 
-`git_tip: PENDING_COMMIT`
+`git_tip: 6b130ace7bc6d3642300fc648937367fe0d2dcc1`
 
 ## What was proven (automated)
 
