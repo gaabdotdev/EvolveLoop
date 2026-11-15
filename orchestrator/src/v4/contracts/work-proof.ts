@@ -11,6 +11,7 @@ import {
   type ContractHeader,
   type IsoTimestamp,
   type VersionedRef,
+  scanForSecrets,
   validateWith,
   type ValidationResult,
 } from "./common.js";
@@ -186,6 +187,9 @@ export function validateWorkProof(value: unknown): ValidationResult {
         "final_status",
         `final_status ${declared} does not match normative derivation ${derived}`,
       );
+    }
+    for (const f of scanForSecrets(c.value())) {
+      c.fail("INV-PROOF-06", f.path, `possible secret material (${f.reason}); WorkProof must not carry secrets (TM-V4-F11)`);
     }
   });
 }

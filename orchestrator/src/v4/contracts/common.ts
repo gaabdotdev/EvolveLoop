@@ -106,7 +106,13 @@ export interface CostRecord {
 }
 
 /**
- * Identifier prefixes (ADR-V4-0015). The suffix is opaque; UUIDv7/ULID recommended.
+ * Canonical identifier grammar (ADR-V4-0015; TM-V4-F08).
+ *
+ * Full id = PREFIX + SUFFIX. SUFFIX is `[A-Za-z0-9][A-Za-z0-9_-]{5,127}`.
+ * Path separators, dots, percent-encoding, NUL, spaces and `..` are unrepresentable.
+ * Timestamps are never identity or order keys (ordering = per-work `seq`, ADR-V4-0003).
+ * Every trust boundary (API, IPC, capsule, worker message) MUST call `isValidId` before
+ * using an id as a path component.
  */
 export const ID_PREFIX = {
   work: "work_",
@@ -128,10 +134,14 @@ export const ID_PREFIX = {
 
 export type IdKind = keyof typeof ID_PREFIX;
 
-const ID_SUFFIX = /^[A-Za-z0-9][A-Za-z0-9_-]{5,127}$/;
+/** Suffix after the kind prefix. Length 6–128; charset excludes `.` `/` `\\` `%` NUL. */
+export const ID_SUFFIX = /^[A-Za-z0-9][A-Za-z0-9_-]{5,127}$/;
 
 export function isValidId(kind: IdKind, value: unknown): value is string {
   if (typeof value !== "string") return false;
+  if (value.includes("\0") || value.includes("/") || value.includes("\\") || value.includes("..") || value.includes("%")) {
+    return false;
+  }
   const prefix = ID_PREFIX[kind];
   return value.startsWith(prefix) && ID_SUFFIX.test(value.slice(prefix.length));
 }
@@ -215,6 +225,12 @@ export class Checker {
     this.ensure(this.root.kind === kind, "STRUCT", "kind", `kind must be "${kind}"`);
     this.ensure(isSemver(this.root.schema_version), "STRUCT", "schema_version", "schema_version must be semver");
     this.string("tenant_id");
+    this.ensure(
+      this.root.tenant_id === DEFAULT_TENANT_ID,
+      "INV-TENANT-01",
+      "tenant_id",
+      `V4.0–V4.2 is single-tenant (ADR-V4-0014); tenant_id must be "${DEFAULT_TENANT_ID}"`,
+    );
   }
 
   string(key: string, opts: { optional?: boolean; nonEmpty?: boolean } = {}): string | undefined {

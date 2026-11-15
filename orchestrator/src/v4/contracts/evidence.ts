@@ -11,10 +11,12 @@ import {
   type V4ProvenanceKind,
   PROVENANCE_KINDS,
   isSha256,
+  scanForSecrets,
   validateWith,
   type ValidationResult,
 } from "./common.js";
 import { VERIFICATION_METHOD_KINDS, type VerificationMethodKind } from "./goal-contract.js";
+import { FORBIDDEN_SELF_TRUST_FIELDS, rejectForbiddenFields } from "./field-class.js";
 
 export const EVIDENCE_SCHEMA_VERSION = "1.0.0";
 
@@ -99,9 +101,21 @@ export function validateEvidence(value: unknown): ValidationResult {
     const provenance = c.oneOf("provenance", PROVENANCE_KINDS);
     c.timestamp("observed_at");
     c.timestamp("valid_until", { optional: true });
-    c.stringArray("limitations", { minLength: 1 });
+    const limitations = c.stringArray("limitations");
+    if (limitations) {
+      c.ensure(limitations.length > 0, "INV-EVD-02", "limitations", "evidence must state what it does not prove");
+    }
     if (methodKind === "SELF_REPORTED") {
       c.ensure(provenance === "SELF_REPORTED", "INV-EVD-01", "provenance", "SELF_REPORTED method implies SELF_REPORTED provenance");
+    }
+    rejectForbiddenFields(
+      c,
+      FORBIDDEN_SELF_TRUST_FIELDS,
+      "INV-EVD-04",
+      (field) => `self-asserted trust field "${field}" is forbidden; trust is derived from the authenticated channel (TM-V4-F09)`,
+    );
+    for (const f of scanForSecrets(c.value())) {
+      c.fail("INV-EVD-05", f.path, `possible secret material (${f.reason}); evidence must not carry secrets (TM-V4-F11)`);
     }
   });
 }

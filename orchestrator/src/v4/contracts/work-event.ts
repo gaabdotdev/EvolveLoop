@@ -2,21 +2,26 @@
  * Work Event v1 — append-only record of a transition/action (constitution §5, §6.1; ADR-V4-0003).
  * Storage owner: M02 Event Ledger. Each event type has exactly one producing meta (EVENT_TYPE_CATALOG).
  *
- * Semantics: identity = event_id; ordering = per-work contiguous `seq` (no global total order);
- * dedup = same event_id + same payload_digest is a duplicate, different digest is a conflict;
- * causality = causation_id/correlation_id; immutability = events are never updated or deleted
- * (compaction only via checkpoints + archive, ADR-V4-0003).
+ * Semantics (ADR-V4-0003; TM-V4-F07):
+ *   identity        = event_id
+ *   ordering        = per-work contiguous `seq` (timestamps NEVER order)
+ *   dedup           = same event_id + same payload_digest is a duplicate; different digest is a conflict
+ *   causality       = causation_id / correlation_id
+ *   tamper-evidence = hash chain `prev_event_digest` → `event_digest`
+ *   immutability    = events are never updated or deleted (compaction via checkpoints + archive)
  */
 
 import {
   type ContractHeader,
   type ActorRef,
   type IsoTimestamp,
+  type Sha256Hex,
   isSha256,
   sha256Canonical,
   validateWith,
   type ValidationResult,
 } from "./common.js";
+import { FORBIDDEN_SELF_TRUST_FIELDS, rejectForbiddenFields } from "./field-class.js";
 
 export const WORK_EVENT_SCHEMA_VERSION = "1.0.0";
 
@@ -28,6 +33,9 @@ export type MetaId =
  * Event type registry v1. Types are `<aggregate>.<verb>`; payload versions evolve via `type_version`.
  * Adding a type = minor; changing a payload incompatibly = new type_version (ADR-V4-0001).
  * `x.<meta>.<name>` is reserved for experimental, non-authoritative events.
+ * Payload *schemas* are owned by the producing meta. They MUST NOT put executor-authored
+ * CONTROL into payload (ADR-V4-0017); `next_action` / `objective` as authority are forbidden
+ * (TM-V4-F12). Header-level self-trust fields are rejected by `validateWorkEvent` (INV-EVT-05).
  */
 export const EVENT_TYPE_CATALOG = {
   "work.created": { owner: "M01" },
@@ -85,10 +93,25 @@ export interface WorkEvent<P extends Record<string, unknown> = Record<string, un
   fencing?: { lease_id: string; fencing_epoch: number };
   payload: P;
   payload_digest: string;
+  /**
+   * Tamper-evidence chain (INV-EVT-06). Seq 1 is `"GENESIS"`; every later event cites
+   * the previous event's `event_digest`. Edits, deletions and reordering are detectable
+   * by an independent verifier (M06/M20) without trusting the storage layer.
+   */
+  prev_event_digest: Sha256Hex | "GENESIS";
+  /** sha256 of canonical JSON of this event excluding `event_digest` itself. */
+  event_digest: Sha256Hex;
 }
 
 export function computePayloadDigest(payload: Record<string, unknown>): string {
   return sha256Canonical(payload);
+}
+
+/** Hash-chain digest (INV-EVT-06). Drop `event_digest` so the field is not self-referential. */
+export function computeEventDigest(event: Omit<WorkEvent, "event_digest"> | WorkEvent): Sha256Hex {
+  const { event_digest: _ignored, ...body } = event as WorkEvent;
+  void _ignored;
+  return sha256Canonical(body);
 }
 
 export function validateWorkEvent(value: unknown): ValidationResult {
@@ -123,20 +146,56 @@ export function validateWorkEvent(value: unknown): ValidationResult {
     if (payload && isSha256(digest)) {
       c.ensure(computePayloadDigest(payload) === digest, "INV-EVT-03", "payload_digest", "payload digest mismatch (mutated event?)");
     }
+    const prev = c.get("prev_event_digest");
+    const seq = c.get("seq");
+    if (seq === 1) {
+      c.ensure(prev === "GENESIS", "INV-EVT-06", "prev_event_digest", "seq 1 must have prev_event_digest GENESIS");
+    } else {
+      c.ensure(
+        prev === "GENESIS" || isSha256(prev),
+        "INV-EVT-06",
+        "prev_event_digest",
+        'prev_event_digest must be "GENESIS" or sha256',
+      );
+      if (typeof seq === "number" && seq > 1) {
+        c.ensure(isSha256(prev), "INV-EVT-06", "prev_event_digest", "seq > 1 cannot use GENESIS");
+      }
+    }
+    const eventDigest = c.get("event_digest");
+    c.ensure(isSha256(eventDigest), "INV-EVT-06", "event_digest", "event_digest must be sha256");
+    if (isSha256(eventDigest)) {
+      let computed: string | null = null;
+      try {
+        computed = computeEventDigest(c.value() as unknown as WorkEvent);
+      } catch {
+        computed = null;
+      }
+      c.ensure(computed === eventDigest, "INV-EVT-06", "event_digest", "event digest mismatch (tampered or non-canonical)");
+    }
+    rejectForbiddenFields(c, FORBIDDEN_SELF_TRUST_FIELDS, "INV-EVT-05", (f) => `self-asserted trust field "${f}" is forbidden (ADR-V4-0017)`);
+    if (payload) {
+      for (const f of FORBIDDEN_SELF_TRUST_FIELDS) {
+        if (Object.prototype.hasOwnProperty.call(payload, f)) {
+          c.fail("INV-EVT-05", `payload.${f}`, `self-asserted trust field "${f}" is forbidden in event payload (ADR-V4-0017)`);
+        }
+      }
+    }
   });
 }
 
 export interface StreamIssue {
-  code: "INV-EVT-01" | "INV-EVT-02";
+  code: "INV-EVT-01" | "INV-EVT-02" | "INV-EVT-06";
   seq: number;
   message: string;
 }
 
 /**
- * Stream invariants for one work: contiguous seq from 1 (INV-EVT-01) and event_id uniqueness
- * with digest-consistent duplicates only (INV-EVT-02).
+ * Stream invariants for one work: contiguous seq from 1 (INV-EVT-01), event_id uniqueness
+ * with digest-consistent duplicates only (INV-EVT-02), and hash-chain integrity (INV-EVT-06).
  */
-export function checkEventStream(events: readonly Pick<WorkEvent, "event_id" | "seq" | "work_id" | "payload_digest">[]): StreamIssue[] {
+export function checkEventStream(
+  events: readonly Pick<WorkEvent, "event_id" | "seq" | "work_id" | "payload_digest" | "prev_event_digest" | "event_digest">[],
+): StreamIssue[] {
   const issues: StreamIssue[] = [];
   const seen = new Map<string, string>();
   const workIds = new Set(events.map((e) => e.work_id));
@@ -152,6 +211,17 @@ export function checkEventStream(events: readonly Pick<WorkEvent, "event_id" | "
       });
     }
     seen.set(e.event_id, e.payload_digest);
+    if (i === 0) {
+      if (e.prev_event_digest !== "GENESIS") {
+        issues.push({ code: "INV-EVT-06", seq: e.seq, message: "seq 1 must have prev_event_digest GENESIS" });
+      }
+    } else if (e.prev_event_digest !== events[i - 1].event_digest) {
+      issues.push({
+        code: "INV-EVT-06",
+        seq: e.seq,
+        message: "hash chain broken (prev_event_digest does not match previous event_digest)",
+      });
+    }
   });
   return issues;
 }

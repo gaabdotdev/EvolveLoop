@@ -10,7 +10,7 @@ import type { Work } from "./work.js";
 import type { Task } from "./task.js";
 import type { Execution } from "./execution.js";
 import type { Executor } from "./executor.js";
-import type { ExecutionCapsule } from "./capsule.js";
+import type { CapsuleAcceptance, ExecutionCapsule } from "./capsule.js";
 import type { Checkpoint } from "./checkpoint.js";
 import type { EffectRecord, EffectState, RetryDecision } from "./effect.js";
 import type { Artifact } from "./artifact.js";
@@ -75,10 +75,21 @@ export interface EffectLedgerPort {
   retryDecision(effect_id: string): Promise<RetryDecision>;
 }
 
-/** M04. */
+/** M04. Capsule ≠ grant: `accept` re-derives authority and binds Work State from the ledger (INV-CAP-07/08). */
 export interface CapsuleServicePort {
   seal(work_id: string, opts: { base_checkpoint_id: string; for_executor?: string }): Promise<ExecutionCapsule>;
   verify(capsule: ExecutionCapsule, opts: { now: IsoTimestamp; trusted_key_ids: string[] }): Promise<ValidationResult>;
+  /**
+   * Accept a verified capsule. Implementations MUST:
+   * 1. fail-closed on any verify failure;
+   * 2. re-derive effective grants from current policy (never copy `delegable_grants` as authority);
+   * 3. read Work/Task state from the Event Ledger at `base_checkpoint.event_seq` (never from `task_refs`);
+   * 4. consume anti-replay / single-use token.
+   */
+  accept(
+    capsule: ExecutionCapsule,
+    ctx: { now: IsoTimestamp; policy_id: string },
+  ): Promise<CapsuleAcceptance>;
 }
 
 /** M10. Deny-by-default PDP. Enforcement points must re-check before external dispatch. */

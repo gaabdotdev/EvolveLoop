@@ -21,3 +21,4 @@ export * from "./work-event.js";
 export * from "./ports.js";
 export * from "./adapters-v37.js";
 export * from "./catalog.js";
+export * from "./field-class.js";

@@ -2,8 +2,11 @@
  * Execution Capsule v1 — portable, verifiable state for another executor to continue
  * (constitution §4.3; ADR-V4-0006). Producer: M04. Consumers: executors (C2+), M05 forks.
  *
- * A capsule carries REFERENCES (content hashes) plus the minimum operational context; it never
- * carries secrets or permanent credentials — only short-lived grant references (INV-CAP-02).
+ * A capsule carries REFERENCES (content hashes) plus the minimum operational context.
+ * Capsule ≠ grant (INV-CAP-07, TM-V4-F01): it never carries authority. Effective permissions
+ * are re-derived by Policy at accept time and can only narrow. Work/Task state is never
+ * written from capsule snapshots (INV-CAP-08). Executor-authored text is UNTRUSTED_DATA
+ * (INV-CAP-09, TM-V4-F12). No permanent secrets (INV-CAP-02).
  */
 
 import {
@@ -20,6 +23,11 @@ import {
 } from "./common.js";
 import { EFFECT_STATES, OPEN_EFFECT_STATES, type EffectState } from "./effect.js";
 import { CONFORMANCE_LEVELS, type ConformanceLevel } from "./executor.js";
+import { FORBIDDEN_CAPSULE_AUTHORITY_FIELDS, rejectForbiddenFields } from "./field-class.js";
+
+/** Capsule is not a grant: authority is always re-derived at accept (ADR-V4-0006, TM-V4-F01). */
+export const CAPSULE_AUTHORITY_MODEL = "POLICY_REDERIVED_AT_ACCEPT" as const;
+export type CapsuleAuthorityModel = typeof CAPSULE_AUTHORITY_MODEL;
 
 export const EXECUTION_CAPSULE_SCHEMA_VERSION = "1.0.0";
 /** Capsule *format* version; compatibility = same major (ADR-V4-0006). */
@@ -34,10 +42,16 @@ export interface DelegableGrantRef {
 export interface ExecutionCapsule extends ContractHeader<"ExecutionCapsule"> {
   capsule_id: string;
   capsule_format_version: string;
+  /** Constant. Receivers MUST re-derive authority from current policy; they MUST NOT copy grants. */
+  authority_model: CapsuleAuthorityModel;
   work_id: string;
   source_execution_id?: string;
   goal_contract_ref: { id: string; version: number };
   base_checkpoint: { checkpoint_id: string; event_seq: number; state_digest: string };
+  /**
+   * Orientation snapshots only (INV-CAP-08). Work/Task state is read from the Event Ledger
+   * at `base_checkpoint.event_seq`. Implementations MUST NOT write these values into Work State.
+   */
   task_refs: { task_id: string; state: string }[];
   decisions: { decision_ref: string; summary: string }[];
   artifacts: ContentRef[];
@@ -45,6 +59,7 @@ export interface ExecutionCapsule extends ContractHeader<"ExecutionCapsule"> {
   open_effects: { effect_id: string; state: EffectState }[];
   pending_items: string[];
   constraints: string[];
+  /** Grant *references* only — never grant material, tokens, or permission sets (INV-CAP-07). */
   delegable_grants: DelegableGrantRef[];
   /** Explicit list of what was NOT preserved or cannot transfer (constitution §4.3). */
   not_preserved: string[];
@@ -75,6 +90,12 @@ export function validateExecutionCapsule(value: unknown, opts: { now?: IsoTimest
   return validateWith(value, (c) => {
     c.header("ExecutionCapsule");
     c.id("capsule_id", "capsule");
+    c.ensure(
+      c.get("authority_model") === CAPSULE_AUTHORITY_MODEL,
+      "INV-CAP-07",
+      "authority_model",
+      `authority_model must be "${CAPSULE_AUTHORITY_MODEL}" (capsule is not a grant)`,
+    );
     const fmt = c.string("capsule_format_version");
     if (fmt !== undefined) {
       c.ensure(isCapsuleFormatCompatible(fmt), "INV-CAP-05", "capsule_format_version", `incompatible capsule format ${fmt}`);
@@ -139,5 +160,28 @@ export function validateExecutionCapsule(value: unknown, opts: { now?: IsoTimest
     for (const f of scanForSecrets(c.value())) {
       c.fail("INV-CAP-02", f.path, `possible secret material (${f.reason}); capsules carry grant references only`);
     }
+    rejectForbiddenFields(
+      c,
+      FORBIDDEN_CAPSULE_AUTHORITY_FIELDS,
+      "INV-CAP-07",
+      (field) => `forbidden authority field "${field}": capsule is not a grant and does not carry control instructions (TM-V4-F01/F12)`,
+    );
   });
+}
+
+/**
+ * Result of accepting a verified capsule (M04 + M10). Authority is always re-derived;
+ * Work State is always read from the ledger. `effective_grant_refs` ⊆ current policy
+ * AND ⊆ `capsule.delegable_grants` (can only narrow).
+ */
+export interface CapsuleAcceptance {
+  capsule_id: string;
+  accepted_at: IsoTimestamp;
+  authority_source: "POLICY_REDERIVED";
+  work_state_source: "EVENT_LEDGER";
+  effective_grant_refs: string[];
+  policy_ref: { policy_id: string; version: number; epoch: number };
+  base_checkpoint_id: string;
+  /** Expiry / anti-replay / single-use token consumed at accept (M04). */
+  replay_id: string;
 }
