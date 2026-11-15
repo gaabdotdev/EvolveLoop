@@ -2,8 +2,8 @@
 
 **Branch:** `feature/v4-integration`  
 **Baseline:** `03937c175368715e893193fcfad09aac8474286b` (provisional — V3.7 **BLOCKED** G17; never claim APPROVED)  
-**Integrator (M19):** A-M19-1 (Wave 1) + freeze merge + Wave 2 integrate (2026-11-15T14:18Z) + Wave 3 integrate (2026-11-15T15:15Z)  
-**Integration HEAD at this record:** merge `33229c590da3ce63b7208717fb32dbb7348f45c7` (status file may sit on a follow-up docs commit)  
+**Integrator (M19):** A-M19-1 (Wave 1) + freeze merge + Wave 2 integrate (2026-11-15T14:18Z) + Wave 3 integrate (2026-11-15T15:15Z) + Continuity vertical (A-M19-5)  
+**Integration HEAD at this record:** see `CONTINUITY-SLICE-V41.md` `git_tip` (status file may sit on that delivery commit)  
 **Knowledge:** `WIKI_ROOT` unset → GAP; grounding = repo docs + ACCEPTED tips only
 
 M19 may integrate **only** orchestrator-ACCEPTED deliveries. Shared catalog is **FROZEN** (ADR-V4-0001) as of the M00 CONTRACT-FREEZE stamp; semantic changes require RFC.
@@ -208,12 +208,23 @@ No `npm install`. `orchestrator/node_modules` remains the existing symlink to th
 
 Additive vs Wave 2 record: 200 tests / 29 files → 234 tests / 36 files. Delta includes M04 (17) + M05 (15) plus the 2-test vertical slice already on integration before this batch (`tests/v4/vertical/intent-to-workproof.test.ts`).
 
+## Continuity vertical (2026-11-15) — DELIVERED, not ACCEPTED
+
+Follow-on to Wave 3 per `ORCHESTRATOR-DIRECTIVE-CONTINUITY-GATE.md`. Composition tests only; no product rewrites; `contracts/**` untouched.
+
+| Check | Result |
+|-------|--------|
+| `tests/v4/vertical` | **4 passed** (2 files; +2 vs V4.0 slice) |
+| `tests/v4` | **236 passed** (37 files) |
+| Slice record | `docs/v4-orchestration/CONTINUITY-SLICE-V41.md` |
+| npm install / V3.7 cert / self-ACCEPTED / V4 APPROVED | **none** |
+
 ## Limitations / not claimed
 
 - V3.7 remains **BLOCKED** G17; baseline is provisional; **not APPROVED**.
 - `recovery/v37-full-cert` and V3.7 evidence **not** edited.
 - Wave 2 ACCEPTED tips (M01, M02, M03, M06, M10, M12) **are** ancestors of `feature/v4-integration`.
 - Wave 3 ACCEPTED tips (M04, M05) **are** ancestors of `feature/v4-integration`. Other metas remain out of this integrate batch.
-- Continuity vertical gate is **not** this task (follow-on `ORCHESTRATOR-DIRECTIVE-CONTINUITY-GATE.md`).
+- Continuity vertical is **DELIVERED** for orchestrator validation (`CONTINUITY-SLICE-V41.md`); not self-ACCEPTED; not V4 APPROVED.
 - Wiki CLI unavailable (`WIKI_ROOT` unset).
 - Freeze reservations R1–R16 in `CONTRACT-FREEZE.md` remain binding; do not claim they are encoded away.

@@ -1,6 +1,6 @@
 # EvolveLoop V4 — Master Plan (Orchestrator)
 
-**Status:** Phase 3 (V4.1 Continuity) **INTEGRATED** — M04/M05 on `3da3af5` (234/234); Continuity vertical gate open  
+**Status:** Phase 3 (V4.1 Continuity) vertical **DELIVERED** for orchestrator validation — see `CONTINUITY-SLICE-V41.md` (236/236); not self-ACCEPTED; not V4 APPROVED  
 **Provisional baseline:** `03937c175368715e893193fcfad09aac8474286b` (`recovery/v37-full-cert` tip; V3.7 **BLOCKED** on G17)  
 **Integration branch:** `feature/v4-integration`  
 **Thesis:** Work belongs to the system — not the agent, model, provider, or host.

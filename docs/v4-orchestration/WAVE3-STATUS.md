@@ -9,9 +9,10 @@
 | M04 | Capsule, Handoff & Recovery | **INTEGRATED** | merge `26831b0` |
 | M05 | Time Travel, Replay & Fork | **INTEGRATED** | merge `33229c5` |
 | M19 | Wave 3 integrate | **INTEGRATED** | HEAD `3da3af5`; 234/234 |
+| M19 | Continuity vertical gate | **DELIVERED** (not self-ACCEPTED) | `CONTINUITY-SLICE-V41.md`; vertical 4/4; full 236/236 |
 | M03-full | Effect Ledger continuity extensions | PENDING | Only if M03 gaps remain after Wave 2 |
-| M06-handoff | WorkProof across capsule handoff | PENDING | After M04 |
-| M12-cont | Observability continuity | PENDING | After M04/M05 signals exist |
+| M06-handoff | WorkProof across capsule handoff | **EXERCISED** in vertical (optional) | Honest PARTIAL on fork; not a dedicated meta delivery |
+| M12-cont | Observability continuity | **EXERCISED** in vertical (optional) | `handoff.accepted` CE; not a dedicated meta delivery |
 | M18 | Continuity threat review (RO) | PENDING | Parallel read-only later |
 
 ## Launch gate (orchestrator)
@@ -22,4 +23,4 @@
 - [x] Worktrees M04/M05 from integration tip `4117d21`
 - [x] Agents launched (Grok — quota on heavier models)
 
-Do **not** launch M07+ until Continuity handoff/recovery slice is green (MASTER-PLAN Phase 3 gate).
+Continuity vertical is **DELIVERED** for orchestrator validation (`CONTINUITY-SLICE-V41.md`). Do **not** launch M07+ until the orchestrator marks this gate ACCEPTED. Not V4 APPROVED.
