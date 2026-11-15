@@ -11,7 +11,7 @@
 | Branch | `recovery/v37-full-cert` |
 | Cancel-E2E code tip | `ff78d4577ab8cc1cd8fc5ef954d7842032fb3dbb` |
 | Audit C reviewed tip | `8a09d22b57a8777aacee3c5af9b62b07d66b3bf0` |
-| Packaging HEAD | *(updated in packaging commit — see `evidence/certified-tip.txt`)* |
+| Packaging HEAD | `b35377fd117d2ab474ecb888ea576fadd9a2ea94` |
 | Baseline | `7468a40` + ZIP overlay + remediations |
 | Historical audit | `REJECT` @ `4142948` — **preserved** |
 | Re-audit B | `ACCEPT_WITH_RESERVATIONS` `be8ca586-…` @ `ac13116` — **preserved** |
