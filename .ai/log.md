@@ -36,3 +36,12 @@
 - Tests: `npx vitest run tests/v4/policy tests/v4/contracts tests/v4/conformance` → 63 passed.
 - Wiki: GAP (`WIKI_ROOT` unset). Delivery: `docs/v4/policy/M10-WAVE2-DELIVERY.md`.
 - No merge, no npm install, no V3.7 cert edits.
+
+## 2026-11-15T14:25:00Z — V4 M19 vertical Intent→WorkProof (DELIVERED)
+
+- Automated slice: marked Intent → GoalWorkEngine → M02 FileEventLedger (not IsolatedEventBuffer) → M03 effects → M06 WorkProof.
+- Honesty: self-report UNVERIFIED; independent verifier PROVEN; open DISPATCHED effect PARTIAL.
+- Optional: M10 deny-default + grant consume; M12 redaction + CP CE event.
+- Tests: `npx vitest run tests/v4/vertical` 2/2; full `tests/v4` 202/202.
+- Wiki: GAP (`WIKI_ROOT` unset). Note: `docs/v4-orchestration/VERTICAL-SLICE-V40.md`.
+- Self-status DELIVERED; V4 APPROVED not claimed. No contracts edit, no npm install, no V3.7 cert edits.
