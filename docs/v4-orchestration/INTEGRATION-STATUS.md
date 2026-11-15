@@ -2,8 +2,8 @@
 
 **Branch:** `feature/v4-integration`  
 **Baseline:** `03937c175368715e893193fcfad09aac8474286b` (provisional — V3.7 **BLOCKED** G17; never claim APPROVED)  
-**Integrator (M19):** A-M19-1 (Wave 1) + freeze merge + Wave 2 integrate (2026-11-15T14:18Z) + Wave 3 integrate (2026-11-15T15:15Z) + Continuity vertical (A-M19-5) + Wave 4 integrate (2026-11-15T15:34Z) + M17 early integrate (2026-11-15T15:45Z) + M11 integrate (2026-11-15T16:00Z) + M18 Wave5 integrate (2026-11-15T16:07Z) + M10-full integrate (2026-11-15T16:16Z)  
-**Integration HEAD at this record:** M10-full status commit (this file); merge hash in M10-full sequence below  
+**Integrator (M19):** A-M19-1 (Wave 1) + freeze merge + Wave 2 integrate (2026-11-15T14:18Z) + Wave 3 integrate (2026-11-15T15:15Z) + Continuity vertical (A-M19-5) + Wave 4 integrate (2026-11-15T15:34Z) + M17 early integrate (2026-11-15T15:45Z) + M11 integrate (2026-11-15T16:00Z) + M18 Wave5 integrate (2026-11-15T16:07Z) + M10-full integrate (2026-11-15T16:16Z) + M15 F02 daemon integrate (2026-11-15T16:22Z)  
+**Integration HEAD at this record:** M15 F02 status commit (this file); merge hash in M15 F02 sequence below  
 **Knowledge:** `WIKI_ROOT` unset → GAP; grounding = repo docs + ACCEPTED tips only
 
 M19 may integrate **only** orchestrator-ACCEPTED deliveries. Shared catalog is **FROZEN** (ADR-V4-0001) as of the M00 CONTRACT-FREEZE stamp; semantic changes require RFC.
@@ -26,7 +26,8 @@ M19 may integrate **only** orchestrator-ACCEPTED deliveries. Shared catalog is *
 | M17 Benchmarks (early) | **INTEGRATED** | `69d15ce0ef553c13881a12e4e08f0b0effa3e79f` on `feature/v4/m17-benchmarks-early` | merge `0daf462ac967a632fd23faae62c82c4d376b9d99` | `docs/v4/benchmarks/**` + `benchmarks/**`; fair baseline DECLARED_UNAVAILABLE; M08 methodology still **PROVISIONAL**; M09 not launched; Phase 4 **PARTIAL** |
 | M11 Trust & Provenance | **INTEGRATED** | `f1222f6d518dffc030991a992cdcc9e5e5b5acfb` on `feature/v4/m11-provenance` | merge `290b453a32d54f38e89ea41a537b85be7365a966` | `provenance/**`; engine `9b56c81`; Wave 5; M09 not launched; Phase 4 **PARTIAL** |
 | M18 Wave 5 RO | **INTEGRATED** | `5e8bc7022f3f5403a34d98932785586ff4b23f17` on `feature/v4/m18-wave5-ro` | merge `0c6d1c919eabce9e2065aec1d19efc0b0b048558` | docs-only `docs/v4/security/**`; F02/F07/F14/D13/D16/D17 + score honesty; OPEN residuals RR-W5-01..11 **not inverted**; M09 not launched; Phase 4 **PARTIAL** |
-| M10 Policy full (F02) | **INTEGRATED** | `fd8adf730ef3789b1f1ef4f9a8110661f09664e5` on `feature/v4/m10-policy-full` | merge `04a104b68efd46e5f3b127fbaa3839f595166de8` | `policy/**`, `adapters/v37/policy.ts`, narrow `cli/v35-commands.ts`; CLI store fallback refused under V4 posture; F02 **PARTIALLY MITIGATED**; V3 daemon actor residual **OPEN**; M09 not launched; Phase 4 **PARTIAL** |
+| M10 Policy full (F02) | **INTEGRATED** | `fd8adf730ef3789b1f1ef4f9a8110661f09664e5` on `feature/v4/m10-policy-full` | merge `04a104b68efd46e5f3b127fbaa3839f595166de8` | `policy/**`, `adapters/v37/policy.ts`, narrow `cli/v35-commands.ts`; CLI store fallback refused under V4 posture; F02 **PARTIALLY MITIGATED**; V3 daemon actor residual **OPEN** at that cut (later M15 F02); M09 not launched; Phase 4 **PARTIAL** |
+| M15 F02 daemon | **INTEGRATED** | `cbb38d2e0e28860f8f88adef5c2261cce3aa725e` on `feature/v4/m15-f02-daemon` | merge `6e78bce4d5de768cbe714907393f6a9b85c4ff66` | `v4/api/daemon-approvals.ts`, narrow `daemon.ts` approve/reject; daemon actor write refused under V4 posture; F02 **PARTIALLY MITIGATED**; live daemon has no in-process PDP; privileged IPC token not operator identity; M09 not launched; Phase 4 **PARTIAL** |
 
 ## Merge sequence (2026-11-15) — Wave 1
 
@@ -439,6 +440,50 @@ Additive vs M18 Wave 5 record: 337 tests / 55 files → 343 tests / 55 files. De
 
 M09 **not launched**. Phase 4 remains **PARTIAL**. V4 not APPROVED. F02 not globally closed.
 
+## Merge sequence (2026-11-15) — M15 F02 daemon
+
+Pre-merge HEAD `a4c14786e31bef9cbbc6583eed96499685b69852`. Per `ORCHESTRATOR-DIRECTIVE-M19-M15-F02-INTEGRATE.md`. Worktree `/home/gaab/Downloads/EvolveLoop-v4-m15` tip `cbb38d2` (engine `c34367d`).
+
+```text
+a4c1478  feature/v4-integration (pre-M15-F02-merge)
+   + merge --no-ff cbb38d2  →  6e78bce4d5de768cbe714907393f6a9b85c4ff66
+```
+
+| Step | Command | Result | Hash |
+|------|---------|--------|------|
+| 1 | `git merge --no-ff cbb38d2e0e28860f8f88adef5c2261cce3aa725e` | clean (ort); 4 files, +389/−4 | `6e78bce4d5de768cbe714907393f6a9b85c4ff66` |
+| 2 | `cd orchestrator && npx vitest run tests/v4` | **353/353 PASS** (56 files) | — |
+
+Ancestry after step 1: tip `cbb38d2` is an ancestor of `feature/v4-integration`.
+
+## Conflicts resolved (M15 F02)
+
+No git merge conflicts (ort, ownership: `v4/api/daemon-approvals.ts`, `v4/api/M15-F02-DELIVERY.md`, `tests/v4/api/f02-daemon-actor.test.ts`, narrow `v3/coordinator/daemon.ts` approve/reject). CLI `applyCliApprovalStoreFallback` unchanged. No barrel union; `adapters/v37/index.ts` unchanged.
+
+## Landed coherently (M15 F02)
+
+- `orchestrator/src/v4/api/daemon-approvals.ts` (`F02_DAEMON_ACTOR_REFUSED`; `applyDaemonApprovalActorWrite`)
+- `orchestrator/src/v4/api/M15-F02-DELIVERY.md`
+- `orchestrator/src/v3/coordinator/daemon.ts` (narrow approve/reject wrap)
+- `orchestrator/tests/v4/api/f02-daemon-actor.test.ts`
+
+F02 is **PARTIALLY MITIGATED** on the V4 PDP + V4-posture CLI filesystem fallback + V4-posture daemon actor write. Do **not** claim F02 globally closed. Live V3 daemon has no in-process PDP; privileged IPC token is not operator identity (RR-W5-01 remainder). RR-W5-02 remains **OPEN**.
+
+## Test evidence (M15 F02 integrate)
+
+```text
+RUN  v2.1.9  /home/gaab/Downloads/EvolveLoop-v4-integration/orchestrator
+Test Files  56 passed (56)
+     Tests  353 passed (353)
+Duration    2.41s
+```
+
+No `npm install`. `orchestrator/node_modules` remains the existing symlink to the V3.7-cert tree.
+
+Additive vs M10-full record: 343 tests / 55 files → 353 tests / 56 files. Delta = M15 F02 daemon actor tests (+10 / +1 file).
+
+M09 **not launched**. Phase 4 remains **PARTIAL**. V4 not APPROVED. F02 not globally closed.
+
 ## Limitations / not claimed
 
 - V3.7 remains **BLOCKED** G17; baseline is provisional; **not APPROVED**.
@@ -449,8 +494,9 @@ M09 **not launched**. Phase 4 remains **PARTIAL**. V4 not APPROVED. F02 not glob
 - M17 ACCEPTED tip (`69d15ce`) **is** an ancestor of `feature/v4-integration`.
 - M11 ACCEPTED tip (`f1222f6`) **is** an ancestor of `feature/v4-integration`.
 - M18 Wave 5 ACCEPTED tip (`5e8bc70`) **is** an ancestor of `feature/v4-integration`.
-- M10-full ACCEPTED tip (`fd8adf7`) **is** an ancestor of `feature/v4-integration`. Other metas remain out of this integrate batch.
-- M18 Wave 5 OPEN residuals (RR-W5-01..11) remain OPEN / PARTIALLY MITIGATED / READ-MODEL ONLY except the RR-W5-01 **CLI store-fallback** path, which M10-full refuses under V4 posture. F02 overall is **PARTIALLY MITIGATED**; V3 daemon actor residual (RR-W5-01 remainder) and RR-W5-02 remain **OPEN**. Do not claim F02 globally closed.
+- M10-full ACCEPTED tip (`fd8adf7`) **is** an ancestor of `feature/v4-integration`.
+- M15 F02 ACCEPTED tip (`cbb38d2`) **is** an ancestor of `feature/v4-integration`. Other metas remain out of this integrate batch.
+- M18 Wave 5 OPEN residuals (RR-W5-01..11) remain OPEN / PARTIALLY MITIGATED / READ-MODEL ONLY except: RR-W5-01 **CLI store-fallback** (M10-full refuses under V4 posture) and RR-W5-01 **daemon actor write** (M15 F02 refuses under V4 posture). F02 overall is **PARTIALLY MITIGATED**; live daemon has no in-process PDP; privileged IPC token is not operator identity (RR-W5-01 remainder); RR-W5-02 remains **OPEN**. Do not claim F02 globally closed.
 - Continuity vertical is **DELIVERED** for orchestrator validation (`CONTINUITY-SLICE-V41.md`); not self-ACCEPTED; not V4 APPROVED.
 - M08 engine status is **PROVISIONAL** (`cprof-methodology.provisional.v0`); not an ACCEPTED methodology; not evidence of executor quality or L2/L3 routing.
 - M17 canonical baseline is **DECLARED_UNAVAILABLE** (`el-v4-fair-baseline.declared-unavailable.v0`); honesty pins forbid production scores and L2/L3 routing.
