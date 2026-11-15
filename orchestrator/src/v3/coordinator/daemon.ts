@@ -16,6 +16,7 @@ import { ApprovalBroker } from "../approvals/broker.js";
 import { SandboxManager } from "../sandbox/manager.js";
 import { agentWorkspaceProfile } from "../security/profiles.js";
 import type { CapabilityAction } from "../security/types.js";
+import { applyDaemonApprovalActorWrite } from "../../v4/api/daemon-approvals.js";
 
 export interface DaemonDurableState {
   kind: "CoordinatorDaemonState";
@@ -107,13 +108,17 @@ export class CoordinatorDaemon {
         });
       case "approvals.approve": {
         const id = String(req.params?.approval_id ?? "");
-        const actor = String(req.params?.actor ?? "cli");
-        return this.approvals.approve(id, actor, req.params?.note ? String(req.params.note) : undefined);
+        const note = req.params?.note ? String(req.params.note) : undefined;
+        return applyDaemonApprovalActorWrite("approve", req.params, (actor) =>
+          this.approvals.approve(id, actor, note),
+        );
       }
       case "approvals.reject": {
         const id = String(req.params?.approval_id ?? "");
-        const actor = String(req.params?.actor ?? "cli");
-        return this.approvals.reject(id, actor, req.params?.note ? String(req.params.note) : undefined);
+        const note = req.params?.note ? String(req.params.note) : undefined;
+        return applyDaemonApprovalActorWrite("reject", req.params, (actor) =>
+          this.approvals.reject(id, actor, note),
+        );
       }
       case "approvals.gate": {
         // Production gate: sensitive ops must pass ApprovalBroker (SEC-C01).
