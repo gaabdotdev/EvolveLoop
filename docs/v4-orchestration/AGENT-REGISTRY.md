@@ -26,7 +26,7 @@
 | A-M00-REWORK-1 | M00 freeze rework B1–B3 | Cursor Task | `cursor-grok-4.6-high-fast` | m00 | Task `a76596e8-8786-4138-bcde-102a6ca5384e` | COMPLETE — ACCEPTED rework `af118a0` |
 | A-FREEZE-2 | M00 freeze re-review | Cursor Task | `cursor-grok-4.6-high-fast` | m00 | Task `4f992443-cbca-430a-9b36-af6219f34edf` | RUNNING |
 | A-M19-1 | M19 Wave1 integrate | Cursor Task | `cursor-grok-4.6-high-fast` | `/home/gaab/Downloads/EvolveLoop-v4-integration` | Task `d1472461-b84a-4b4e-93fd-28a3e93873d6` | COMPLETE — Wave1 ACCEPTED @ `5967f7b` |
-| A-M19-2 | M19 Wave2 integrate | Cursor Task | `cursor-grok-4.6-high-fast` | `/home/gaab/Downloads/EvolveLoop-v4-integration` | Task `a67420b0-6f2d-4b26-a0ef-7b2948e8b847` | RUNNING — merge M01/M02/M03/M06/M10/M12 |
+| A-M19-2 | M19 Wave2 integrate | Cursor Task | `cursor-grok-4.6-high-fast` | `/home/gaab/Downloads/EvolveLoop-v4-integration` | Task `a67420b0-6f2d-4b26-a0ef-7b2948e8b847` | COMPLETE — Wave2 INTEGRATED @ `d8ab952`; 200/200 |
 | A-M18-1 | M18 | Cursor Task `generalPurpose` | `claude-opus-5-5-medium` | `/home/gaab/Downloads/EvolveLoop-v4-m18` | Task `bd6eecf1-9665-452f-ad08-55df9e01de55` | COMPLETE — Wave 1 ACCEPTED by orchestrator |
 
 ### Runtime notes

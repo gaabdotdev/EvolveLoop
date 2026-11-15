@@ -1,6 +1,6 @@
 # EvolveLoop V4 — Master Plan (Orchestrator)
 
-**Status:** Phase 2 (V4.0) **INTEGRATING** — Wave 2 tips ACCEPTED; M19 merge in flight  
+**Status:** Phase 2 (V4.0) **INTEGRATED** — Wave 2 on `d8ab952` (200/200); vertical Intent→WorkProof gate open  
 **Provisional baseline:** `03937c175368715e893193fcfad09aac8474286b` (`recovery/v37-full-cert` tip; V3.7 **BLOCKED** on G17)  
 **Integration branch:** `feature/v4-integration`  
 **Thesis:** Work belongs to the system — not the agent, model, provider, or host.
@@ -45,9 +45,9 @@
 | M06 | `2728695` | ACCEPTED |
 | M10 | `78fa4bc` | ACCEPTED |
 | M12 | `72c5f5b` | ACCEPTED |
-| M19 | Task `a67420b0-…` | merging tips → integration |
+| M19 | Task `a67420b0-…` | **INTEGRATED** @ `d8ab952` (200/200) |
 
-Gate to Phase 3: vertical Intent→WorkProof on integration HEAD + M19 INTEGRATED.
+Gate to Phase 3: vertical Intent→WorkProof on integration HEAD (directive `ORCHESTRATOR-DIRECTIVE-VERTICAL-SLICE.md`).
 
 ## Exit criteria for Wave 1
 

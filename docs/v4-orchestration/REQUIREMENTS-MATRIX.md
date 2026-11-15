@@ -49,7 +49,7 @@
 | Meta | Accept criterion (summary) | Impl | Tests | Evidence | Status |
 |------|----------------------------|------|-------|----------|--------|
 | M00 | Domain+contracts+ADRs+ownership+conformance hooks | — | — | — | RUNNING |
-| M01 | Intent→Goal Contract; Work queryable without chat memory | — | — | — | PENDING |
+| M01 | Intent→Goal Contract; Work queryable without chat memory | tip `f72ad76` | merge `e815407` | 44 unit + wave2 suite | **INTEGRATED** |
 | M02 | Recovered state consistent; crash preserves confirmed progress | — | — | — | PENDING |
 | M03 | No blind external replay; UNKNOWN reconciled/blocked | — | — | — | PENDING |
 | M04 | Compatible executor assumes work; no improper effect dup | — | — | — | PENDING |
@@ -74,7 +74,7 @@
 
 | Milestone | Exit criterion | Gate owner | Status |
 |-----------|----------------|------------|--------|
-| V4.0 | Structured work persist/recover/audit vertical slice | M19+Orch | PENDING |
+| V4.0 | Structured work persist/recover/audit vertical slice | M19+Orch | **IN_PROGRESS** (directive VERTICAL-SLICE) |
 | V4.1 | Survive failures + executor change w/o confirmed loss / improper effects | M16/M04 | PENDING |
 | V4.2 | Adaptive decisions improve quality/cost/completion vs baseline | M09/M17 | PENDING |
 | V4.3 | Sensitive actions authorized/limited/audited/revocable adversarially | M10/M18 | PENDING |
