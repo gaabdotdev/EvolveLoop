@@ -48,3 +48,4 @@
 
 - M00/M18 need high reasoning for contracts/threat modeling → Opus 5.5 medium (best Opus available on Task model allowlist).
 - Worktrees disposable/isolated; V3.7 cert untouched.
+| A-M17-1 | M17 early benchmarks | Cursor Task | `cursor-grok-4.6-high-fast` | `/home/gaab/Downloads/EvolveLoop-v4-m17` | Task `1dc1e92f-450d-4062-b8d1-bf81697e01ba` | RUNNING — Wave 4 early |
