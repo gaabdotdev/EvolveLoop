@@ -6,8 +6,8 @@
 
 | Meta | Focus | Status | Notes |
 |------|-------|--------|-------|
-| M04 | Capsule, Handoff & Recovery | **RUNNING** | worktree @ `4117d21`; F01 capsule≠grant |
-| M05 | Time Travel, Replay & Fork | **RUNNING** | worktree @ `4117d21`; ADR-0007 |
+| M04 | Capsule, Handoff & Recovery | **ACCEPTED** | tip `14aa02b`; 17/17 + 219/219 |
+| M05 | Time Travel, Replay & Fork | **ACCEPTED** | tip `b27b2cb`; 15/15 + 217/217 |
 | M03-full | Effect Ledger continuity extensions | PENDING | Only if M03 gaps remain after Wave 2 |
 | M06-handoff | WorkProof across capsule handoff | PENDING | After M04 |
 | M12-cont | Observability continuity | PENDING | After M04/M05 signals exist |

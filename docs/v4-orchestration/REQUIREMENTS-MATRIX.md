@@ -50,8 +50,8 @@
 |------|----------------------------|------|-------|----------|--------|
 | M00 | Domain+contracts+ADRs+ownership+conformance hooks | — | — | — | RUNNING |
 | M01 | Intent→Goal Contract; Work queryable without chat memory | tip `f72ad76` | merge `e815407` | 44 unit + wave2 suite | **INTEGRATED** |
-| M04 | Capsule seal/verify/accept; handoff/recovery | — | — | — | **RUNNING** (Wave 3) |
-| M05 | Time travel / fork / replay (ADR-0007) | — | — | — | **RUNNING** (Wave 3) |
+| M04 | Capsule seal/verify/accept; handoff/recovery | tip `14aa02b` | — | 17 + 219 full | **ACCEPTED** |
+| M05 | Time travel / fork / replay (ADR-0007) | tip `b27b2cb` | — | 15 + 217 full | **ACCEPTED** |
 | M02 | Recovered state consistent; crash preserves confirmed progress | — | — | — | PENDING |
 | M03 | No blind external replay; UNKNOWN reconciled/blocked | — | — | — | PENDING |
 | M04 | Compatible executor assumes work; no improper effect dup | — | — | — | PENDING |
