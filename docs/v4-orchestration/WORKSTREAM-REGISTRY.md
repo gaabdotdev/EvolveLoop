@@ -13,17 +13,17 @@ States: `PENDING` | `DISCOVERY` | `CONTRACT_REVIEW` | `READY` | `RUNNING` | `REV
 | M06 | WorkProof & Independent Verifier | 2→6 | `feature/v4/m06-workproof-min` | `/home/gaab/Downloads/EvolveLoop-v4-m06` | — | **INTEGRATED** | tip `2728695` → `8c801ae` |
 | M07 | Dynamic Planning Engine | 4 | `feature/v4/m07-planning` | `/home/gaab/Downloads/EvolveLoop-v4-m07` | Task `53020ad6-…` | **INTEGRATED** | tip `0e9b581` → `cfead01` |
 | M08 | Capability Intelligence | 4 | `feature/v4/m08-capability` | `/home/gaab/Downloads/EvolveLoop-v4-m08` | Task `1ccdd7c6-…` | **INTEGRATED** | tip `13fac49` → `07bd808`; methodology PROVISIONAL |
-| M09 | Adaptive Execution Intelligence | 4 | — | — | — | PENDING | |
+| M09 | Adaptive Execution Intelligence | 4 | — | — | — | **BLOCKED** | wait methodology ACCEPTED + observed baseline |
 | M10 | Policy Engine, Trust & Governance | 2→5 | `feature/v4/m10-policy-foundations` | `/home/gaab/Downloads/EvolveLoop-v4-m10` | — | **INTEGRATED** | tip `78fa4bc` → `32ec793` |
-| M11 | Trust & Provenance Graph | 5 | — | — | — | PENDING | |
+| M11 | Trust & Provenance Graph | 5 | `feature/v4/m11-provenance` | `/home/gaab/Downloads/EvolveLoop-v4-m11` | — | **READY** | Wave 5 first cut |
 | M12 | Predictive Observability & CE | 2→7 | `feature/v4/m12-obs-init` | `/home/gaab/Downloads/EvolveLoop-v4-m12` | — | **INTEGRATED** | tip `72c5f5b` → `df4fbf4` |
 | M13 | Elastic Compute Fabric | 7 | — | — | — | PENDING | |
 | M14 | Agent & Runtime Ecosystem | 7 | — | — | — | PENDING | No marketplace |
 | M15 | Control Center, CLI, SDK & APIs | 2→7 | — | — | — | PENDING | CLI early |
 | M16 | Autonomous Engineering & Impossible Handoff | 6 | — | — | — | PENDING | |
-| M17 | Benchmarks & Economic Proof | cross | `feature/v4/m17-benchmarks-early` | `/home/gaab/Downloads/EvolveLoop-v4-m17` | Task `1dc1e92f-…` | **ACCEPTED** | tip `69d15ce`; 306/306 |
+| M17 | Benchmarks & Economic Proof | cross | `feature/v4/m17-benchmarks-early` | reclaimable | Task `1dc1e92f-…` | **INTEGRATED** | tip `69d15ce` → `0daf462`; baseline DECLARED_UNAVAILABLE |
 | M18 | Security & Adversarial Assurance | cross | `feature/v4/m18-security` | `/home/gaab/Downloads/EvolveLoop-v4-m18` | Task `bd6eecf1-…` | **INTEGRATED** (Wave 1) | Tip `47155ec` → `2fc17c2`; later waves PENDING |
-| M19 | Integration & Release | 8 | `feature/v4-integration` | `/home/gaab/Downloads/EvolveLoop-v4-integration` | Task `09412815-…` | **INTEGRATED** Wave4 | HEAD `0f7f626`; 284/284; M17 next |
+| M19 | Integration & Release | 8 | `feature/v4-integration` | `/home/gaab/Downloads/EvolveLoop-v4-integration` | Task `de63e3fd-…` | **INTEGRATED** M17 | HEAD `04ed782`; 306/306; Wave5 next |
 | M20 | Independent Final Audit | 8 | — | — | — | PENDING | Separate context |
 
 ## Ownership roots (initial — M00 must refine)

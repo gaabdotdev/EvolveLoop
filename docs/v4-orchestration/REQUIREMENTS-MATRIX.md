@@ -67,7 +67,7 @@
 | M14 | Third-party executors without breaking guarantees | — | — | — | PENDING |
 | M15 | Operate by goals/results; debug without fighting platform | — | — | — | PENDING |
 | M16 | Impossible Handoff PASS on real workload | — | — | — | PENDING |
-| M17 | Fair comparable baselines; no cherry-picked claims | — | — | — | PENDING |
+| M17 | Fair comparable baselines; no cherry-picked claims | tip `69d15ce` | merge `0daf462` | 22 unit + suite 306 | **INTEGRATED** (baseline DECLARED_UNAVAILABLE) |
 | M18 | Independent security rejection authority | — | — | — | RUNNING |
 | M19 | Integrated candidate + regressions | — | — | — | READY |
 | M20 | Independent audit tries to invalidate APPROVED | — | — | — | PENDING |
@@ -78,7 +78,7 @@
 |-----------|----------------|------------|--------|
 | V4.0 | Structured work persist/recover/audit vertical slice | M19+Orch | **ACCEPTED** tip `cf37912` (202/202) |
 | V4.1 | Survive failures + executor change w/o confirmed loss / improper effects | M16/M04 | PENDING |
-| V4.2 | Adaptive decisions improve quality/cost/completion vs baseline | M09/M17 | PENDING |
+| V4.2 | Adaptive decisions improve quality/cost/completion vs baseline | M09/M17 | **PARTIAL** — substrate yes; measurable improvement no (`PHASE4-EXIT.md`) |
 | V4.3 | Sensitive actions authorized/limited/audited/revocable adversarially | M10/M18 | PENDING |
 | V4.4 | Real software workloads with WorkProof + reproducible comparisons | M16 | PENDING |
 | V4.5 | Third parties integrate without breaking guarantees | M14/M15 | PENDING |

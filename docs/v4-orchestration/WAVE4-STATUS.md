@@ -10,7 +10,8 @@
 | M09 | Adaptive Execution Intelligence | BLOCKED | depends M08 + M17 provenance |
 | M12-pred | Observability predictive | PENDING | after M07/M08 land |
 | M19 | Wave 4 first-cut integrate | **INTEGRATED** | HEAD `0f7f626`; 284/284 |
-| M17 | Benchmarks & Economic Proof (early) | **ACCEPTED** | tip `69d15ce`; baselines defined; M08 still PROVISIONAL |
+| M17 | Benchmarks & Economic Proof (early) | **INTEGRATED** | merge `0daf462`; baseline DECLARED_UNAVAILABLE; M08 still PROVISIONAL |
+| Phase 4 exit | — | **PARTIAL** | see `PHASE4-EXIT.md`; Wave 5 opened |
 
 ## Hard edges (DEPENDENCY-GRAPH)
 

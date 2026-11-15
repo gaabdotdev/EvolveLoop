@@ -23,7 +23,7 @@ M19 may integrate **only** orchestrator-ACCEPTED deliveries. Shared catalog is *
 | M05 Time Travel | **ACCEPTED** | `b27b2cbc5936ff82be189ff4a16896517437c9d4` on `feature/v4/m05-timetravel` | merge `33229c590da3ce63b7208717fb32dbb7348f45c7` | `timetravel/**` |
 | M07 Dynamic Planning | **ACCEPTED** | `0e9b581fe275e82a56339b8cb9bf1173349f8795` on `feature/v4/m07-planning` | merge `cfead011364e1ae39fa613c6469dbfbb4c0e12b5` | `planning/**` |
 | M08 Capability Intelligence | **ACCEPTED** (delivery) | `13fac49fce6eb7f44d8628407111d5f305a6ae2a` on `feature/v4/m08-capability` | merge `07bd808f15f9662040b205948be304cd63889113` | `capability/**`; methodology `cprof-methodology.provisional.v0` remains **PROVISIONAL** |
-| M17 Benchmarks (early) | **ACCEPTED** (delivery) | `69d15ce0ef553c13881a12e4e08f0b0effa3e79f` on `feature/v4/m17-benchmarks-early` | merge `0daf462ac967a632fd23faae62c82c4d376b9d99` | `docs/v4/benchmarks/**` + `benchmarks/**`; fair baseline DECLARED_UNAVAILABLE; M08 methodology still **PROVISIONAL**; M09 not launched |
+| M17 Benchmarks (early) | **INTEGRATED** | `69d15ce0ef553c13881a12e4e08f0b0effa3e79f` on `feature/v4/m17-benchmarks-early` | merge `0daf462ac967a632fd23faae62c82c4d376b9d99` | `docs/v4/benchmarks/**` + `benchmarks/**`; fair baseline DECLARED_UNAVAILABLE; M08 methodology still **PROVISIONAL**; M09 not launched; Phase 4 **PARTIAL** |
 
 ## Merge sequence (2026-11-15) — Wave 1
 
