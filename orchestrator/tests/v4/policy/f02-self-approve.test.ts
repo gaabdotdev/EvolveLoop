@@ -1,6 +1,13 @@
-import { describe, expect, it } from "vitest";
-import { V37PolicyAdapter, V4_CLI_STORE_FALLBACK, v3StoreApproveFallbackForbidden } from "../../../src/v4/adapters/v37/policy.js";
-import { InMemoryOperatorAuthn } from "../../../src/v4/policy/authn.js";
+import { describe, expect, it, vi } from "vitest";
+import {
+  applyCliApprovalStoreFallback,
+  F02_STORE_FALLBACK_REFUSED,
+  V37PolicyAdapter,
+  V4_CLI_STORE_FALLBACK,
+  v3StoreApproveFallbackForbidden,
+  v4CliStoreFallbackAllowed,
+} from "../../../src/v4/adapters/v37/policy.js";
+import { CALLER_ASSERTED_IDENTITY_KEYS, InMemoryOperatorAuthn } from "../../../src/v4/policy/authn.js";
 import { DenyByDefaultPolicyEngine, InMemoryWorkContext } from "../../../src/v4/policy/engine.js";
 import { PolicyStore } from "../../../src/v4/policy/store.js";
 import { readDecidedBy } from "../../../src/v4/policy/types.js";
@@ -32,7 +39,25 @@ function setup() {
 describe("M10 F02 — no caller-asserted approver, no CLI store fallback", () => {
   it("does not wire the V3 CLI store-write fallback", () => {
     expect(V4_CLI_STORE_FALLBACK).toBe(false);
+    expect(v4CliStoreFallbackAllowed()).toBe(false);
     expect(() => v3StoreApproveFallbackForbidden("apr1", "cli")).toThrow(/must not fall back/);
+  });
+
+  it("refuses store.approve/reject after IPC failure without invoking the writer (RR-W5-01)", () => {
+    const write = vi.fn(() => ({ state: "APPROVED" }));
+    expect(() => applyCliApprovalStoreFallback("approve", write)).toThrow(F02_STORE_FALLBACK_REFUSED);
+    expect(write).not.toHaveBeenCalled();
+    expect(() => applyCliApprovalStoreFallback("reject", write)).toThrow(/ApprovalStore\.reject\(actor\)/);
+    expect(write).not.toHaveBeenCalled();
+  });
+
+  it("locks v35-commands approve/reject to the V4 fallback gate (narrow CLI F02 path)", async () => {
+    const { readFileSync } = await import("node:fs");
+    const src = readFileSync(new URL("../../../src/cli/v35-commands.ts", import.meta.url), "utf8");
+    expect(src).toContain('applyCliApprovalStoreFallback("approve"');
+    expect(src).toContain('applyCliApprovalStoreFallback("reject"');
+    expect(src).not.toMatch(/print\(\s*store\.approve\(/);
+    expect(src).not.toMatch(/print\(\s*store\.reject\(/);
   });
 
   it("ignores actor/decided_by on the decision request (R4)", async () => {
@@ -73,6 +98,39 @@ describe("M10 F02 — no caller-asserted approver, no CLI store fallback", () =>
     } as { approval_id: string; operator_token: string; actor: string });
     expect(result.ok).toBe(false);
     if (!result.ok) expect(result.reason).toBe("CALLER_ASSERTED_IDENTITY_REJECTED");
+  });
+
+  it("rejects every caller-asserted identity key on approve and reject (RR-W5-02)", async () => {
+    const { engine, adapter, human } = setup();
+    const d = await engine.decide(request({ action: "deploy.publish", resource: "prod", risk: "high" }));
+    const pending = engine.pendingForDecision(d.decision_id)!;
+    for (const key of CALLER_ASSERTED_IDENTITY_KEYS) {
+      const forged = {
+        approval_id: pending.approval_id,
+        operator_token: human.token,
+        [key]: key === "decided_by" ? { kind: "HUMAN", id: "executor_worker01" } : "executor_worker01",
+      };
+      const approved = adapter.approve(forged as { approval_id: string; operator_token: string });
+      expect(approved.ok).toBe(false);
+      if (!approved.ok) expect(approved.reason).toBe("CALLER_ASSERTED_IDENTITY_REJECTED");
+      const rejected = adapter.reject(forged as { approval_id: string; operator_token: string });
+      expect(rejected.ok).toBe(false);
+      if (!rejected.ok) expect(rejected.reason).toBe("CALLER_ASSERTED_IDENTITY_REJECTED");
+    }
+    const stillPending = engine.pendingForDecision(d.decision_id);
+    expect(stillPending?.state).toBe("PENDING");
+  });
+
+  it("does not treat caller-asserted actor as PolicyDecision authority (R4 — no thawed decided_by)", async () => {
+    const { engine } = setup();
+    const d = await engine.decide({
+      ...request({ action: "deploy.publish", resource: "prod", risk: "high" as const }),
+      actor: "cli",
+    } as ReturnType<typeof request> & { actor: string });
+    expect(d).not.toHaveProperty("actor");
+    expect(Object.prototype.hasOwnProperty.call(d, "decided_by")).toBe(true);
+    expect(readDecidedBy(d)).toEqual({ kind: "POLICY_ENGINE", id: "policy-engine-v4" });
+    expect(d.schema_version).toBe("1.0.0");
   });
 
   it("denies self-approval by executor identity (M18 S2)", async () => {

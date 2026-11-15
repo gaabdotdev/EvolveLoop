@@ -1,3 +1,6 @@
+import { mkdirSync, mkdtempSync, rmSync, symlinkSync, writeFileSync, realpathSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { generateNodeIdentity } from "../../../src/v3/fabric/trust/identity.js";
 import { HandleSigningAdapter } from "../../../src/v4/adapters/v37/identity.js";
@@ -71,6 +74,29 @@ describe("M10 F14 — conservative resource matching", () => {
     expect(resourceMatches("/workspace/src/*", "/workspace/src/app.ts")).toBe(true);
     expect(resourceMatches("/workspace/src/app.ts", "/workspace/src/app.ts")).toBe(true);
     expect(resourceMatches("/workspace/src/*", "/tmp/app.ts")).toBe(false);
+  });
+
+  it("leaves logical (non-filesystem) resources lexical", () => {
+    expect(canonicalizeResource("prod")).toBe("prod");
+    expect(canonicalizeResource("network.egress")).toBe("network.egress");
+    expect(resourceMatches("prod", "prod")).toBe(true);
+  });
+
+  it("realpath-resolves symlink aliases so prefix ALLOW on the alias does not match (partial F14)", () => {
+    const root = mkdtempSync(join(tmpdir(), "m10-f14-"));
+    try {
+      const realDir = join(root, "real");
+      const aliasDir = join(root, "alias");
+      mkdirSync(realDir);
+      writeFileSync(join(realDir, "secret.txt"), "x");
+      symlinkSync(realDir, aliasDir);
+      const viaAlias = canonicalizeResource(join(aliasDir, "secret.txt"));
+      expect(viaAlias).toBe(realpathSync(join(realDir, "secret.txt")));
+      expect(resourceMatches(`${aliasDir}/*`, join(aliasDir, "secret.txt"))).toBe(false);
+      expect(resourceMatches(`${realDir}/*`, join(aliasDir, "secret.txt"))).toBe(true);
+    } finally {
+      rmSync(root, { recursive: true, force: true });
+    }
   });
 });
 
