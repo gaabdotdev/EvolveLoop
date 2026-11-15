@@ -1,21 +1,23 @@
-# META M10 — Policy full (Wave 5 Trust cut)
+# META M10 — Policy full (Wave 5 Trust cut — F02)
 
-Read `WAVE5-COMMON.md`. Ground on M18 Wave5 RO (`docs/v4/security/M18-WAVE5-RO.md`) residuals **RR-W5-01 / RR-W5-02**.
+Read `WAVE5-COMMON.md`. Ground on `docs/v4/security/M18-WAVE5-RO.md` residuals **RR-W5-01 / RR-W5-02**.
 
 | Field | Value |
 |-------|-------|
-| Worktree | `/home/gaab/Downloads/EvolveLoop-v4-m10` (create from integration HEAD after M18 INTEGRATED) |
+| Worktree | `/home/gaab/Downloads/EvolveLoop-v4-m10` |
 | Branch | `feature/v4/m10-policy-full` |
-| Ownership | `orchestrator/src/v4/policy/**` + `orchestrator/tests/v4/policy/**` (+ adapters if needed) |
-| Contracts | FROZEN — do not add `decided_by` to PolicyDecision 1.0.0 without RFC |
+| Ownership | `orchestrator/src/v4/policy/**`, `orchestrator/src/v4/adapters/v37/policy.ts`, `orchestrator/tests/v4/policy/**` |
+| Narrow F02 exception | May edit **only** approve/reject store-fallback paths in `orchestrator/src/cli/v35-commands.ts` (co-owned with M15 per OWNERSHIP-MAP; do not refactor unrelated CLI) |
+| Contracts | FROZEN — no `decided_by` on PolicyDecision 1.0.0 without RFC |
 
-## First-cut scope (this wave)
+## Implement
 
-1. **RR-W5-01 / F02:** Isolate or refuse the V3 CLI `store.approve(actor)` fallback on any V4 operator path; keep token-derived identity on approve (`InMemoryOperatorAuthn` / V37 adapter posture). Prefer fail-closed documentation + code gate over deleting unrelated V3.5 surfaces wholesale.
-2. Enforce HUMAN ≠ requesting executor on V4 approval resolution where tests already lock SELF_APPROVAL_DENIED — extend to the live CLI/adapter path M18 flagged.
-3. Path deny: prefer realpath/symlink-canonical checks where M10 already owns deny lists (F14 residual — partial OK).
-4. Do **not** invent trust scores; do not unblocking M09; do not thaw contracts.
+1. **RR-W5-01 / F02:** When V4 posture is active (`V4_CLI_STORE_FALLBACK === false` or equivalent), **refuse** `store.approve(id, actor)` / reject local-store fallback after IPC failure. Fail closed with a clear error — do not silently write approvals via filesystem actor string.
+2. Keep token-derived / authenticated operator identity on V4 approve paths (`InMemoryOperatorAuthn`, existing SELF_APPROVAL_DENIED tests).
+3. **RR-W5-02 (partial):** Document + test that V4 approval resolution does not treat caller-asserted `actor` as authority; do not invent frozen `decided_by`.
+4. Optional partial F14: realpath/canonical deny where M10 already owns path checks — not required to close F14 fully.
+5. No trust scores; no M09; no V3.7 cert edits; no contract thaw; no APPROVED.
 
 ## Accept
 
-Tests for F02 path; delivery note. DELIVERED. No merge. No APPROVED.
+Tests covering refused store fallback + existing policy suites green. Delivery under `policy/` (and note CLI touch). DELIVERED. No merge.

@@ -14,7 +14,7 @@ States: `PENDING` | `DISCOVERY` | `CONTRACT_REVIEW` | `READY` | `RUNNING` | `REV
 | M07 | Dynamic Planning Engine | 4 | `feature/v4/m07-planning` | `/home/gaab/Downloads/EvolveLoop-v4-m07` | Task `53020ad6-…` | **INTEGRATED** | tip `0e9b581` → `cfead01` |
 | M08 | Capability Intelligence | 4 | `feature/v4/m08-capability` | `/home/gaab/Downloads/EvolveLoop-v4-m08` | Task `1ccdd7c6-…` | **INTEGRATED** | tip `13fac49` → `07bd808`; methodology PROVISIONAL |
 | M09 | Adaptive Execution Intelligence | 4 | — | — | — | **BLOCKED** | wait methodology ACCEPTED + observed baseline |
-| M10 | Policy Engine, Trust & Governance | 2→5 | `feature/v4/m10-policy-foundations` | `/home/gaab/Downloads/EvolveLoop-v4-m10` | — | **INTEGRATED** | tip `78fa4bc` → `32ec793` |
+| M10 | Policy Engine, Trust & Governance | 2→5 | `feature/v4/m10-policy-full` | `/home/gaab/Downloads/EvolveLoop-v4-m10` | — | **RUNNING** Wave5 | foundations INTEGRATED `32ec793`; full cut RR-W5-01 |
 | M11 | Trust & Provenance Graph | 5 | `feature/v4/m11-provenance` | reclaimable | Task `7dace8cc-…` | **INTEGRATED** | tip `f1222f6` → `290b453` |
 | M12 | Predictive Observability & CE | 2→7 | `feature/v4/m12-obs-init` | `/home/gaab/Downloads/EvolveLoop-v4-m12` | — | **INTEGRATED** | tip `72c5f5b` → `df4fbf4` |
 | M13 | Elastic Compute Fabric | 7 | — | — | — | PENDING | |
@@ -22,8 +22,8 @@ States: `PENDING` | `DISCOVERY` | `CONTRACT_REVIEW` | `READY` | `RUNNING` | `REV
 | M15 | Control Center, CLI, SDK & APIs | 2→7 | — | — | — | PENDING | CLI early |
 | M16 | Autonomous Engineering & Impossible Handoff | 6 | — | — | — | PENDING | |
 | M17 | Benchmarks & Economic Proof | cross | `feature/v4/m17-benchmarks-early` | reclaimable | Task `1dc1e92f-…` | **INTEGRATED** | tip `69d15ce` → `0daf462`; baseline DECLARED_UNAVAILABLE |
-| M18 | Security & Adversarial Assurance | cross | `feature/v4/m18-wave5-ro` | `/home/gaab/Downloads/EvolveLoop-v4-m18` | Task `59382dcb-…` | **ACCEPTED** Wave5 | tip `5e8bc70`; Wave1 still at `47155ec` |
-| M19 | Integration & Release | 8 | `feature/v4-integration` | `/home/gaab/Downloads/EvolveLoop-v4-integration` | Task `ad99f775-…` | **INTEGRATED** M11 | HEAD `111b933`; 337/337; Wave5 M18 next |
+| M18 | Security & Adversarial Assurance | cross | `feature/v4/m18-wave5-ro` | reclaimable | Task `59382dcb-…` | **INTEGRATED** Wave5 | tip `5e8bc70` → `0c6d1c9` |
+| M19 | Integration & Release | 8 | `feature/v4-integration` | `/home/gaab/Downloads/EvolveLoop-v4-integration` | Task `7b2c2fa3-…` | **INTEGRATED** M18W5 | HEAD `80d35ba`; 337/337; M10-full next |
 | M20 | Independent Final Audit | 8 | — | — | — | PENDING | Separate context |
 
 ## Ownership roots (initial — M00 must refine)

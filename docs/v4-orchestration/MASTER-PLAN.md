@@ -34,8 +34,9 @@
 | Meta | Status | Notes |
 |------|--------|-------|
 | M11 Provenance | **INTEGRATED** | merge `290b453`; 337/337 |
-| M10-full / M06-authz | PENDING | after M18 cues |
-| M18 Wave5 RO | READY | prompt `M18-WAVE5-RO.md` |
+| M18 Wave5 RO | **INTEGRATED** | merge `0c6d1c9`; 337/337 |
+| M10-full (F02) | READY | prompt `M10-FULL-MISSION.md`; RR-W5-01 |
+| M06-authz | PENDING | after M10-full |
 | M09 | BLOCKED | methodology PROVISIONAL + baseline UNAVAILABLE |
 
 **Closed waves (summary):**

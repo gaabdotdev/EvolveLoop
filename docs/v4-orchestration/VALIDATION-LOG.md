@@ -32,6 +32,7 @@
 | 2026-11-15T15:58Z | M11 Provenance | **ACCEPTED** | tip `f1222f6` (engine `9b56c81`); ownership `provenance/**` only; orch vitest **31/31** + **337/337** | Four §4.12 queries + fail-closed; no trust score; GAPs noted (R1/R4/D17 wiring) |
 | 2026-11-15T16:00Z | M19 integrate M11 | **ACCEPTED / INTEGRATED** | merge `290b453`; HEAD `111b933`; orch recheck **337/337** | Wave 5 next: M18 RO |
 | 2026-11-15T16:06Z | M18 Wave5 RO | **ACCEPTED** | tip `5e8bc70`; `docs/v4/security/**` only; F02 remains OPEN on V3 CLI path | residuals RR-W5-01..11; no product code |
+| 2026-11-15T16:08Z | M19 integrate M18 Wave5 | **ACCEPTED / INTEGRATED** | merge `0c6d1c9`; HEAD `80d35ba`; orch recheck **337/337** | OPEN residuals not inverted; M10-full next |
 
 Validation outcomes for metas: `ACCEPTED` | `REWORK` | `BLOCKED` | `REJECTED` only.
 

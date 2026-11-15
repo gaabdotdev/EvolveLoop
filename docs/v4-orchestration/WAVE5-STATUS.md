@@ -5,7 +5,7 @@
 | Meta | Focus | Status | Notes |
 |------|-------|--------|-------|
 | M11 | Trust & Provenance Graph | **INTEGRATED** | tip `f1222f6`; merge `290b453a32d54f38e89ea41a537b85be7365a966`; orch vitest **337/337** (55 files; provenance 31) |
-| M10-full | Policy full | PENDING | next cut — F02 V3 CLI residual RR-W5-01 |
+| M10-full | Policy full (F02) | READY | worktree `EvolveLoop-v4-m10`; RR-W5-01 |
 | M06-authz | WorkProof authz | PENDING | |
 | M18 | Adversarial RO review | **INTEGRATED** | tip `5e8bc70`; merge `0c6d1c919eabce9e2065aec1d19efc0b0b048558`; docs-only `docs/v4/security/**`; orch vitest **337/337** (55 files, unchanged). OPEN residuals RR-W5-01..11 **not inverted** (F02 V3 CLI still OPEN). |
 | M09 | Adaptive (no score routing) | BLOCKED | wait methodology ACCEPTED + observed baseline |
