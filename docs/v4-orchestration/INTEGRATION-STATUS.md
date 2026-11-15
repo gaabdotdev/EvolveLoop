@@ -2,8 +2,8 @@
 
 **Branch:** `feature/v4-integration`  
 **Baseline:** `03937c175368715e893193fcfad09aac8474286b` (provisional — V3.7 **BLOCKED** G17; never claim APPROVED)  
-**Integrator (M19):** A-M19-1 (Wave 1) + freeze merge + Wave 2 integrate (2026-11-15T14:18Z) + Wave 3 integrate (2026-11-15T15:15Z) + Continuity vertical (A-M19-5) + Wave 4 integrate (2026-11-15T15:34Z) + M17 early integrate (2026-11-15T15:45Z) + M11 integrate (2026-11-15T16:00Z) + M18 Wave5 integrate (2026-11-15T16:07Z)  
-**Integration HEAD at this record:** M18 Wave5 status commit (this file); merge hash in M18 Wave5 sequence below  
+**Integrator (M19):** A-M19-1 (Wave 1) + freeze merge + Wave 2 integrate (2026-11-15T14:18Z) + Wave 3 integrate (2026-11-15T15:15Z) + Continuity vertical (A-M19-5) + Wave 4 integrate (2026-11-15T15:34Z) + M17 early integrate (2026-11-15T15:45Z) + M11 integrate (2026-11-15T16:00Z) + M18 Wave5 integrate (2026-11-15T16:07Z) + M10-full integrate (2026-11-15T16:16Z)  
+**Integration HEAD at this record:** M10-full status commit (this file); merge hash in M10-full sequence below  
 **Knowledge:** `WIKI_ROOT` unset → GAP; grounding = repo docs + ACCEPTED tips only
 
 M19 may integrate **only** orchestrator-ACCEPTED deliveries. Shared catalog is **FROZEN** (ADR-V4-0001) as of the M00 CONTRACT-FREEZE stamp; semantic changes require RFC.
@@ -26,6 +26,7 @@ M19 may integrate **only** orchestrator-ACCEPTED deliveries. Shared catalog is *
 | M17 Benchmarks (early) | **INTEGRATED** | `69d15ce0ef553c13881a12e4e08f0b0effa3e79f` on `feature/v4/m17-benchmarks-early` | merge `0daf462ac967a632fd23faae62c82c4d376b9d99` | `docs/v4/benchmarks/**` + `benchmarks/**`; fair baseline DECLARED_UNAVAILABLE; M08 methodology still **PROVISIONAL**; M09 not launched; Phase 4 **PARTIAL** |
 | M11 Trust & Provenance | **INTEGRATED** | `f1222f6d518dffc030991a992cdcc9e5e5b5acfb` on `feature/v4/m11-provenance` | merge `290b453a32d54f38e89ea41a537b85be7365a966` | `provenance/**`; engine `9b56c81`; Wave 5; M09 not launched; Phase 4 **PARTIAL** |
 | M18 Wave 5 RO | **INTEGRATED** | `5e8bc7022f3f5403a34d98932785586ff4b23f17` on `feature/v4/m18-wave5-ro` | merge `0c6d1c919eabce9e2065aec1d19efc0b0b048558` | docs-only `docs/v4/security/**`; F02/F07/F14/D13/D16/D17 + score honesty; OPEN residuals RR-W5-01..11 **not inverted**; M09 not launched; Phase 4 **PARTIAL** |
+| M10 Policy full (F02) | **INTEGRATED** | `fd8adf730ef3789b1f1ef4f9a8110661f09664e5` on `feature/v4/m10-policy-full` | merge `04a104b68efd46e5f3b127fbaa3839f595166de8` | `policy/**`, `adapters/v37/policy.ts`, narrow `cli/v35-commands.ts`; CLI store fallback refused under V4 posture; F02 **PARTIALLY MITIGATED**; V3 daemon actor residual **OPEN**; M09 not launched; Phase 4 **PARTIAL** |
 
 ## Merge sequence (2026-11-15) — Wave 1
 
@@ -393,6 +394,51 @@ Docs-only merge: 337 tests / 55 files unchanged vs M11 record.
 
 M09 **not launched**. Phase 4 remains **PARTIAL**. V4 not APPROVED.
 
+## Merge sequence (2026-11-15) — M10-full F02
+
+Pre-merge HEAD `53f04af08cca1d9475fc69d727654cf3a5b3e2ca`. Per `ORCHESTRATOR-DIRECTIVE-M19-M10-FULL-INTEGRATE.md`. Worktree `/home/gaab/Downloads/EvolveLoop-v4-m10` tip `fd8adf7` (engine `52b555c`).
+
+```text
+53f04af  feature/v4-integration (pre-M10-full-merge)
+   + merge --no-ff fd8adf7  →  04a104b68efd46e5f3b127fbaa3839f595166de8
+```
+
+| Step | Command | Result | Hash |
+|------|---------|--------|------|
+| 1 | `git merge --no-ff fd8adf730ef3789b1f1ef4f9a8110661f09664e5` | clean (ort); 6 files, +264/−15 | `04a104b68efd46e5f3b127fbaa3839f595166de8` |
+| 2 | `cd orchestrator && npx vitest run tests/v4` | **343/343 PASS** (55 files) | — |
+
+Ancestry after step 1: tip `fd8adf7` is an ancestor of `feature/v4-integration`.
+
+## Conflicts resolved (M10-full)
+
+No git merge conflicts (ort, ownership: `policy/**`, `adapters/v37/policy.ts`, narrow `cli/v35-commands.ts`, `tests/v4/policy/**`). No barrel union; `adapters/v37/index.ts` unchanged.
+
+## Landed coherently (M10-full)
+
+- `orchestrator/src/v4/policy/match.ts` (partial F14 realpath on absolute non-glob paths)
+- `orchestrator/src/v4/policy/M10-FULL-DELIVERY.md`
+- `orchestrator/src/v4/adapters/v37/policy.ts` (token-only credential; `CALLER_ASSERTED_IDENTITY_REJECTED`)
+- `orchestrator/src/cli/v35-commands.ts` (approve/reject store-fallback refused under V4 posture)
+- `orchestrator/tests/v4/policy/{f02-self-approve,r13-r14-match}.test.ts`
+
+F02 is **PARTIALLY MITIGATED** on the V4 PDP + V4-posture CLI filesystem fallback. Do **not** claim F02 globally closed. V3 daemon `approvals.approve` actor-from-IPC residual remains **OPEN** (RR-W5-01 remainder). RR-W5-02 remains **OPEN**.
+
+## Test evidence (M10-full integrate)
+
+```text
+RUN  v2.1.9  /home/gaab/Downloads/EvolveLoop-v4-integration/orchestrator
+Test Files  55 passed (55)
+     Tests  343 passed (343)
+Duration    2.38s
+```
+
+No `npm install`. `orchestrator/node_modules` remains the existing symlink to the V3.7-cert tree.
+
+Additive vs M18 Wave 5 record: 337 tests / 55 files → 343 tests / 55 files. Delta = M10-full policy tests on existing files (+6).
+
+M09 **not launched**. Phase 4 remains **PARTIAL**. V4 not APPROVED. F02 not globally closed.
+
 ## Limitations / not claimed
 
 - V3.7 remains **BLOCKED** G17; baseline is provisional; **not APPROVED**.
@@ -402,8 +448,9 @@ M09 **not launched**. Phase 4 remains **PARTIAL**. V4 not APPROVED.
 - Wave 4 ACCEPTED tips (M07, M08) **are** ancestors of `feature/v4-integration`.
 - M17 ACCEPTED tip (`69d15ce`) **is** an ancestor of `feature/v4-integration`.
 - M11 ACCEPTED tip (`f1222f6`) **is** an ancestor of `feature/v4-integration`.
-- M18 Wave 5 ACCEPTED tip (`5e8bc70`) **is** an ancestor of `feature/v4-integration`. Other metas remain out of this integrate batch.
-- M18 Wave 5 OPEN residuals (RR-W5-01..11) remain OPEN / PARTIALLY MITIGATED / READ-MODEL ONLY; F02 V3 CLI `store.approve(actor)` is **OPEN**.
+- M18 Wave 5 ACCEPTED tip (`5e8bc70`) **is** an ancestor of `feature/v4-integration`.
+- M10-full ACCEPTED tip (`fd8adf7`) **is** an ancestor of `feature/v4-integration`. Other metas remain out of this integrate batch.
+- M18 Wave 5 OPEN residuals (RR-W5-01..11) remain OPEN / PARTIALLY MITIGATED / READ-MODEL ONLY except the RR-W5-01 **CLI store-fallback** path, which M10-full refuses under V4 posture. F02 overall is **PARTIALLY MITIGATED**; V3 daemon actor residual (RR-W5-01 remainder) and RR-W5-02 remain **OPEN**. Do not claim F02 globally closed.
 - Continuity vertical is **DELIVERED** for orchestrator validation (`CONTINUITY-SLICE-V41.md`); not self-ACCEPTED; not V4 APPROVED.
 - M08 engine status is **PROVISIONAL** (`cprof-methodology.provisional.v0`); not an ACCEPTED methodology; not evidence of executor quality or L2/L3 routing.
 - M17 canonical baseline is **DECLARED_UNAVAILABLE** (`el-v4-fair-baseline.declared-unavailable.v0`); honesty pins forbid production scores and L2/L3 routing.
