@@ -21,7 +21,9 @@
 | A-M00-4 | M00 | Cursor Task `generalPurpose` | `cursor-grok-4.6-high-fast` | same | Task `768f1aa4-8b46-4f79-a744-8b9edd4ec01c` | COMPLETE — authored `0a88109`–`1dea128`; package ACCEPTED |
 | A-M00-5 | M00 | `cursor-agent` CLI | `composer-2.5` | same | killed | STOPPED |
 | A-M00-6 | M00 | Cursor Task `generalPurpose` | `gemini-4-hydrogen-high` | same | Task `532fab4b-…` | FAILED — Gemini quota (after package already on branch) |
-| A-M00-* | M00 | — | — | tip `1dea128` | — | Package ACCEPTED; freeze-review blocked on quota |
+| A-M00-* | M00 | — | — | tip `1dea128` | — | Package ACCEPTED |
+| A-FREEZE-1 | M00 freeze review | Cursor Task | `cursor-grok-4.6-high-fast` | m00 or integration | Task `8cd94458-d2cb-4e30-9f93-79c4b7faeb30` | RUNNING |
+| A-M19-1 | M19 Wave1 integrate | Cursor Task | `cursor-grok-4.6-high-fast` | `/home/gaab/Downloads/EvolveLoop-v4-integration` | Task `d1472461-b84a-4b4e-93fd-28a3e93873d6` | RUNNING |
 | A-M18-1 | M18 | Cursor Task `generalPurpose` | `claude-opus-5-5-medium` | `/home/gaab/Downloads/EvolveLoop-v4-m18` | Task `bd6eecf1-9665-452f-ad08-55df9e01de55` | COMPLETE — Wave 1 ACCEPTED by orchestrator |
 
 ### Runtime notes

@@ -1,6 +1,6 @@
 # EvolveLoop V4 — Master Plan (Orchestrator)
 
-**Status:** Phase 0 complete → Phase 1 in progress  
+**Status:** Phase 1 closing → freeze review + M19 integrate in flight; Wave 2 gated on FROZEN  
 **Provisional baseline:** `03937c175368715e893193fcfad09aac8474286b` (`recovery/v37-full-cert` tip; V3.7 **BLOCKED** on G17)  
 **Integration branch:** `feature/v4-integration`  
 **Thesis:** Work belongs to the system — not the agent, model, provider, or host.
@@ -29,17 +29,21 @@
 
 ## Current wave
 
-**Wave 1 (active):**
+**Wave 1 (closing):**
 
-- **M00** — Architecture & Domain Contracts (implementation of contracts/ADRs/ownership — not product modules)
-- **M18** — Initial threat model (read-mostly; findings only; no redesign without evidence)
+- **M00** — ACCEPTED @ `1dea128` (package)
+- **M18** — ACCEPTED Wave 1 @ `47155ec`
+- **Freeze review** — RUNNING (`8cd94458-…`)
+- **M19** — integrating M00+M18 into `feature/v4-integration` (`d1472461-…`)
+
+**Wave 2** — READY to launch only after `CONTRACT-FREEZE.md` = FROZEN (or formal waiver)
 
 ## Exit criteria for Wave 1
 
-- [ ] M00 delivers domain model, versioned contract stubs, ADR register for open decisions, ownership map, consumer conformance hooks
-- [ ] Independent architecture review of M00 (separate agent/context)
-- [ ] M18 delivers initial threat model covering Continuity, Effects, Capsule, Policy, Proof surfaces
-- [ ] Orchestrator validation → ACCEPTED / REWORK with evidence
+- [x] M00 delivers domain model, versioned contracts, ADR register, ownership, conformance hooks
+- [ ] Independent architecture review of M00 (separate agent/context) — in flight
+- [x] M18 delivers initial threat model
+- [x] Orchestrator validation → M00/M18 ACCEPTED
 - [ ] Contracts frozen for Wave 2 (V4.0)
 
 ## Known external blocker (final APPROVED)
