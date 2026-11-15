@@ -34,21 +34,21 @@ export interface ContractCatalogEntry {
 export const CONTRACT_CATALOG_VERSION = "1.0.0";
 
 export const CONTRACT_CATALOG: Readonly<Record<ContractKind, ContractCatalogEntry>> = {
-  GoalContract: { kind: "GoalContract", schema_version: GOAL_CONTRACT_SCHEMA_VERSION, producer: "M01", stability: "PROPOSED", validate: validateGoalContract },
-  Work: { kind: "Work", schema_version: WORK_SCHEMA_VERSION, producer: "M01", stability: "PROPOSED", validate: validateWork },
-  Task: { kind: "Task", schema_version: TASK_SCHEMA_VERSION, producer: "M01", stability: "PROPOSED", validate: validateTask },
-  Execution: { kind: "Execution", schema_version: EXECUTION_SCHEMA_VERSION, producer: "M13", stability: "PROPOSED", validate: validateExecution },
-  Executor: { kind: "Executor", schema_version: EXECUTOR_SCHEMA_VERSION, producer: "M14", stability: "PROPOSED", validate: validateExecutor },
-  ExecutionCapsule: { kind: "ExecutionCapsule", schema_version: EXECUTION_CAPSULE_SCHEMA_VERSION, producer: "M04", stability: "PROPOSED", validate: (v) => validateExecutionCapsule(v) },
-  Checkpoint: { kind: "Checkpoint", schema_version: CHECKPOINT_SCHEMA_VERSION, producer: "M02", stability: "PROPOSED", validate: validateCheckpoint },
-  EffectRecord: { kind: "EffectRecord", schema_version: EFFECT_RECORD_SCHEMA_VERSION, producer: "M03", stability: "PROPOSED", validate: validateEffectRecord },
-  Artifact: { kind: "Artifact", schema_version: ARTIFACT_SCHEMA_VERSION, producer: "M02", stability: "PROPOSED", validate: validateArtifact },
-  Evidence: { kind: "Evidence", schema_version: EVIDENCE_SCHEMA_VERSION, producer: "M06", stability: "PROPOSED", validate: validateEvidence },
-  WorkProof: { kind: "WorkProof", schema_version: WORK_PROOF_SCHEMA_VERSION, producer: "M06", stability: "PROPOSED", validate: validateWorkProof },
-  Policy: { kind: "Policy", schema_version: POLICY_SCHEMA_VERSION, producer: "M10", stability: "PROPOSED", validate: validatePolicy },
-  PolicyDecision: { kind: "PolicyDecision", schema_version: POLICY_DECISION_SCHEMA_VERSION, producer: "M10", stability: "PROPOSED", validate: validatePolicyDecision },
-  CapabilityProfile: { kind: "CapabilityProfile", schema_version: CAPABILITY_PROFILE_SCHEMA_VERSION, producer: "M08", stability: "PROPOSED", validate: validateCapabilityProfile },
-  WorkEvent: { kind: "WorkEvent", schema_version: WORK_EVENT_SCHEMA_VERSION, producer: "M02", stability: "PROPOSED", validate: validateWorkEvent },
+  GoalContract: { kind: "GoalContract", schema_version: GOAL_CONTRACT_SCHEMA_VERSION, producer: "M01", stability: "FROZEN", validate: validateGoalContract },
+  Work: { kind: "Work", schema_version: WORK_SCHEMA_VERSION, producer: "M01", stability: "FROZEN", validate: validateWork },
+  Task: { kind: "Task", schema_version: TASK_SCHEMA_VERSION, producer: "M01", stability: "FROZEN", validate: validateTask },
+  Execution: { kind: "Execution", schema_version: EXECUTION_SCHEMA_VERSION, producer: "M13", stability: "FROZEN", validate: validateExecution },
+  Executor: { kind: "Executor", schema_version: EXECUTOR_SCHEMA_VERSION, producer: "M14", stability: "FROZEN", validate: validateExecutor },
+  ExecutionCapsule: { kind: "ExecutionCapsule", schema_version: EXECUTION_CAPSULE_SCHEMA_VERSION, producer: "M04", stability: "FROZEN", validate: (v) => validateExecutionCapsule(v) },
+  Checkpoint: { kind: "Checkpoint", schema_version: CHECKPOINT_SCHEMA_VERSION, producer: "M02", stability: "FROZEN", validate: validateCheckpoint },
+  EffectRecord: { kind: "EffectRecord", schema_version: EFFECT_RECORD_SCHEMA_VERSION, producer: "M03", stability: "FROZEN", validate: validateEffectRecord },
+  Artifact: { kind: "Artifact", schema_version: ARTIFACT_SCHEMA_VERSION, producer: "M02", stability: "FROZEN", validate: validateArtifact },
+  Evidence: { kind: "Evidence", schema_version: EVIDENCE_SCHEMA_VERSION, producer: "M06", stability: "FROZEN", validate: validateEvidence },
+  WorkProof: { kind: "WorkProof", schema_version: WORK_PROOF_SCHEMA_VERSION, producer: "M06", stability: "FROZEN", validate: validateWorkProof },
+  Policy: { kind: "Policy", schema_version: POLICY_SCHEMA_VERSION, producer: "M10", stability: "FROZEN", validate: validatePolicy },
+  PolicyDecision: { kind: "PolicyDecision", schema_version: POLICY_DECISION_SCHEMA_VERSION, producer: "M10", stability: "FROZEN", validate: validatePolicyDecision },
+  CapabilityProfile: { kind: "CapabilityProfile", schema_version: CAPABILITY_PROFILE_SCHEMA_VERSION, producer: "M08", stability: "FROZEN", validate: validateCapabilityProfile },
+  WorkEvent: { kind: "WorkEvent", schema_version: WORK_EVENT_SCHEMA_VERSION, producer: "M02", stability: "FROZEN", validate: validateWorkEvent },
 };
 
 /**

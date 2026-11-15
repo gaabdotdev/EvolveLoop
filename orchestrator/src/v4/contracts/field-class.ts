@@ -65,15 +65,36 @@ export const FORBIDDEN_CAPSULE_AUTHORITY_FIELDS = [
   "api_key",
 ] as const;
 
+/**
+ * Reject forbidden field *names* at any depth (INV-CAP-07 / F01 / F12).
+ * A top-level denylist is not sufficient: `{ handoff: { permissions, next_action } }`
+ * must fail the same invariant as a root `permissions` key.
+ */
 export function rejectForbiddenFields(
   c: Checker,
   fields: readonly string[],
   code: string,
   message: (field: string) => string,
 ): void {
-  for (const field of fields) {
-    if (c.has(field)) c.fail(code, field, message(field));
-  }
+  const forbidden = new Set(fields);
+  const seen = new WeakSet<object>();
+
+  const walk = (value: unknown, path: string): void => {
+    if (value === null || typeof value !== "object") return;
+    if (seen.has(value)) return;
+    seen.add(value);
+    if (Array.isArray(value)) {
+      value.forEach((item, i) => walk(item, `${path}[${i}]`));
+      return;
+    }
+    for (const [key, child] of Object.entries(value as Record<string, unknown>)) {
+      const childPath = path ? `${path}.${key}` : key;
+      if (forbidden.has(key)) c.fail(code, childPath, message(key));
+      walk(child, childPath);
+    }
+  };
+
+  walk(c.value(), "");
 }
 
 export function fieldClassOf(table: Readonly<Record<string, FieldClass>>, path: string): FieldClass {

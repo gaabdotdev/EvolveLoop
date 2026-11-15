@@ -71,8 +71,21 @@ export const EFFECT_TRANSITIONS: Readonly<Record<EffectState, readonly EffectSta
   COMPENSATED: [],
 };
 
-/** Transitions out of these states must cite observed evidence (INV-EFF-03). */
+/** Transitions out of these states must cite observed evidence. */
 export const EFFECT_STATES_REQUIRING_EVIDENCE_TO_LEAVE: readonly EffectState[] = ["DISPATCHED", "UNKNOWN", "ESCALATED", "PARTIAL"];
+
+/**
+ * States that may only be recorded with CP-side observation or reconciliation evidence
+ * (INV-EFF-03, ADR-V4-0008 rule 2). Executor report alone is ≤ UNKNOWN; NOT_EXECUTED is
+ * included so a lie cannot induce a fresh `effect_id` for the same intent.
+ */
+export const EFFECT_STATES_REQUIRING_EVIDENCE: readonly EffectState[] = [
+  "COMMITTED",
+  "REJECTED",
+  "NOT_EXECUTED",
+  "PARTIAL",
+  "COMPENSATED",
+];
 
 /** States that are "open": a checkpoint/capsule must declare them (INV-CKPT-04, INV-CAP-04). */
 export const OPEN_EFFECT_STATES: readonly EffectState[] = ["AUTHORIZED", "DISPATCHED", "UNKNOWN", "PARTIAL", "ESCALATED"];
@@ -145,6 +158,9 @@ export function decideRetry(
         ? { action: "DISPATCH_ALLOWED", reason: "authorized_never_dispatched" }
         : { action: "FORBIDDEN", reason: "authorization_reference_missing" };
     case "NOT_EXECUTED":
+      // Terminal. The same effect_id must not be redispatched. A new attempt is a new
+      // effect_id with fresh authorization — and INV-EFF-03 forbids recording this state
+      // without CP-side evidence, so a lie cannot open that path.
       return { action: "FORBIDDEN", reason: "terminal_create_new_effect_with_fresh_authorization" };
     case "DISPATCHED":
     case "UNKNOWN":
@@ -223,8 +239,7 @@ export function validateEffectRecord(value: unknown): ValidationResult {
     if (state && authorizedOrBeyond.includes(state)) {
       c.ensure(c.get("authorization") !== undefined, "INV-EFF-02", "authorization", `${state} requires an authorization reference`);
     }
-    const confirmed: readonly EffectState[] = ["COMMITTED", "REJECTED", "PARTIAL", "COMPENSATED"];
-    if (state && confirmed.includes(state)) {
+    if (state && (EFFECT_STATES_REQUIRING_EVIDENCE as readonly string[]).includes(state)) {
       c.ensure((evidence?.length ?? 0) > 0, "INV-EFF-03", "evidence_ids", `${state} requires observed evidence`);
     }
     if (cls === "EXTERNAL" && state === "UNKNOWN") {

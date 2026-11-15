@@ -24,7 +24,7 @@ States (normative comments in `effect.ts`): PLANNED → AUTHORIZED → DISPATCHE
 Rules:
 
 1. **Write-ahead DISPATCHED:** the DISPATCHED transition is made durable **before** the request leaves the platform. A crash therefore yields UNKNOWN (or DISPATCHED, which `decideRetry` treats like UNKNOWN), never silence.
-2. **Executor report alone ≤ UNKNOWN** (D05). COMMITTED / REJECTED / NOT_EXECUTED require CP-side observation or reconciliation evidence (`INV-EFF-03`).
+2. **Executor report alone ≤ UNKNOWN** (D05). COMMITTED / REJECTED / NOT_EXECUTED require CP-side observation or reconciliation evidence (`INV-EFF-03`). `validateEffectRecord` rejects evidenceless `NOT_EXECUTED` so a lying executor cannot induce a fresh `effect_id` for the same intent. `decideRetry(NOT_EXECUTED)` remains `FORBIDDEN` (terminal; a proven non-execution needs a *new* authorized effect, not a silent redispatch of the same id).
 3. **`decideRetry` is normative** (implementations must return the same action):
    - UNKNOWN/DISPATCHED + idempotency key → `RETRY_WITH_SAME_IDEMPOTENCY_KEY`
    - else if status query → `RECONCILE_FIRST`

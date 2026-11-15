@@ -21,9 +21,10 @@ M18 required property: capsule carries **references** to authority, never author
 
 1. **Format version** `capsule_format_version` (semver). Compatibility = same major (`isCapsuleFormatCompatible`).
 2. **Integrity:** `manifest_sha256 = sha256(canonical JSON of body excluding integrity)` using EvolveLoop canonical JSON v1 (not RFC 8785; producers avoid non-integer floats). Optional `Ed25519` signature over the manifest, using V3.7 identity primitives via `V37SignaturePort`. V4.1 Continuity **requires** a signature at `CapsuleServicePort.verify`; V4.0 substrate may seal unsigned capsules only for in-process tests.
-3. **Capsule ≠ grant (INV-CAP-07).** Constant `authority_model = POLICY_REDERIVED_AT_ACCEPT`. Fields `permissions`, `verified_task_state`, `next_action`, `objective`, credentials/tokens are **forbidden**. `delegable_grants` are `grant_ref` + scope + expiry — references, not material.
+3. **Capsule ≠ grant (INV-CAP-07).** Constant `authority_model = POLICY_REDERIVED_AT_ACCEPT`. Fields `permissions`, `verified_task_state`, `next_action`, `objective`, credentials/tokens are **forbidden at any depth** (a nested `{ handoff: { permissions, next_action } }` is the same violation as a root key). `delegable_grants` are `grant_ref` + scope + expiry — references, not material.
 4. **Accept protocol (`CapsuleServicePort.accept`):**
-   - fail-closed if `verify` fails (digest, signature, expiry, format, secret scan, forbidden fields);
+   - fail-closed if `verify` fails (digest, signature, expiry, format, secret scan, **recursive** forbidden fields on the *raw* object);
+   - **allowlist-parse** known fields only (`allowlistParseExecutionCapsule`); unknown keys are dropped and MUST NOT be forwarded to executor context, Policy, or Work State. ADR-V4-0001 "ignore unknown optional fields" is readability, not forwarding. `seal` MUST emit only allowlisted fields;
    - re-derive `effective_grant_refs` from **current** Policy (M10); result ⊆ current policy **and** ⊆ capsule grant refs (only narrows);
    - bind Work/Task state from Event Ledger at `base_checkpoint.event_seq` (INV-CAP-08) — `task_refs` are orientation snapshots, never written into Work State;
    - consume anti-replay / single-use `replay_id`; superseded capsules rejected (D03);

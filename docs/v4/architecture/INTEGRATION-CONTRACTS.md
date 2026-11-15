@@ -25,7 +25,7 @@ Skeletons: TypeScript interfaces in `orchestrator/src/v4/contracts/ports.ts`. Ru
 
 1. Artifact bytes durable → then `artifact.registered`.
 2. Policy ALLOW/REQUIRE_APPROVAL (and human decision if required) → then effect AUTHORIZED → then DISPATCHED durable → then external call.
-3. Capsule `verify` pass → then `accept` (re-derive + ledger state) → then dispatch.
+3. Capsule `verify` pass on the *raw* object (recursive INV-CAP-07) → `allowlistParseExecutionCapsule` → `accept` (re-derive + ledger state) → then dispatch. Unknown keys are never forwarded.
 4. Independent evidence → then task VERIFIED → then `proof.issued`. `deriveFinalStatus` is the oracle.
 5. Fork: new work id → inherited effects `fork_inherited` → no grant copy.
 

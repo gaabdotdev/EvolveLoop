@@ -5,6 +5,7 @@
 
 import { createHash } from "node:crypto";
 import {
+  type EffectRecord,
   type ExecutionCapsule,
   type WorkEvent,
   computeCapsuleDigest,
@@ -110,3 +111,35 @@ export const validEvidence = {
   observed_at: NOW,
   limitations: ["does not prove production behaviour"],
 };
+
+export function validEffect(overrides: Partial<EffectRecord> = {}): EffectRecord {
+  return {
+    kind: "EffectRecord",
+    schema_version: "1.0.0",
+    tenant_id: DEFAULT_TENANT_ID,
+    effect_id: "eff_abc123def",
+    work_id: "work_abc123def",
+    task_id: "task_abc123def",
+    execution_id: "exec_abc123def",
+    executor_ref: { executor_id: "executor_worker01", executor_version: "1.0.0" },
+    effect_class: "EXTERNAL",
+    intent: {
+      action: "git.push",
+      target_resource: "origin/main",
+      parameters_digest: SHA,
+      description: "push branch",
+    },
+    integration: {
+      integration_id: "git",
+      capabilities: { supports_idempotency_key: true, supports_status_query: true, supports_compensation: false },
+    },
+    authorization: { policy_decision_id: "pdec_abc123def" },
+    state: "DISPATCHED",
+    evidence_ids: [],
+    reconciliation: [],
+    fork_inherited: false,
+    created_at: NOW,
+    updated_at: NOW,
+    ...overrides,
+  };
+}
