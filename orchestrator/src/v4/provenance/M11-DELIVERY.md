@@ -16,7 +16,13 @@
 
 ## 1. Commits
 
-Stamped after `git commit` on this branch (see git log). Orchestrator should treat `git rev-parse feature/v4/m11-provenance` as tip.
+On `feature/v4/m11-provenance` (no merge to integration):
+
+| Hash | Message |
+|------|---------|
+| `9b56c81d68c0750b8dedd180d67fb5c28a35c50d` | feat(v4/m11): provenance read-model for the four §4.12 queries |
+
+Engine commit above is the implementation + tests + this record as first landed. A follow-up docs stamp, if present, only records that SHA. Orchestrator tip = `git rev-parse feature/v4/m11-provenance`.
 
 ## 2. What was implemented
 
