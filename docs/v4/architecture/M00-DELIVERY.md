@@ -19,7 +19,7 @@ On `feature/v4/m00-architecture` (no merge to integration):
 | `bb9988b` | docs(v4/m00): orchestrator directive — incorporate ACCEPTED M18 Wave 1 reqs |
 | `e2099f1` | docs(v4/m00): single-writer lock for Gemini M00 owner (orchestrator) |
 | `0a88109` | feat(v4/m00): encode M18 freeze invariants in domain contracts |
-| docs commit | architecture, ADRs 0001–0017, ownership, catalog, delivery, review (this package) |
+| `8d3a70a` | docs(v4/m00): architecture, ADR register, ownership and M18 freeze coverage |
 
 ## 2. Files owned by M00
 
