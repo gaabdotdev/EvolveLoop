@@ -12,7 +12,11 @@
 
 ## 1. Commits
 
-On `feature/v4/m01-goal-work` (no merge to integration). Hashes filled after `git log`.
+On `feature/v4/m01-goal-work` (no merge to integration):
+
+| Hash | Message |
+|------|---------|
+| `8d14e2b` | feat(v4/m01): Goal Compiler and queryable Work State |
 
 ## 2. Files owned by M01
 
