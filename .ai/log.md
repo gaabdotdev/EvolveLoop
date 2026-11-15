@@ -45,3 +45,12 @@
 - Tests: `npx vitest run tests/v4/vertical` 2/2; full `tests/v4` 202/202.
 - Wiki: GAP (`WIKI_ROOT` unset). Note: `docs/v4-orchestration/VERTICAL-SLICE-V40.md`.
 - Self-status DELIVERED; V4 APPROVED not claimed. No contracts edit, no npm install, no V3.7 cert edits.
+
+## 2026-11-15T15:45:00Z — V4 M17 early fair baselines (DELIVERED)
+
+- Protocol + schema + M09 improvement bar under `docs/v4/benchmarks/**`; canonical artifact is DECLARED_UNAVAILABLE (no production scores).
+- Optional harness `orchestrator/src/v4/benchmarks/**` validates honesty; refuses SELF_REPORTED ground truth and L2/L3 ranking.
+- M08 methodology remains PROVISIONAL; M17 does not stamp ACCEPTED. Evidence gap: `docs/v4/benchmarks/M08-EVIDENCE.md`.
+- Tests: `npx vitest run tests/v4/benchmarks` 22/22; full `tests/v4` 306/306.
+- Wiki: GAP (`WIKI_ROOT` unset). Delivery: `docs/v4/benchmarks/M17-DELIVERY.md`.
+- Self-status DELIVERED; not ACCEPTED/APPROVED. No contracts edit, no npm install, no V3.7 cert edits, no merge.
