@@ -9,10 +9,10 @@
 | Self-status | **DELIVERED** (orchestrator validation; not self-ACCEPTED) |
 | V4 APPROVED | **not claimed** |
 | Pre-delivery HEAD | `6f07640` (`docs(v4/orch): register A-M19-3 vertical slice agent`) |
-| Delivery tip | *stamped after commit — see `git_tip` below* |
+| Delivery tip | `f52c980aab0e95ff604763718873004d4440f04a` |
 | Knowledge | Wiki **GAP** (`WIKI_ROOT` / `RAG_REPO_ROOT` unset); contracts from this repo |
 
-`git_tip: PENDING_STAMP`
+`git_tip: f52c980aab0e95ff604763718873004d4440f04a`
 
 ## What was proven (automated)
 
