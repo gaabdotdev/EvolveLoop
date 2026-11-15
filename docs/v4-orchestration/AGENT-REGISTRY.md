@@ -13,7 +13,8 @@
 
 | Agent ID | Meta | Runtime | Model | Worktree | Mode | Status |
 |----------|------|---------|-------|----------|------|--------|
-| A-M00-1 | M00 | Cursor Task `generalPurpose` | `claude-opus-5-5-medium` | `/home/gaab/Downloads/EvolveLoop-v4-m00` | background Task `95cf20e3-24bd-4a3f-9036-585bfd085457` | RUNNING |
+| A-M00-1 | M00 | Cursor Task `generalPurpose` | `claude-opus-5-5-medium` | `/home/gaab/Downloads/EvolveLoop-v4-m00` | Task `95cf20e3-24bd-4a3f-9036-585bfd085457` | PARTIAL (`55a810a`); Opus limit on resume |
+| A-M00-2 | M00 | Cursor Task `generalPurpose` | `gpt-5.6-sol-medium` | `/home/gaab/Downloads/EvolveLoop-v4-m00` | Task `0376e09f-86a1-4534-b4aa-48d56fcc34d2` | RUNNING — finish M00 + M18 §9 |
 | A-M18-1 | M18 | Cursor Task `generalPurpose` | `claude-opus-5-5-medium` | `/home/gaab/Downloads/EvolveLoop-v4-m18` | Task `bd6eecf1-9665-452f-ad08-55df9e01de55` | COMPLETE — Wave 1 ACCEPTED by orchestrator |
 
 ### Runtime notes
