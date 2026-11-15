@@ -33,6 +33,7 @@
 | 2026-11-15T16:00Z | M19 integrate M11 | **ACCEPTED / INTEGRATED** | merge `290b453`; HEAD `111b933`; orch recheck **337/337** | Wave 5 next: M18 RO |
 | 2026-11-15T16:06Z | M18 Wave5 RO | **ACCEPTED** | tip `5e8bc70`; `docs/v4/security/**` only; F02 remains OPEN on V3 CLI path | residuals RR-W5-01..11; no product code |
 | 2026-11-15T16:08Z | M19 integrate M18 Wave5 | **ACCEPTED / INTEGRATED** | merge `0c6d1c9`; HEAD `80d35ba`; orch recheck **337/337** | OPEN residuals not inverted; M10-full next |
+| 2026-11-15T16:14Z | M10 Policy full F02 | **ACCEPTED** | tip `fd8adf7` (engine `52b555c`); orch **41/41** policy + **343/343** full | CLI store fallback refused; F02 PARTIALLY MITIGATED (daemon actor residual) |
 
 Validation outcomes for metas: `ACCEPTED` | `REWORK` | `BLOCKED` | `REJECTED` only.
 
