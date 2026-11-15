@@ -22,9 +22,9 @@ On `feature/v4/m15-f02-daemon` (no merge to integration):
 
 | Hash | Message |
 |------|---------|
-| *(engine SHA stamped after first landing)* | feat(v4/m15): refuse V3 daemon actor under V4 posture (F02) |
+| `c34367d3c47e6f00f93cd931d25098144f4e5423` | feat(v4/m15): refuse V3 daemon actor under V4 posture (F02) |
 
-Engine commit above is the implementation + tests + this record as first landed. Follow-up stamps that SHA. Orchestrator tip = `git rev-parse feature/v4/m15-f02-daemon`.
+Engine commit above is the implementation + tests + this record as first landed. This follow-up stamps that SHA. Orchestrator tip = `git rev-parse feature/v4/m15-f02-daemon`.
 
 ## 2. What was implemented
 
@@ -58,7 +58,7 @@ cd orchestrator && npx vitest run tests/v4
 # node_modules is a symlink — do not npm install
 ```
 
-Recorded against this cut. Prior Wave 5 M10-full note was 55 files / 343 passed — delta is this file's 10 tests.
+Recorded at implementation SHA `c34367d`. Prior Wave 5 M10-full note was 55 files / 343 passed — delta is this file's 10 tests.
 
 Locks: daemon approve with `actor` / default `"cli"` refused without invoking the writer; live IPC leaves V3 record `PENDING`; token-only + adapter records HUMAN `decided_by`; asserted identity keys refused even with token+adapter; CLI `applyCliApprovalStoreFallback` still present.
 
