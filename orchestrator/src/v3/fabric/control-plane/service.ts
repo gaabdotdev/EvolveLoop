@@ -174,6 +174,9 @@ export class ControlPlaneService {
             });
             return envelope("task", "task.progress_ack", { ok: true }, { ack_of: msg.request_id });
           }
+          if (msg.type === "task.cancel_ack") {
+            return;
+          }
           if (msg.type === "task.result") {
             const reply = this.handleResult(msg.payload as any, ctx.worker_node_id!, msg.request_id);
             const taskId = String((msg.payload as { task_id?: string })?.task_id ?? "");
@@ -294,6 +297,47 @@ export class ControlPlaneService {
     const rec = this.nodes.revoke(workerNodeId, reason);
     this.disconnectWorker(workerNodeId, `revoked:${reason}`);
     return rec;
+  }
+
+  /**
+   * Cancel an in-flight task: revoke lease (fencing rejects late commits) and push task.cancel.
+   */
+  cancelTask(input: {
+    lease_id: string;
+    task_id: string;
+    worker_node_id?: string;
+    reason?: string;
+  }): { lease_status: string; cancel_pushed: boolean } {
+    const lease = this.leases.revoke(input.lease_id);
+    const workerId = input.worker_node_id ?? lease.owner_worker_node_id;
+    const socket = this.connections.get(workerId);
+    let cancel_pushed = false;
+    if (socket && !socket.destroyed) {
+      socket.write(
+        encodeFrame(
+          envelope(
+            "task",
+            "task.cancel",
+            {
+              task_id: input.task_id,
+              lease_id: input.lease_id,
+              reason: input.reason ?? "operator_cancel",
+            },
+            { worker_node_id: workerId },
+          ),
+        ),
+      );
+      cancel_pushed = true;
+    }
+    const pend = this.pendingResults.get(input.task_id);
+    if (pend) {
+      this.pendingResults.delete(input.task_id);
+      clearTimeout(pend.timer);
+      pend.resolve(
+        envelope("task", "task.result_rejected", { reason: "lease_revoked_cancelled" }, {}),
+      );
+    }
+    return { lease_status: lease.status, cancel_pushed };
   }
 
   disconnectWorker(workerNodeId: string, reason: string): boolean {

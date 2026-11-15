@@ -40,6 +40,8 @@ export interface WorkerRuntimeOptions {
 export class WorkerRuntime {
   private slotsFree: number;
   private processes = new Map<string, { child: ChildProcess; supervision: ProcessSupervisionRecord }>();
+  private readonly controllers = new Map<string, AbortController>();
+  private readonly cancelledTasks = new Set<string>();
   private outbox: unknown[] = [];
   private readonly sandbox: SandboxManager;
   private readonly requireOsSandbox: boolean;
@@ -53,6 +55,10 @@ export class WorkerRuntime {
     mkdirSync(opts.workRoot, { recursive: true });
     mkdirSync(join(opts.workRoot, "outbox"), { recursive: true });
     mkdirSync(join(opts.workRoot, "workspaces"), { recursive: true });
+  }
+
+  isCancelled(taskId: string): boolean {
+    return this.cancelledTasks.has(taskId);
   }
 
   inventory() {
@@ -76,8 +82,12 @@ export class WorkerRuntime {
 
   async execute(
     contract: ExecutionContract,
-    opts?: { command?: string[]; env?: Record<string, string> },
-  ): Promise<{ status: "completed" | "failed" | "rejected"; supervision: ProcessSupervisionRecord; stdout?: string }> {
+    opts?: { command?: string[]; env?: Record<string, string>; signal?: AbortSignal; cancel_grace_ms?: number },
+  ): Promise<{
+    status: "completed" | "failed" | "rejected" | "cancelled";
+    supervision: ProcessSupervisionRecord;
+    stdout?: string;
+  }> {
     const v = this.validateContract(contract);
     if (!v.ok) {
       return {
@@ -87,6 +97,17 @@ export class WorkerRuntime {
           start_time: new Date().toISOString(),
           tree_state: "unknown",
           correlation_ids: { reject: v.reason },
+        },
+      };
+    }
+    if (this.cancelledTasks.has(contract.task_id) || opts?.signal?.aborted) {
+      return {
+        status: "cancelled",
+        supervision: {
+          task_id: contract.task_id,
+          start_time: new Date().toISOString(),
+          tree_state: "killed",
+          correlation_ids: { reject: "cancelled_before_start" },
         },
       };
     }
@@ -102,6 +123,11 @@ export class WorkerRuntime {
       };
     }
     this.slotsFree -= 1;
+    const ac = new AbortController();
+    this.controllers.set(contract.task_id, ac);
+    const onExternalAbort = () => ac.abort();
+    opts?.signal?.addEventListener("abort", onExternalAbort, { once: true });
+    if (opts?.signal?.aborted) ac.abort();
     const ws = join(this.opts.workRoot, "workspaces", contract.task_id);
     mkdirSync(ws, { recursive: true });
     writeFileSync(join(ws, "contract.json"), JSON.stringify(contract, null, 2));
@@ -157,15 +183,34 @@ export class WorkerRuntime {
           ...(opts?.env ?? {}),
         },
         profile,
+        signal: ac.signal,
+        cancel_grace_ms: opts?.cancel_grace_ms ?? contract.cancel_policy?.graceful_ms ?? 2_000,
       });
       supervision.sandbox_id = result.backend_id;
       supervision.pid = result.pid;
       supervision.pgid = result.pgid;
       supervision.exit_code = result.exit_code;
-      supervision.tree_state = result.blocked ? "unknown" : "exited";
-      // Note (AUD-SBX-02): SandboxManager.exec is awaited to completion; mid-flight
-      // cancel requires a future async supervision handle. Host-path cancel works via this.processes.
+      supervision.tree_state = result.cancelled ? "killed" : result.blocked ? "unknown" : "exited";
       this.slotsFree += 1;
+      this.controllers.delete(contract.task_id);
+      opts?.signal?.removeEventListener("abort", onExternalAbort);
+      if (result.cancelled || this.cancelledTasks.has(contract.task_id)) {
+        supervision.correlation_ids.cancel = "sandbox_aborted";
+        this.outbox.push({
+          type: "task.result",
+          task_id: contract.task_id,
+          lease_id: contract.lease_id,
+          fencing_epoch: contract.fencing_epoch,
+          status: "cancelled",
+          at: new Date().toISOString(),
+        });
+        mkdirSync(join(this.opts.workRoot, "outbox"), { recursive: true });
+        writeFileSync(
+          join(this.opts.workRoot, "outbox", `${contract.task_id}.json`),
+          JSON.stringify(this.outbox.at(-1), null, 2),
+        );
+        return { status: "cancelled", supervision, stdout: result.stderr || result.stdout };
+      }
       if (result.blocked) {
         supervision.correlation_ids.reject = result.block_reason ?? "sandbox_blocked";
         this.outbox.push({
@@ -207,6 +252,8 @@ export class WorkerRuntime {
       };
     }
 
+    // Host-path execution continues below (sandbox_profile=none / allowHostFallback).
+
     // Host path only for explicit sandbox_profile=none lab contracts.
     // Never inherit the full process environment (AUD-SBX-01).
     const scrubbedEnv: Record<string, string> = {
@@ -217,6 +264,19 @@ export class WorkerRuntime {
       EL_WORKER_NODE_ID: this.opts.worker_node_id,
       ...(opts?.env ?? {}),
     };
+    if (ac.signal.aborted) {
+      this.slotsFree += 1;
+      this.controllers.delete(contract.task_id);
+      return {
+        status: "cancelled",
+        supervision: {
+          ...supervision,
+          tree_state: "killed",
+          correlation_ids: { ...supervision.correlation_ids, cancel: "aborted_before_host_spawn" },
+        },
+      };
+    }
+
     const child = spawn(cmd[0], cmd.slice(1), {
       cwd: ws,
       env: scrubbedEnv,
@@ -231,6 +291,25 @@ export class WorkerRuntime {
     supervision.tree_state = "running";
     this.processes.set(contract.task_id, { child, supervision });
 
+    const onHostAbort = () => {
+      try {
+        if (child.pid) process.kill(-child.pid, "SIGTERM");
+        else child.kill("SIGTERM");
+      } catch {
+        /* */
+      }
+      const grace = opts?.cancel_grace_ms ?? contract.cancel_policy?.force_after_ms ?? 2_000;
+      setTimeout(() => {
+        try {
+          if (child.pid) process.kill(-child.pid, "SIGKILL");
+          else child.kill("SIGKILL");
+        } catch {
+          /* */
+        }
+      }, grace).unref?.();
+    };
+    ac.signal.addEventListener("abort", onHostAbort, { once: true });
+
     const stdoutChunks: Buffer[] = [];
     child.stdout?.on("data", (c) => stdoutChunks.push(c));
     child.stderr?.on("data", (c) => stdoutChunks.push(c));
@@ -239,8 +318,11 @@ export class WorkerRuntime {
       child.on("exit", (code) => resolve(code));
     });
     supervision.exit_code = exitCode;
-    supervision.tree_state = "exited";
+    const wasCancelled = this.cancelledTasks.has(contract.task_id) || ac.signal.aborted;
+    supervision.tree_state = wasCancelled ? "killed" : "exited";
     this.processes.delete(contract.task_id);
+    this.controllers.delete(contract.task_id);
+    opts?.signal?.removeEventListener("abort", onExternalAbort);
     this.slotsFree += 1;
 
     const stdout = Buffer.concat(stdoutChunks).toString("utf8");
@@ -250,31 +332,35 @@ export class WorkerRuntime {
       lease_id: contract.lease_id,
       fencing_epoch: contract.fencing_epoch,
       exit_code: exitCode,
+      status: wasCancelled ? "cancelled" : exitCode === 0 ? "completed" : "failed",
       at: new Date().toISOString(),
     });
     mkdirSync(join(this.opts.workRoot, "outbox"), { recursive: true });
     writeFileSync(join(this.opts.workRoot, "outbox", `${contract.task_id}.json`), JSON.stringify(this.outbox.at(-1), null, 2));
 
     return {
-      status: exitCode === 0 ? "completed" : "failed",
+      status: wasCancelled ? "cancelled" : exitCode === 0 ? "completed" : "failed",
       supervision,
       stdout,
     };
   }
 
   cancel(taskId: string, force = false): boolean {
+    this.cancelledTasks.add(taskId);
+    const ctrl = this.controllers.get(taskId);
+    if (ctrl && !ctrl.signal.aborted) ctrl.abort();
     const rec = this.processes.get(taskId);
-    if (!rec) return false;
+    if (!rec && !ctrl) return Boolean(ctrl) || this.cancelledTasks.has(taskId);
     try {
-      if (rec.supervision.pid) {
+      if (rec?.supervision.pid) {
         process.kill(-rec.supervision.pid, force ? "SIGKILL" : "SIGTERM");
-      } else {
+      } else if (rec) {
         rec.child.kill(force ? "SIGKILL" : "SIGTERM");
       }
-      rec.supervision.tree_state = "killed";
+      if (rec) rec.supervision.tree_state = "killed";
       return true;
     } catch {
-      return false;
+      return Boolean(ctrl);
     }
   }
 

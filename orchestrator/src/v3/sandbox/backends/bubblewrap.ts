@@ -265,6 +265,23 @@ export class BubblewrapBackend implements SandboxBackend {
     const timeout = request.profile.process.timeout_ms;
     const maxOut = request.profile.process.max_output_bytes;
     const started = Date.now();
+    const graceMs = request.cancel_grace_ms ?? 2_000;
+
+    if (request.signal?.aborted) {
+      return {
+        kind: "SandboxExecResult",
+        backend_id: this.backend_id,
+        exit_code: null,
+        signal: "SIGTERM",
+        stdout: "",
+        stderr: "aborted_before_start",
+        timed_out: false,
+        cancelled: true,
+        duration_ms: 0,
+        blocked: false,
+        limitations,
+      };
+    }
 
     return new Promise((resolvePromise) => {
       // Spawn bwrap directly (args[0] is bwrap path); remaining are argv to bwrap.
@@ -278,11 +295,28 @@ export class BubblewrapBackend implements SandboxBackend {
       let stdout = "";
       let stderr = "";
       let timedOut = false;
+      let cancelled = false;
       let settled = false;
+      let killEscalation: ReturnType<typeof setTimeout> | undefined;
+
+      const killTree = (sig: NodeJS.Signals) => {
+        if (child.pid == null) return;
+        try {
+          process.kill(-child.pid, sig);
+        } catch {
+          try {
+            child.kill(sig);
+          } catch {
+            /* gone */
+          }
+        }
+      };
 
       const finish = (exit_code: number | null, signal: NodeJS.Signals | null) => {
         if (settled) return;
         settled = true;
+        if (killEscalation) clearTimeout(killEscalation);
+        request.signal?.removeEventListener("abort", onAbort);
         resolvePromise({
           kind: "SandboxExecResult",
           backend_id: this.backend_id,
@@ -291,6 +325,7 @@ export class BubblewrapBackend implements SandboxBackend {
           stdout: truncate(stdout, maxOut),
           stderr: truncate(stderr, maxOut),
           timed_out: timedOut,
+          cancelled,
           duration_ms: Date.now() - started,
           pid: child.pid,
           pgid: child.pid,
@@ -298,20 +333,18 @@ export class BubblewrapBackend implements SandboxBackend {
         });
       };
 
+      const onAbort = () => {
+        cancelled = true;
+        killTree("SIGTERM");
+        killEscalation = setTimeout(() => killTree("SIGKILL"), graceMs);
+      };
+
       const timer = setTimeout(() => {
         timedOut = true;
-        if (child.pid != null) {
-          try {
-            process.kill(-child.pid, "SIGKILL");
-          } catch {
-            try {
-              child.kill("SIGKILL");
-            } catch {
-              /* gone */
-            }
-          }
-        }
+        killTree("SIGKILL");
       }, timeout);
+
+      request.signal?.addEventListener("abort", onAbort, { once: true });
 
       child.stdout?.on("data", (buf: Buffer) => {
         if (stdout.length < maxOut) stdout += buf.toString("utf-8");

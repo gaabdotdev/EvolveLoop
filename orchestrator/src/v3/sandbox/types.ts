@@ -27,6 +27,10 @@ export interface SandboxExecRequest {
   /** Capability being authorized when approval_id is supplied (default process.spawn). */
   approval_operation?: string;
   approval_resource?: string;
+  /** Abort mid-flight execution (SIGTERM then SIGKILL after graceful_ms). */
+  signal?: AbortSignal;
+  /** Grace period before escalating cancel to SIGKILL (default 2000). */
+  cancel_grace_ms?: number;
 }
 
 export interface SandboxExecResult {
@@ -37,6 +41,8 @@ export interface SandboxExecResult {
   stdout: string;
   stderr: string;
   timed_out: boolean;
+  /** True when aborted via request.signal (distinct from profile timeout). */
+  cancelled?: boolean;
   duration_ms: number;
   pid?: number;
   pgid?: number;

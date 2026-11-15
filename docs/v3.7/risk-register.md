@@ -25,6 +25,8 @@
 | R18 | Operator-driven ticks (no auto-schedule) | M | H | Stalled workflows under load | V3.6 LIMITATIONS | Auto-tick policy with backpressure for V3.7 | Ops | **P2** |
 | R19 | Live cost/tokens UNAVAILABLE | M | H | Bad placement by cost | MP acceptance; V3.6 live | Require measured provenance for cost-aware schedule | Accounting | **P2** |
 | R20 | Premature Windows/macOS workers | M | L | False multi-OS claim | V3.5 Linux-first; bwrap Linux-only | Linux workers first; other OS = later charter | Platforms | **P3** |
+| R21 | Same-UID abuse of Coordinator IPC (SEC-H02) | M | M | Local privileged IPC misuse | AUD-H02-01; Unix socket + token files `0600` | **Accepted boundary:** single-user trusted host ([ADR-V37-0003](adr/ADR-V37-0003-ipc-trust-boundary.md)); cross-user FS isolation only; do not claim same-UID multi-tenant isolation | Security | **P1** (closed as documented boundary) |
+| R22 | Cancel mid-flight orphans / late success | H | M | Resource leak; false success after revoke | Sandbox AbortSignal + lease fencing | TERM→KILL + `cancelTask` revoke; see [CANCEL-SEMANTICS.md](CANCEL-SEMANTICS.md) | Runtime | **P0** (mitigated in recovery tip) |
 
 ## Risk themes for V3.7 goals doc
 

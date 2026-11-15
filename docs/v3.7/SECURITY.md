@@ -10,5 +10,6 @@ Extends V3.5 model.
 - Cross-project artifact deny default.
 - No silent sandbox→host fallback when `sandbox_profile` requires OS isolation; host path (profile `none`) uses scrubbed env (no full `process.env` inherit).
 - Plaintext protocol lab-only (`insecurePlaintext`).
-- Coordinator IPC: privileged methods require privileged token + nonce anti-replay; `tick` is privileged (SEC-H02). **Residual:** same-UID processes that can read `ipc.privileged.token` still share authority (filesystem ACL model); not claimed as cross-user isolation.
+- Coordinator IPC: privileged methods require privileged token + nonce anti-replay; `tick` is privileged (SEC-H02). **Trust domain:** single-user trusted host per [ADR-V37-0003](adr/ADR-V37-0003-ipc-trust-boundary.md). Cross-user isolation via `0600` socket/token files. Same-UID malware with data-dir access is **out of scope** (operator session compromise).
 - Fabric admin IPC: capability-scoped tokens bound to Control Plane epoch.
+- Cancel: see [CANCEL-SEMANTICS.md](CANCEL-SEMANTICS.md) — lease revoke fences late commits; sandbox abort uses TERM→KILL.
