@@ -23,7 +23,7 @@ States: `PENDING` | `DISCOVERY` | `CONTRACT_REVIEW` | `READY` | `RUNNING` | `REV
 | M16 | Autonomous Engineering & Impossible Handoff | 6 | — | — | — | PENDING | |
 | M17 | Benchmarks & Economic Proof | cross | — | — | — | PENDING | |
 | M18 | Security & Adversarial Assurance | cross | `feature/v4/m18-security` | `/home/gaab/Downloads/EvolveLoop-v4-m18` | Task `bd6eecf1-…` | **INTEGRATED** (Wave 1) | Tip `47155ec` → `2fc17c2`; later waves PENDING |
-| M19 | Integration & Release | 8 | `feature/v4-integration` | `/home/gaab/Downloads/EvolveLoop-v4-integration` | Task `a67420b0-…` | **INTEGRATED** Wave2 | HEAD `d8ab952`; 200/200; vertical slice next |
+| M19 | Integration & Release | 8 | `feature/v4-integration` | `/home/gaab/Downloads/EvolveLoop-v4-integration` | Task `459d13f9-…` | **ACCEPTED** vertical | HEAD `cf37912`; Phase 2 gate green |
 | M20 | Independent Final Audit | 8 | — | — | — | PENDING | Separate context |
 
 ## Ownership roots (initial — M00 must refine)

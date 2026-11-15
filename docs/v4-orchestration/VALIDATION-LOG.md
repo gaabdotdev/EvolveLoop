@@ -17,6 +17,7 @@
 | 2026-11-15T14:16Z | M06 WorkProof-min | **ACCEPTED** | `3dd5463`+`2728695`; ownership `proof/**`; vitest **54/54** | Honesty/independence guards |
 | 2026-11-15T14:17Z | M02 Ledger/Checkpoints | **ACCEPTED** | `9291d24`+`374769d`; ownership ledger/checkpoint/artifacts/+`adapters/v37/ledger.ts`; vitest **66/66** | Watch merge conflict `adapters/v37/index.ts` vs M10 |
 | 2026-11-15T14:20Z | M19 Wave 2 integrate | **ACCEPTED / INTEGRATED** | merges M02→M01→M03→M06→M10→M12; barrel `b5bdd01`; HEAD `d8ab952`; orch recheck vitest **200/200** | G17 still blocks APPROVED |
+| 2026-11-15T14:27Z | M19 vertical Intent→WorkProof | **ACCEPTED** | tip `cf37912` (slice `f52c980`); M02 `FileEventLedger`; honesty UNVERIFIED→PROVEN + PARTIAL cap; vitest **2/2** vertical + **202/202** full | Phase 2 gate green; G17 still blocks APPROVED |
 
 Validation outcomes for metas: `ACCEPTED` | `REWORK` | `BLOCKED` | `REJECTED` only.
 

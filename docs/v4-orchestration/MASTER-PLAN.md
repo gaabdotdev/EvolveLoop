@@ -1,6 +1,6 @@
 # EvolveLoop V4 — Master Plan (Orchestrator)
 
-**Status:** Phase 2 (V4.0) **INTEGRATED** — Wave 2 on `d8ab952` (200/200); vertical Intent→WorkProof gate open  
+**Status:** Phase 2 (V4.0) **COMPLETE** — vertical Intent→WorkProof **ACCEPTED** (`cf37912`, 202/202); Phase 3 READY  
 **Provisional baseline:** `03937c175368715e893193fcfad09aac8474286b` (`recovery/v37-full-cert` tip; V3.7 **BLOCKED** on G17)  
 **Integration branch:** `feature/v4-integration`  
 **Thesis:** Work belongs to the system — not the agent, model, provider, or host.
@@ -47,7 +47,7 @@
 | M12 | `72c5f5b` | ACCEPTED |
 | M19 | Task `a67420b0-…` | **INTEGRATED** @ `d8ab952` (200/200) |
 
-Gate to Phase 3: vertical Intent→WorkProof on integration HEAD (directive `ORCHESTRATOR-DIRECTIVE-VERTICAL-SLICE.md`).
+Gate to Phase 3: **PASSED** — `VERTICAL-SLICE-V40.md` + vitest vertical 2/2 / full 202/202 @ `cf37912`.
 
 ## Exit criteria for Wave 1
 
