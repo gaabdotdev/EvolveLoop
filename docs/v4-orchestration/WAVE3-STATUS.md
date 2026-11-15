@@ -9,6 +9,7 @@
 | M04 | Capsule, Handoff & Recovery | **INTEGRATED** | merge `26831b0` |
 | M05 | Time Travel, Replay & Fork | **INTEGRATED** | merge `33229c5` |
 | M19 | Wave 3 integrate | **INTEGRATED** | HEAD `3da3af5`; 234/234 |
+| M19 | Continuity vertical | **ACCEPTED** | tip `81abcbd`; 4/4 + 236/236 — Phase 3 COMPLETE |
 | M19 | Continuity vertical gate | **DELIVERED** (not self-ACCEPTED) | `CONTINUITY-SLICE-V41.md`; vertical 4/4; full 236/236 |
 | M03-full | Effect Ledger continuity extensions | PENDING | Only if M03 gaps remain after Wave 2 |
 | M06-handoff | WorkProof across capsule handoff | **EXERCISED** in vertical (optional) | Honest PARTIAL on fork; not a dedicated meta delivery |

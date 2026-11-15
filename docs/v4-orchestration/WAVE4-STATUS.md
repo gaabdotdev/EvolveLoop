@@ -1,15 +1,15 @@
-# Wave 4 status — V4.2 Adaptive Intel (DRAFT — do not launch yet)
+# Wave 4 status — V4.2 Adaptive Intel
 
-**Prerequisite:** Phase 3 Continuity vertical gate **ACCEPTED** (`CONTINUITY-SLICE-V41.md`).  
-**Do not launch** until orchestrator flips this file out of DRAFT.
+**Prerequisite:** Phase 3 Continuity vertical **ACCEPTED** (`CONTINUITY-SLICE-V41.md` @ `81abcbd`).  
+**Gate cleared:** 2026-11-15T15:25Z. First cut: M07 + M08 (M09 waits on M08+M17).
 
 | Meta | Focus | Status | Notes |
 |------|-------|--------|-------|
-| M07 | Dynamic Planning Engine | BLOCKED_ON_GATE | `planning/**` |
-| M08 | Capability Intelligence | BLOCKED_ON_GATE | `capability/**`; scores need provenance |
-| M09 | Adaptive Execution Intelligence | BLOCKED_ON_GATE | depends M08 + M17 provenance |
-| M12-pred | Observability predictive | BLOCKED_ON_GATE | after Continuity signals |
-| M17 | Benchmarks & Economic Proof (early) | BLOCKED_ON_GATE | fair baseline for M09 |
+| M07 | Dynamic Planning Engine | PENDING_LAUNCH | `planning/**` |
+| M08 | Capability Intelligence | PENDING_LAUNCH | `capability/**`; no invented scores |
+| M09 | Adaptive Execution Intelligence | BLOCKED | depends M08 + M17 provenance |
+| M12-pred | Observability predictive | PENDING | after M07/M08 land |
+| M17 | Benchmarks & Economic Proof (early) | PENDING | fair baseline for M09 |
 
 ## Hard edges (DEPENDENCY-GRAPH)
 
