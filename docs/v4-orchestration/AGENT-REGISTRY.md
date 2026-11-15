@@ -14,7 +14,7 @@
 | Agent ID | Meta | Runtime | Model | Worktree | Mode | Status |
 |----------|------|---------|-------|----------|------|--------|
 | A-M00-1 | M00 | Cursor Task `generalPurpose` | `claude-opus-5-5-medium` | `/home/gaab/Downloads/EvolveLoop-v4-m00` | background Task `95cf20e3-24bd-4a3f-9036-585bfd085457` | RUNNING |
-| A-M18-1 | M18 | Cursor Task `generalPurpose` | `claude-opus-5-5-medium` | `/home/gaab/Downloads/EvolveLoop-v4-m18` | background Task `bd6eecf1-9665-452f-ad08-55df9e01de55` | RUNNING |
+| A-M18-1 | M18 | Cursor Task `generalPurpose` | `claude-opus-5-5-medium` | `/home/gaab/Downloads/EvolveLoop-v4-m18` | Task `bd6eecf1-9665-452f-ad08-55df9e01de55` | COMPLETE — Wave 1 ACCEPTED by orchestrator |
 
 ### Runtime notes
 

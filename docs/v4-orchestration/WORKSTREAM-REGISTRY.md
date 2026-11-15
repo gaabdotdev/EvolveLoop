@@ -22,7 +22,7 @@ States: `PENDING` | `DISCOVERY` | `CONTRACT_REVIEW` | `READY` | `RUNNING` | `REV
 | M15 | Control Center, CLI, SDK & APIs | 2→7 | — | — | — | PENDING | CLI early |
 | M16 | Autonomous Engineering & Impossible Handoff | 6 | — | — | — | PENDING | |
 | M17 | Benchmarks & Economic Proof | cross | — | — | — | PENDING | |
-| M18 | Security & Adversarial Assurance | cross | `feature/v4/m18-security` | `/home/gaab/Downloads/EvolveLoop-v4-m18` | cursor-agent | RUNNING | Wave 1 threat model |
+| M18 | Security & Adversarial Assurance | cross | `feature/v4/m18-security` | `/home/gaab/Downloads/EvolveLoop-v4-m18` | Task `bd6eecf1-…` | ACCEPTED (Wave 1) | Tip `47155ec`; later waves PENDING |
 | M19 | Integration & Release Engineering | 8 | `feature/v4-integration` | `/home/gaab/Downloads/EvolveLoop-v4-integration` | — | READY | Integrator only merges |
 | M20 | Independent Final Audit | 8 | — | — | — | PENDING | Separate context |
 
