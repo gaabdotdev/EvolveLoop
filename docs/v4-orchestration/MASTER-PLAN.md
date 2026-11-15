@@ -29,25 +29,21 @@
 
 ## Current wave
 
-**Wave 1 (closed):**
+**Wave 5 (V4.3 Trust) — active:**
 
-- **M00** — ACCEPTED @ `1dea128`; freeze **FROZEN** @ `e4fb8ad` (R1–R16)
-- **M18** — ACCEPTED Wave 1 @ `47155ec`
-- **M19** — Wave1 + freeze merge done (`061dbd4`)
+| Meta | Status | Notes |
+|------|--------|-------|
+| M11 Provenance | RUNNING | Task `7dace8cc-…` @ `EvolveLoop-v4-m11` |
+| M10-full / M06-authz | PENDING | after M11 |
+| M18 Wave5 RO | PENDING | prompt `M18-WAVE5-RO.md` |
+| M09 | BLOCKED | methodology PROVISIONAL + baseline UNAVAILABLE |
 
-**Wave 2 (integrating):**
+**Closed waves (summary):**
 
-| Meta | Tip | Status |
-|------|-----|--------|
-| M01 | `f72ad76` | ACCEPTED |
-| M02 | `374769d` | ACCEPTED |
-| M03 | `91dbdf3` | ACCEPTED |
-| M06 | `2728695` | ACCEPTED |
-| M10 | `78fa4bc` | ACCEPTED |
-| M12 | `72c5f5b` | ACCEPTED |
-| M19 | Task `a67420b0-…` | **INTEGRATED** @ `d8ab952` (200/200) |
-
-Gate to Phase 3: **PASSED** — `VERTICAL-SLICE-V40.md` + vitest vertical 2/2 / full 202/202 @ `cf37912`.
+- Wave 1: M00 FROZEN `e4fb8ad`; M18 tip `47155ec`; M19 merge `061dbd4`
+- Wave 2: M01/M02/M03/M06/M10/M12 INTEGRATED; vertical `cf37912`
+- Wave 3: M04/M05 INTEGRATED; Continuity `81abcbd`
+- Wave 4: M07/M08/M17 INTEGRATED @ `04ed782`; Phase 4 **PARTIAL** (`PHASE4-EXIT.md`)
 
 ## Exit criteria for Wave 1
 
