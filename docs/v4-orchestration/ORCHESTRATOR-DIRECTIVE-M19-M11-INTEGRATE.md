@@ -1,27 +1,25 @@
 # Orchestrator directive — M19 integrate M11 (Wave 5)
 
 **To:** M19 (`feature/v4-integration`)  
-**When:** only after orchestrator **ACCEPTED** M11 tip  
-**Source:** `/home/gaab/Downloads/EvolveLoop-v4-m11` branch `feature/v4/m11-provenance`
+**ACCEPTED tip:** `f1222f6d518dffc030991a992cdcc9e5e5b5acfb` on `feature/v4/m11-provenance`  
+**Source worktree:** `/home/gaab/Downloads/EvolveLoop-v4-m11`  
+**Engine commit:** `9b56c81` (delivery stamp `f1222f6`)
 
-## Pre-merge validation (orchestrator)
+## Pre-merge (orchestrator already verified)
 
-1. Tip is descendant of integration baseline ≥ `89b3c89`.
-2. Ownership only `orchestrator/src/v4/provenance/**` + `orchestrator/tests/v4/provenance/**` (+ delivery note).
-3. No contracts/catalog edits; no V3.7 cert; no other meta trees rewritten.
-4. Implements all four `ProvenanceQueryPort` methods.
-5. Fail-closed evidence: missing/mismatch/SELF_REPORTED-as-independent never fabricates ids.
-6. Independent: `cd orchestrator && npx vitest run tests/v4/provenance` + full `tests/v4`.
+- Ownership only `orchestrator/src/v4/provenance/**` + `tests/v4/provenance/**`
+- Contracts/V3.7 untouched
+- Orch vitest: provenance **31/31**, full v4 **337/337**
 
 ## Procedure
 
 1. PATH with nvm node; no `npm install`.
-2. `git merge --no-ff <ACCEPTED_TIP>`.
-3. Resolve conflicts without changing FROZEN contracts semantics.
-4. Recheck `npx vitest run tests/v4`.
-5. Update `INTEGRATION-STATUS.md`, `WAVE5-STATUS.md`, registries; commit.
-6. No APPROVED; no M09 launch; Phase 4 remains PARTIAL until observed baseline.
+2. Work ONLY in `/home/gaab/Downloads/EvolveLoop-v4-integration`.
+3. `git merge --no-ff f1222f6` (full hash above).
+4. `cd orchestrator && npx vitest run tests/v4` must pass (expect ≥337).
+5. Update `INTEGRATION-STATUS.md`, `WAVE5-STATUS.md`; commit orch record.
+6. Do **not** launch M09; Phase 4 remains PARTIAL; no APPROVED; no V3.7 edits.
 
-## After integrate
+## After
 
-Prefer next Wave 5 cut: M18 adversarial RO refresh **or** M10-full / M06-authz — not M09 score-routing.
+Report HEAD, merge hash, vitest counts. Next Wave 5 cut left to orchestrator (M18 RO / M10-full).
