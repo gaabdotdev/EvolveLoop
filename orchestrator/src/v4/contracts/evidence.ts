@@ -55,15 +55,23 @@ export interface Evidence extends ContractHeader<"Evidence"> {
   limitations: string[];
 }
 
+/** Subjects whose independence judgement requires a named subject executor (INV-EVD-01). */
+export const EVIDENCE_SUBJECTS_REQUIRING_EXECUTOR: readonly EvidenceSubjectKind[] = ["CRITERION", "TASK", "EXECUTION"];
+
 /**
  * Independence rule (ADR-V4-0009): evidence is independent iff it was not produced by the
  * executor under judgement and its method is not SELF_REPORTED. Executor identity is compared
  * by executor_id (version changes do not create independence).
+ *
+ * Fail closed: a missing `subject_executor_ref` is **not** independent. Omitting the subject
+ * must not open a path to PROVEN.
  */
 export function isIndependent(e: Pick<Evidence, "method" | "produced_by" | "subject_executor_ref" | "provenance">): boolean {
   if (e.method.kind === "SELF_REPORTED" || e.provenance === "SELF_REPORTED") return false;
-  if (!e.subject_executor_ref) return true;
-  return e.subject_executor_ref.executor_id !== e.produced_by.executor_id;
+  const subjectId = e.subject_executor_ref?.executor_id;
+  const producerId = e.produced_by?.executor_id;
+  if (!subjectId || !producerId) return false;
+  return subjectId !== producerId;
 }
 
 export function validateEvidence(value: unknown): ValidationResult {
@@ -93,7 +101,16 @@ export function validateEvidence(value: unknown): ValidationResult {
     });
     c.oneOf("result", EVIDENCE_RESULTS);
     c.executorRef("produced_by");
+    const requiresSubjectExecutor =
+      subjectKind === undefined || (EVIDENCE_SUBJECTS_REQUIRING_EXECUTOR as readonly string[]).includes(subjectKind);
     c.executorRef("subject_executor_ref", { optional: true });
+    if (requiresSubjectExecutor && c.get("subject_executor_ref") === undefined) {
+      c.fail(
+        "INV-EVD-01",
+        "subject_executor_ref",
+        "CRITERION/TASK/EXECUTION evidence must name the subject executor; omitting it cannot qualify as independent",
+      );
+    }
     c.each("tested_artifacts", (cc) => {
       cc.ensure(isSha256(cc.get("sha256")), "INV-EVD-03", "sha256", "tested artifacts must be hash-identified");
     });

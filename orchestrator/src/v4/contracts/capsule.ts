@@ -14,6 +14,7 @@ import {
   type ContentRef,
   type IsoTimestamp,
   type ActorRef,
+  isRecord,
   isSemver,
   isSha256,
   scanForSecrets,
@@ -71,6 +72,76 @@ export interface ExecutionCapsule extends ContractHeader<"ExecutionCapsule"> {
     manifest_sha256: string;
     signature?: { alg: "Ed25519"; key_id: string; value_b64: string };
   };
+}
+
+/**
+ * Allowlist of ExecutionCapsule fields that `seal` / `accept` MAY persist or forward.
+ * Unknown keys are dropped — they are never executor context, grants, or Work State
+ * (INV-CAP-07, TM-V4-F01). Nested objects are picked the same way.
+ *
+ * ADR-V4-0001 "ignore unknown optional fields" means same-major *readability*,
+ * not forwarding. Capsules are a trust boundary: ignore ≠ grant.
+ */
+type AllowlistSpec = true | CapsuleAllowlistShape | readonly [CapsuleAllowlistShape];
+type CapsuleAllowlistShape = { readonly [k: string]: AllowlistSpec };
+
+const EXECUTION_CAPSULE_ALLOWLIST: CapsuleAllowlistShape = {
+  kind: true,
+  schema_version: true,
+  tenant_id: true,
+  capsule_id: true,
+  capsule_format_version: true,
+  authority_model: true,
+  work_id: true,
+  source_execution_id: true,
+  goal_contract_ref: { id: true, version: true },
+  base_checkpoint: { checkpoint_id: true, event_seq: true, state_digest: true },
+  task_refs: [{ task_id: true, state: true }],
+  decisions: [{ decision_ref: true, summary: true }],
+  artifacts: [{ sha256: true, size_bytes: true, media_type: true, locator: true }],
+  open_effects: [{ effect_id: true, state: true }],
+  pending_items: true,
+  constraints: true,
+  delegable_grants: [{ grant_ref: true, scope: true, expires_at: true }],
+  not_preserved: true,
+  compatibility: { min_conformance_level: true, required_capabilities: true },
+  created_at: true,
+  created_by: { kind: true, id: true },
+  integrity: {
+    canonicalization: true,
+    manifest_sha256: true,
+    signature: { alg: true, key_id: true, value_b64: true },
+  },
+};
+
+function pickAllowlisted(value: unknown, spec: CapsuleAllowlistShape): Record<string, unknown> | undefined {
+  if (!isRecord(value)) return undefined;
+  const out: Record<string, unknown> = {};
+  for (const [key, childSpec] of Object.entries(spec)) {
+    if (!Object.prototype.hasOwnProperty.call(value, key)) continue;
+    const child = value[key];
+    if (childSpec === true) {
+      out[key] = child;
+    } else if (Array.isArray(childSpec)) {
+      out[key] = Array.isArray(child)
+        ? child.map((item) => (isRecord(item) ? pickAllowlisted(item, childSpec[0]) : item))
+        : child;
+    } else if (isRecord(child)) {
+      out[key] = pickAllowlisted(child, childSpec);
+    } else {
+      out[key] = child;
+    }
+  }
+  return out;
+}
+
+/**
+ * Drop unknown keys (any depth) so they cannot be forwarded as authority or control.
+ * Callers MUST run this on any capsule object that leaves the Control Plane toward
+ * an executor. Validation still runs on the raw object so nested forbidden names fail.
+ */
+export function allowlistParseExecutionCapsule(raw: unknown): Record<string, unknown> | undefined {
+  return pickAllowlisted(raw, EXECUTION_CAPSULE_ALLOWLIST);
 }
 
 /** Digest over every field except `integrity` (INV-CAP-01). */
