@@ -4,7 +4,7 @@ States: `PENDING` | `DISCOVERY` | `CONTRACT_REVIEW` | `READY` | `RUNNING` | `REV
 
 | Meta | Name | Phase | Branch | Worktree | Owner runtime | Status | Notes |
 |------|------|-------|--------|----------|---------------|--------|-------|
-| M00 | Architecture & Domain Contracts | 1 | `feature/v4/m00-architecture` | `/home/gaab/Downloads/EvolveLoop-v4-m00` | (completed under quota churn) | **ACCEPTED** | tip `1dea128`; freeze deferred pending separate-context review |
+| M00 | Architecture & Domain Contracts | 1 | `feature/v4/m00-architecture` | `/home/gaab/Downloads/EvolveLoop-v4-m00` | Grok `768f1aa4-…` | **INTEGRATED** | tip `1dea128` → integration `e44252f`; freeze pending |
 | M01 | Goal Compiler & Work State | 2 | — | — | — | PENDING | After M00 freeze |
 | M02 | Event Ledger, Persistence & Checkpoints | 2 | — | — | — | PENDING | |
 | M03 | Effect Ledger | 2→3 | — | — | — | PENDING | |
@@ -22,7 +22,8 @@ States: `PENDING` | `DISCOVERY` | `CONTRACT_REVIEW` | `READY` | `RUNNING` | `REV
 | M15 | Control Center, CLI, SDK & APIs | 2→7 | — | — | — | PENDING | CLI early |
 | M16 | Autonomous Engineering & Impossible Handoff | 6 | — | — | — | PENDING | |
 | M17 | Benchmarks & Economic Proof | cross | — | — | — | PENDING | |
-| M18 | Security & Adversarial Assurance | cross | `feature/v4/m18-security` | `/home/gaab/Downloads/EvolveLoop-v4-m18` | Task `bd6eecf1-…` | ACCEPTED (Wave 1) | Tip `47155ec`; later waves PENDING |
+| M18 | Security & Adversarial Assurance | cross | `feature/v4/m18-security` | `/home/gaab/Downloads/EvolveLoop-v4-m18` | Task `bd6eecf1-…` | **INTEGRATED** (Wave 1) | Tip `47155ec` → `2fc17c2`; later waves PENDING |
+| M19 | Integration & Release | 8 | `feature/v4-integration` | `/home/gaab/Downloads/EvolveLoop-v4-integration` | Task `d1472461-…` | Wave1 **ACCEPTED** | HEAD `5967f7b`; full release PENDING |
 | M19 | Integration & Release Engineering | 8 | `feature/v4-integration` | `/home/gaab/Downloads/EvolveLoop-v4-integration` | — | READY | Integrator only merges |
 | M20 | Independent Final Audit | 8 | — | — | — | PENDING | Separate context |
 

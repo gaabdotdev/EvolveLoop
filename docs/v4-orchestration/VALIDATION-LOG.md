@@ -5,6 +5,7 @@
 | 2026-11-15T09:37Z | Phase 0 inventory | PASS | `INVENTORY.md` | V3.7 BLOCKED G17 confirmed |
 | 2026-11-15T13:04Z | M18 Wave 1 threat model | **ACCEPTED** | `a733630`, `47155ec` | F01/F02 spot-checked |
 | 2026-11-15T13:20Z | M00 Architecture & Contracts | **ACCEPTED** (freeze deferred) | tip `1dea128`; vitest `tests/v4` **23/23 PASS**; ADRs 0001–0017; M18 §9 table | Independent review same-context → freeze not granted |
+| 2026-11-15T13:51Z | M19 Wave 1 integrate M00+M18 | **ACCEPTED** | HEAD `5967f7b`; merges `e44252f`/`2fc17c2`; ancestors `1dea128`+`47155ec`; orchestrator re-ran vitest **23/23**; cert `03937c1` untouched | Freeze still open (`8cd94458-…`) |
 
 Validation outcomes for metas: `ACCEPTED` | `REWORK` | `BLOCKED` | `REJECTED` only.
 
