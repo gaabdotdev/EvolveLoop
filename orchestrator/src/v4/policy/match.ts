@@ -1,0 +1,83 @@
+/**
+ * Rule matching + path canonicalization (TM-V4-F14).
+ * R13: ALLOW rules may not use `*` on subjects, actions, or resources.
+ */
+
+import type { ExecutorRef, PolicyRule, RiskLevel } from "../contracts/index.js";
+import { RISK_RANK } from "./types.js";
+
+export const ALLOW_WILDCARD_DENIED = "INV-POL-04-TIGHT";
+
+/** True when an ALLOW rule uses a wildcard in any selector (freeze R13 tightening). */
+export function allowRuleHasWildcard(rule: PolicyRule): boolean {
+  if (rule.effect !== "ALLOW") return false;
+  return rule.subjects.includes("*") || rule.actions.includes("*") || rule.resources.includes("*");
+}
+
+/**
+ * Resource strings that cannot be matched safely (path traversal, encoding, NUL).
+ * Fail-closed: undefined ⇒ no match ⇒ DENY.
+ */
+export function canonicalizeResource(resource: string): string | undefined {
+  if (typeof resource !== "string" || resource.length === 0) return undefined;
+  if (resource.includes("\0") || resource.includes("%") || resource.includes("\\")) return undefined;
+  if (resource.includes("..")) return undefined;
+  return resource;
+}
+
+export function resourceMatches(pattern: string, resource: string): boolean {
+  const pat = canonicalizeResource(pattern);
+  const res = canonicalizeResource(resource);
+  if (!pat || !res) return false;
+  if (pat === res) return true;
+  if (pat.endsWith("*") && pat.length > 1 && !pat.slice(0, -1).includes("*")) {
+    return res.startsWith(pat.slice(0, -1));
+  }
+  return false;
+}
+
+export function subjectMatches(selector: string, subject: ExecutorRef, labels: readonly string[]): boolean {
+  if (selector === subject.executor_id) return true;
+  if (selector.startsWith("label:")) return labels.includes(selector.slice("label:".length));
+  if (selector === "*") return true;
+  return false;
+}
+
+export function actionMatches(selector: string, action: string): boolean {
+  if (selector === action) return true;
+  if (selector === "*") return true;
+  return false;
+}
+
+export function riskWithin(max: RiskLevel | undefined, actual: RiskLevel): boolean {
+  if (!max) return true;
+  return RISK_RANK[actual] <= RISK_RANK[max];
+}
+
+export function ruleMatches(
+  rule: PolicyRule,
+  input: {
+    subject: ExecutorRef;
+    action: string;
+    resource: string;
+    environment: string;
+    risk: RiskLevel;
+    labels: readonly string[];
+    nowMs: number;
+  },
+): boolean {
+  if (allowRuleHasWildcard(rule)) return false;
+  const subjectOk = rule.subjects.some((s) => subjectMatches(s, input.subject, input.labels));
+  const actionOk = rule.actions.some((a) => actionMatches(a, input.action));
+  const resourceOk = rule.resources.some((r) => resourceMatches(r, input.resource));
+  if (!subjectOk || !actionOk || !resourceOk) return false;
+  const cond = rule.conditions;
+  if (!cond) return true;
+  if (cond.environments && cond.environments.length > 0 && !cond.environments.includes(input.environment)) {
+    return false;
+  }
+  if (!riskWithin(cond.max_risk, input.risk)) return false;
+  if (cond.valid_from && Date.parse(cond.valid_from) > input.nowMs) return false;
+  if (cond.valid_until && Date.parse(cond.valid_until) <= input.nowMs) return false;
+  return true;
+}
