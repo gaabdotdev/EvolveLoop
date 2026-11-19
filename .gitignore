@@ -53,3 +53,6 @@ profiles/*/local.override.yaml
 orchestrator/v36-live-ops/
 orchestrator/v36-live-run/
 node_modules
+
+# Accidental shell-expanded jobs dir (literal ${...} path)
+orchestrator/${ORCHESTRATOR_JOBS_DIR:-$ORCHESTRATOR_ROOT/
