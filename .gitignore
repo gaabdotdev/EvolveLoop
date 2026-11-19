@@ -46,3 +46,9 @@ mcp.json.bak.*
 # Personal profile outputs (generated)
 profiles/gaabtype/paths.local.yaml
 profiles/*/local.override.yaml
+
+# Accidental shell-expanded jobs dir (literal ${...} path)
+orchestrator/${ORCHESTRATOR_JOBS_DIR:-$ORCHESTRATOR_ROOT/
+
+# Local absolute skill symlinks (machine-specific); agents/rules stay tracked
+.agents/skills/

@@ -3,7 +3,7 @@
 | Campo | Valor |
 |-------|-------|
 | **task_id** | V22-GAP-P0-3 |
-| **Base** | `release/v2.1-freeze-preparation` @ `f3c901a` (merge do PR #20) |
+| **Base** | `release/v2.1-freeze-preparation` @ `51e5bed` (`51e5bed67a96d8b10597602f938c74df9a6fe75c`) |
 | **O que este ficheiro não é** | Não substitui o corpo de `docs/research/evolveloop-v2.2/01-current-state-audit.md`, que descreve `28ab56ce` em 2026-10-21 e diz que a implementação V2.2 não tinha começado. Esse texto permanece. Uma linha no topo aponta para aqui |
 | **Medição** | `tree_sha` em `docs/v22/baseline/raw/p0-baseline-report.json`, `p0-handoff-report.json` e `p0-compaction-report.json` |
 
@@ -20,9 +20,11 @@ O dossiê de outubro não serve de estado desta release. A implementação V2.2 
 | Baseline das seis tarefas | `docs/v22/baseline/` | Entrada medida com tiktoken. Saída, cache e custo `NOT_MEASURED` |
 | Handoff com N≥3 | `docs/v22/baseline/raw/p0-handoff-report.json` e `orchestrator/tests/unit/v22-p0-handoff.test.ts` | Volume contra o contexto completo do emissor. O checklist de 81 tokens é sonda de sobrevivência. Retomada do receptor pelo snapshot de continuidade |
 | Memória episódica pública | `profiles/default.yaml` | `memory.enabled: false` |
-| Graphify | `EVOLVELOOP_GRAPHIFY` default OFF. ADR-0014 | Não é backend de conhecimento |
+| Graphify | `EVOLVELOOP_GRAPHIFY` default OFF. ADR-0014 | Não é backend de conhecimento. A flag não está ligada |
+| Skill Graphify | `.cursor/skills/graphify/SKILL.md`, hard gate imediatamente antes do hard gate de wiki em `.cursor/skills/orquestrar/SKILL.md` | `EVOLVELOOP_GRAPHIFY` por definir. Default OFF (ADR-0014) |
 | Caveman e cache de prefixo | `EVOLVELOOP_BREVITY_CAVEMAN`, `EVOLVELOOP_PROMPT_CACHE` default OFF | Hit HTTP de vendor `NOT_MEASURED` |
 | CI | `.github/workflows/ci.yml` | `npm test`, `npm run test:bench`, pytest do agent-setup, validador. Tokenizer da medição instalado no venv |
+| Passo `pytest wiki index` | `.github/workflows/ci.yml`, comando `python -m pytest -q fixtures/evolveloop-wiki-vault/tests/test_index.py` | Diff local, ainda não commitado |
 
 ## O que não está medido ou não existe
 
