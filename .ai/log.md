@@ -27,3 +27,6 @@
 - V3.4: EngineeringLoopService + harness matrix; unit 2/2 + E2E 1/1; evidence docs/v3/evidence/gate.v34-engineering.json; ADR-0009
 - TRUE_FULL_PASS only via evaluator; harness dry-run not SUPPORTED
 - 2026-11-11T19:36:19-03:00 V3_COMPLETE
+
+## 2026-11-21T14:31:11-03:00 — M3 recovery 2/3: 5× real Cursor TRUE_FULL_PASS (fire-5)
+- harness timeout 300s + golden pin; evidence under /tmp/v0-m3-recovery2-*
