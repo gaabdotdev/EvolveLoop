@@ -273,18 +273,23 @@ export async function runV0Circuit(opts: CircuitRunOptions): Promise<CircuitRunR
         };
       } else {
         const markerRel = `.evolveloop/circuit-markers/${opts.task.marker_name}`;
+        const markerBody = opts.task.marker_content ?? opts.task.task_id;
         const prompt = [
+          `CRITICAL: your ONLY job is to create ONE file and stop.`,
           `Task ${opts.task.task_id}: ${opts.task.intent}`,
-          `Create file ${markerRel} with exact content:`,
-          opts.task.marker_content ?? opts.task.task_id,
-          `Do not modify tests, package.json, or build scripts.`,
+          `Write file ${markerRel} with EXACT content (no quotes, no markdown fence):`,
+          markerBody,
+          `Do not explore the repository. Do not read unrelated files. Do not run tests or builds.`,
+          `Do not modify tests, package.json, build scripts, or any other path.`,
+          `When the file exists with the exact content, finish immediately.`,
         ].join("\n");
         adapter_result = await adapter.invoke({
           work_id,
           task_id: opts.task.task_id,
           prompt,
           workspace_path: execWorkspace,
-          timeout_ms: opts.task.adapter_timeout_ms ?? 90_000,
+          // cursor-agent print+force cold path is ~70–90s locally; keep headroom for large worktrees
+          timeout_ms: opts.task.adapter_timeout_ms ?? 300_000,
           force_tools: true,
         });
       }
@@ -442,13 +447,13 @@ export async function runV0Circuit(opts: CircuitRunOptions): Promise<CircuitRunR
   }
 }
 
-export function defaultFireTasks(): CircuitTaskSpec[] {
+export function defaultFireTasks(adapter_timeout_ms = 300_000): CircuitTaskSpec[] {
   return [1, 2, 3, 4, 5].map((n) => ({
     task_id: `fire-${n}`,
     intent: `Criar marcador de circuito V0 task fire-${n} em .evolveloop/circuit-markers/fire-${n}.txt`,
     marker_name: `fire-${n}.txt`,
     marker_content: `fire-${n}`,
-    adapter_timeout_ms: 90_000,
+    adapter_timeout_ms,
   }));
 }
 
@@ -458,8 +463,9 @@ export async function runFireFive(opts: {
   worktree_base?: string;
   use_offline_fixture?: boolean;
   lightweight_validator?: boolean;
+  adapter_timeout_ms?: number;
 }): Promise<CircuitRunResult[]> {
-  const tasks = defaultFireTasks();
+  const tasks = defaultFireTasks(opts.adapter_timeout_ms ?? 300_000);
   const results: CircuitRunResult[] = [];
   const work_id = `work-fire5-${Date.now()}`;
   for (const task of tasks) {

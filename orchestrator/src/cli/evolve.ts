@@ -308,7 +308,7 @@ async function main() {
             marker_name: args.marker ?? `${task_id}.txt`,
             marker_content: args["marker-content"] ?? task_id,
             offline_apply_marker: args["offline-fixture"] === "true",
-            adapter_timeout_ms: args.timeout ? Number(args.timeout) : 90_000,
+            adapter_timeout_ms: args.timeout ? Number(args.timeout) : 300_000,
           },
           confirm_mso: true,
         });
@@ -328,6 +328,7 @@ async function main() {
           worktree_base,
           use_offline_fixture: args["offline-fixture"] === "true",
           lightweight_validator: args["full-validator"] !== "true",
+          adapter_timeout_ms: args.timeout ? Number(args.timeout) : 300_000,
         });
         print({
           kind: "FireFiveSummary",

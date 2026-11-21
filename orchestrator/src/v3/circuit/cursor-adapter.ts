@@ -197,13 +197,22 @@ export class CursorCircuitAdapter implements CircuitAgentAdapter {
       argv: args,
       cwd: req.workspace_path,
       workspace_root: req.workspace_path,
-      timeout_ms: req.timeout_ms ?? 120_000,
+      // cursor-agent cold path is typically ~70–90s; keep headroom for large worktrees
+      timeout_ms: req.timeout_ms ?? 300_000,
       env_extra_allowlist: [
         "HOME",
         "XDG_CONFIG_HOME",
         "XDG_DATA_HOME",
+        "XDG_CACHE_HOME",
         "CURSOR_API_KEY",
+        "CURSOR_API_ENDPOINT",
         "TERM",
+        "SSL_CERT_FILE",
+        "SSL_CERT_DIR",
+        "NODE_EXTRA_CA_CERTS",
+        "HTTPS_PROXY",
+        "HTTP_PROXY",
+        "NO_PROXY",
       ],
       stdout_deny_patterns: [/api[_-]?key/i, /authorization:\s*bearer/i],
     });
