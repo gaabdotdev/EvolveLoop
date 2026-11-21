@@ -277,7 +277,7 @@ export async function runV0Circuit(opts: CircuitRunOptions): Promise<CircuitRunR
         const prompt = [
           `CRITICAL: your ONLY job is to create ONE file and stop.`,
           `Task ${opts.task.task_id}: ${opts.task.intent}`,
-          `Write file ${markerRel} with EXACT content (no quotes, no markdown fence):`,
+          `Write file ${markerRel} with EXACT single-line content (no quotes, no markdown fence, optional final newline OK):`,
           markerBody,
           `Do not explore the repository. Do not read unrelated files. Do not run tests or builds.`,
           `Do not modify tests, package.json, build scripts, or any other path.`,
@@ -370,6 +370,7 @@ export async function runV0Circuit(opts: CircuitRunOptions): Promise<CircuitRunR
             },
             {
               id: "marker-content",
+              // $(cat) strips one trailing newline — agents often write "content\\n".
               argv: [
                 "bash",
                 "-lc",
