@@ -32,6 +32,8 @@ import {
   validateGrillMeResult,
 } from "../v3/grill-me/intake.js";
 import type { GrillMeResult } from "../v3/grill-me/types.js";
+import { runIntentFlow } from "../v3/intake/intent-flow.js";
+import { defaultStateDbPath, StateDb } from "../v3/state-db/store.js";
 import { spawnDomainHierarchy, approveDomainPlan, spawnAuxiliary } from "../v3/hierarchy/spawn.js";
 import { ContinuityEngine } from "../v3/continuity/engine.js";
 import type { HandoffTrigger } from "../v3/continuity/types.js";
@@ -122,6 +124,10 @@ function usage() {
     name: "evolve",
     version: "3.6.0-multi-workflow",
     groups: {
+      intent: ["<text|--text> → silent scan + Grill-Me ≤5 → Goal Contract SQLite"],
+      status: ["trivial zero-token status from .evolveloop/state.db"],
+      pause: ["trivial zero-token pause"],
+      resume: ["trivial zero-token resume"],
       grill: ["apply", "validate"],
       goal: ["create", "show", "evaluate", "criterion"],
       work: ["init", "status"],
@@ -164,6 +170,9 @@ function usage() {
       eval: ["battery"],
     },
     notes: [
+      "V0 Bloco 2: `evolve intent --text \"...\"` runs silent scan + Grill-Me (3–5 Qs) and persists Goal Contract to <workspace>/.evolveloop/state.db (SQLite WAL).",
+      "Use --answers-json for offline/non-interactive answers (Enter/ok → defaults). --confirm-mso flags MSO ready (does not run Bloco 3).",
+      "Trivial ops (status|pause|resume|help) bypass Grill-Me with zero tokens via regex+SQLite.",
       "Closing this CLI does not erase --data-dir state.",
       "V3.5: prefer `evolve service start` for persistent coordinator (IPC); legacy `coordinator start` only marks PID in-process.",
       "coordinator start only marks process running in this Node process; use scripts/v3/coordinator-supervise.sh or systemd user template for supervised ticks.",
@@ -232,6 +241,83 @@ async function main() {
       const paths = requireDataDir(args);
       const handled = await handleV35Command(args, paths);
       if (handled) return;
+    }
+
+    // V0 Bloco 2 — intent / trivial ops (SQLite WAL under workspace)
+    if (
+      args.group === "intent" ||
+      args.group === "status" ||
+      args.group === "pause" ||
+      args.group === "resume"
+    ) {
+      const workspace = resolve(args.workspace ?? args.cwd ?? process.cwd());
+      let intentText = "";
+      if (args.group === "intent") {
+        intentText = args.text?.trim() || (args.command !== "help" ? args.command.trim() : "");
+        if (!intentText || intentText === "help") {
+          console.error(
+            'Required: evolve intent --text "<intenção>" [--workspace .] [--answers-json path] [--confirm-mso] [--goal-id id]',
+          );
+          process.exit(1);
+        }
+      } else {
+        intentText = args.group;
+      }
+
+      // Non-interactive V0: missing/empty answers → recommended defaults (Enter/ok).
+      let answers: Array<string | undefined> | Record<string, string> = [];
+      if (args["answers-json"]) {
+        answers = JSON.parse(readFileSync(resolve(args["answers-json"]), "utf-8")) as
+          | Array<string | undefined>
+          | Record<string, string>;
+      }
+
+      const result = runIntentFlow({
+        workspace,
+        intent: intentText,
+        answers,
+        confirm_mso: args["confirm-mso"] === "true",
+        state_db_path: args["state-db"],
+        goal_contract_id: args["goal-id"] ?? args.id,
+        mirror_goal_contracts_dir: args["mirror-goals-dir"],
+        evidence_dir: args["evidence-dir"],
+      });
+
+      if (result.kind === "goal_contract" && args.format !== "json") {
+        console.error(result.grill_prompts_pt.join("\n---\n"));
+        console.error("");
+        console.error(result.summary_lines.join("\n"));
+        if (result.mso_ready) {
+          console.error("MSO: confirmado (pronto para Bloco 3 — não executado neste comando).");
+        } else {
+          console.error("MSO: pendente — passe --confirm-mso para marcar disparo.");
+        }
+      } else if ("message_pt" in result) {
+        console.error(result.message_pt);
+      }
+      print(result);
+      return;
+    }
+
+    if (args.group === "goal-db" || (args.group === "goal" && args.command === "db-show")) {
+      const workspace = resolve(args.workspace ?? process.cwd());
+      const dbPath = args["state-db"] ? resolve(args["state-db"]) : defaultStateDbPath(workspace);
+      const db = new StateDb(dbPath);
+      try {
+        const id = args.id ?? args["goal-id"];
+        if (!id) {
+          print({
+            db_path: db.path,
+            journal_mode: db.journalMode(),
+            contracts: db.listValidatedGoalContracts(),
+          });
+        } else {
+          print(db.loadLatestGoalContract(id) ?? { error: "NOT_FOUND", id });
+        }
+      } finally {
+        db.close();
+      }
+      return;
     }
 
     if (args.group === "grill") {

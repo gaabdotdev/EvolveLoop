@@ -31,6 +31,9 @@ orchestrator/data/
 orchestrator/v35-live-e2e-data/
 graphify-out/
 
+# V0 durable runtime state (SQLite WAL)
+.evolveloop/
+
 # Prune / scratch
 .prune-snapshots/
 *.log
