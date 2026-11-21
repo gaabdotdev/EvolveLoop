@@ -7,7 +7,7 @@
   "tokenizer": "tiktoken:cl100k_base",
   "path_normalization": "stable_relative",
   "model_id": "deterministic-provider",
-  "tree_sha": "76cc11e6cf4eed30f6c6be68cc599eff8a7df88a",
+  "tree_sha": "1635d745a7aecb4dd29ad8d2b342d3a7e924a135",
   "n": 3,
   "n_status": "PASS",
   "reference_tokens": 1773,
@@ -25,7 +25,7 @@
   "cache_write_tokens": "NOT_MEASURED",
   "cost": "NOT_MEASURED",
   "model_latency_ms": "NOT_MEASURED",
-  "latency_ms": 873.1666866666666,
+  "latency_ms": 1126.5152219999998,
   "latency_ms_status": "LIMITED",
   "latency_kind": "handoff_assembly",
   "dispersion": {
@@ -43,7 +43,7 @@
   "compaction_fidelity": "UNAVAILABLE",
   "product_percent_gate": "NOT_MEASURED",
   "limitation": "Uma corrida de handoff com a flag EVOLVELOOP_COMPACTION ausente. reference_tokens é o contexto completo do agente emissor (briefing, DoD, restrições, decisões, próximo passo, grafo, conhecimento recuperado e evidência), sem saved_at. O checklist required_resume_payload fica em fidelity_checklist_tokens e não é o denominador: no P0-5 esse checklist (81 tokens) produziu o rácio 26,91 contra o pickup. transferred_tokens é o pickup normalizado. O rácio é observação, não gate de produto. Saída, cache, custo e latência de modelo são NOT_MEASURED. Dispersão 0 de transferred_tokens é a esperada no determinístico. Compactação desta corrida é UNAVAILABLE; a medição com a flag ligada está no relatório P0-6. tree_sha é o HEAD no momento da corrida.",
-  "measured_at": "2026-10-23T02:14:55.015Z",
+  "measured_at": "2026-11-21T16:32:11.357Z",
   "runs": [
     {
       "repetition": 1,
@@ -51,7 +51,7 @@
       "fidelity_checklist_tokens": 81,
       "transferred_tokens": 2180,
       "volume_ratio": 1.2295544275239707,
-      "latency_ms": 995.8513109999999,
+      "latency_ms": 1346.001331,
       "receiver_resume_ok": true,
       "payload_present": true,
       "missing": []
@@ -62,7 +62,7 @@
       "fidelity_checklist_tokens": 81,
       "transferred_tokens": 2180,
       "volume_ratio": 1.2295544275239707,
-      "latency_ms": 815.6357029999999,
+      "latency_ms": 991.7713019999999,
       "receiver_resume_ok": true,
       "payload_present": true,
       "missing": []
@@ -73,7 +73,7 @@
       "fidelity_checklist_tokens": 81,
       "transferred_tokens": 2180,
       "volume_ratio": 1.2295544275239707,
-      "latency_ms": 808.013046,
+      "latency_ms": 1041.773033,
       "receiver_resume_ok": true,
       "payload_present": true,
       "missing": []

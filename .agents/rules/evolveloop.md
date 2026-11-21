@@ -1,3 +1,8 @@
+# evolveloop — espelho de regra
+
+**SSOT:** `.cursor/rules/evolveloop.mdc`
+**Não editar como fonte:** regenerar com `bash scripts/sync-agents-from-cursor.sh`.
+
 [PRIORIDADE MÁXIMA]
 - Não invente informações
 - Não faça suposições sem evidência

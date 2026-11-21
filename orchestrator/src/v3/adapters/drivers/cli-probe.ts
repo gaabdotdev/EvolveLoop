@@ -18,7 +18,7 @@ export interface CliProbeResult {
 const CLI_CANDIDATES: Record<HarnessCliId, string[]> = {
   claude: ["claude"],
   codex: ["codex"],
-  antigravity: ["antigravity"],
+  antigravity: ["antigravity", "agent"],
   "cursor-agent": ["agent", "cursor-agent"],
 };
 

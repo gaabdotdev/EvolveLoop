@@ -20,6 +20,23 @@ export interface AdapterInvokeRequest {
   ir_path?: string;
   provider_mode?: "mock" | "real";
   note?: string;
+  /**
+   * Workspace the harness should operate in (git worktree path).
+   * Used by cursor-agent `--workspace`; required for non-interactive trust scope.
+   */
+  workspace_path?: string;
+  /**
+   * When set, wait up to N ms for the spawned CLI to exit and capture exit_code.
+   * Default is fire-and-forget (PROCESS_SPAWNED).
+   */
+  wait_ms?: number;
+  /** cursor-agent execution mode (ask = read-only Q&A; plan = read-only planning). */
+  cli_mode?: "ask" | "plan";
+  /**
+   * When true, pass cursor-agent `--force` so consented live engineering can run
+   * npm/git/shell tools. Not an authentication substitute.
+   */
+  force_tools?: boolean;
 }
 
 export interface AdapterInvokeResult {

@@ -7,9 +7,40 @@ export type AdapterId = "cursor" | "claude-code" | "codex" | "antigravity";
 
 export type AdapterCapabilityLevel =
   | "supported"
+  | "SUPPORTED"
   | "partial"
+  | "PARTIAL"
   | "unsupported"
-  | "unknown";
+  | "UNSUPPORTED"
+  | "unknown"
+  | "PROBE_ONLY"
+  | "DRY_RUN"
+  | "BLOCKED";
+
+/** Normalize legacy lowercase levels to V3.5 matrix vocabulary. */
+export function normalizeCapabilityLevel(
+  level: AdapterCapabilityLevel,
+): "SUPPORTED" | "PARTIAL" | "PROBE_ONLY" | "DRY_RUN" | "BLOCKED" | "UNSUPPORTED" {
+  switch (level) {
+    case "supported":
+    case "SUPPORTED":
+      return "SUPPORTED";
+    case "partial":
+    case "PARTIAL":
+      return "PARTIAL";
+    case "PROBE_ONLY":
+      return "PROBE_ONLY";
+    case "DRY_RUN":
+      return "DRY_RUN";
+    case "BLOCKED":
+      return "BLOCKED";
+    case "unsupported":
+    case "UNSUPPORTED":
+    case "unknown":
+    default:
+      return "UNSUPPORTED";
+  }
+}
 
 export type AdapterCapabilityKey =
   | "sessions"

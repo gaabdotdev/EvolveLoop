@@ -1,7 +1,7 @@
----
-description: Wiki grounding — knowledge context for agent work (global)
-alwaysApply: true
----
+# wiki-agent — espelho de regra
+
+**SSOT:** `.cursor/rules/wiki-agent.mdc`
+**Não editar como fonte:** regenerar com `bash scripts/sync-agents-from-cursor.sh`.
 
 # Wiki — agent grounding loop
 

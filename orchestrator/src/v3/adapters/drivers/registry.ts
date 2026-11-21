@@ -50,17 +50,53 @@ function codexDriver(): AgentAdapterDriver {
 }
 
 function antigravityDriver(): AgentAdapterDriver {
-  const probe = probeHarnessCli("antigravity");
+  // Prefer cursor-agent (`agent`) when present — prior argv `--prompt-file` was invalid for it.
+  const cursorProbe = probeHarnessCli("cursor-agent");
+  const probe = cursorProbe.available ? cursorProbe : probeHarnessCli("antigravity");
   if (!probe.available) {
-    return new BlockedAdapterDriver("antigravity", "antigravity CLI not on PATH");
+    return new BlockedAdapterDriver("antigravity", "antigravity/cursor-agent CLI not on PATH");
   }
+  const isCursorAgent =
+    probe.cli_id === "cursor-agent" ||
+    (probe.path?.endsWith("/agent") ?? false) ||
+    (probe.path?.endsWith("/cursor-agent") ?? false);
   return new CliProcessAdapterDriver({
     adapter_id: "antigravity",
-    cli_id: "antigravity",
-    buildArgs: (promptPath) => ["--prompt-file", promptPath],
+    cli_id: isCursorAgent ? "cursor-agent" : "antigravity",
+    buildArgs: (promptPath, request) => {
+      if (isCursorAgent) {
+        const workspace = request.workspace_path;
+        const args = [
+          "-p",
+          "--output-format",
+          "text",
+          // Workspace trust for non-interactive disposable fixtures — NOT authentication.
+          // Auth is session-based (`agent login` / `agent status`) or CURSOR_API_KEY.
+          "--trust",
+        ];
+        if (request.cli_mode === "ask" || request.cli_mode === "plan") {
+          args.push("--mode", request.cli_mode);
+        }
+        // Tool permission for consented live engineering (npm/git). Not auth.
+        if (request.force_tools !== false && request.cli_mode !== "ask" && request.cli_mode !== "plan") {
+          args.push("--force");
+        }
+        if (workspace) {
+          args.push("--workspace", workspace);
+        }
+        args.push(
+          `Read the EvolveLoop handoff prompt at ${promptPath} and complete the assigned task. Stay strictly inside the workspace. Do not modify files outside it.`,
+        );
+        return args;
+      }
+      return ["--prompt-file", promptPath];
+    },
     notes: [
-      "Antigravity CLI bridge — experimental argv; validate locally",
+      isCursorAgent
+        ? "cursor-agent bridge via antigravity adapter_id (print mode + workspace trust)"
+        : "Antigravity CLI bridge — experimental argv; validate locally",
       "Cancel only for Core-owned spawned PIDs",
+      "--trust scopes workspace trust after session auth; it is not an auth substitute",
     ],
   });
 }

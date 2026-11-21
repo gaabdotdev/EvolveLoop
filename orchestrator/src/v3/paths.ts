@@ -21,6 +21,11 @@ export interface V3DataPaths {
   locksDir: string;
   worktreesDir: string;
   idempotencyDir: string;
+  /** V3.5 */
+  approvalsDir: string;
+  sandboxDir: string;
+  workspacesDir: string;
+  processSessionsDir: string;
 }
 
 export function resolveV3DataPaths(dataDir: string): V3DataPaths {
@@ -41,6 +46,10 @@ export function resolveV3DataPaths(dataDir: string): V3DataPaths {
     locksDir: join(root, "locks"),
     worktreesDir: join(root, "worktrees"),
     idempotencyDir: join(root, "idempotency"),
+    approvalsDir: join(root, "approvals"),
+    sandboxDir: join(root, "sandbox"),
+    workspacesDir: join(root, "workspaces"),
+    processSessionsDir: join(root, "process-sessions"),
   };
   for (const dir of Object.values(paths)) {
     if (dir === root) continue;
