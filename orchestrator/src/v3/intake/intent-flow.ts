@@ -1,6 +1,6 @@
 /**
  * V0 intent flow: silent scan → Grill-Me (≤5) → Goal Contract in SQLite WAL.
- * Stops before Bloco 3 (no adapters / MSO execution). Confirmation only flags MSO ready.
+ * Bloco 3 circuit consumes this contract via `evolve circuit` / runV0Circuit.
  */
 
 import { createHash } from "node:crypto";

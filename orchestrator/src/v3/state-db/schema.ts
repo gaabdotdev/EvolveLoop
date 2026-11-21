@@ -31,6 +31,42 @@ CREATE TABLE IF NOT EXISTS trivial_ops (
   response_json TEXT NOT NULL,
   updated_at TEXT NOT NULL
 );
+
+CREATE TABLE IF NOT EXISTS token_ledger (
+  entry_id TEXT PRIMARY KEY NOT NULL,
+  work_id TEXT NOT NULL,
+  task_id TEXT,
+  goal_contract_id TEXT,
+  provider_id TEXT,
+  adapter_id TEXT,
+  model TEXT,
+  tokens_in INTEGER,
+  tokens_out INTEGER,
+  latency_ms INTEGER,
+  cost_usd REAL,
+  cost_provenance TEXT NOT NULL,
+  status TEXT NOT NULL,
+  payload_json TEXT NOT NULL,
+  created_at TEXT NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS idx_token_ledger_work
+  ON token_ledger (work_id, created_at DESC);
+
+CREATE TABLE IF NOT EXISTS circuit_runs (
+  run_id TEXT PRIMARY KEY NOT NULL,
+  work_id TEXT NOT NULL,
+  task_id TEXT NOT NULL,
+  goal_contract_id TEXT,
+  status TEXT NOT NULL,
+  reason TEXT,
+  workspace_path TEXT,
+  payload_json TEXT NOT NULL,
+  created_at TEXT NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS idx_circuit_runs_work
+  ON circuit_runs (work_id, created_at DESC);
 `;
 
-export const STATE_DB_SCHEMA_VERSION = "1";
+export const STATE_DB_SCHEMA_VERSION = "2";

@@ -5,9 +5,16 @@
 import { mkdirSync } from "node:fs";
 import { createRequire } from "node:module";
 import { dirname, join, resolve } from "node:path";
+import { randomUUID } from "node:crypto";
 import type { GoalContract } from "../goal-contract/types.js";
 import { STATE_DB_SCHEMA_SQL, STATE_DB_SCHEMA_VERSION } from "./schema.js";
-import type { PersistedGoalContract, TrivialOpRow } from "./types.js";
+import type {
+  CircuitRunRow,
+  PersistedGoalContract,
+  TokenLedgerEntry,
+  TokenLedgerInsert,
+  TrivialOpRow,
+} from "./types.js";
 
 /** Avoid static `import "node:sqlite"` — Vite/Vitest cannot resolve the stripped `sqlite` id. */
 type DatabaseSyncInstance = {
@@ -235,5 +242,195 @@ export class StateDb {
       .prepare(`SELECT op_key, response_json, updated_at FROM trivial_ops WHERE op_key = ?`)
       .get(opKey) as TrivialOpRow | undefined;
     return row;
+  }
+
+  recordTokenLedger(input: TokenLedgerInsert): TokenLedgerEntry {
+    const entry_id = input.entry_id ?? `tl-${randomUUID()}`;
+    const created_at = new Date().toISOString();
+    const payload = input.payload ?? {};
+    this.db
+      .prepare(
+        `INSERT INTO token_ledger(
+           entry_id, work_id, task_id, goal_contract_id, provider_id, adapter_id,
+           model, tokens_in, tokens_out, latency_ms, cost_usd, cost_provenance,
+           status, payload_json, created_at
+         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      )
+      .run(
+        entry_id,
+        input.work_id,
+        input.task_id ?? null,
+        input.goal_contract_id ?? null,
+        input.provider_id ?? null,
+        input.adapter_id ?? null,
+        input.model ?? null,
+        input.tokens_in ?? null,
+        input.tokens_out ?? null,
+        input.latency_ms ?? null,
+        input.cost_usd ?? null,
+        input.cost_provenance,
+        input.status,
+        JSON.stringify(payload),
+        created_at,
+      );
+    return {
+      entry_id,
+      work_id: input.work_id,
+      task_id: input.task_id,
+      goal_contract_id: input.goal_contract_id,
+      provider_id: input.provider_id,
+      adapter_id: input.adapter_id,
+      model: input.model,
+      tokens_in: input.tokens_in ?? null,
+      tokens_out: input.tokens_out ?? null,
+      latency_ms: input.latency_ms ?? null,
+      cost_usd: input.cost_usd ?? null,
+      cost_provenance: input.cost_provenance,
+      status: input.status,
+      payload,
+      created_at,
+    };
+  }
+
+  listTokenLedger(workId?: string): TokenLedgerEntry[] {
+    const rows = (
+      workId
+        ? this.db
+            .prepare(
+              `SELECT entry_id, work_id, task_id, goal_contract_id, provider_id, adapter_id,
+                      model, tokens_in, tokens_out, latency_ms, cost_usd, cost_provenance,
+                      status, payload_json, created_at
+               FROM token_ledger WHERE work_id = ? ORDER BY created_at DESC`,
+            )
+            .all(workId)
+        : this.db
+            .prepare(
+              `SELECT entry_id, work_id, task_id, goal_contract_id, provider_id, adapter_id,
+                      model, tokens_in, tokens_out, latency_ms, cost_usd, cost_provenance,
+                      status, payload_json, created_at
+               FROM token_ledger ORDER BY created_at DESC`,
+            )
+            .all()
+    ) as Array<{
+      entry_id: string;
+      work_id: string;
+      task_id: string | null;
+      goal_contract_id: string | null;
+      provider_id: string | null;
+      adapter_id: string | null;
+      model: string | null;
+      tokens_in: number | null;
+      tokens_out: number | null;
+      latency_ms: number | null;
+      cost_usd: number | null;
+      cost_provenance: TokenLedgerEntry["cost_provenance"];
+      status: string;
+      payload_json: string;
+      created_at: string;
+    }>;
+
+    return rows.map((row) => ({
+      entry_id: row.entry_id,
+      work_id: row.work_id,
+      task_id: row.task_id ?? undefined,
+      goal_contract_id: row.goal_contract_id ?? undefined,
+      provider_id: row.provider_id ?? undefined,
+      adapter_id: row.adapter_id ?? undefined,
+      model: row.model ?? undefined,
+      tokens_in: row.tokens_in,
+      tokens_out: row.tokens_out,
+      latency_ms: row.latency_ms,
+      cost_usd: row.cost_usd,
+      cost_provenance: row.cost_provenance,
+      status: row.status,
+      payload: JSON.parse(row.payload_json) as Record<string, unknown>,
+      created_at: row.created_at,
+    }));
+  }
+
+  recordCircuitRun(input: {
+    run_id?: string;
+    work_id: string;
+    task_id: string;
+    goal_contract_id?: string;
+    status: string;
+    reason?: string;
+    workspace_path?: string;
+    payload?: Record<string, unknown>;
+  }): CircuitRunRow {
+    const run_id = input.run_id ?? `cr-${randomUUID()}`;
+    const created_at = new Date().toISOString();
+    const payload = input.payload ?? {};
+    this.db
+      .prepare(
+        `INSERT INTO circuit_runs(
+           run_id, work_id, task_id, goal_contract_id, status, reason,
+           workspace_path, payload_json, created_at
+         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      )
+      .run(
+        run_id,
+        input.work_id,
+        input.task_id,
+        input.goal_contract_id ?? null,
+        input.status,
+        input.reason ?? null,
+        input.workspace_path ?? null,
+        JSON.stringify(payload),
+        created_at,
+      );
+    return {
+      run_id,
+      work_id: input.work_id,
+      task_id: input.task_id,
+      goal_contract_id: input.goal_contract_id,
+      status: input.status,
+      reason: input.reason,
+      workspace_path: input.workspace_path,
+      payload,
+      created_at,
+    };
+  }
+
+  listCircuitRuns(workId?: string): CircuitRunRow[] {
+    const rows = (
+      workId
+        ? this.db
+            .prepare(
+              `SELECT run_id, work_id, task_id, goal_contract_id, status, reason,
+                      workspace_path, payload_json, created_at
+               FROM circuit_runs WHERE work_id = ? ORDER BY created_at DESC`,
+            )
+            .all(workId)
+        : this.db
+            .prepare(
+              `SELECT run_id, work_id, task_id, goal_contract_id, status, reason,
+                      workspace_path, payload_json, created_at
+               FROM circuit_runs ORDER BY created_at DESC`,
+            )
+            .all()
+    ) as Array<{
+      run_id: string;
+      work_id: string;
+      task_id: string;
+      goal_contract_id: string | null;
+      status: string;
+      reason: string | null;
+      workspace_path: string | null;
+      payload_json: string;
+      created_at: string;
+    }>;
+
+    return rows.map((row) => ({
+      run_id: row.run_id,
+      work_id: row.work_id,
+      task_id: row.task_id,
+      goal_contract_id: row.goal_contract_id ?? undefined,
+      status: row.status,
+      reason: row.reason ?? undefined,
+      workspace_path: row.workspace_path ?? undefined,
+      payload: JSON.parse(row.payload_json) as Record<string, unknown>,
+      created_at: row.created_at,
+    }));
   }
 }

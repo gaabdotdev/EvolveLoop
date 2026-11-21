@@ -34,6 +34,12 @@ import {
 import type { GrillMeResult } from "../v3/grill-me/types.js";
 import { runIntentFlow } from "../v3/intake/intent-flow.js";
 import { defaultStateDbPath, StateDb } from "../v3/state-db/store.js";
+import {
+  runFireFive,
+  runV0Circuit,
+  selectV0AgentAdapter,
+} from "../v3/circuit/index.js";
+import { probeV0ModelProviders } from "../v3/model-providers/index.js";
 import { spawnDomainHierarchy, approveDomainPlan, spawnAuxiliary } from "../v3/hierarchy/spawn.js";
 import { ContinuityEngine } from "../v3/continuity/engine.js";
 import type { HandoffTrigger } from "../v3/continuity/types.js";
@@ -128,6 +134,12 @@ function usage() {
       status: ["trivial zero-token status from .evolveloop/state.db"],
       pause: ["trivial zero-token pause"],
       resume: ["trivial zero-token resume"],
+      circuit: [
+        "probe (1+1+1 health)",
+        "run --task-id … --intent …",
+        "fire-5 [--offline-fixture]",
+        "ledger [--work-id]",
+      ],
       grill: ["apply", "validate"],
       goal: ["create", "show", "evaluate", "criterion"],
       work: ["init", "status"],
@@ -171,7 +183,9 @@ function usage() {
     },
     notes: [
       "V0 Bloco 2: `evolve intent --text \"...\"` runs silent scan + Grill-Me (3–5 Qs) and persists Goal Contract to <workspace>/.evolveloop/state.db (SQLite WAL).",
-      "Use --answers-json for offline/non-interactive answers (Enter/ok → defaults). --confirm-mso flags MSO ready (does not run Bloco 3).",
+      "Use --answers-json for offline/non-interactive answers (Enter/ok → defaults). --confirm-mso flags MSO ready.",
+      "V0 Bloco 3: `evolve circuit probe|run|fire-5|ledger` — ExecutionRunner + Evidence Validator + Token Ledger + 1+1+1.",
+      "circuit fire-5 needs EVOLVELOOP_HARNESS_CONSENT=true for real Cursor invoke; --offline-fixture exercises Validator/Ledger/Runner without claiming agent pass.",
       "Trivial ops (status|pause|resume|help) bypass Grill-Me with zero tokens via regex+SQLite.",
       "Closing this CLI does not erase --data-dir state.",
       "V3.5: prefer `evolve service start` for persistent coordinator (IPC); legacy `coordinator start` only marks PID in-process.",
@@ -241,6 +255,108 @@ async function main() {
       const paths = requireDataDir(args);
       const handled = await handleV35Command(args, paths);
       if (handled) return;
+    }
+
+    // V0 Bloco 3 — E2E circuit
+    if (args.group === "circuit") {
+      const workspace = resolve(args.workspace ?? args.cwd ?? process.cwd());
+      const stateDb = args["state-db"] ? resolve(args["state-db"]) : defaultStateDbPath(workspace);
+
+      if (args.command === "probe" || args.command === "help") {
+        const models = await probeV0ModelProviders();
+        const adapter = await selectV0AgentAdapter();
+        const adapter_health = await adapter.healthCheck();
+        print({
+          kind: "V0CircuitProbe",
+          rule: "1+1+1",
+          local_model: models.local,
+          remote_provider: models.remote,
+          agent_adapter: adapter_health,
+        });
+        return;
+      }
+
+      if (args.command === "ledger") {
+        const db = new StateDb(stateDb);
+        try {
+          print({
+            db_path: db.path,
+            journal_mode: db.journalMode(),
+            token_ledger: db.listTokenLedger(args["work-id"]),
+            circuit_runs: db.listCircuitRuns(args["work-id"]),
+          });
+        } finally {
+          db.close();
+        }
+        return;
+      }
+
+      if (args.command === "run") {
+        const task_id = args["task-id"] ?? `task-${Date.now()}`;
+        const intent =
+          args.intent?.trim() ||
+          args.text?.trim() ||
+          `Criar marcador de circuito V0 em .evolveloop/circuit-markers/${task_id}.txt`;
+        const result = await runV0Circuit({
+          workspace,
+          state_db_path: stateDb,
+          worktree_path: args.worktree ? resolve(args.worktree) : undefined,
+          lightweight_validator: args["full-validator"] !== "true",
+          task: {
+            task_id,
+            intent,
+            marker_name: args.marker ?? `${task_id}.txt`,
+            marker_content: args["marker-content"] ?? task_id,
+            offline_apply_marker: args["offline-fixture"] === "true",
+            adapter_timeout_ms: args.timeout ? Number(args.timeout) : 90_000,
+          },
+          confirm_mso: true,
+        });
+        print(result);
+        if (result.status === "TRUE_FULL_PASS") return;
+        process.exitCode = result.status === "BLOCKED" ? 2 : 1;
+        return;
+      }
+
+      if (args.command === "fire-5") {
+        const worktree_base = args["worktree-base"]
+          ? resolve(args["worktree-base"])
+          : undefined;
+        const results = await runFireFive({
+          workspace,
+          state_db_path: stateDb,
+          worktree_base,
+          use_offline_fixture: args["offline-fixture"] === "true",
+          lightweight_validator: args["full-validator"] !== "true",
+        });
+        print({
+          kind: "FireFiveSummary",
+          count: results.length,
+          results: results.map((r) => ({
+            run_id: r.run_id,
+            task_id: r.task_id,
+            status: r.status,
+            reason: r.reason,
+            goal_contract_id: r.goal_contract_id,
+            token_ledger_entry_id: r.token_ledger_entry_id,
+          })),
+        });
+        const db = new StateDb(stateDb);
+        try {
+          print({
+            ledger_tail: db.listTokenLedger().slice(0, 20),
+            circuit_runs: db.listCircuitRuns().slice(0, 10),
+          });
+        } finally {
+          db.close();
+        }
+        return;
+      }
+
+      console.error(
+        "Usage: evolve circuit probe|run|fire-5|ledger [--workspace .] [--offline-fixture true]",
+      );
+      process.exit(1);
     }
 
     // V0 Bloco 2 — intent / trivial ops (SQLite WAL under workspace)
