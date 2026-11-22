@@ -1,0 +1,12 @@
+AUD-STUB-05 skills duplication audit
+.cursor/skills dirs: 25
+.agents/skills entries: 39
+.agents/skills real (non-symlink) copies: 0
+.agents/skills broken symlinks: 0
+hard-gates:
+  grill-me: ['.agents/skills/grill-me -> ../../global-skills/grill-me', 'global-skills/grill-me -> REAL']
+  image-to-code: ['.agents/skills/image-to-code -> ../../global-skills/image-to-code', 'global-skills/image-to-code -> REAL']
+  wiki: ['.agents/skills/wiki -> ../../.cursor/skills/wiki', '.cursor/skills/wiki -> REAL']
+verdict: no residual content duplication between .agents/skills and .cursor/skills;
+          .agents/skills is symlink mirror (SSOT=.cursor/skills + global-skills).
+orphan copies removed: 0 (none existed)

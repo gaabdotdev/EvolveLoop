@@ -4,8 +4,9 @@
  *
  * Usage:
  *   node dist/cli/run-engine.js --ir path/to/ir.yaml [--policy high-reliability] [--feature-id feat-1]
- *   node dist/cli/run-engine.js --ir ir.yaml --jobs-dir ./jobs   # cursor-skill via JobFileExecutor
- *   node dist/cli/run-engine.js --ir ir.yaml --discovery --jobs-dir ./jobs  # runtime provider discovery
+ *   node dist/cli/run-engine.js --ir ir.yaml --provider-mode mock   # explicit simulation (default)
+ *   node dist/cli/run-engine.js --ir ir.yaml --provider-mode real --jobs-dir ./jobs
+ *   node dist/cli/run-engine.js --ir ir.yaml --discovery --jobs-dir ./jobs --provider-mode real
  */
 import { mkdtempSync, readdirSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
@@ -13,12 +14,8 @@ import { fileURLToPath } from "node:url";
 import { tmpdir } from "node:os";
 import {
   ExecutionEngine,
-  ProviderRouter,
-  createMockProvider,
   loadYamlFile,
   buildRegistryFromManifestFiles,
-  PluginLoader,
-  JobFileExecutor,
   FilesystemKnowledgeStore,
   FilesystemMemoryStore,
   resolveDataPaths,
@@ -27,6 +24,21 @@ import {
 } from "../index.js";
 import type { AnalysisScope } from "../evolveloop/longitudinal-types.js";
 import type { CapabilityIR, ProviderManifest } from "../types/index.js";
+import { manifestToRegistryEntries } from "../registry/manifest-loader.js";
+import { loadAgentsEnvFile, resolveOrchestratorCliPaths } from "./run-engine-env.js";
+import {
+  parseProviderMode,
+  setupProviders,
+  ProviderBootstrapError,
+} from "./provider-bootstrap.js";
+import { serializeForPublish } from "../evidence/publish-sanitize.js";
+import {
+  isGraphifyExperimentEnabled,
+  isCavemanBrevityEnabled,
+  isPromptCacheEnabled,
+} from "../v22/feature-flags.js";
+import { queryGraphifyCodeStructure, formatGraphifyContext } from "../v22/graphify-adapter.js";
+import { measureV22Goals009010 } from "../v22/p2-bench-measure.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -61,28 +73,49 @@ function loadProviderManifests(providersDir: string): ProviderManifest[] {
   return manifests;
 }
 
+function manifestByCapability(manifests: ProviderManifest[]): Map<string, ProviderManifest> {
+  const map = new Map<string, ProviderManifest>();
+  for (const manifest of manifests) {
+    for (const cap of manifest.spec.capabilities) {
+      if (!map.has(cap.id)) map.set(cap.id, manifest);
+    }
+  }
+  return map;
+}
+
 function supplementRegistry(
   registry: ReturnType<typeof buildRegistryFromManifestFiles>,
   ir: CapabilityIR,
+  bundledManifests: ProviderManifest[],
 ): ReturnType<typeof buildRegistryFromManifestFiles> {
   const caps = new Set(ir.spec.nodes.map((n) => n.capability));
   const capabilities = { ...registry.capabilities };
+  const byCap = manifestByCapability(bundledManifests);
 
   for (const cap of caps) {
-    if (!capabilities[cap]) {
-      capabilities[cap] = {
-        providers: [
-          {
-            id: cap,
-            priority: 100,
-            cost: "medium",
-            quality_score: 0.85,
-            availability: "active",
-            version: "1.0.0",
-          },
-        ],
-      };
+    if (capabilities[cap]) continue;
+
+    const manifest = byCap.get(cap);
+    if (manifest) {
+      const entry = manifestToRegistryEntries(manifest).find((e) => e.capability === cap);
+      if (entry) {
+        capabilities[cap] = { providers: [entry.provider] };
+        continue;
+      }
     }
+
+    capabilities[cap] = {
+      providers: [
+        {
+          id: cap,
+          priority: 100,
+          cost: "medium",
+          quality_score: 0.85,
+          availability: "active",
+          version: "1.0.0",
+        },
+      ],
+    };
   }
 
   return { ...registry, capabilities };
@@ -91,8 +124,9 @@ function supplementRegistry(
 function registryForMockRun(
   registry: ReturnType<typeof buildRegistryFromManifestFiles>,
   ir: CapabilityIR,
+  bundledManifests: ProviderManifest[],
 ): ReturnType<typeof buildRegistryFromManifestFiles> {
-  let result = supplementRegistry(registry, ir);
+  let result = supplementRegistry(registry, ir, bundledManifests);
   const capabilities = { ...result.capabilities };
 
   for (const [capId, cap] of Object.entries(capabilities)) {
@@ -116,34 +150,14 @@ function registryForMockRun(
   return { ...result, capabilities };
 }
 
-function setupProviders(
+function collectProviderIds(
   registry: ReturnType<typeof buildRegistryFromManifestFiles>,
-  agentsRoot: string,
-  jobsDir?: string,
-): ProviderRouter {
-  const router = new ProviderRouter();
-  const loader = new PluginLoader(agentsRoot);
-  const executor = jobsDir ? new JobFileExecutor(resolve(jobsDir)) : undefined;
-
+): Set<string> {
   const ids = new Set<string>();
   for (const cap of Object.values(registry.capabilities)) {
     for (const p of cap.providers) ids.add(p.id);
   }
-
-  const manifestsDir = resolve(__dirname, "../../providers");
-  const manifests = loadProviderManifests(manifestsDir);
-  const manifestByName = new Map(manifests.map((m) => [m.metadata.name, m]));
-
-  for (const id of ids) {
-    const manifest = manifestByName.get(id);
-    if (manifest?.spec.plugin?.type === "cursor-skill" && executor) {
-      router.register(loader.load(manifest, executor));
-    } else {
-      router.register(createMockProvider(id));
-    }
-  }
-
-  return router;
+  return ids;
 }
 
 function parseEvolveScope(args: Record<string, string>): AnalysisScope | null {
@@ -170,13 +184,27 @@ function parseEvolveScope(args: Record<string, string>): AnalysisScope | null {
 }
 
 async function main() {
+  loadAgentsEnvFile();
   const args = parseArgs(process.argv);
 
   if (!args.ir) {
     console.error(
-      `Usage: run-engine --ir <path.yaml> [--policy id] [--feature-id id] [--jobs-dir path] [--data-dir path] [--discovery] [--resume] [--wait-for-jobs ms] [--evolve] [--evolve-scope-type USER|PROJECT|WORKSPACE|SYSTEM] [--evolve-scope-id id] [--evolve-authorize-system]`,
+      `Usage: run-engine --ir <path.yaml> [--provider-mode mock|real] [--policy id] [--feature-id id] [--jobs-dir path] [--data-dir path] [--discovery] [--resume] [--wait-for-jobs ms] [--evolve] [--evolve-scope-type USER|PROJECT|WORKSPACE|SYSTEM] [--evolve-scope-id id] [--evolve-authorize-system]`,
     );
     process.exit(1);
+  }
+
+  let providerMode;
+  try {
+    providerMode = parseProviderMode(args["provider-mode"]);
+  } catch (err) {
+    console.error(err instanceof Error ? err.message : err);
+    process.exit(1);
+  }
+  if (args["provider-mode"] === undefined) {
+    console.error(
+      "[provider-mode] omitted → default mock (simulated). Pass --provider-mode real for non-mock providers.",
+    );
   }
 
   const enableDiscovery = args.discovery === "true";
@@ -186,20 +214,45 @@ async function main() {
   const featureId = args["feature-id"] ?? ir.metadata.id;
 
   const orchestratorRoot = resolve(__dirname, "../..");
-  const agentsRoot = resolve(orchestratorRoot, "..");
+  const cliPaths = resolveOrchestratorCliPaths(args, enableDiscovery);
+  const agentsRoot = cliPaths.agentsRoot
+    ? resolve(cliPaths.agentsRoot)
+    : resolve(orchestratorRoot, "..");
   const providersDir = join(orchestratorRoot, "providers");
   const contractsDir = join(orchestratorRoot, "contracts");
   const policiesDir = join(orchestratorRoot, "policies");
-  const jobsDir = args["jobs-dir"] ?? (enableDiscovery ? "./jobs" : undefined);
+  const jobsDir = cliPaths.jobsDir;
   const resume = args.resume === "true";
   const waitForJobsMs = args["wait-for-jobs"] ? parseInt(args["wait-for-jobs"], 10) : 0;
   const manifests = loadProviderManifests(providersDir);
 
-  let registry = enableDiscovery
-    ? buildRegistryFromManifestFiles([])
-    : buildRegistryFromManifestFiles(manifests);
-  registry = jobsDir ? supplementRegistry(registry, ir) : registryForMockRun(registry, ir);
-  const providers = setupProviders(registry, agentsRoot, jobsDir);
+  let registry = buildRegistryFromManifestFiles(manifests);
+  registry =
+    providerMode === "mock"
+      ? registryForMockRun(registry, ir, manifests)
+      : supplementRegistry(registry, ir, manifests);
+
+  let bootstrap;
+  try {
+    bootstrap = setupProviders({
+      mode: providerMode,
+      agentsRoot,
+      jobsDir,
+      manifests,
+      providerIds: collectProviderIds(registry),
+    });
+  } catch (err) {
+    const message =
+      err instanceof ProviderBootstrapError
+        ? err.message
+        : err instanceof Error
+          ? err.message
+          : String(err);
+    console.error(`[provider-mode=${providerMode}] bootstrap failed: ${message}`);
+    process.exit(1);
+  }
+  for (const w of bootstrap.warnings) console.error(`[provider-mode] warning: ${w}`);
+  const providers = bootstrap.router;
 
   const dataDir = args["data-dir"] ? resolve(args["data-dir"]) : undefined;
   const dataPaths = dataDir ? resolveDataPaths(dataDir) : undefined;
@@ -258,7 +311,7 @@ async function main() {
     wait_for_jobs_ms: waitForJobsMs,
   });
 
-  const summary = {
+  let summary: Record<string, unknown> = {
     success: result.success,
     finished: result.finished,
     state: result.state,
@@ -267,9 +320,40 @@ async function main() {
     nodes: result.graph.nodes.map((n) => ({ id: n.id, status: n.status, capability: n.capability })),
     metrics: result.metrics,
     event_count: result.events.length,
+    provider_mode: bootstrap.provider_mode,
+    providers_registered: bootstrap.registered,
   };
 
-  console.log(JSON.stringify(summary, null, 2));
+  const anyP2 =
+    isGraphifyExperimentEnabled() || isCavemanBrevityEnabled() || isPromptCacheEnabled();
+  if (anyP2) {
+    const graph = isGraphifyExperimentEnabled()
+      ? queryGraphifyCodeStructure({
+          projectRoot: agentsRoot,
+          query: `capability graph ${featureId}`,
+        })
+      : undefined;
+    summary.v22_p2 = {
+      graphify: graph
+        ? {
+            enabled: graph.enabled,
+            source: graph.source,
+            cli_available: graph.cli_available,
+            edge_count: graph.edges.length,
+            context_preview: formatGraphifyContext(graph).slice(0, 500),
+          }
+        : undefined,
+      bench:
+        isCavemanBrevityEnabled() || isPromptCacheEnabled()
+          ? measureV22Goals009010({
+              jobsDir: jobsDir ? resolve(jobsDir) : join(orchestratorRoot, "jobs"),
+              orchestratorRoot,
+            })
+          : undefined,
+    };
+  }
+
+  console.log(serializeForPublish(summary));
   process.exit(result.success ? 0 : 1);
 }
 

@@ -1,0 +1,12 @@
+V2-MEM-02 Hybrid Graph Code + Decisions
+date: 2026-11-21T18:51:53-03:00
+branch: chore/v0-consolidation
+vitest: tests/unit/v2-mem-02-hybrid-graph.test.ts → 8/8 EXIT 0
+regression: tests/unit/v2-mem-01-consolidation.test.ts → 9/9 EXIT 0
+regression: tests/unit/v1-mem-01-hybrid-search.test.ts → 4/4 EXIT 0
+tsc: npx tsc --noEmit EXIT 0
+files:
+  - orchestrator/src/v3/memory/hybrid-graph.ts
+  - orchestrator/src/v3/memory/index.ts
+  - orchestrator/tests/unit/v2-mem-02-hybrid-graph.test.ts
+verdict: V2-MEM-02_PASS

@@ -1,0 +1,19 @@
+{
+  "case_id": "BO-ORCH-03",
+  "name": "Leader workers hierarchy",
+  "objective": "Root→leader→workers observable",
+  "repo": "beta-app",
+  "fixture_path": "orchestrator/tests/fixtures/v3-eval/beta-app",
+  "preconditions": [],
+  "acceptance_criteria": [
+    {"id": "c1", "description": "hierarchy completed", "mandatory": true, "evaluator": "test"},
+    {"id": "c2", "description": "diff present", "mandatory": true, "evaluator": "diff"}
+  ],
+  "timeout_ms": 60000,
+  "strategies": ["C_evolveloop_adaptive"],
+  "invalidation_rules": ["critical_telemetry_loss"],
+  "difficulty": "medium",
+  "class": "orchestration_leader_workers",
+  "multi_file": true,
+  "split": "validation"
+}

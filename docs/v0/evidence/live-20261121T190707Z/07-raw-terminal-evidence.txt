@@ -1,0 +1,330 @@
+=== exact commands (from harness log head) ===
+=== V0 live five-tasks harness ===
+ts=20261121T190707Z
+repo=/home/gaab/orca/workspaces/EvolveLoop/seagrass
+evidence=/home/gaab/orca/workspaces/EvolveLoop/seagrass/docs/v0/evidence/live-20261121T190707Z
+worktree_base=/home/gaab/orca/workspaces/EvolveLoop/seagrass/.evolveloop/live-wt/20261121T190707Z
+state_db=/home/gaab/orca/workspaces/EvolveLoop/seagrass/docs/v0/evidence/live-20261121T190707Z/state.db
+consent=true
+OPENROUTER=
+OPENROUTER=UNAVAILABLE
+
+=== 01 probe (1+1+1) ===
+{
+  "kind": "V0CircuitProbe",
+  "rule": "1+1+1",
+  "local_model": {
+    "kind": "ModelHealth",
+    "provider_id": "ollama",
+    "ok": true,
+    "code": "OK",
+    "message": "Ollama ok; model=bonsai-64k:latest",
+    "model": "bonsai-64k:latest",
+    "base_url": "http://127.0.0.1:11434",
+    "checked_at": "2026-11-21T19:07:07.683Z",
+    "limitations": [
+      "Local Ollama only — no FreeLLMAPI gateway",
+      "Availability is probed via GET /api/tags"
+    ]
+  },
+  "remote_provider": {
+    "kind": "ModelHealth",
+    "provider_id": "openrouter",
+    "ok": false,
+    "code": "MISSING_CREDENTIALS",
+    "message": "OpenRouter API key absent — healthCheck failed honestly",
+    "base_url": "https://openrouter.ai/api/v1",
+    "model": "openai/gpt-4o-mini",
+    "checked_at": "2026-11-21T19:07:07.702Z",
+    "limitations": [
+      "Remote OpenRouter never used as silent default",
+      "Requires OPENROUTER_API_KEY or EVOLVELOOP_OPENROUTER_API_KEY",
+      "Does not invent cost when usage fields absent"
+    ]
+  },
+  "agent_adapter": {
+    "kind": "AdapterHealth",
+    "adapter_id": "cursor",
+    "ok": true,
+    "code": "OK",
+    "message": "cursor-agent available at /home/gaab/.local/bin/agent",
+    "cli_path": "/home/gaab/.local/bin/agent",
+    "checked_at": "2026-11-21T19:07:08.464Z",
+    "limitations": [
+      "V0 agent adapter slot — Cursor via cursor-agent CLI",
+      "invoke requires EVOLVELOOP_HARNESS_CONSENT=true for real spawn",
+      "All spawn routed through ExecutionRunner"
+    ]
+  }
+}
+probe_exit=0
+
+=== 02 fire-5 LIVE (pass@1 attempt) ===
+(node:1326468) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+{
+  "kind": "FireFiveSummary",
+  "count": 5,
+  "results": [
+    {
+      "run_id": "cr-240647eb-dca1-4add-8bf2-d49435c4559e",
+      "task_id": "fire-1",
+      "status": "TRUE_FULL_PASS",
+      "reason": "TRUE_FULL_PASS",
+      "goal_contract_id": "gc-fire-1",
+      "token_ledger_entry_id": "tl-88d8943b-ed17-4152-8ee0-a87ebfca68cb"
+    },
+    {
+      "run_id": "cr-aa3cfb92-2fc9-44ea-8a13-e607ac70c11a",
+      "task_id": "fire-2",
+      "status": "TRUE_FULL_PASS",
+      "reason": "TRUE_FULL_PASS",
+
+=== exit codes ===
+probe_exit=0
+fire5_exit=0
+ledger_exit=0
+token_compare_exit=0
+HARNESS_VERDICT=TRUE-FULL-PASS_x5
+
+=== per-task FireFiveSummary ===
+{
+  "kind": "FireFiveSummary",
+  "count": 5,
+  "results": [
+    {
+      "run_id": "cr-240647eb-dca1-4add-8bf2-d49435c4559e",
+      "task_id": "fire-1",
+      "status": "TRUE_FULL_PASS",
+      "reason": "TRUE_FULL_PASS",
+      "goal_contract_id": "gc-fire-1",
+      "token_ledger_entry_id": "tl-88d8943b-ed17-4152-8ee0-a87ebfca68cb"
+    },
+    {
+      "run_id": "cr-aa3cfb92-2fc9-44ea-8a13-e607ac70c11a",
+      "task_id": "fire-2",
+      "status": "TRUE_FULL_PASS",
+      "reason": "TRUE_FULL_PASS",
+      "goal_contract_id": "gc-fire-2",
+      "token_ledger_entry_id": "tl-a3448876-98a1-4e34-86c4-8b287d7dd4b5"
+    },
+    {
+      "run_id": "cr-75fd2577-1f03-4a76-bca1-6351499d0718",
+      "task_id": "fire-3",
+      "status": "TRUE_FULL_PASS",
+      "reason": "TRUE_FULL_PASS",
+      "goal_contract_id": "gc-fire-3",
+      "token_ledger_entry_id": "tl-414f203b-2f27-4f91-bc14-945deacf4cc6"
+    },
+    {
+      "run_id": "cr-21e14572-a203-4ee5-90f7-f1a4e4b44284",
+      "task_id": "fire-4",
+      "status": "TRUE_FULL_PASS",
+      "reason": "TRUE_FULL_PASS",
+      "goal_contract_id": "gc-fire-4",
+      "token_ledger_entry_id": "tl-285b57dc-0dbb-492d-9130-e69ffe069a29"
+    },
+    {
+      "run_id": "cr-35a99f70-95ca-4f8d-835c-741706fa2c78",
+      "task_id": "fire-5",
+      "status": "TRUE_FULL_PASS",
+      "reason": "TRUE_FULL_PASS",
+      "goal_contract_id": "gc-fire-5",
+      "token_ledger_entry_id": "tl-2dce82b0-247b-41e5-9cb1-69351ff4d294"
+    }
+  ]
+}
+
+=== Token Ledger (honest UNAVAILABLE costs) ===
+[
+  {
+    "task": "fire-5",
+    "status": "TRUE_FULL_PASS",
+    "latency_ms": 42,
+    "cost_provenance": "UNAVAILABLE",
+    "adapter": "cursor",
+    "tokens_in": null,
+    "tokens_out": null
+  },
+  {
+    "task": "fire-5",
+    "status": "ok",
+    "latency_ms": 81749,
+    "cost_provenance": "UNAVAILABLE",
+    "adapter": "cursor",
+    "tokens_in": null,
+    "tokens_out": null
+  },
+  {
+    "task": "fire-4",
+    "status": "TRUE_FULL_PASS",
+    "latency_ms": 42,
+    "cost_provenance": "UNAVAILABLE",
+    "adapter": "cursor",
+    "tokens_in": null,
+    "tokens_out": null
+  },
+  {
+    "task": "fire-4",
+    "status": "ok",
+    "latency_ms": 83058,
+    "cost_provenance": "UNAVAILABLE",
+    "adapter": "cursor",
+    "tokens_in": null,
+    "tokens_out": null
+  },
+  {
+    "task": "fire-3",
+    "status": "TRUE_FULL_PASS",
+    "latency_ms": 48,
+    "cost_provenance": "UNAVAILABLE",
+    "adapter": "cursor",
+    "tokens_in": null,
+    "tokens_out": null
+  },
+  {
+    "task": "fire-3",
+    "status": "ok",
+    "latency_ms": 85790,
+    "cost_provenance": "UNAVAILABLE",
+    "adapter": "cursor",
+    "tokens_in": null,
+    "tokens_out": null
+  },
+  {
+    "task": "fire-2",
+    "status": "TRUE_FULL_PASS",
+    "latency_ms": 44,
+    "cost_provenance": "UNAVAILABLE",
+    "adapter": "cursor",
+    "tokens_in": null,
+    "tokens_out": null
+  },
+  {
+    "task": "fire-2",
+    "status": "ok",
+    "latency_ms": 81509,
+    "cost_provenance": "UNAVAILABLE",
+    "adapter": "cursor",
+    "tokens_in": null,
+    "tokens_out": null
+  },
+  {
+    "task": "fire-1",
+    "status": "TRUE_FULL_PASS",
+    "latency_ms": 44,
+    "cost_provenance": "UNAVAILABLE",
+    "adapter": "cursor",
+    "tokens_in": null,
+    "tokens_out": null
+  },
+  {
+    "task": "fire-1",
+    "status": "ok",
+    "latency_ms": 82120,
+    "cost_provenance": "UNAVAILABLE",
+    "adapter": "cursor",
+    "tokens_in": null,
+    "tokens_out": null
+  }
+]
+
+=== pass metrics ===
+{
+  "kind": "V0LivePassMetrics",
+  "goals": [
+    "V0-TEST-F",
+    "V0-EXIT-02"
+  ],
+  "stack": "1+1+1 (ollama local + openrouter remote slot + cursor adapter)",
+  "task_count": 5,
+  "pass_at_1": {
+    "successes": 5,
+    "total": 5,
+    "rate": 1
+  },
+  "pass_pow_3": {
+    "successes": 5,
+    "total": 5,
+    "rate": 1
+  },
+  "tasks": [
+    {
+      "task_id": "fire-1",
+      "attempts": 1,
+      "attempt_statuses": [
+        "TRUE_FULL_PASS"
+      ],
+      "pass_at_1": true,
+      "pass_pow_3": true
+    },
+    {
+      "task_id": "fire-2",
+      "attempts": 1,
+      "attempt_statuses": [
+        "TRUE_FULL_PASS"
+      ],
+      "pass_at_1": true,
+      "pass_pow_3": true
+    },
+    {
+      "task_id": "fire-3",
+      "attempts": 1,
+      "attempt_statuses": [
+        "TRUE_FULL_PASS"
+      ],
+      "pass_at_1": true,
+      "pass_pow_3": true
+    },
+    {
+      "task_id": "fire-4",
+      "attempts": 1,
+      "attempt_statuses": [
+        "TRUE_FULL_PASS"
+      ],
+      "pass_at_1": true,
+      "pass_pow_3": true
+    },
+    {
+      "task_id": "fire-5",
+      "attempts": 1,
+      "attempt_statuses": [
+        "TRUE_FULL_PASS"
+      ],
+      "pass_at_1": true,
+      "pass_pow_3": true
+    }
+  ],
+  "consecutive_true_full_pass_at_1": true,
+  "exit02_verdict": "TRUE-FULL-PASS_x5_consecutive"
+}
+
+=== token compare verdict ===
+{
+  "verdict": "PASS_LIVE_REDUCTION_58.35pct",
+  "combined": {
+    "baseline_total": 11630,
+    "phase_total": 4844,
+    "reduction_pct": 58.349097162510745,
+    "meets_target": true,
+    "target_min_pct": 50
+  },
+  "ledger_honesty": [
+    "ledger_rows=10",
+    "cost_provenance_UNAVAILABLE=10/10",
+    "rows_with_token_counts=0",
+    "PROVIDER_REPORTED tokens absent (cursor-agent CLI does not emit usage) \u2014 estimates used for reduction %"
+  ],
+  "openrouter": "UNAVAILABLE"
+}
+
+=== git diff --stat (harness-related) ===
+ orchestrator/package.json | 6 ++++++
+ 1 file changed, 6 insertions(+)
+ M orchestrator/package.json
+ M scripts/sync-agents-from-cursor.sh
+?? bin/evolve
+?? docs/v0/
+?? scripts/install-evolve-cli.sh
+?? scripts/v0-live-five-tasks.sh
+?? scripts/v0-live-token-compare.mjs

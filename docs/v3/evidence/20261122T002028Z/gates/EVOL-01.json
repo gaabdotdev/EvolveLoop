@@ -1,0 +1,14 @@
+{
+  "gate": "V3-EVOL-01",
+  "task": "M17-V3-EVOL-01-SHADOW-REPLAY",
+  "status": "PASS_UNIT",
+  "vitest_exit": 0,
+  "regression_exit": 0,
+  "passed_ids": ["cand-beneficial"],
+  "rejected_ids": ["cand-neutral", "cand-subtle-regression"],
+  "rollback_command": "evolution.rollbackProduction()",
+  "promote_beneficial": true,
+  "promote_neutral_denied": true,
+  "rollback_ok": true,
+  "honesty": "fixture_historical_corpus"
+}

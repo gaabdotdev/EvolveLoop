@@ -1,0 +1,77 @@
+{
+  "kind": "gate.v3-reliability",
+  "at": "2026-11-11T22:37:16.451Z",
+  "commit": "06842669293a5edcb6b0eee25f1631287d233e2d",
+  "engineering_failure_battery": {
+    "kind": "EngineeringFailureBatteryReport",
+    "scenarios": [
+      {
+        "id": "plan_incomplete",
+        "stage": "PLAN",
+        "passed": true,
+        "detail": "mandatory_incomplete:c1:NOT_STARTED,mandatory_missing_evidence:c1"
+      },
+      {
+        "id": "ambiguous_acceptance_blocked",
+        "stage": "PLAN",
+        "passed": true,
+        "detail": "mandatory_blocked:c1,mandatory_incomplete:c1:BLOCKED,mandatory_missing_evidence:c1"
+      },
+      {
+        "id": "budget_insufficient_stop",
+        "stage": "PLAN",
+        "passed": true,
+        "detail": "PAUSE:budget_exceeded"
+      },
+      {
+        "id": "provider_unavailable_handoff",
+        "stage": "IMPLEMENT",
+        "passed": true,
+        "detail": "status=applied to=w-fail-prov-365dd6-w-sub-ho-98cba"
+      },
+      {
+        "id": "test_fail_no_true_full_pass",
+        "stage": "TEST",
+        "passed": true,
+        "detail": "test_exit_nonzero:ev-c085be80-989e-4310-874e-5e94b3e63217,missing_valid_test_evidence"
+      },
+      {
+        "id": "stale_test_before_mutation",
+        "stage": "TEST",
+        "passed": true,
+        "detail": "tests_before_last_mutation:ev-2f9567df-cc36-4cb3-9744-12ac24f2ece3"
+      },
+      {
+        "id": "self_review_rejected",
+        "stage": "REVIEW",
+        "passed": true,
+        "detail": "review_not_independent:ev-aaee418b-4630-4778-ae10-bfdf621dbb93"
+      },
+      {
+        "id": "missing_evidence_rejected",
+        "stage": "VERIFY",
+        "passed": true,
+        "detail": "mandatory_missing_evidence:c1,mandatory_missing_evidence:c1:test_result,missing_valid_test_evidence|mandatory_missing_evidence:c1,mandatory_missing_evidence:c1:test_result,missing_valid_test_evidence"
+      },
+      {
+        "id": "anti_loop_excessive_replans",
+        "stage": "RECOVERY",
+        "passed": true,
+        "detail": "STOP_FAILED:excessive_replans:3"
+      },
+      {
+        "id": "duplicate_task_rejected",
+        "stage": "PLAN",
+        "passed": true,
+        "detail": "repeated_error:task_duplicate:2,redundant_delegations:2"
+      }
+    ],
+    "passed": true,
+    "limitations": [
+      "Deterministic in-process injections — not live LLM/provider crashes",
+      "Harness process kill is out of scope (Core cancel only)"
+    ]
+  },
+  "recovery_on_real_task": true,
+  "status": "PASS"
+}

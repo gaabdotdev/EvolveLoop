@@ -1,0 +1,59 @@
+=== AUD-STUB-05 diffstat 2026-11-22T01:59:05Z ===
+
+## Deleted dead barrels (this gate)
+D  orchestrator/src/knowledge/truth-source/index.ts
+D  orchestrator/src/v3/adapters/drivers/index.ts
+D  orchestrator/src/v3/adapters/index.ts
+D  orchestrator/src/v3/approvals/index.ts
+D  orchestrator/src/v3/budget/index.ts
+D  orchestrator/src/v3/context/index.ts
+D  orchestrator/src/v3/continuity/index.ts
+D  orchestrator/src/v3/coordinator/index.ts
+D  orchestrator/src/v3/event-log/index.ts
+D  orchestrator/src/v3/execution/index.ts
+D  orchestrator/src/v3/harness/index.ts
+D  orchestrator/src/v3/hierarchy/index.ts
+D  orchestrator/src/v3/intake/index.ts
+D  orchestrator/src/v3/locks/index.ts
+D  orchestrator/src/v3/model-catalog/index.ts
+D  orchestrator/src/v3/recovery/index.ts
+D  orchestrator/src/v3/routing/index.ts
+D  orchestrator/src/v3/tui/index.ts
+D  orchestrator/src/v3/work-ledger/index.ts
+D  orchestrator/src/v3/workspace/index.ts
+
+ orchestrator/src/knowledge/truth-source/index.ts |  5 ----
+ orchestrator/src/v3/adapters/drivers/index.ts    | 15 ------------
+ orchestrator/src/v3/adapters/index.ts            | 29 ------------------------
+ orchestrator/src/v3/approvals/index.ts           |  3 ---
+ orchestrator/src/v3/budget/index.ts              | 10 --------
+ orchestrator/src/v3/context/index.ts             | 12 ----------
+ orchestrator/src/v3/continuity/index.ts          |  2 --
+ orchestrator/src/v3/coordinator/index.ts         |  6 -----
+ orchestrator/src/v3/event-log/index.ts           |  1 -
+ orchestrator/src/v3/execution/index.ts           |  6 -----
+ orchestrator/src/v3/harness/index.ts             |  1 -
+ orchestrator/src/v3/hierarchy/index.ts           |  7 ------
+ orchestrator/src/v3/intake/index.ts              |  6 -----
+ orchestrator/src/v3/locks/index.ts               |  7 ------
+ orchestrator/src/v3/model-catalog/index.ts       |  7 ------
+ orchestrator/src/v3/recovery/index.ts            |  8 -------
+ orchestrator/src/v3/routing/index.ts             | 16 -------------
+ orchestrator/src/v3/tui/index.ts                 |  8 -------
+ orchestrator/src/v3/work-ledger/index.ts         |  6 -----
+ orchestrator/src/v3/workspace/index.ts           |  3 ---
+ 20 files changed, 158 deletions(-)
+
+## Baseline orphan already staged (quarantine)
+D  orchestrator/tests/quarantine/audit-tmp-adversarial.ts
+
+## knip unused-files delta
+PRE:  42
+POST: 22
+REMOVED_PROVEN_DEAD: 20 barrel index.ts with zero importers
+REMAINING_FALSE_POSITIVES: scripts/CLI/fixtures/vitest configs (intentional entrypoints; not deleted)
+
+## skills
+content_duplication_residual: 0
+orphan_skill_copies_removed: 0
+hard_gates_preserved: grill-me, image-to-code, wiki

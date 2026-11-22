@@ -1,0 +1,32 @@
+# AUD-SEC-diffstat (batch changes)
+# UTC 2026-11-22T01:55:24Z
+
+## Tracked diffs (if any)
+
+## Status (honesty markers + evidence)
+?? docs/v3/evidence/audit-mso-20261122T012324Z/gates/AUD-SEC-01.md
+?? docs/v3/evidence/audit-mso-20261122T012324Z/gates/AUD-SEC-02.md
+?? docs/v3/evidence/audit-mso-20261122T012324Z/gates/AUD-SEC-03.md
+?? docs/v3/evidence/audit-mso-20261122T012324Z/gates/AUD-SEC-04.md
+?? docs/v3/evidence/audit-mso-20261122T012324Z/gates/AUD-SEC-05.md
+?? docs/v3/evidence/audit-mso-20261122T012324Z/gates/AUD-SEC-06.md
+?? docs/v3/evidence/audit-mso-20261122T012324Z/gates/AUD-SEC-07.md
+?? docs/v3/evidence/audit-mso-20261122T012324Z/gates/AUD-SEC-SUMMARY.md
+?? docs/v3/evidence/audit-mso-20261122T012324Z/gates/AUD-SEC-diffstat.txt
+?? docs/v3/evidence/audit-mso-20261122T012324Z/gates/AUD-SEC-host-probe.json
+?? docs/v3/evidence/audit-mso-20261122T012324Z/gates/AUD-SEC-tests.txt
+?? orchestrator/src/v3/sandbox/cgroup-v2.ts
+?? orchestrator/src/v3/sandbox/microvm-profile.ts
+?? orchestrator/src/v3/security/ebpf-audit.ts
+?? orchestrator/tests/unit/v1-sec-03-phase-isolation.test.ts
+?? orchestrator/tests/unit/v3-sec-01-microvm.test.ts
+?? orchestrator/tests/unit/v3-sec-03-ebpf-audit.test.ts
+
+## Line counts (wc -l)
+  551 orchestrator/src/v3/sandbox/microvm-profile.ts
+  282 orchestrator/src/v3/sandbox/cgroup-v2.ts
+  901 orchestrator/src/v3/security/ebpf-audit.ts
+  251 orchestrator/tests/unit/v3-sec-01-microvm.test.ts
+  383 orchestrator/tests/unit/v3-sec-03-ebpf-audit.test.ts
+  142 orchestrator/tests/unit/v1-sec-03-phase-isolation.test.ts
+ 2510 total

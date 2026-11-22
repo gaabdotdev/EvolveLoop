@@ -1,0 +1,57 @@
+diff --git a/engine/__init__.py b/engine/__init__.py
+new file mode 100644
+--- /dev/null
++++ b/engine/__init__.py
+@@ -0,0 +1,2 @@
++"""Compatibility package for legacy `engine.*` imports."""
+
+diff --git a/engine/wiki_doc.py b/engine/wiki_doc.py
+new file mode 100644
+--- /dev/null
++++ b/engine/wiki_doc.py
+@@ -0,0 +1,7 @@
++"""Shim: re-exports wiki_doc from kernel.knowledge (legacy import path)."""
++
++from __future__ import annotations
++
++from kernel.knowledge.wiki_doc import WikiPage, ingest_wiki_to_mysql, iter_wiki_pages
++
++__all__ = ["WikiPage", "ingest_wiki_to_mysql", "iter_wiki_pages"]
+
+diff --git a/tests/test_wiki_doc.py b/tests/test_wiki_doc.py
+--- a/tests/test_wiki_doc.py
++++ b/tests/test_wiki_doc.py
+@@ -4,7 +4,7 @@
+ from pathlib import Path
+
+-from engine.wiki_doc import iter_wiki_pages
++from kernel.knowledge.wiki_doc import iter_wiki_pages
+
+ WIKI_DIR = Path(__file__).resolve().parent.parent / "docs" / "wiki"
+
+diff --git a/tests/test_rate_limit.py b/tests/test_rate_limit.py
+--- a/tests/test_rate_limit.py
++++ b/tests/test_rate_limit.py
+@@ -21,3 +21,22 @@
+     assert allow_request(key, limit=1, window_sec=60.0) is True
+     assert allow_request(key, limit=1, window_sec=60.0) is False
+     assert allow_request(key, limit=1, window_sec=60.0) is True
++
++
++def test_reset_for_tests_clears_buckets():
++    from api.rate_limit import allow_request, reset_for_tests
++
++    key = "test:unit:reset"
++    assert allow_request(key, limit=1, window_sec=60.0) is True
++    assert allow_request(key, limit=1, window_sec=60.0) is False
++    reset_for_tests()
++    assert allow_request(key, limit=1, window_sec=60.0) is True
++
++
++def test_allow_request_limit_one():
++    from api.rate_limit import allow_request, reset_for_tests
++
++    reset_for_tests()
++    key = "test:unit:limit1"
++    assert allow_request(key, limit=1, window_sec=60.0) is True
++    assert allow_request(key, limit=1, window_sec=60.0) is False

@@ -1,0 +1,19 @@
+{
+  "case_id": "BO-ORCH-05",
+  "name": "Spawn denied by policy",
+  "objective": "Blocked spawn must emit agent.spawn_blocked",
+  "repo": "alpha-lib",
+  "fixture_path": "orchestrator/tests/fixtures/v3-eval/alpha-lib",
+  "preconditions": [],
+  "acceptance_criteria": [
+    {"id": "c1", "description": "root completed without blocked child", "mandatory": true, "evaluator": "test"},
+    {"id": "c2", "description": "diff or no-op documented", "mandatory": true, "evaluator": "diff"}
+  ],
+  "timeout_ms": 60000,
+  "strategies": ["C_evolveloop_adaptive"],
+  "invalidation_rules": ["critical_telemetry_loss"],
+  "difficulty": "medium",
+  "class": "orchestration_spawn_denied",
+  "multi_file": false,
+  "split": "development"
+}

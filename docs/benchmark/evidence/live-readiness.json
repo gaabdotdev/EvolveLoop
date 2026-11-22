@@ -1,0 +1,69 @@
+{
+  "kind": "LiveLlmReadiness",
+  "state": "READY",
+  "consent": true,
+  "executable": true,
+  "selected_harness": "cursor-agent",
+  "providers": [
+    {
+      "id": "cursor-agent",
+      "available": true,
+      "auth": "logged_in",
+      "detail": "✓ Logged in as gabriel.prossional@gmail.com"
+    },
+    {
+      "id": "claude-code",
+      "available": true,
+      "auth": "none",
+      "detail": "claude auth status loggedIn=false or unparseable"
+    },
+    {
+      "id": "openai",
+      "available": false,
+      "auth": "none",
+      "detail": "OPENAI_API_KEY unset"
+    },
+    {
+      "id": "openrouter",
+      "available": false,
+      "auth": "none",
+      "detail": "OPENROUTER_API_KEY unset"
+    }
+  ],
+  "blockers": [],
+  "notes": [
+    "Does not set EVOLVELOOP_HARNESS_CONSENT",
+    "Does not invent tokens or API keys",
+    "Deterministic solvers remain the CI regression path — never used for LIVE claims"
+  ],
+  "checks": {
+    "consent": {
+      "ok": true,
+      "detail": "EVOLVELOOP_HARNESS_CONSENT=true (process-scoped)"
+    },
+    "harness_cursor_agent": {
+      "ok": true,
+      "detail": "path=/home/gaab/.local/bin/agent"
+    },
+    "harness_claude": {
+      "ok": true,
+      "detail": "path=/home/gaab/.local/bin/claude"
+    },
+    "auth_cursor_agent": {
+      "ok": true,
+      "detail": "✓ Logged in as gabriel.prossional@gmail.com"
+    },
+    "auth_claude": {
+      "ok": false,
+      "detail": "claude auth status loggedIn=false or unparseable"
+    },
+    "model": {
+      "ok": true,
+      "detail": "cursor-agent account/default model usable for -p invoke"
+    },
+    "can_start": {
+      "ok": true,
+      "detail": "cursor-agent ask-mode smoke READY (72857ms)"
+    }
+  }
+}

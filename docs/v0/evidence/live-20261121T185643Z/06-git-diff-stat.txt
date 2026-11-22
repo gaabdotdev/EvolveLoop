@@ -1,0 +1,10 @@
+=== git diff --stat (harness-related tracked+untracked) ===
+ orchestrator/package.json | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+=== git status --short ===
+ M orchestrator/package.json
+?? bin/evolve
+?? docs/v0/
+?? scripts/v0-live-five-tasks.sh
+?? scripts/v0-live-token-compare.mjs

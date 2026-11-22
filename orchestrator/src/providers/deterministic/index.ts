@@ -10,8 +10,10 @@ import type {
   ProviderRuntime,
 } from "../../types/index.js";
 import { buildAuthorityEvidence, buildWorkerEvidence } from "../../evidence/builders.js";
+import { evidenceFromShellResult } from "../../plugins/cursor-skill-provider.js";
 import {
   authorize,
+  effectiveAuthority,
   type AuthorityContext,
 } from "../../authority/capability-authority.js";
 import { PathEscapeError } from "./paths.js";
@@ -98,13 +100,17 @@ const DEFAULT_HANDLERS: Record<string, DeterministicHandler> = {
   },
   "system.inspect": () => systemHandlers.systemInspect(),
   "project.inspect": (req, ctx) => projectInspect(ctx.workspaceRoot, requestInputs(req).path ?? "."),
-  "knowledge.search": (req) => {
+  "knowledge.search": (req, ctx) => {
     const inputs = requestInputs(req);
     const query = inputs.query ?? inputs.q;
     if (!query) throw Object.assign(new Error("missing query"), { code: "MALFORMED_INPUT" });
-    return knowledgeSearch(query);
+    return knowledgeSearch(query, { projectRoot: ctx.workspaceRoot });
   },
-  "knowledge.inspect": (req) => knowledgeInspect(requestInputs(req).query ?? requestInputs(req).q ?? ""),
+  "knowledge.inspect": (req, ctx) => {
+    const inputs = requestInputs(req);
+    const query = inputs.query ?? inputs.q ?? "";
+    return knowledgeInspect(query, { projectRoot: ctx.workspaceRoot });
+  },
 };
 
 function capabilityPermissions(capability: string): {
@@ -175,8 +181,7 @@ export class DeterministicProvider implements ProviderRuntime {
     }
 
     const authCtx: AuthorityContext = {
-      ...this.authorityContext,
-      ...request.authority_context,
+      ...effectiveAuthority(this.authorityContext, request.authority_context),
       workspaceRoot: this.workspaceRoot,
     };
     const inputs = requestInputs(request);
@@ -209,6 +214,13 @@ export class DeterministicProvider implements ProviderRuntime {
         workspaceRoot: this.workspaceRoot,
         authority: authCtx,
       });
+      if (request.capability === "shell.execute") {
+        const interpreted = evidenceFromShellResult(request, this.id, result);
+        if (interpreted.evidence) {
+          (interpreted.evidence.spec as { normalized?: unknown }).normalized = result;
+        }
+        return interpreted;
+      }
       const duration = Date.now() - start;
       const evidence = buildWorkerEvidence(request.node, request.run_id, this.id, duration, {
         commands_run:

@@ -1,0 +1,124 @@
+{
+  "kind": "V3TaskBattery",
+  "version": 1,
+  "split": {
+    "development": ["T01", "T02", "T03", "T04", "T05", "T06", "T07", "T08"],
+    "validation": [],
+    "held_out": ["T09", "T10"]
+  },
+  "repos": {
+    "alpha-lib": {
+      "fixture": "orchestrator/tests/fixtures/v3-eval/alpha-lib",
+      "description": "Small multi-file library (math + index exports)"
+    },
+    "beta-app": {
+      "fixture": "orchestrator/tests/fixtures/v3-eval/beta-app",
+      "description": "Multi-module app (lib store + cart + checkout)"
+    },
+    "gamma-service": {
+      "fixture": "orchestrator/tests/fixtures/v3-eval/gamma-service",
+      "description": "Service with config JSON, auth, router, pre-existing tests"
+    }
+  },
+  "tasks": [
+    {
+      "id": "T01",
+      "repo": "alpha-lib",
+      "title": "Fix clamp lower bound",
+      "nature": "bugfix",
+      "difficulty": "easy",
+      "multi_file": true,
+      "requires_investigation": true,
+      "acceptance": [
+        "clamp(-1,0,5)===0",
+        "pre-existing tests still pass",
+        "new test covers lower bound"
+      ]
+    },
+    {
+      "id": "T02",
+      "repo": "alpha-lib",
+      "title": "Add sub() and re-export",
+      "nature": "feature",
+      "difficulty": "easy",
+      "multi_file": true,
+      "acceptance": ["sub(5,2)===3", "exported from index", "tests added"]
+    },
+    {
+      "id": "T03",
+      "repo": "alpha-lib",
+      "title": "Harden formatPair separator",
+      "nature": "behavior_change",
+      "difficulty": "medium",
+      "multi_file": true,
+      "acceptance": ["formatPair uses dash", "test covers new behavior"]
+    },
+    {
+      "id": "T04",
+      "repo": "beta-app",
+      "title": "removeItem deletes at zero",
+      "nature": "bugfix",
+      "difficulty": "medium",
+      "multi_file": true,
+      "requires_investigation": true,
+      "acceptance": ["remove to zero deletes key", "store.del used", "pre-existing tests pass"]
+    },
+    {
+      "id": "T05",
+      "repo": "beta-app",
+      "title": "Free shipping for qty>=10",
+      "nature": "feature",
+      "difficulty": "medium",
+      "multi_file": true,
+      "acceptance": ["shippingCost free at 10+", "existing checkout semantics preserved"]
+    },
+    {
+      "id": "T06",
+      "repo": "beta-app",
+      "title": "Refactor totalItems via store.keys",
+      "nature": "refactor",
+      "difficulty": "medium",
+      "multi_file": true,
+      "acceptance": ["behavior preserved", "uses keys()", "pre-existing tests pass"]
+    },
+    {
+      "id": "T07",
+      "repo": "gamma-service",
+      "title": "Implement /echo route",
+      "nature": "feature",
+      "difficulty": "medium",
+      "multi_file": true,
+      "acceptance": ["echo returns body", "auth enforced", "pre-existing routes intact"]
+    },
+    {
+      "id": "T08",
+      "repo": "gamma-service",
+      "title": "Auth cache short-circuit",
+      "nature": "integration",
+      "difficulty": "hard",
+      "multi_file": false,
+      "requires_investigation": true,
+      "acceptance": ["token cached accepted when flag on", "secret still works", "denied still denied"]
+    },
+    {
+      "id": "T09",
+      "repo": "gamma-service",
+      "title": "Bump version to 1.1.0",
+      "nature": "config_change",
+      "difficulty": "medium",
+      "multi_file": true,
+      "split": "held_out",
+      "acceptance": ["config version 1.1.0", "existing version assertion updated", "new test"]
+    },
+    {
+      "id": "T10",
+      "repo": "beta-app",
+      "title": "Guarantee non-negative shippingCost",
+      "nature": "regression_guard",
+      "difficulty": "easy",
+      "multi_file": true,
+      "split": "held_out",
+      "acceptance": ["shippingCost always >=0", "empty cart returns 0", "pre-existing tests pass"]
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+# Orchestrator local artefacts
+node_modules/
+dist/
+coverage/
+.vite/
+*.tsbuildinfo
+*.log
+.env
+.env.*
+!.env.example

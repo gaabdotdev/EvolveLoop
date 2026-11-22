@@ -1,0 +1,14 @@
+{
+  "name": "smoke-abc-strategies",
+  "description": "Smoke comparison of strategies A/B/C on orchestration + telemetry cases",
+  "suite_id": "engineering-v1",
+  "strategies": [
+    "A_single_agent",
+    "B_evolveloop_no_delegation",
+    "C_evolveloop_adaptive"
+  ],
+  "case_ids": ["BO-ORCH-01", "BO-ORCH-02", "BO-ORCH-05", "BO-TEL-01"],
+  "repetitions": 1,
+  "provider_id": "mock",
+  "model_id": "mock-model"
+}

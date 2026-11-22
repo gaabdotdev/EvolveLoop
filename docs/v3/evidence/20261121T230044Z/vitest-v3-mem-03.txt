@@ -1,0 +1,13 @@
+
+ RUN  v2.1.9 /home/gaab/orca/workspaces/EvolveLoop/seagrass/orchestrator
+
+stdout | tests/unit/v3-mem-03-virtual-memory.test.ts > V3-MEM-03 Virtual Memory (MemGPT paging) > token budget does not grow with 100× history (measured)
+{"gate":"V3-MEM-03","token_budget":800,"baseline_n":4,"scale":100,"history_n":400,"baseline_tokens":656,"final_tokens":795,"growth_ratio":1.2119,"resident":1,"tombstoned":45,"pages_total":46,"naive_full_history_tokens":62245,"TOKEN_BUDGET_100X":"BOUNDED"}
+
+ ✓ tests/unit/v3-mem-03-virtual-memory.test.ts (7 tests) 299ms
+
+ Test Files  1 passed (1)
+      Tests  7 passed (7)
+   Start at  20:00:44
+   Duration  753ms (transform 167ms, setup 12ms, collect 194ms, tests 299ms, environment 0ms, prepare 81ms)
+

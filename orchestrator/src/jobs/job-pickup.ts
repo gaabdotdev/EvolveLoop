@@ -1,6 +1,12 @@
-import { mkdirSync, writeFileSync } from "node:fs";
+import { mkdirSync } from "node:fs";
 import { join, resolve } from "node:path";
+import { resolveOrchestratorRoot } from "../cli/run-engine-env.js";
+import { writeSanitizedJsonFile, writeSanitizedTextFile } from "../evidence/evidence-bus.js";
+import { redactSecrets } from "../evidence/secret-redaction.js";
+import { applyCavemanToBriefingSection } from "../v22/brevity-caveman.js";
 import { JobStore, type SkillJob } from "./job-store.js";
+import { preparePickupSpawnContext, type PickupContextPrepareResult } from "./spawn-pickup-context.js";
+import type { EventBus } from "../events/event-bus.js";
 
 export interface PickupPlan {
   status: "idle" | "ready";
@@ -24,11 +30,28 @@ export function resolvePendingJob(
   return store.listPending()[0] ?? null;
 }
 
-export function buildPickupPrompt(job: SkillJob, jobsDir: string): string {
-  const completeCmd = `cd Cursor/orchestrator && npm run run-jobs -- complete --jobs-dir ${jobsDir} --run-id ${job.run_id} --success --evidence <path-to-evidence.json>`;
-  const failCmd = `cd Cursor/orchestrator && npm run run-jobs -- complete --jobs-dir ${jobsDir} --run-id ${job.run_id} --error "reason"`;
+export interface BuildPickupPromptOptions {
+  /** When set, overrides EVOLVELOOP_BREVITY_CAVEMAN for this build. */
+  caveman?: boolean;
+  /** Precomputed spawn context (invoke path); omitted → computed per call. */
+  spawnContext?: PickupContextPrepareResult;
+}
 
-  return `# SkillJob Pickup — ${job.run_id}
+export function buildPickupPrompt(
+  job: SkillJob,
+  jobsDir: string,
+  orchestratorRoot?: string,
+  options?: BuildPickupPromptOptions,
+): string {
+  const orchRoot = orchestratorRoot ?? resolveOrchestratorRoot();
+  const completeCmd = `cd ${orchRoot} && npm run run-jobs -- complete --jobs-dir ${jobsDir} --run-id ${job.run_id} --success --evidence <path-to-evidence.json>`;
+  const failCmd = `cd ${orchRoot} && npm run run-jobs -- complete --jobs-dir ${jobsDir} --run-id ${job.run_id} --error "reason"`;
+
+  const ctx =
+    options?.spawnContext ??
+    preparePickupSpawnContext(job, jobsDir, { featureId: job.feature_id ?? job.node_id });
+
+  const raw = `# SkillJob Pickup
 
 **Capability:** ${job.capability}  
 **Provider:** ${job.provider_id}  
@@ -39,13 +62,23 @@ export function buildPickupPrompt(job: SkillJob, jobsDir: string): string {
 1. **Ler skill:** \`${job.skill_path}\`
 2. **Executar briefing** abaixo; cumprir Definition of Done
 3. **Emitir evidence** conforme contrato da capability (ex.: \`telemetry/evidence/*.json\`)
-4. **Completar job:**
-   - Sucesso: \`${completeCmd}\`
-   - Falha: \`${failCmd}\`
+4. **Completar job** após evidência (run-id e comandos no briefing)
 
 ## Briefing
 
-${job.briefing}
+**Run desta sessão:** \`${job.run_id}\`
+
+**Completar job:**
+- Sucesso: \`${completeCmd}\`
+- Falha: \`${failCmd}\`
+
+${redactSecrets(job.briefing)}
+
+${ctx.gate_bundle_block}
+
+${ctx.budgeted_context_block}
+
+${ctx.evidence_path ? `## Context budget evidence\n\nRecorded at: \`${ctx.evidence_path}\`\n` : ""}
 
 ## Definition of Done
 
@@ -62,34 +95,42 @@ ${JSON.stringify(job.inputs, null, 2)}
 ---
 *Gerado por @agents/orchestrator run-jobs invoke*
 `;
+  return applyCavemanToBriefingSection(
+    raw,
+    options?.caveman !== undefined ? { enabled: options.caveman } : undefined,
+  ).text;
 }
 
 export function writePickupArtifacts(
   job: SkillJob,
   jobsDir: string,
   promptDir: string,
+  options?: { eventBus?: EventBus; caveman?: boolean },
 ): PickupPlan {
   mkdirSync(promptDir, { recursive: true });
   const promptPath = join(promptDir, "current-job.md");
-  const prompt = buildPickupPrompt(job, jobsDir);
-  writeFileSync(promptPath, prompt, "utf-8");
-  writeFileSync(
-    join(promptDir, "current-job.json"),
-    JSON.stringify(
-      {
-        run_id: job.run_id,
-        skill_path: job.skill_path,
-        capability: job.capability,
-        provider_id: job.provider_id,
-        jobs_dir: jobsDir,
-        prompt_path: promptPath,
-        picked_at: new Date().toISOString(),
-      },
-      null,
-      2,
-    ),
-    "utf-8",
-  );
+  const spawnContext = preparePickupSpawnContext(job, jobsDir, {
+    eventBus: options?.eventBus,
+    featureId: job.feature_id ?? job.node_id,
+  });
+  const prompt = buildPickupPrompt(job, jobsDir, undefined, {
+    spawnContext,
+    caveman: options?.caveman,
+  });
+  writeSanitizedTextFile(promptPath, prompt);
+  writeSanitizedJsonFile(join(promptDir, "current-job.json"), {
+    run_id: job.run_id,
+    skill_path: job.skill_path,
+    capability: job.capability,
+    provider_id: job.provider_id,
+    jobs_dir: jobsDir,
+    prompt_path: promptPath,
+    briefing: job.briefing,
+    picked_at: new Date().toISOString(),
+    context_owner_id: spawnContext.context_owner_id,
+    context_budget_evidence: spawnContext.evidence_path,
+    context_budget_telemetry: spawnContext.telemetry,
+  });
 
   return {
     status: "ready",
@@ -107,6 +148,8 @@ export function invokePickup(options: {
   jobsDir: string;
   promptDir: string;
   runId?: string;
+  eventBus?: EventBus;
+  caveman?: boolean;
 }): PickupPlan {
   const jobsDir = resolve(options.jobsDir);
   const store = new JobStore(jobsDir);
@@ -114,5 +157,8 @@ export function invokePickup(options: {
   if (!job) {
     return { status: "idle", jobs_dir: jobsDir };
   }
-  return writePickupArtifacts(job, jobsDir, resolve(options.promptDir));
+  return writePickupArtifacts(job, jobsDir, resolve(options.promptDir), {
+    eventBus: options.eventBus,
+    caveman: options.caveman,
+  });
 }

@@ -1,0 +1,17 @@
+{
+  "cycle_id": "v3-phase0-c4",
+  "commands": [
+    "evolve continuity handoff --work-id w --agent-id a --trigger LIMIT_REACHED --reason ...",
+    "evolve continuity apply --handoff-id ho-...",
+    "evolve exec run --work-id w --task-id implement-backend --ir path.yaml --provider-mode real"
+  ],
+  "tests": [
+    "tests/unit/continuity-handoff.test.ts",
+    "tests/unit/execution-bridge.test.ts"
+  ],
+  "limitations": [
+    "no Claude/Codex/Cursor native handoff yet",
+    "exec requires Capability IR path",
+    "jobsDir only when cursor-skill providers are in the IR set"
+  ]
+}

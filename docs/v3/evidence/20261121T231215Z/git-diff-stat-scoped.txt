@@ -1,0 +1,22 @@
+# Scoped paths for M5-V3-MEM-05
+
+## New / touched (this task)
+  483 /home/gaab/orca/workspaces/EvolveLoop/seagrass/orchestrator/src/v3/memory/bitemporal-graph.ts
+  324 /home/gaab/orca/workspaces/EvolveLoop/seagrass/orchestrator/tests/unit/v3-mem-05-bitemporal.test.ts
+  229 /home/gaab/orca/workspaces/EvolveLoop/seagrass/orchestrator/src/v3/memory/index.ts
+ 1036 total
+
+## git status (scoped)
+ M .agent_history.md
+ M .ai/log.md
+?? docs/v3/evidence/20261121T231215Z/
+?? docs/v3/evidence/LATEST_PATH.txt
+?? docs/v3/evidence/latest
+?? orchestrator/src/v3/memory/bitemporal-graph.ts
+?? orchestrator/src/v3/memory/index.ts
+?? orchestrator/tests/unit/v3-mem-05-bitemporal.test.ts
+
+## git diff --stat (tracked related)
+ .agent_history.md | 294 +++++++++++++++++++++++++++++++++++++++++++++
+ .ai/log.md        | 349 ++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 643 insertions(+)

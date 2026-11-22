@@ -1,0 +1,45 @@
+{
+  "kind": "v33_final_audit_gate",
+  "at": "2026-11-11T22:19:32Z",
+  "pre_freeze_git_head": "51e5bed67a96d8b10597602f938c74df9a6fe75c",
+  "branch": "release/v2.1-freeze-preparation",
+  "v3_content_fingerprint_sha256": "3cc883f2b28ed1cbdd5609f5dac2cb1bbb20739c37afdf46532ac6d7d9a8f2b1",
+  "commands": [
+    "npx tsc --noEmit (exit 0)",
+    "npx vitest run [13 files v33-related] \u2192 35/35 pass",
+    "evolve battery run \u2192 passed=true (5/5 scenarios)"
+  ],
+  "suite": {
+    "files": 13,
+    "tests_passed": 35,
+    "tests_failed": 0,
+    "skipped": 0
+  },
+  "battery": {
+    "passed": true,
+    "log": "/tmp/v33-battery.json"
+  },
+  "audit_findings_fixed": [
+    "adapters-catalog expected execution_bridge none; updated to cli_process for claude-code",
+    "applyCrossProvider now releases source locks and issues substitute fencing token",
+    "added v33-consent-ownership tests (no silent real spawn without consent)"
+  ],
+  "criteria": {
+    "tests_reproduced": true,
+    "e2e_multiagent": true,
+    "battery": true,
+    "consent_blocks_spawn": true,
+    "auto_swap_ownership_fence": true,
+    "limitations_documented": true
+  },
+  "limitations": [
+    "no exactly-once",
+    "no IDE session kill",
+    "worktree != OS sandbox",
+    "real harness spawn requires EVOLVELOOP_HARNESS_CONSENT=true + provider_mode=real",
+    "E2E uses Core coordination + dry-run harness; not live paid Claude/Codex sessions"
+  ],
+  "status": "PASS",
+  "freeze_commit": "422132dee88e41bbeacf882fd00198582c1b01fc",
+  "freeze_tag": "v3.3-freeze"
+}

@@ -1,0 +1,7 @@
+orchestrator/scripts/v3-exit-03-scale-probe.mts (new)
+docs/v3/evidence/20261122T004621Z/ (new evidence pack)
+  files: 16
+  size: 80K
+docs/v3/evidence/latest -> 20261122T004621Z
+docs/v3/evidence/LATEST_PATH.txt -> 20261122T004621Z
+.ai/log.md +492 -0

@@ -1,0 +1,12 @@
+
+ RUN  v2.1.9 /home/gaab/orca/workspaces/EvolveLoop/seagrass/orchestrator
+
+ ✓ tests/unit/v3-test-01-metamorphic.test.ts (11 tests) 16ms
+ ✓ tests/unit/v3-test-02-dst.test.ts (7 tests) 536ms
+   ✓ V3-TEST-02 DST — runScenarios gate (≥10k) > runScenarios(seed, 10000) → 0 deadlock, 0 split-brain + seed reproducibility 423ms
+
+ Test Files  2 passed (2)
+      Tests  18 passed (18)
+   Start at  21:34:29
+   Duration  1.13s (transform 278ms, setup 19ms, collect 601ms, tests 552ms, environment 1ms, prepare 149ms)
+

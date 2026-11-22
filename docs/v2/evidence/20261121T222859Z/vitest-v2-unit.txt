@@ -1,0 +1,27 @@
+
+ RUN  v2.1.9 /home/gaab/orca/workspaces/EvolveLoop/seagrass/orchestrator
+
+ ✓ tests/unit/v2-int-03-agent-profiles.test.ts (6 tests) 23ms
+ ✓ tests/unit/v2-sec-02-credential-policies.test.ts (20 tests) 15ms
+ ✓ tests/unit/v2-mem-01-consolidation.test.ts (10 tests) 16ms
+ ✓ tests/unit/v2-orch-01-file-ownership.test.ts (8 tests) 28ms
+ ✓ tests/unit/v2-int-04-delegated-authority.test.ts (8 tests) 11ms
+ ✓ tests/unit/v2-sec-01-quarantine.test.ts (8 tests) 28ms
+ ✓ tests/unit/v2-evol-01-evolution-pipeline.test.ts (10 tests) 11ms
+ ✓ tests/unit/v2-int-02-laya-benchmark.test.ts (8 tests) 13ms
+ ✓ tests/unit/v2-int-01-decision-engine.test.ts (8 tests) 9ms
+(node:2174379) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ tests/unit/v2-orch-03-idempotency-saga.test.ts (8 tests) 97ms
+ ✓ tests/unit/v2-orch-02-merge-queue.test.ts (7 tests) 152ms
+ ✓ tests/unit/v2-mem-02-hybrid-graph.test.ts (8 tests) 44ms
+ ✓ tests/unit/v2-mem-03-memory-eval.test.ts (7 tests) 19ms
+ ✓ tests/unit/v2-orch-04-backpressure.test.ts (7 tests) 23ms
+ ✓ tests/unit/v2-qual-01-independent-review.test.ts (10 tests) 28ms
+ ✓ tests/unit/v2-qual-02-mutation.test.ts (12 tests) 33ms
+
+ Test Files  16 passed (16)
+      Tests  145 passed (145)
+   Start at  19:30:40
+   Duration  1.50s (transform 2.46s, setup 299ms, collect 6.44s, tests 549ms, environment 3ms, prepare 1.36s)
+

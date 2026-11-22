@@ -20,14 +20,19 @@ agent-setup/.pytest_cache/
 *.pyc
 *.tsbuildinfo
 
-# Local memory / sessions / workspaces
-memory/
+# Local memory artefacts (repo-root only) — NOT source under orchestrator/src/**/memory/
+/memory/
 *-workspace/
 security-workspace/
 **/runs/
 .cursor/pickup/
 orchestrator/jobs/
 orchestrator/data/
+orchestrator/v35-live-e2e-data/
+graphify-out/
+
+# V0 durable runtime state (SQLite WAL)
+.evolveloop/
 
 # Prune / scratch
 .prune-snapshots/
@@ -45,3 +50,14 @@ mcp.json.bak.*
 # Personal profile outputs (generated)
 profiles/gaabtype/paths.local.yaml
 profiles/*/local.override.yaml
+
+# V3.6 live run ephemeral data-dir
+orchestrator/v36-live-ops/
+orchestrator/v36-live-run/
+
+# Local absolute skill symlinks (machine-specific); agents/rules stay tracked
+.agents/skills/
+
+# Consolidation hygiene (exports / caches)
+*.zip
+.vite/

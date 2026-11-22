@@ -1,0 +1,187 @@
+{
+  "cells": [
+    {
+      "agent": "cursor",
+      "model": "bonsai-64k:latest",
+      "protocol": "openai_compatible",
+      "status": "enumerated",
+      "notes": "cell covered by protocol build/parse + adapter id presence"
+    },
+    {
+      "agent": "cursor",
+      "model": "openrouter/auto-cheap",
+      "protocol": "openai_compatible",
+      "status": "enumerated",
+      "notes": "cell covered by protocol build/parse + adapter id presence"
+    },
+    {
+      "agent": "cursor",
+      "model": "openrouter/frontier",
+      "protocol": "openai_compatible",
+      "status": "enumerated",
+      "notes": "cell covered by protocol build/parse + adapter id presence"
+    },
+    {
+      "agent": "cursor",
+      "model": "bonsai-64k:latest",
+      "protocol": "anthropic",
+      "status": "enumerated",
+      "notes": "cell covered by protocol build/parse + adapter id presence"
+    },
+    {
+      "agent": "cursor",
+      "model": "openrouter/auto-cheap",
+      "protocol": "anthropic",
+      "status": "enumerated",
+      "notes": "cell covered by protocol build/parse + adapter id presence"
+    },
+    {
+      "agent": "cursor",
+      "model": "openrouter/frontier",
+      "protocol": "anthropic",
+      "status": "enumerated",
+      "notes": "cell covered by protocol build/parse + adapter id presence"
+    },
+    {
+      "agent": "cursor",
+      "model": "bonsai-64k:latest",
+      "protocol": "responses",
+      "status": "enumerated",
+      "notes": "cell covered by protocol build/parse + adapter id presence"
+    },
+    {
+      "agent": "cursor",
+      "model": "openrouter/auto-cheap",
+      "protocol": "responses",
+      "status": "enumerated",
+      "notes": "cell covered by protocol build/parse + adapter id presence"
+    },
+    {
+      "agent": "cursor",
+      "model": "openrouter/frontier",
+      "protocol": "responses",
+      "status": "enumerated",
+      "notes": "cell covered by protocol build/parse + adapter id presence"
+    },
+    {
+      "agent": "cursor",
+      "model": "bonsai-64k:latest",
+      "protocol": "gemini",
+      "status": "enumerated",
+      "notes": "cell covered by protocol build/parse + adapter id presence"
+    },
+    {
+      "agent": "cursor",
+      "model": "openrouter/auto-cheap",
+      "protocol": "gemini",
+      "status": "enumerated",
+      "notes": "cell covered by protocol build/parse + adapter id presence"
+    },
+    {
+      "agent": "cursor",
+      "model": "openrouter/frontier",
+      "protocol": "gemini",
+      "status": "enumerated",
+      "notes": "cell covered by protocol build/parse + adapter id presence"
+    },
+    {
+      "agent": "antigravity",
+      "model": "bonsai-64k:latest",
+      "protocol": "openai_compatible",
+      "status": "enumerated",
+      "notes": "cell covered by protocol build/parse + adapter id presence"
+    },
+    {
+      "agent": "antigravity",
+      "model": "openrouter/auto-cheap",
+      "protocol": "openai_compatible",
+      "status": "enumerated",
+      "notes": "cell covered by protocol build/parse + adapter id presence"
+    },
+    {
+      "agent": "antigravity",
+      "model": "openrouter/frontier",
+      "protocol": "openai_compatible",
+      "status": "enumerated",
+      "notes": "cell covered by protocol build/parse + adapter id presence"
+    },
+    {
+      "agent": "antigravity",
+      "model": "bonsai-64k:latest",
+      "protocol": "anthropic",
+      "status": "enumerated",
+      "notes": "cell covered by protocol build/parse + adapter id presence"
+    },
+    {
+      "agent": "antigravity",
+      "model": "openrouter/auto-cheap",
+      "protocol": "anthropic",
+      "status": "enumerated",
+      "notes": "cell covered by protocol build/parse + adapter id presence"
+    },
+    {
+      "agent": "antigravity",
+      "model": "openrouter/frontier",
+      "protocol": "anthropic",
+      "status": "enumerated",
+      "notes": "cell covered by protocol build/parse + adapter id presence"
+    },
+    {
+      "agent": "antigravity",
+      "model": "bonsai-64k:latest",
+      "protocol": "responses",
+      "status": "enumerated",
+      "notes": "cell covered by protocol build/parse + adapter id presence"
+    },
+    {
+      "agent": "antigravity",
+      "model": "openrouter/auto-cheap",
+      "protocol": "responses",
+      "status": "enumerated",
+      "notes": "cell covered by protocol build/parse + adapter id presence"
+    },
+    {
+      "agent": "antigravity",
+      "model": "openrouter/frontier",
+      "protocol": "responses",
+      "status": "enumerated",
+      "notes": "cell covered by protocol build/parse + adapter id presence"
+    },
+    {
+      "agent": "antigravity",
+      "model": "bonsai-64k:latest",
+      "protocol": "gemini",
+      "status": "enumerated",
+      "notes": "cell covered by protocol build/parse + adapter id presence"
+    },
+    {
+      "agent": "antigravity",
+      "model": "openrouter/auto-cheap",
+      "protocol": "gemini",
+      "status": "enumerated",
+      "notes": "cell covered by protocol build/parse + adapter id presence"
+    },
+    {
+      "agent": "antigravity",
+      "model": "openrouter/frontier",
+      "protocol": "gemini",
+      "status": "enumerated",
+      "notes": "cell covered by protocol build/parse + adapter id presence"
+    }
+  ],
+  "agents": [
+    "cursor",
+    "antigravity"
+  ],
+  "protocols": [
+    "openai_compatible",
+    "anthropic",
+    "responses",
+    "gemini"
+  ],
+  "models": [
+    "bonsai-64k:latest",
+    "openrouter/auto-cheap",
+    "openrouter/frontier"
+  ]
+}

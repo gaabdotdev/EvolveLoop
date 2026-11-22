@@ -1,0 +1,8 @@
+{
+  "base_url": "http://localhost:3001/v1",
+  "state": "needsKey",
+  "message": "catalog HTTP 401",
+  "models_count": 0,
+  "honest": true,
+  "invented_ready": false
+}

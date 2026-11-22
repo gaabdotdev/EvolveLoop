@@ -1,0 +1,78 @@
+{
+  "kind": "gate.v3-harnesses",
+  "at": "2026-11-11T22:37:16.451Z",
+  "commit": "06842669293a5edcb6b0eee25f1631287d233e2d",
+  "consent": false,
+  "matrix": [
+    {
+      "adapter_id": "cursor",
+      "class": "PARTIAL",
+      "can_invoke": true,
+      "execution_bridge": "jobs_pickup",
+      "notes": [
+        "execution_bridge is jobs_pickup via CursorSkillProvider, not a full Cursor Agent SDK driver",
+        "authority over host-internal tools cannot be asserted by Core",
+        "invokes ExecutionBridge (PLAN_APPROVED gated)",
+        "cursor-skill providers use JobStore pickup — not a live IDE agent API",
+        "host-internal tools remain incompletely mediated",
+        "jobs_pickup / ExecutionBridge — not full IDE agent API"
+      ]
+    },
+    {
+      "adapter_id": "claude-code",
+      "class": "DRY_RUN",
+      "can_invoke": true,
+      "execution_bridge": "cli_process",
+      "cli_available": true,
+      "notes": [
+        "Default invoke is dry-run (prompt file); real spawn needs EVOLVELOOP_HARNESS_CONSENT=true",
+        "can_invoke false when claude CLI absent from PATH",
+        "Does not control IDE-attached Claude sessions",
+        "Claude Code CLI bridge (print mode)",
+        "Does not claim IDE session injection or full permission mediation",
+        "Cancel only for Core-owned spawned PIDs (process-sessions)",
+        "cli=/home/gaab/.local/bin/claude version_hint=2.1.302 (Claude Code)",
+        "real spawn requires provider_mode=real + EVOLVELOOP_HARNESS_CONSENT=true",
+        "dry-run writes prompt package under --data-dir/harness-prompts without calling network",
+        "Default invoke writes prompt package; SUPPORTED only after consented real spawn verified"
+      ]
+    },
+    {
+      "adapter_id": "codex",
+      "class": "PROBE_ONLY",
+      "can_invoke": false,
+      "execution_bridge": "none",
+      "cli_available": false,
+      "notes": [
+        "No native execution bridge in Core yet",
+        "codex CLI not on PATH",
+        "invoke() always returns blocked — fail-closed",
+        "operator may export Handoff Package for manual resume outside Core",
+        "codex not on PATH"
+      ]
+    },
+    {
+      "adapter_id": "antigravity",
+      "class": "PROBE_ONLY",
+      "can_invoke": false,
+      "execution_bridge": "none",
+      "cli_available": false,
+      "notes": [
+        "No native execution bridge in Core yet",
+        "antigravity CLI not on PATH",
+        "invoke() always returns blocked — fail-closed",
+        "operator may export Handoff Package for manual resume outside Core",
+        "antigravity not on PATH"
+      ]
+    }
+  ],
+  "cursor_smoke": {
+    "adapter": "cursor",
+    "class": "PARTIAL",
+    "can_invoke": true,
+    "smoke": "PASS",
+    "detail": "invokes ExecutionBridge (PLAN_APPROVED gated); cursor-skill providers use JobStore pickup — not a live IDE agent API; host-internal tools remain incompletely mediated"
+  },
+  "false_supported": [],
+  "status": "PASS"
+}

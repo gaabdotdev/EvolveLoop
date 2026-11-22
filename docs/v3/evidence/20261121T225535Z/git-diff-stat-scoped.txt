@@ -1,0 +1,13 @@
+# Scoped paths for M2-V3-MEM-02 (untracked on branch — git diff alone empty)
+
+  689 orchestrator/src/v3/memory/pyramid-index.ts
+  173 orchestrator/src/v3/memory/index.ts
+  163 orchestrator/tests/unit/v3-mem-02-pyramid.test.ts
+ 1025 total
+
+?? docs/v3/evidence/20261121T225535Z/
+?? docs/v3/evidence/LATEST_PATH.txt
+?? docs/v3/evidence/latest
+?? orchestrator/src/v3/memory/index.ts
+?? orchestrator/src/v3/memory/pyramid-index.ts
+?? orchestrator/tests/unit/v3-mem-02-pyramid.test.ts

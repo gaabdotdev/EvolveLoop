@@ -1,0 +1,10 @@
+
+ RUN  v2.1.9 /home/gaab/orca/workspaces/EvolveLoop/seagrass/orchestrator
+
+ ✓ tests/unit/v3-sec-02-dlp-egress.test.ts (23 tests) 18ms
+
+ Test Files  1 passed (1)
+      Tests  23 passed (23)
+   Start at  21:03:24
+   Duration  406ms (transform 107ms, setup 12ms, collect 111ms, tests 18ms, environment 0ms, prepare 68ms)
+

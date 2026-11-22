@@ -1,0 +1,16 @@
+{
+  "entries": [
+    {
+      "path": ".cursor/skills"
+    },
+    {
+      "path": "global-skills"
+    },
+    {
+      "path": "~/.cursor/skills"
+    },
+    {
+      "path": "~/.agents/skills"
+    }
+  ]
+}

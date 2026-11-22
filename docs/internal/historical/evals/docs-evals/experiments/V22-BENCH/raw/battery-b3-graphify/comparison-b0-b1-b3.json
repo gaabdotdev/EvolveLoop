@@ -1,0 +1,554 @@
+{
+  "H07_H18_dev": {
+    "label": "held-out dev \u2014 OFFICIAL_WIKI_GROUND hybrid (run-01)",
+    "compare_arms": [
+      "B0",
+      "B1",
+      "B3"
+    ],
+    "by_arm": {
+      "B0": {
+        "tasks": 12,
+        "recall_eq_1": 7,
+        "median_paths": 18.5,
+        "median_tokens": 21283.5,
+        "median_latency_ms": 75.5
+      },
+      "B1": {
+        "tasks": 12,
+        "recall_eq_1": 9,
+        "median_paths": 8.5,
+        "median_tokens": 20462.5,
+        "median_latency_ms": 1639.0
+      },
+      "B3": {
+        "tasks": 12,
+        "recall_eq_1": 9,
+        "median_paths": 9.0,
+        "median_tokens": 20521.5,
+        "median_latency_ms": 750.0
+      }
+    },
+    "per_task": [
+      {
+        "task_id": "H07",
+        "split": "H07_H18_dev",
+        "arm": "B0",
+        "recall": 0.0,
+        "paths": 38,
+        "tokens": 21795,
+        "latency_ms": 161
+      },
+      {
+        "task_id": "H07",
+        "split": "H07_H18_dev",
+        "arm": "B1",
+        "recall": 1.0,
+        "paths": 9,
+        "tokens": 21530,
+        "latency_ms": 1672
+      },
+      {
+        "task_id": "H07",
+        "split": "H07_H18_dev",
+        "arm": "B3",
+        "recall": 0.0,
+        "paths": 11,
+        "tokens": 16039,
+        "latency_ms": 745
+      },
+      {
+        "task_id": "H08",
+        "split": "H07_H18_dev",
+        "arm": "B0",
+        "recall": 0.0,
+        "paths": 9,
+        "tokens": 20531,
+        "latency_ms": 49
+      },
+      {
+        "task_id": "H08",
+        "split": "H07_H18_dev",
+        "arm": "B1",
+        "recall": 0.0,
+        "paths": 5,
+        "tokens": 18555,
+        "latency_ms": 1631
+      },
+      {
+        "task_id": "H08",
+        "split": "H07_H18_dev",
+        "arm": "B3",
+        "recall": 1.0,
+        "paths": 12,
+        "tokens": 21278,
+        "latency_ms": 853
+      },
+      {
+        "task_id": "H09",
+        "split": "H07_H18_dev",
+        "arm": "B0",
+        "recall": 1.0,
+        "paths": 24,
+        "tokens": 20986,
+        "latency_ms": 78
+      },
+      {
+        "task_id": "H09",
+        "split": "H07_H18_dev",
+        "arm": "B1",
+        "recall": 1.0,
+        "paths": 9,
+        "tokens": 21425,
+        "latency_ms": 1590
+      },
+      {
+        "task_id": "H09",
+        "split": "H07_H18_dev",
+        "arm": "B3",
+        "recall": 1.0,
+        "paths": 9,
+        "tokens": 19995,
+        "latency_ms": 723
+      },
+      {
+        "task_id": "H10",
+        "split": "H07_H18_dev",
+        "arm": "B0",
+        "recall": 1.0,
+        "paths": 13,
+        "tokens": 16643,
+        "latency_ms": 49
+      },
+      {
+        "task_id": "H10",
+        "split": "H07_H18_dev",
+        "arm": "B1",
+        "recall": 1.0,
+        "paths": 7,
+        "tokens": 20570,
+        "latency_ms": 1630
+      },
+      {
+        "task_id": "H10",
+        "split": "H07_H18_dev",
+        "arm": "B3",
+        "recall": 1.0,
+        "paths": 4,
+        "tokens": 21449,
+        "latency_ms": 755
+      },
+      {
+        "task_id": "H11",
+        "split": "H07_H18_dev",
+        "arm": "B0",
+        "recall": 0.0,
+        "paths": 41,
+        "tokens": 21370,
+        "latency_ms": 164
+      },
+      {
+        "task_id": "H11",
+        "split": "H07_H18_dev",
+        "arm": "B1",
+        "recall": 0.0,
+        "paths": 7,
+        "tokens": 20241,
+        "latency_ms": 1574
+      },
+      {
+        "task_id": "H11",
+        "split": "H07_H18_dev",
+        "arm": "B3",
+        "recall": 1.0,
+        "paths": 10,
+        "tokens": 21369,
+        "latency_ms": 709
+      },
+      {
+        "task_id": "H12",
+        "split": "H07_H18_dev",
+        "arm": "B0",
+        "recall": 1.0,
+        "paths": 9,
+        "tokens": 12652,
+        "latency_ms": 46
+      },
+      {
+        "task_id": "H12",
+        "split": "H07_H18_dev",
+        "arm": "B1",
+        "recall": 0.0,
+        "paths": 10,
+        "tokens": 20417,
+        "latency_ms": 1613
+      },
+      {
+        "task_id": "H12",
+        "split": "H07_H18_dev",
+        "arm": "B3",
+        "recall": 1.0,
+        "paths": 9,
+        "tokens": 21778,
+        "latency_ms": 789
+      },
+      {
+        "task_id": "H13",
+        "split": "H07_H18_dev",
+        "arm": "B0",
+        "recall": 1.0,
+        "paths": 19,
+        "tokens": 21197,
+        "latency_ms": 90
+      },
+      {
+        "task_id": "H13",
+        "split": "H07_H18_dev",
+        "arm": "B1",
+        "recall": 1.0,
+        "paths": 9,
+        "tokens": 21706,
+        "latency_ms": 1748
+      },
+      {
+        "task_id": "H13",
+        "split": "H07_H18_dev",
+        "arm": "B3",
+        "recall": 1.0,
+        "paths": 3,
+        "tokens": 15879,
+        "latency_ms": 706
+      },
+      {
+        "task_id": "H14",
+        "split": "H07_H18_dev",
+        "arm": "B0",
+        "recall": 1.0,
+        "paths": 12,
+        "tokens": 21925,
+        "latency_ms": 65
+      },
+      {
+        "task_id": "H14",
+        "split": "H07_H18_dev",
+        "arm": "B1",
+        "recall": 1.0,
+        "paths": 7,
+        "tokens": 21874,
+        "latency_ms": 1647
+      },
+      {
+        "task_id": "H14",
+        "split": "H07_H18_dev",
+        "arm": "B3",
+        "recall": 1.0,
+        "paths": 8,
+        "tokens": 20590,
+        "latency_ms": 776
+      },
+      {
+        "task_id": "H15",
+        "split": "H07_H18_dev",
+        "arm": "B0",
+        "recall": 0.0,
+        "paths": 41,
+        "tokens": 21370,
+        "latency_ms": 155
+      },
+      {
+        "task_id": "H15",
+        "split": "H07_H18_dev",
+        "arm": "B1",
+        "recall": 1.0,
+        "paths": 10,
+        "tokens": 19471,
+        "latency_ms": 1663
+      },
+      {
+        "task_id": "H15",
+        "split": "H07_H18_dev",
+        "arm": "B3",
+        "recall": 1.0,
+        "paths": 9,
+        "tokens": 19802,
+        "latency_ms": 815
+      },
+      {
+        "task_id": "H16",
+        "split": "H07_H18_dev",
+        "arm": "B0",
+        "recall": 1.0,
+        "paths": 16,
+        "tokens": 19804,
+        "latency_ms": 62
+      },
+      {
+        "task_id": "H16",
+        "split": "H07_H18_dev",
+        "arm": "B1",
+        "recall": 1.0,
+        "paths": 8,
+        "tokens": 19651,
+        "latency_ms": 1657
+      },
+      {
+        "task_id": "H16",
+        "split": "H07_H18_dev",
+        "arm": "B3",
+        "recall": 0.0,
+        "paths": 12,
+        "tokens": 20453,
+        "latency_ms": 687
+      },
+      {
+        "task_id": "H17",
+        "split": "H07_H18_dev",
+        "arm": "B0",
+        "recall": 1.0,
+        "paths": 18,
+        "tokens": 21674,
+        "latency_ms": 73
+      },
+      {
+        "task_id": "H17",
+        "split": "H07_H18_dev",
+        "arm": "B1",
+        "recall": 1.0,
+        "paths": 16,
+        "tokens": 19155,
+        "latency_ms": 3234
+      },
+      {
+        "task_id": "H17",
+        "split": "H07_H18_dev",
+        "arm": "B3",
+        "recall": 1.0,
+        "paths": 8,
+        "tokens": 21780,
+        "latency_ms": 695
+      },
+      {
+        "task_id": "H18",
+        "split": "H07_H18_dev",
+        "arm": "B0",
+        "recall": 0.0,
+        "paths": 37,
+        "tokens": 21610,
+        "latency_ms": 139
+      },
+      {
+        "task_id": "H18",
+        "split": "H07_H18_dev",
+        "arm": "B1",
+        "recall": 1.0,
+        "paths": 4,
+        "tokens": 20508,
+        "latency_ms": 1605
+      },
+      {
+        "task_id": "H18",
+        "split": "H07_H18_dev",
+        "arm": "B3",
+        "recall": 0.0,
+        "paths": 7,
+        "tokens": 17069,
+        "latency_ms": 766
+      }
+    ]
+  },
+  "H19_H24_test": {
+    "label": "held-out test \u2014 OFFICIAL_WIKI_GROUND hybrid (run-01)",
+    "compare_arms": [
+      "B0",
+      "B1",
+      "B3"
+    ],
+    "by_arm": {
+      "B0": {
+        "tasks": 6,
+        "recall_eq_1": 4,
+        "median_paths": 19.5,
+        "median_tokens": 20098.5,
+        "median_latency_ms": 86.5
+      },
+      "B1": {
+        "tasks": 6,
+        "recall_eq_1": 5,
+        "median_paths": 7.5,
+        "median_tokens": 21531.0,
+        "median_latency_ms": 1653.5
+      },
+      "B3": {
+        "tasks": 6,
+        "recall_eq_1": 6,
+        "median_paths": 10.5,
+        "median_tokens": 20699.0,
+        "median_latency_ms": 723.5
+      }
+    },
+    "per_task": [
+      {
+        "task_id": "H19",
+        "split": "H19_H24_test",
+        "arm": "B0",
+        "recall": 1.0,
+        "paths": 18,
+        "tokens": 18509,
+        "latency_ms": 85
+      },
+      {
+        "task_id": "H19",
+        "split": "H19_H24_test",
+        "arm": "B1",
+        "recall": 0.0,
+        "paths": 7,
+        "tokens": 21461,
+        "latency_ms": 1627
+      },
+      {
+        "task_id": "H19",
+        "split": "H19_H24_test",
+        "arm": "B3",
+        "recall": 1.0,
+        "paths": 4,
+        "tokens": 16751,
+        "latency_ms": 674
+      },
+      {
+        "task_id": "H20",
+        "split": "H19_H24_test",
+        "arm": "B0",
+        "recall": 1.0,
+        "paths": 10,
+        "tokens": 17831,
+        "latency_ms": 56
+      },
+      {
+        "task_id": "H20",
+        "split": "H19_H24_test",
+        "arm": "B1",
+        "recall": 1.0,
+        "paths": 8,
+        "tokens": 21952,
+        "latency_ms": 1737
+      },
+      {
+        "task_id": "H20",
+        "split": "H19_H24_test",
+        "arm": "B3",
+        "recall": 1.0,
+        "paths": 17,
+        "tokens": 20276,
+        "latency_ms": 736
+      },
+      {
+        "task_id": "H21",
+        "split": "H19_H24_test",
+        "arm": "B0",
+        "recall": 1.0,
+        "paths": 32,
+        "tokens": 21308,
+        "latency_ms": 130
+      },
+      {
+        "task_id": "H21",
+        "split": "H19_H24_test",
+        "arm": "B1",
+        "recall": 1.0,
+        "paths": 5,
+        "tokens": 21601,
+        "latency_ms": 1654
+      },
+      {
+        "task_id": "H21",
+        "split": "H19_H24_test",
+        "arm": "B3",
+        "recall": 1.0,
+        "paths": 7,
+        "tokens": 21122,
+        "latency_ms": 785
+      },
+      {
+        "task_id": "H22",
+        "split": "H19_H24_test",
+        "arm": "B0",
+        "recall": 0.0,
+        "paths": 5,
+        "tokens": 19734,
+        "latency_ms": 46
+      },
+      {
+        "task_id": "H22",
+        "split": "H19_H24_test",
+        "arm": "B1",
+        "recall": 1.0,
+        "paths": 7,
+        "tokens": 20357,
+        "latency_ms": 1737
+      },
+      {
+        "task_id": "H22",
+        "split": "H19_H24_test",
+        "arm": "B3",
+        "recall": 1.0,
+        "paths": 14,
+        "tokens": 21171,
+        "latency_ms": 704
+      },
+      {
+        "task_id": "H23",
+        "split": "H19_H24_test",
+        "arm": "B0",
+        "recall": 1.0,
+        "paths": 21,
+        "tokens": 21564,
+        "latency_ms": 88
+      },
+      {
+        "task_id": "H23",
+        "split": "H19_H24_test",
+        "arm": "B1",
+        "recall": 1.0,
+        "paths": 16,
+        "tokens": 21364,
+        "latency_ms": 1653
+      },
+      {
+        "task_id": "H23",
+        "split": "H19_H24_test",
+        "arm": "B3",
+        "recall": 1.0,
+        "paths": 5,
+        "tokens": 18588,
+        "latency_ms": 711
+      },
+      {
+        "task_id": "H24",
+        "split": "H19_H24_test",
+        "arm": "B0",
+        "recall": 0.0,
+        "paths": 27,
+        "tokens": 20463,
+        "latency_ms": 103
+      },
+      {
+        "task_id": "H24",
+        "split": "H19_H24_test",
+        "arm": "B1",
+        "recall": 1.0,
+        "paths": 11,
+        "tokens": 21645,
+        "latency_ms": 1627
+      },
+      {
+        "task_id": "H24",
+        "split": "H19_H24_test",
+        "arm": "B3",
+        "recall": 1.0,
+        "paths": 19,
+        "tokens": 21416,
+        "latency_ms": 841
+      }
+    ]
+  }
+}

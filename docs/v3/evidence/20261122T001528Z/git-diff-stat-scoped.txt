@@ -1,0 +1,7 @@
+=== tracked diff ===
+ orchestrator/src/v3/security/index.ts | 9 +++++++++
+ 1 file changed, 9 insertions(+)
+=== untracked (new) ===
+  701 orchestrator/src/v3/security/redteam-continuous.ts
+  179 orchestrator/tests/unit/v3-sec-04-redteam.test.ts
+  880 total

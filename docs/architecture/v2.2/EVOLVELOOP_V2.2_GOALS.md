@@ -1,0 +1,267 @@
+# EvolveLoop V2.2 — Metas oficiais (produto)
+
+| Campo | Valor |
+|-------|-------|
+| **task_id** | V22-T2-goals-docs |
+| **Base normativa** | `docs/research/evolveloop-v2.2/09-v2.2-proposed-scope.md` validado contra inventário V22-T1 |
+| **Checkout de referência** | `release/v2.1-freeze-preparation` @ `28ab56ce091fc25edbf67e5106268580becff2b2` |
+| **Política numérica (D2)** | Nenhum alvo percentual ou multiplicador como gate sem baseline B0/B1; métricas de otimização = `PENDING_BASELINE` até calibração |
+
+## Visão
+
+A V2.2 torna **conhecimento por projeto** e **recuperação com orçamento** operáveis e **medíveis**, sem antecipar a V3 (World Model, Agency, Memory Trust em runtime). O substrato V2 (`KnowledgeBackend`, `MemoryStore`, checkpoint, Capability IR → Evidence) permanece; a entrega é documentação, convenções, harness e gates verificáveis — não um segundo knowledge store nem compaction destrutiva no hot path.
+
+## Problemas que a V2.2 resolve
+
+1. **Ownership do contexto de trabalho** indefinido — ADR-DR-0005 adia compaction; ADR-DR-0002 adia budget de skills no runtime (`docs/architecture/finalization/ADR-INDEX.md`).
+2. **Hierarquia de fonte de verdade** não operacionalizada — código, `.ai/`, vault e grafo inferido coexistem sem proveniência nem detecção de obsoleto unificada (`docs/research/evolveloop-v2.2/07-compatibility-matrix.md`).
+3. **Medição parcial** — E-001 é PROXY whitespace; B0/B1 offline em `V22-BENCH` (`docs/internal/historical/evals/docs-evals/experiments/V22-BENCH/EXPERIMENT.md`); LLM ao vivo ainda `NOT_MEASURED`.
+4. **Continuidade entre sessões** não verificável no perfil público — `memory.enabled: false`, hooks sem `wiki-mem` (`profiles/default.yaml`, `.cursor/hooks.json`).
+5. **Grounding Wiki fail-closed** quando `WIKI_ROOT` ausente (`orchestrator/src/knowledge/backend/wiki-backend.ts`).
+
+## Princípios (decisão de produto D1)
+
+| # | Princípio | Rotulo |
+|---|-----------|--------|
+| P1 | Ordem de autoridade: **código > `.ai/` (não obsoleto) > vault (`WIKI_ROOT`) > grafo INFERRED**; arestas EXTRACTED citáveis; INFERRED nunca substitui código | decisão de produto |
+| P2 | **Proveniência obrigatória** em páginas/decisões recuperadas (fonte, hash ou path) | decisão de produto |
+| P3 | **Detecção de obsoleto** antes de injetar (lint wiki, hash, `status: obsoleto`) | decisão de produto |
+| P4 | **Sem alvo numérico** de economia até baseline B0/B1 publicado (D2) | decisão de produto |
+| P5 | Fora de escopo V2.2 / V3: World Model, Memory Trust runtime, Agency, cost governor, roteamento de modelo; descartar Mem0/Letta e `caveman-compress` em contratos salvo nova evidência (D1) | decisão de produto |
+
+## Metas
+
+### Template (14 campos)
+
+Cada meta abaixo declara os 14 campos exigidos pelo pack V2.2.
+
+---
+
+## V22-GOAL-001
+
+- **ID:** V22-GOAL-001
+- **Prioridade:** P0
+- **Título:** ADR de ownership do contexto de trabalho
+- **Problema:** ADR-DR-0005 bloqueia compaction/reinject; ownership entre contexto compactado, Memory, Knowledge e Checkpoint permanece em checklist aberto (`docs/architecture/finalization/adrs/ADR-DR-0005-context-ownership-before-compaction.md`).
+- **Estado atual:** Compaction `NOT_IMPLEMENTED`; ADR `docs/adr/0013-context-ownership-working-context.md` **accepted**; owner + contrato em `orchestrator/src/context/`; **SkillJob pickup** (`job-pickup.ts` / `spawn-pickup-context.ts`) grava `ContextBudgetEvidence` e sidecar checkpoint.
+- **Resultado:** ADR novo em `docs/adr/` respondendo às 9 perguntas do escopo proposto (conteúdo candidato em `docs/research/evolveloop-v2.2/09-v2.2-proposed-scope.md` § P0-1), sem criar store permanente para working context.
+- **Solução:** Documento ADR apenas; desbloqueia desenho futuro de compaction e interpretação de ADR-DR-0002 (budget) sem fundir stores.
+- **Dependências:** Nenhuma ferramenta externa.
+- **Impacto arquitetural:** Aditivo em `orchestrator/src/context/` (owner por spawn, contrato compaction); tipos `KnowledgeBackend` / `MemoryStore` / checkpoint inalterados (`orchestrator/src/knowledge/backend/types.ts`, `orchestrator/src/memory/memory-store.ts`).
+- **Critérios de aceite:** As 9 perguntas com resposta explícita; Knowledge ≠ Memory ≠ Checkpoint; working context declarado descartável na fronteira da chamada ao modelo.
+- **Métricas:** N/A (decisão documental); sem alvo numérico.
+- **Validação / testes:** Revisão cruzada com ADR-DR-0005 e ADR-DR-0002; quando `evolve-v3` existir, confrontar com `WORLD-MODEL.md` (**hipótese pendente** — branch ausente no remoto).
+- **Riscos:** Respostas que autorizem sumarizador destrutivo cedo.
+- **Condição de conclusão:** ADR merged com status `accepted` ou `rejected` explícito (ambos fecham a pergunta).
+
+**Rotulo dominante:** meta + decisão de produto.
+
+---
+
+## V22-GOAL-002
+
+- **ID:** V22-GOAL-002
+- **Prioridade:** P0
+- **Título:** Cerca de fonte de verdade e isolamento por raiz de projeto
+- **Problema:** `feature_id` e `data-dir` não isolam repositórios; MCP memory global e grafos compartilhados podem vazar contexto (`docs/research/evolveloop-v2.2/10-risks-and-open-questions.md`).
+- **Estado atual:** Sem detector de toplevel no engine; hierarquia código > `.ai/` > vault documentada na pesquisa mas não normativa no repo (`docs/adr/0004-project-knowledge-contract.md` cobre contrato dual, não ordem de desempate completa).
+- **Resultado:** Convenção escrita + testes: uma raiz = um `.ai/` = um cache de grafo opcional; proveniência obrigatória; obsoleto detectável; cenário 12 (canário entre projetos) passa.
+- **Solução:** ADR ou addendum em `docs/adr/` + fixtures de path; implementação mínima pode permanecer em skill/checklist até fase de código autorizada.
+- **Dependências:** V22-GOAL-001 recomendado em paralelo (evita discutir “onde mora resumo” sem ownership).
+- **Impacto arquitetural:** Preferir convenção e testes; evitar novo backend id no TS (`KnowledgeBackendId` permanece `wiki` \| `fake`).
+- **Critérios de aceite:** String canário do projeto A ausente do contexto do projeto B; página sem fonte não permanece `status: atual`; código divergente não é “corrigido” só na wiki.
+- **Métricas:** 0 vazamentos no fixture de isolamento (contagem, não percentual de tokens).
+- **Validação / testes:** Dois roots temporários; cenário 12 do `docs/research/evolveloop-v2.2/08-benchmarks-and-test-plan.md`.
+- **Riscos:** Monorepo multi-produto na mesma raiz — documentar uso de páginas, não múltiplas wikis.
+- **Condição de conclusão:** Teste de canário existe, passa, e convenção publicada em `docs/architecture/v2.2/` ou `docs/adr/`.
+- **Implementação (código):** `wired` — runtime `orchestrator/src/knowledge/truth-source/`; fence default em `knowledge.search` (engine/`DeterministicProvider`); opt-out `KNOWLEDGE_TRUTH_FENCE=off`; testes unit + `orchestrator/tests/integration/v22-wire.integration.test.ts`.
+
+**Rotulo dominante:** meta + evidência pesquisa.
+
+---
+
+## V22-GOAL-003
+
+- **ID:** V22-GOAL-003
+- **Prioridade:** P0
+- **Título:** Harness de benchmark e baselines B0/B1
+- **Problema:** E-001 mede `token_estimate` por whitespace e `task_success NOT_MEASURED` (`docs/internal/historical/evals/docs-evals/experiments/E-001/EXPERIMENT.md`).
+- **Estado atual:** B0 real `OFFICIAL_BASELINE` (`raw/battery-real/`); B1 bench pack `PROVISIONAL_CURATED_PACK`; sintético `PROVISIONAL_SYNTHETIC`; LLM `NOT_MEASURED`.
+- **Resultado:** B0 medido no monorepo (6 tarefas); B1 no pack curado (recall circular); S03/S07 no mini-fixture (B1 provisório).
+- **Solução:** `V22-BENCH/` + `BENCHMARK-PLAN.md` § B1→oficial.
+- **Dependências:** **B1 OFFICIAL** bloqueado até **V22-GOAL-005** (`ground.sh`/`WIKI_ROOT`, conhecimento sem gabarito, held-out). LLM ao vivo: `NOT_MEASURED`.
+- **Impacto arquitetural:** Nenhum no runtime de produção.
+- **Critérios de aceite:** Raw contém tokens entrada/saída, paths lidos, verificador, SHA do tree, id do modelo; integridade do scorer.
+- **Métricas:** Scorer canônico `v22-anchor-scorer-1.0.0` (`file_evidence`) + budget com `tiktoken:cl100k_base`. **OFFICIAL_WIKI_GROUND (B1 híbrido):** manifest `raw/battery-held-out-official-hybrid/OFFICIAL-MANIFEST.json` — dev H07–H18 B1 **9/12** vs B0 **7/12**; teste H19–H24 B1 **5/6** vs B0 **4/6** (2× rebuild estável); B1 mediana tokens ≤22000 (~20463 dev / ~21531 teste); latência B1 ≤3000 ms (~1656). Reconciliação PR #14/B3: `GOAL-003-005-official-report.md`. **PROVISIONAL_CURATED_PACK:** pack bench (circular). **PROVISIONAL_SYNTHETIC:** sanity. LLM: `NOT_MEASURED`.
+- **Validação / testes:** `integrity_test` análogo ao E-001; cenários 1–2 mínimos para B0/B1.
+- **Riscos:** Cache do host Cursor desconhecido → registrar `UNKNOWN` no raw.
+- **Condição de conclusão:** B0 oficial publicado; B1 **OFFICIAL_WIKI_GROUND** (híbrido Ollama) com manifest reprodutível e integridade verde; alvos D2 held-out teste calibrados (recall B1≥B0, tokens, latência).
+
+**Rotulo dominante:** meta + evidência projeto.
+
+---
+
+## V22-GOAL-004
+
+- **ID:** V22-GOAL-004
+- **Prioridade:** P0
+- **Título:** Continuidade entre sessões verificável
+- **Problema:** Retomar decisão em nova sessão não tem gate verificável no default público (`memory.enabled: false` em `profiles/default.yaml`; hooks sem `wiki-mem` em `.cursor/hooks.json`).
+- **Estado atual:** Skill `wiki-mem` existe (`.cursor/skills/wiki-mem/SKILL.md`); ADR-0004 separa vault de `.ai/`; engine não inicializa `.ai/`.
+- **Resultado:** Procedimento verificável (opt-in profile ou fixture de laboratório) onde cenários 3 e 7 do plano 08 passam — decisão recuperada sem varrer o repositório inteiro.
+- **Solução:** Documentar fluxo `/mem` + `.ai/sessions` + promote-queue; fixture que grava e relê decisão; não exigir memória always-on no perfil público sem decisão de release.
+- **Dependências:** V22-GOAL-002 (cerca); V22-GOAL-005 (wiki de projeto) para braço B1.
+- **Impacto arquitetural:** Opt-in preservado; sem segundo `KnowledgeBackend`.
+- **Critérios de aceite:** Cenário 3: mesma tarefa de retomada; verificador acerta; cenário 7: cita página/ADR/código.
+- **Métricas:** S03/S07 B1 no mini-fixture: `PROVISIONAL_CURATED_PACK` (obs. paths 2, tokens 114). Alvos oficiais continuidade: `PENDING_BASELINE` até B1 wiki real (005). Episódico engine/host: `NOT_MEASURED`.
+- **Validação / testes:** Fixture do plano 08; evidência em `memory/<feature_id>/evidence/` quando usar engine.
+- **Riscos:** Confundir episódico com SSOT de domínio (wiki skill já proíbe).
+- **Condição de conclusão:** Corrida registrada no fixture com verificador verde para cenários 3 e 7.
+- **Implementação (código):** `wired` — `orchestrator/src/session/session-continuity.ts` + checkpoint HMAC existente; hooks em `ExecutionEngine` (persist/load/clear, `satisfied_job_run_ids`); evidência via `evidence-bus`; doc `docs/architecture/v2.2/SESSION-CONTINUITY.md`; testes `orchestrator/tests/integration/v22-session-continuity.integration.test.ts` e `orchestrator/tests/unit/session-continuity.test.ts`.
+
+**Rotulo dominante:** meta + decisão de produto.
+
+---
+
+## V22-GOAL-005
+
+- **ID:** V22-GOAL-005
+- **Prioridade:** P1
+- **Título:** Wiki operacional como backend default (vault + projeto)
+- **Problema:** `WIKI_ROOT` ausente → `RAG_REPO_MISSING` (`orchestrator/src/knowledge/backend/wiki-backend.ts`); skill de projeto não é fluxo obrigatório do engine.
+- **Estado atual:** `knowledge.backend: wiki` no perfil (`profiles/default.yaml`); `ground.sh` exige `WIKI_ROOT` (`.cursor/skills/wiki/scripts/ground.sh`); Carpaccio normativo em ADR-0004.
+- **Resultado:** Ambiente de referência documentado onde `ground.sh list-packs` funciona; workflows init/query/update/lint em fixture; atualização incremental após mudança relevante.
+- **Solução:** Operacionalizar `wiki` + `wiki-carpaccio` (host); bridge Python inalterada; sem LanceDB no TS (ADR-0004).
+- **Dependências:** V22-GOAL-002; desbloqueia **B1 OFFICIAL** em V22-GOAL-003 (bench pack é `PROVISIONAL_CURATED_PACK`).
+- **Impacto arquitetural:** Arquivos no projeto-alvo e config de ambiente; sem novo `KnowledgeBackendId`.
+- **Critérios de aceite:** Cenários 2, 3, 6, 7 do plano 08; excerpt cap 500 permanece até ADR que altere (`wiki-backend.ts`).
+- **Métricas:** **OFFICIAL_WIKI_GROUND:** `run-official-wiki-hybrid-bench.sh` + manifest (karpathyWiki `cd3cf08`, Ollama `nomic-embed-text`, corpus `evolveloop`). Gates D2 (held-out teste): recall B1≥B0, B1 tokens ≤22000, latência ≤3000 ms — ver `GOAL-003-005-official-report.md`. Fixture vault: `FIXTURE_WIKI_GROUND` (mecanismo). Pack bench: `PROVISIONAL_CURATED_PACK`.
+- **Validação / testes:** Fixture; opcional `knowledge-backend.test.ts` quando deps instaladas.
+- **Riscos:** Wiki gigante na primeira sessão — init mínima obrigatória no teste.
+- **Condição de conclusão:** Quatro workflows (init, query, update, lint) com corrida registrada.
+
+**Rotulo dominante:** meta + evidência projeto.
+
+---
+
+## V22-GOAL-006
+
+- **ID:** V22-GOAL-006
+- **Prioridade:** P1
+- **Título:** Orçamento de contexto por spawn / GATE_BUNDLE
+- **Problema:** Nada impede reler repo inteiro ou injetar vault completa; sem dedup de paths (`docs/research/evolveloop-v2.2/09-v2.2-proposed-scope.md` § P1-2).
+- **Estado atual:** ranking **query-only** (sem `rg_patterns` no score; candidatos = união rg como B0); `npm run test:bench` cobre R01–R06 + H07–H18; pickup grava `ContextBudgetEvidence`.
+- **Resultado:** Procedimento normativo: índice `.ai/`, até N páginas, até M paths `rg`; N/M calibrados pós-baseline ou parametrizados no fixture (N=5, M=15 proposta inicial **não é gate** — `PENDING_BASELINE`).
+- **Solução:** Checklist em skill / briefing PDA; campos opcionais em JSON de evidência (aditivos); não quebrar `knowledge.search` v1 (`orchestrator/contracts/knowledge.search.yaml`).
+- **Dependências:** V22-GOAL-005; V22-GOAL-003 para alvos numéricos de token.
+- **Impacto arquitetural:** Aditivo em evidência; sem mudança obrigatória de contrato.
+- **Critérios de aceite:** Cenário 10: braço com orçamento não perde verificador nem lê path canário redundante.
+- **Métricas:** B0 oficial: cap observado 45 paths (informativo). B1 bench: `PROVISIONAL_CURATED_PACK` — alvos paths/tokens `PENDING_BASELINE` até B1 oficial (003←005). Redundância: 0. PROVISIONAL_SYNTHETIC: não gate.
+- **Validação / testes:** Log de paths por run; gap do host Cursor documentado se paths não observáveis.
+- **Riscos:** Orçamento corta função no meio — cortar por arquivo inteiro.
+- **Condição de conclusão:** Fixture mostra lista de paths e ausência de canário cruzado.
+
+**Rotulo dominante:** meta + decisão de produto.
+
+---
+
+## V22-GOAL-007
+
+- **ID:** V22-GOAL-007
+- **Prioridade:** P1
+- **Título:** Canário de qualidade e redação de segredos
+- **Problema:** Excerpts e logs podem vazar segredos; `secret-redaction.ts` citado só em branch de hardening não ancestral do freeze (`docs/architecture/release-audit-2026-10-11/V2.1-FREEZE-SCOPE-REPORT.md`).
+- **Estado atual:** `cleanOutput` limita tamanho (`orchestrator/src/capabilities/results.ts`); sem teste de canário nesta branch.
+- **Resultado:** Teste com string canário ausente de artefatos commitados de evidência; wiki não copia `.env` para `.ai/`.
+- **Solução:** Teste primeiro; patch mínimo de redação só se falhar — fora do escopo de merge amplo V3-hardening.
+- **Dependências:** Nenhuma externa.
+- **Impacto arquitetural:** Possível ajuste local de log; formato HMAC checkpoint inalterado (`orchestrator/src/jobs/checkpoint.ts`).
+- **Critérios de aceite:** 0 ocorrências do canário em evidence publicada.
+- **Métricas:** Contagem de ocorrências do canário (0); sem alvo percentual.
+- **Validação / testes:** Fixture dedicado no plano V22-BENCH.
+- **Riscos:** Redação agressiva remove paths necessários à evidência.
+- **Condição de conclusão:** Teste do canário passa no tree da V2.2.
+- **Implementação (código):** `wired` — `secret-redaction.ts`, `evidence-bus.ts`, `publish-sanitize.ts`; jobs/memory/evidence bus/engine reports; testes unit + `v22-wire.integration.test.ts` (canário 0× em jobs-dir e memory).
+
+**Rotulo dominante:** meta + evidência pesquisa.
+
+---
+
+## V22-GOAL-008
+
+- **ID:** V22-GOAL-008
+- **Prioridade:** P2
+- **Título:** Graphify como backend opcional (protótipo, flag)
+- **Problema:** Cadeias de dependência em código custam leituras; hipótese não medida localmente (`docs/research/evolveloop-v2.2/03-repositories-and-tools.md`).
+- **Estado atual:** Ferramenta ausente no repo; release upstream citada v0.9.93 (evidência pesquisa, 2026-10-21).
+- **Resultado:** Experimento CLI externo Apache-2.0, `graphify-out/` gitignored por raiz; **sem** `--wiki`, sem cloud, sem LLM na passagem; decisão INTEGRAR-flag ou DESCARTAR após bench.
+- **Solução:** Não adicionar `"graphify"` a `KnowledgeBackendId`; flag de experimento apenas.
+- **Dependências:** V22-GOAL-003, V22-GOAL-006; Python 3.10+ no ambiente de experimento.
+- **Impacto arquitetural:** Nenhum no contrato público se permanecer fora do backend.
+- **Critérios de aceite:** Cenários 5 e 11; aresta EXTRACTED ou rotulada INFERRED; vitória definida no `BENCHMARK-PLAN.md` (não por marketing Reddit).
+- **Métricas:** Tokens e dependentes corretos vs B0/B1 — alvos `PENDING_BASELINE` até execução; números externos (71×, Repowise) **contexto apenas** (D2).
+- **Validação / testes:** Braço B3 do plano 08.
+- **Riscos:** Skill upstream desencoraja abrir arquivo — instrução de experimento deve permitir verificação no disco.
+- **Condição de conclusão:** Relatório de bench com decisão explícita; “instalado” não é conclusão.
+- **Implementação (código):** `wired` — flag `EVOLVELOOP_GRAPHIFY` (default OFF); `orchestrator/src/v22/graphify-adapter.ts` (CLI real + fallback stub); braço B3 medido (`graphify_b3_harness.py`, raw `battery-b3-graphify/`); ADR-0014; `graphify-out/` gitignored; testes unit + integração B3 + `v22-p2-goals.integration.test.ts`.
+
+**Rotulo dominante:** meta + hipótese pendente.
+
+---
+
+## V22-GOAL-009
+
+- **ID:** V22-GOAL-009
+- **Prioridade:** P2
+- **Título:** Brevidade de saída (estilo Caveman, só voz)
+- **Problema:** Prosa longa na resposta aumenta tokens de saída; efeito pequeno em trabalho agêntico (evidência pesquisa JetBrains −8,5% saída — **contexto**, não resultado EvolveLoop).
+- **Estado atual:** Sem skill Caveman no pack EvolveLoop; `caveman-compress` **fora** de contratos (D1).
+- **Resultado:** Instrução ou skill de host opcional, default off; proibida em mensagens com comando, JSON, diff ou gate.
+- **Solução:** Host-only; não importar compressor de arquivo ao core.
+- **Dependências:** V22-GOAL-003; cenário 9 do plano 08.
+- **Impacto arquitetural:** Nenhum no orchestrator se host-only.
+- **Critérios de aceite:** Verificador estável; negações do gabarito preservadas.
+- **Métricas:** Redução de tokens de saída vs B0 `PENDING_BASELINE`; −8,5% JetBrains **não** é limiar (D2).
+- **Validação / testes:** Braço B4; diff automático de fidelidade.
+- **Riscos:** Handoff ambíguo; perda de negação.
+- **Condição de conclusão:** Decisão registrada com números do harness V22, não de terceiros.
+- **Implementação (código):** `wired` — flag `EVOLVELOOP_BREVITY_CAVEMAN` (default OFF); `brevity-caveman.ts` + `measure-pickup-prompts.ts` (prompt **completo** invoke, R01–R06 + H07–H12, tokenizer `PROXY:whitespace_split` alinhado ao harness); evidência `FIXTURE_PICKUP_INVOKE`; doc `V22-P2-MEASUREMENT.md`.
+
+**Rotulo dominante:** meta + decisão de produto.
+
+---
+
+## V22-GOAL-010
+
+- **ID:** V22-GOAL-010
+- **Prioridade:** P2
+- **Título:** Prompt cache no adapter HTTP (se existir)
+- **Problema:** Prefixo estável reduz custo sem apagar informação; engine não chama modelo em testes live (`NOT_MEASURED` na pesquisa).
+- **Estado atual:** Sem adapter HTTP de produção no freeze V2.1; documentação Anthropic descreve mecanismo (contexto em `docs/research/evolveloop-v2.2/sources.md` apenas).
+- **Resultado:** Se adapter próprio existir: prefixo estável antes do breakpoint; retrieval depois; cache hit reportado pelo provedor.
+- **Solução:** Aditivo no adapter; não simular cache do IDE Cursor.
+- **Dependências:** Adapter real; ausente → adiar com frase explícita.
+- **Impacto arquitetural:** Aditivo; segredos fora do prefixo cacheável.
+- **Critérios de aceite:** Duas chamadas com mesmo prefixo mostram hit no provedor.
+- **Métricas:** Tokens cacheados vs não cacheados `PENDING_BASELINE` ou `NOT_MEASURED` sem adapter.
+- **Validação / testes:** Duas chamadas gravadas.
+- **Riscos:** Segredo no prefixo cacheado no vendor.
+- **Condição de conclusão:** Provedor mostra hit ou item permanece adiado documentado.
+- **Implementação (código):** `wired` — flag `EVOLVELOOP_PROMPT_CACHE` (default OFF); adapter `prompt-cache-http.ts`; medição honesta `measure-prompt-cache-prefix.ts` (% cacheável, estabilidade entre jobs/features; **`vendor_http_cache_hit: NOT_MEASURED`**); doc `V22-P2-MEASUREMENT.md`.
+- **Implementação (vendor, V22-GOAL-010-vendor):** `wired` — `orchestrator/src/providers/llm/llm-http-provider-adapter.ts` lê `cache_read_input_tokens` / `cache_creation_input_tokens` (Anthropic) e `prompt_tokens_details.cached_tokens` (OpenAI); `cache_control` no prefixo estável; telemetria `vendor-cache-telemetry.json` (sanitizada); testes com fixtures de documentação; live `probeVendorCacheLive()` quando chave já existe no ambiente, senão **`NOT_MEASURED`**.
+
+**Rotulo dominante:** meta + hipótese pendente.
+
+---
+
+## Fora de escopo (registro D1)
+
+| Item | Classificação V3 / descartar | Rotulo |
+|------|------------------------------|--------|
+| World Model, Belief/Observation, Agency, Governor, Meta 0 | V3 | hipótese pendente (branch `evolve-v3`) |
+| Memory Trust runtime | V3 | hipótese pendente |
+| Cost governor, roteamento modelo, long-horizon | V3 | decisão de produto |
+| Mem0, Letta, claude-mem, MCP memory como núcleo | descartar | evidência pesquisa |
+| `caveman-compress` em contrato/skill/código | descartar | decisão de produto |
+| Microsoft GraphRAG, LLMLingua hot path, Repomix default | descartar / monitorar | evidência pesquisa |
+| `max_skills` no engine | adiado ADR-DR-0002 | evidência projeto |

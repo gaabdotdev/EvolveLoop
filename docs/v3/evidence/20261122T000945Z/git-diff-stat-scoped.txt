@@ -1,0 +1,10 @@
+=== status ===
+ M orchestrator/src/v3/security/index.ts
+?? orchestrator/src/v3/security/ebpf-audit.ts
+?? orchestrator/tests/unit/v3-sec-03-ebpf-audit.test.ts
+=== diff stat (tracked) ===
+ orchestrator/src/v3/security/index.ts | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+=== untracked note ===
+orchestrator/src/v3/security/ebpf-audit.ts
+orchestrator/tests/unit/v3-sec-03-ebpf-audit.test.ts

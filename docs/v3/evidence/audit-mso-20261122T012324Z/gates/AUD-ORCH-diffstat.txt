@@ -1,0 +1,34 @@
+# AUD-ORCH-diffstat (batch changes)
+# UTC 2026-11-22T02:02:51Z
+
+## Intentional code edits (this batch)
+orchestrator/src/v3/state-db/store.ts  — add integrityCheck() + assertWalPragmas integrity gate
+orchestrator/tests/unit/v0-orch-persistence.test.ts — assert integrity_check=ok (AUD-ORCH-01)
+
+## git diff --stat (paths touched for ORCH audit)
+ orchestrator/src/v3/state-db/store.ts | 1226 ++++++++++++++++++++++++++++++++-
+ 1 file changed, 1202 insertions(+), 24 deletions(-)
+
+## Evidence gates (new)
+ [36m/home/gaab/orca/workspaces/EvolveLoop/seagrass/docs/v3/evidence/audit-mso-20261122T012324Z/gates/[0mAUD-ORCH-01.md
+ [36m/home/gaab/orca/workspaces/EvolveLoop/seagrass/docs/v3/evidence/audit-mso-20261122T012324Z/gates/[0mAUD-ORCH-02.md
+ [36m/home/gaab/orca/workspaces/EvolveLoop/seagrass/docs/v3/evidence/audit-mso-20261122T012324Z/gates/[0mAUD-ORCH-03.md
+ [36m/home/gaab/orca/workspaces/EvolveLoop/seagrass/docs/v3/evidence/audit-mso-20261122T012324Z/gates/[0mAUD-ORCH-04.md
+ [36m/home/gaab/orca/workspaces/EvolveLoop/seagrass/docs/v3/evidence/audit-mso-20261122T012324Z/gates/[0mAUD-ORCH-05.md
+ [36m/home/gaab/orca/workspaces/EvolveLoop/seagrass/docs/v3/evidence/audit-mso-20261122T012324Z/gates/[0mAUD-ORCH-06.md
+ [36m/home/gaab/orca/workspaces/EvolveLoop/seagrass/docs/v3/evidence/audit-mso-20261122T012324Z/gates/[0mAUD-ORCH-diffstat.txt
+ [36m/home/gaab/orca/workspaces/EvolveLoop/seagrass/docs/v3/evidence/audit-mso-20261122T012324Z/gates/[0mAUD-ORCH-SUMMARY.md
+ [36m/home/gaab/orca/workspaces/EvolveLoop/seagrass/docs/v3/evidence/audit-mso-20261122T012324Z/gates/[0mAUD-ORCH-tests.txt
+
+## Line counts (wc -l)
+ 1614 /home/gaab/orca/workspaces/EvolveLoop/seagrass/orchestrator/src/v3/state-db/store.ts
+  320 /home/gaab/orca/workspaces/EvolveLoop/seagrass/orchestrator/tests/unit/v0-orch-persistence.test.ts
+   35 /home/gaab/orca/workspaces/EvolveLoop/seagrass/docs/v3/evidence/audit-mso-20261122T012324Z/gates/AUD-ORCH-01.md
+   33 /home/gaab/orca/workspaces/EvolveLoop/seagrass/docs/v3/evidence/audit-mso-20261122T012324Z/gates/AUD-ORCH-02.md
+   36 /home/gaab/orca/workspaces/EvolveLoop/seagrass/docs/v3/evidence/audit-mso-20261122T012324Z/gates/AUD-ORCH-03.md
+   30 /home/gaab/orca/workspaces/EvolveLoop/seagrass/docs/v3/evidence/audit-mso-20261122T012324Z/gates/AUD-ORCH-04.md
+   32 /home/gaab/orca/workspaces/EvolveLoop/seagrass/docs/v3/evidence/audit-mso-20261122T012324Z/gates/AUD-ORCH-05.md
+   32 /home/gaab/orca/workspaces/EvolveLoop/seagrass/docs/v3/evidence/audit-mso-20261122T012324Z/gates/AUD-ORCH-06.md
+   47 /home/gaab/orca/workspaces/EvolveLoop/seagrass/docs/v3/evidence/audit-mso-20261122T012324Z/gates/AUD-ORCH-SUMMARY.md
+   35 /home/gaab/orca/workspaces/EvolveLoop/seagrass/docs/v3/evidence/audit-mso-20261122T012324Z/gates/AUD-ORCH-tests.txt
+ 2214 total

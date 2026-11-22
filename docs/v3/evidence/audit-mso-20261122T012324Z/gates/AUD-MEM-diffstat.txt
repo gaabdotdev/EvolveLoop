@@ -1,0 +1,16 @@
+# AUD-MEM-diffstat (batch changes)
+# UTC 2026-11-22T02:04:29Z
+
+## Code + tests touched
+
+## Untracked / new
+?? orchestrator/tests/unit/audit-mem-01-06.test.ts
+?? docs/v3/evidence/audit-mso-20261122T012324Z/gates/AUD-MEM-*.md
+?? docs/v3/evidence/audit-mso-20261122T012324Z/gates/AUD-MEM-tests.txt
+?? docs/v3/evidence/audit-mso-20261122T012324Z/gates/AUD-MEM-diffstat.txt
+
+## Line counts (wc -l)
+  782 orchestrator/src/v3/memory/broker.ts
+  266 orchestrator/src/v3/memory/cold-storage.ts
+  339 orchestrator/tests/unit/audit-mem-01-06.test.ts
+ 1387 total

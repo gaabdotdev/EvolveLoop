@@ -1,0 +1,11 @@
+
+ RUN  v2.1.9 /home/gaab/orca/workspaces/EvolveLoop/seagrass/orchestrator
+
+ ✓ tests/unit/v3-dist-01-ops.test.ts (10 tests) 30ms
+ ✓ tests/unit/v36-ops-core.test.ts (4 tests) 124ms
+
+ Test Files  2 passed (2)
+      Tests  14 passed (14)
+   Start at  21:40:58
+   Duration  675ms (transform 233ms, setup 27ms, collect 515ms, tests 153ms, environment 0ms, prepare 108ms)
+

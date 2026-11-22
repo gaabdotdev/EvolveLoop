@@ -1,0 +1,46 @@
+{
+  "kind": "gate.v3-benchmarks",
+  "at": "2026-11-11T22:37:16.451Z",
+  "commit": "06842669293a5edcb6b0eee25f1631287d233e2d",
+  "methodology": {
+    "development_tasks": [
+      "T01",
+      "T02",
+      "T03",
+      "T04",
+      "T05",
+      "T06",
+      "T07",
+      "T08"
+    ],
+    "held_out": [
+      "T09",
+      "T10"
+    ],
+    "solvers": "DETERMINISTIC_SOLVER",
+    "token_model": "proxy_filecount_based"
+  },
+  "baseline_proxy": {
+    "mode": "single_agent_deterministic_proxy",
+    "avg_tokens": 1760.4,
+    "verified_completion_rate": 1
+  },
+  "orchestrated": {
+    "mode": "engineering_loop_orchestrated",
+    "avg_tokens": 1304,
+    "verified_completion_rate": 1,
+    "cost_per_verified_completion": 0.0026079999999999996,
+    "held_out_pass_rate": 1
+  },
+  "token_reduction_vs_proxy": 0.2592592592592593,
+  "aggregates": {
+    "verified_completion_rate": 1,
+    "multi_file_tasks": 10,
+    "held_out_pass_rate": 1,
+    "avg_tokens_estimated": 1304,
+    "cost_per_verified_completion": 0.0026079999999999996,
+    "total_cost_estimated_usd": 0.026079999999999996,
+    "false_positive_evaluator_rate": 0
+  },
+  "status": "PASS"
+}

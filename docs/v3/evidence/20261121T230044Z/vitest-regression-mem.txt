@@ -1,0 +1,14 @@
+
+ RUN  v2.1.9 /home/gaab/orca/workspaces/EvolveLoop/seagrass/orchestrator
+
+ ✓ tests/unit/v3-mem-01-cold-storage.test.ts (6 tests) 22ms
+stdout | tests/unit/v3-mem-02-pyramid.test.ts > V3-MEM-02 Pyramid Index (RAPTOR) > measures p95 coarse-to-fine latency on fixture ≥1k nodes (real ms)
+{"gate":"V3-MEM-02","fixture_n0":1200,"fixture_nodes":1358,"by_level":{"0":1200,"1":153,"2":4,"3":1},"samples":40,"p50_ms":0.41,"p95_ms":0.748,"max_ms":1.632,"limitation":"Fixture scale = ≥1k pyramid nodes (not 100k events). Full Suíte E 100k deferred."}
+
+ ✓ tests/unit/v3-mem-02-pyramid.test.ts (4 tests) 66ms
+
+ Test Files  2 passed (2)
+      Tests  10 passed (10)
+   Start at  20:00:46
+   Duration  516ms (transform 169ms, setup 22ms, collect 378ms, tests 89ms, environment 0ms, prepare 109ms)
+

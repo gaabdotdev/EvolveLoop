@@ -1,0 +1,136 @@
+{
+  "gate": "AUD-UX-01",
+  "attempt": "2/3",
+  "utc": "2026-11-22T02:16:52Z",
+  "status": "PASS",
+  "repos": [
+    {
+      "path": "/home/gaab/Documentos/gitHub/KernelBot",
+      "head": "8b0b2ef",
+      "branch": "aud-ux-01/live-stress-20261122",
+      "outside_seagrass": true
+    },
+    {
+      "path": "/home/gaab/Documentos/gitHub/OrbitBot",
+      "head": "53841ee",
+      "branch": "aud-ux-01/live-stress-20261122",
+      "outside_seagrass": true
+    }
+  ],
+  "live_tasks_executed_this_session": 8,
+  "pass_at_1": 0.875,
+  "pass_at_1_fraction": "7/8",
+  "pass_cubed": 1.0,
+  "pass_cubed_fraction": "8/8",
+  "rework_tasks": ["OB-T3"],
+  "manual_intervention": false,
+  "exit_codes": {
+    "KB-T1": 0,
+    "KB-T2": 0,
+    "KB-T3": 0,
+    "KB-T4": 0,
+    "OB-T1": 0,
+    "OB-T2": 0,
+    "OB-T3_attempt1_functional": 0,
+    "OB-T3_attempt2_nesting_rework": 0,
+    "OB-T4": 0,
+    "KB_VERIFY_pytest": 0,
+    "OB_VERIFY_npm_test": 0,
+    "OB_CHECK": 0
+  },
+  "tasks": [
+    {
+      "id": "KB-T1",
+      "repo": "KernelBot",
+      "title": "Fix tests/test_wiki_doc.py import to kernel.knowledge.wiki_doc",
+      "attempts": 1,
+      "pass_at_1": true,
+      "pass_cubed": true,
+      "exit_code": 0,
+      "verify": "pytest tests/test_wiki_doc.py → 2 passed"
+    },
+    {
+      "id": "KB-T2",
+      "repo": "KernelBot",
+      "title": "Restore python-multipart in .venv; run /health test",
+      "attempts": 1,
+      "pass_at_1": true,
+      "pass_cubed": true,
+      "exit_code": 0,
+      "verify": "pytest tests/test_health.py → 1 passed",
+      "notes": "env-only; package already listed in requirements.txt"
+    },
+    {
+      "id": "KB-T3",
+      "repo": "KernelBot",
+      "title": "Add engine.wiki_doc compatibility shim",
+      "attempts": 1,
+      "pass_at_1": true,
+      "pass_cubed": true,
+      "exit_code": 0,
+      "verify": "from engine.wiki_doc import iter_wiki_pages; pytest wiki_doc → 2 passed"
+    },
+    {
+      "id": "KB-T4",
+      "repo": "KernelBot",
+      "title": "Extend rate_limit unit tests (reset_for_tests + limit=1)",
+      "attempts": 1,
+      "pass_at_1": true,
+      "pass_cubed": true,
+      "exit_code": 0,
+      "verify": "pytest tests/test_rate_limit.py → 4 passed"
+    },
+    {
+      "id": "OB-T1",
+      "repo": "OrbitBot",
+      "title": "npm install to restore node_modules; baseline npm test",
+      "attempts": 1,
+      "pass_at_1": true,
+      "pass_cubed": true,
+      "exit_code": 0,
+      "verify": "npm test → 80 pass / 0 fail (pre OB-T3 extras)",
+      "notes": "env restore; before install: 9 fail (missing dotenv/pino/axios)"
+    },
+    {
+      "id": "OB-T2",
+      "repo": "OrbitBot",
+      "title": "Remove diagnostic messages.upsert verbose logging from src/bot.js",
+      "attempts": 1,
+      "pass_at_1": true,
+      "pass_cubed": true,
+      "exit_code": 0,
+      "verify": "node --check src/bot.js; npm run check → 0"
+    },
+    {
+      "id": "OB-T3",
+      "repo": "OrbitBot",
+      "title": "Extend message-dedupe tests (fromMe/participant + TTL)",
+      "attempts": 2,
+      "pass_at_1": false,
+      "pass_cubed": true,
+      "exit_code": 0,
+      "rework": "attempt1 appended tests outside describe(); attempt2 rewrote nesting inside describe",
+      "verify": "node --test test/message-dedupe.test.js → 4 passed nested"
+    },
+    {
+      "id": "OB-T4",
+      "repo": "OrbitBot",
+      "title": "Sync docs/KERNEL-INTEGRATION.md branch+date to feature/kernel-orbit-v1-hardening",
+      "attempts": 1,
+      "pass_at_1": true,
+      "pass_cubed": true,
+      "exit_code": 0,
+      "verify": "npm test → 82 pass / 0 fail"
+    }
+  ],
+  "artifacts": [
+    "AUD-UX-01.md",
+    "AUD-UX-01-live.json",
+    "AUD-UX-01-repos.json",
+    "AUD-UX-01-diffstat-KernelBot.txt",
+    "AUD-UX-01-diffstat-OrbitBot.txt",
+    "AUD-UX-01-diff-KernelBot.patch",
+    "AUD-UX-01-diff-OrbitBot.patch"
+  ],
+  "honesty": "Metrics measured from this session only. OB-T3 counted fail@1 due to nesting rework. No git push. Local branches aud-ux-01/live-stress-20261122 only."
+}

@@ -1,0 +1,1 @@
+{"kind":"v33_resilience_evidence","at":"2026-11-11T21:36:06Z","tests":"v33-resilience.test.ts","result":"6/6 pass","capabilities":["worktrees","cancel+idempotency","parallel_schedule","failure_battery"],"limitations":["git worktree only not OS sandbox","cancel does not kill external harnesses","battery is in-process coordination","no exactly-once"]}

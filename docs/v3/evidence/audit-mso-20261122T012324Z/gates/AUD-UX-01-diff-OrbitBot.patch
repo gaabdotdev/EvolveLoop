@@ -1,0 +1,66 @@
+diff --git a/docs/KERNEL-INTEGRATION.md b/docs/KERNEL-INTEGRATION.md
+index c9ac270..2617caf 100644
+--- a/docs/KERNEL-INTEGRATION.md
++++ b/docs/KERNEL-INTEGRATION.md
+@@ -2,8 +2,8 @@
+ 
+ | Campo | Valor |
+ |-------|-------|
+-| Data | 2026-07-28 |
+-| Branch | `feature/orbit-kernel-provider` |
++| Data | 2026-11-22 |
++| Branch | `feature/kernel-orbit-v1-hardening` |
+ 
+ ## Fluxo
+ 
+diff --git a/src/bot.js b/src/bot.js
+index f82528e..20987a5 100644
+--- a/src/bot.js
++++ b/src/bot.js
+@@ -100,19 +100,6 @@ async function connectWhatsApp() {
+   });
+ 
+   sock.ev.on('messages.upsert', async ({ messages, type }) => {
+-    // Diagnóstico: provar se o Baileys está a entregar eventos (remover após debug)
+-    logger.info('messages.upsert', {
+-      type,
+-      count: Array.isArray(messages) ? messages.length : 0,
+-      sample: (messages || []).slice(0, 5).map((m) => ({
+-        jid: m?.key?.remoteJid,
+-        fromMe: Boolean(m?.key?.fromMe),
+-        hasMessage: Boolean(m?.message),
+-        msgId: m?.key?.id,
+-        preview: extractText(m).trim().slice(0, 60),
+-      })),
+-    });
+-
+     for (const msg of messages) {
+       try {
+         const jid = msg.key?.remoteJid;
+diff --git a/test/message-dedupe.test.js b/test/message-dedupe.test.js
+index 273b29c..b28603e 100644
+--- a/test/message-dedupe.test.js
++++ b/test/message-dedupe.test.js
+@@ -23,4 +23,22 @@ describe('claimMessageKey', () => {
+     assert.equal(claimMessageKey({ remoteJid: 'x@g.us' }), true);
+     assert.equal(claimMessageKey({ remoteJid: 'x@g.us' }), true);
+   });
++
++  it('distingue fromMe e participant no token', () => {
++    _resetDedupeForTests();
++    const base = { id: 'XYZ', remoteJid: '120363@g.us' };
++    assert.equal(claimMessageKey({ ...base, fromMe: false, participant: 'a@s.whatsapp.net' }), true);
++    assert.equal(claimMessageKey({ ...base, fromMe: true, participant: 'a@s.whatsapp.net' }), true);
++    assert.equal(claimMessageKey({ ...base, fromMe: false, participant: 'b@s.whatsapp.net' }), true);
++    assert.equal(claimMessageKey({ ...base, fromMe: false, participant: 'a@s.whatsapp.net' }), false);
++  });
++
++  it('expira após ttlMs e permite reprocessar', async () => {
++    _resetDedupeForTests();
++    const key = { id: 'TTL1', remoteJid: 'x@g.us', fromMe: false };
++    assert.equal(claimMessageKey(key, 20), true);
++    assert.equal(claimMessageKey(key, 20), false);
++    await new Promise((r) => setTimeout(r, 35));
++    assert.equal(claimMessageKey(key, 20), true);
++  });
+ });

@@ -1,0 +1,10 @@
+# Scoped paths for M3-V3-MEM-03
+?? docs/v3/evidence/20261121T230044Z/
+?? docs/v3/evidence/LATEST_PATH.txt
+?? orchestrator/src/v3/memory/index.ts
+?? orchestrator/src/v3/memory/virtual-memory.ts
+?? orchestrator/tests/unit/v3-mem-03-virtual-memory.test.ts
+---
+  451 orchestrator/src/v3/memory/virtual-memory.ts
+  251 orchestrator/tests/unit/v3-mem-03-virtual-memory.test.ts
+  702 total

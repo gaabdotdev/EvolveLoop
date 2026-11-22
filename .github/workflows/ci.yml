@@ -1,0 +1,76 @@
+# Suíte de freeze: orchestrator, bench, pytest do agent-setup e validate.
+# Graphify fica OFF (EVOLVELOOP_GRAPHIFY não é definida).
+# Ollama não é instalado: retrieval lexical usa o fallback BM25 (ADR-0005).
+# Nenhuma API key de vendor — vendor_http_cache_hit permanece NOT_MEASURED.
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - "release/**"
+      - "cursor/**"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  suite:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: orchestrator/package-lock.json
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install measurement tokenizer
+        run: |
+          python -m venv /tmp/v22-baseline-venv
+          /tmp/v22-baseline-venv/bin/pip install -r docs/v22/baseline/requirements.txt
+          echo "/tmp/v22-baseline-venv/bin" >> "$GITHUB_PATH"
+          if ! command -v rg >/dev/null 2>&1; then
+            sudo apt-get update
+            sudo apt-get install -y ripgrep
+          fi
+          rg --version
+
+      - name: Install orchestrator
+        working-directory: orchestrator
+        run: npm ci
+
+      - name: npm test
+        working-directory: orchestrator
+        run: npm test
+
+      - name: npm run test:bench
+        working-directory: orchestrator
+        run: npm run test:bench
+
+      - name: Install agent-setup
+        run: python -m pip install -e "./agent-setup[dev]"
+
+      - name: pytest
+        working-directory: agent-setup
+        run: python -m pytest -q
+
+      - name: pytest wiki index
+        run: python -m pytest -q fixtures/evolveloop-wiki-vault/tests/test_index.py
+
+      - name: v23 readiness structural
+        run: python3 scripts/v23/test_readiness.py
+
+      - name: validate
+        run: bash docs/architecture/v2.2/scripts/validate-v22-artifacts.sh

@@ -1,0 +1,1392 @@
+{
+  "kind": "FireFiveSummary",
+  "count": 5,
+  "results": [
+    {
+      "run_id": "cr-240647eb-dca1-4add-8bf2-d49435c4559e",
+      "task_id": "fire-1",
+      "status": "TRUE_FULL_PASS",
+      "reason": "TRUE_FULL_PASS",
+      "goal_contract_id": "gc-fire-1",
+      "token_ledger_entry_id": "tl-88d8943b-ed17-4152-8ee0-a87ebfca68cb"
+    },
+    {
+      "run_id": "cr-aa3cfb92-2fc9-44ea-8a13-e607ac70c11a",
+      "task_id": "fire-2",
+      "status": "TRUE_FULL_PASS",
+      "reason": "TRUE_FULL_PASS",
+      "goal_contract_id": "gc-fire-2",
+      "token_ledger_entry_id": "tl-a3448876-98a1-4e34-86c4-8b287d7dd4b5"
+    },
+    {
+      "run_id": "cr-75fd2577-1f03-4a76-bca1-6351499d0718",
+      "task_id": "fire-3",
+      "status": "TRUE_FULL_PASS",
+      "reason": "TRUE_FULL_PASS",
+      "goal_contract_id": "gc-fire-3",
+      "token_ledger_entry_id": "tl-414f203b-2f27-4f91-bc14-945deacf4cc6"
+    },
+    {
+      "run_id": "cr-21e14572-a203-4ee5-90f7-f1a4e4b44284",
+      "task_id": "fire-4",
+      "status": "TRUE_FULL_PASS",
+      "reason": "TRUE_FULL_PASS",
+      "goal_contract_id": "gc-fire-4",
+      "token_ledger_entry_id": "tl-285b57dc-0dbb-492d-9130-e69ffe069a29"
+    },
+    {
+      "run_id": "cr-35a99f70-95ca-4f8d-835c-741706fa2c78",
+      "task_id": "fire-5",
+      "status": "TRUE_FULL_PASS",
+      "reason": "TRUE_FULL_PASS",
+      "goal_contract_id": "gc-fire-5",
+      "token_ledger_entry_id": "tl-2dce82b0-247b-41e5-9cb1-69351ff4d294"
+    }
+  ]
+}
+{
+  "ledger_tail": [
+    {
+      "entry_id": "tl-18ddc2f3-6bb0-4f20-b3ca-f8e0d6ee9160",
+      "work_id": "work-fire5-1795288029434",
+      "task_id": "fire-5",
+      "goal_contract_id": "gc-fire-5",
+      "subsystem": "circuit.evidence_validator",
+      "provider_id": "evidence-validator",
+      "adapter_id": "cursor",
+      "tokens_in": null,
+      "tokens_out": null,
+      "tokens_system": null,
+      "tokens_context": null,
+      "tokens_tools": null,
+      "tokens_output": null,
+      "tokens_cache_hit": null,
+      "latency_ms": 42,
+      "cost_usd": null,
+      "cost_provenance": "UNAVAILABLE",
+      "status": "TRUE_FULL_PASS",
+      "payload": {
+        "validator": {
+          "kind": "EvidenceValidatorResult",
+          "status": "TRUE_FULL_PASS",
+          "code": "TRUE_FULL_PASS",
+          "reasons": [],
+          "sensitive_diff_blocked": [],
+          "command_results": [
+            {
+              "id": "marker-exists",
+              "argv": [
+                "bash",
+                "-lc",
+                "test -f '/home/gaab/orca/workspaces/EvolveLoop/seagrass/.evolveloop/live-wt/20261121T190707Z/fire-5/.evolveloop/circuit-markers/fire-5.txt'"
+              ],
+              "exit_code": 0,
+              "status": "ok",
+              "duration_ms": 21
+            },
+            {
+              "id": "marker-content",
+              "argv": [
+                "bash",
+                "-lc",
+                "test \"$(cat '/home/gaab/orca/workspaces/EvolveLoop/seagrass/.evolveloop/live-wt/20261121T190707Z/fire-5/.evolveloop/circuit-markers/fire-5.txt')\" = 'fire-5'"
+              ],
+              "exit_code": 0,
+              "status": "ok",
+              "duration_ms": 21
+            }
+          ],
+          "evaluated_at": "2026-11-21T19:14:24.544Z",
+          "limitations": [
+            "Validator runs outside agent session via ExecutionRunner",
+            "TRUE_FULL_PASS requires mandatory criteria PASS + commands exit 0 + no unauthorized sensitive diffs"
+          ]
+        }
+      },
+      "created_at": "2026-11-21T19:14:24.596Z"
+    },
+    {
+      "entry_id": "tl-2dce82b0-247b-41e5-9cb1-69351ff4d294",
+      "work_id": "work-fire5-1795288029434",
+      "task_id": "fire-5",
+      "goal_contract_id": "gc-fire-5",
+      "subsystem": "circuit.adapter",
+      "provider_id": "ollama",
+      "adapter_id": "cursor",
+      "model": "bonsai-64k:latest",
+      "model_requested": "bonsai-64k:latest",
+      "model_served": "bonsai-64k:latest",
+      "tokens_in": null,
+      "tokens_out": null,
+      "tokens_system": null,
+      "tokens_context": null,
+      "tokens_tools": null,
+      "tokens_output": null,
+      "tokens_cache_hit": null,
+      "latency_ms": 81749,
+      "cost_usd": null,
+      "cost_provenance": "UNAVAILABLE",
+      "status": "ok",
+      "payload": {
+        "adapter_health": {
+          "kind": "AdapterHealth",
+          "adapter_id": "cursor",
+          "ok": true,
+          "code": "OK",
+          "message": "cursor-agent available at /home/gaab/.local/bin/agent",
+          "cli_path": "/home/gaab/.local/bin/agent",
+          "checked_at": "2026-11-21T19:13:00.108Z",
+          "limitations": [
+            "V0 agent adapter slot — Cursor via cursor-agent CLI",
+            "invoke requires EVOLVELOOP_HARNESS_CONSENT=true for real spawn",
+            "All spawn routed through ExecutionRunner"
+          ]
+        },
+        "model_health": {
+          "local": {
+            "kind": "ModelHealth",
+            "provider_id": "ollama",
+            "ok": true,
+            "code": "OK",
+            "message": "Ollama ok; model=bonsai-64k:latest",
+            "model": "bonsai-64k:latest",
+            "base_url": "http://127.0.0.1:11434",
+            "checked_at": "2026-11-21T19:12:59.423Z",
+            "limitations": [
+              "Local Ollama only — no FreeLLMAPI gateway",
+              "Availability is probed via GET /api/tags"
+            ]
+          },
+          "remote": {
+            "kind": "ModelHealth",
+            "provider_id": "openrouter",
+            "ok": false,
+            "code": "MISSING_CREDENTIALS",
+            "message": "OpenRouter API key absent — healthCheck failed honestly",
+            "base_url": "https://openrouter.ai/api/v1",
+            "model": "openai/gpt-4o-mini",
+            "checked_at": "2026-11-21T19:12:59.423Z",
+            "limitations": [
+              "Remote OpenRouter never used as silent default",
+              "Requires OPENROUTER_API_KEY or EVOLVELOOP_OPENROUTER_API_KEY",
+              "Does not invent cost when usage fields absent"
+            ]
+          }
+        },
+        "adapter_code": "EXIT_ZERO"
+      },
+      "created_at": "2026-11-21T19:14:24.190Z"
+    },
+    {
+      "entry_id": "tl-1bb59e2a-ec4c-4066-af02-023d81bf2f8d",
+      "work_id": "work-fire5-1795288029434",
+      "task_id": "fire-4",
+      "goal_contract_id": "gc-fire-4",
+      "subsystem": "circuit.evidence_validator",
+      "provider_id": "evidence-validator",
+      "adapter_id": "cursor",
+      "tokens_in": null,
+      "tokens_out": null,
+      "tokens_system": null,
+      "tokens_context": null,
+      "tokens_tools": null,
+      "tokens_output": null,
+      "tokens_cache_hit": null,
+      "latency_ms": 42,
+      "cost_usd": null,
+      "cost_provenance": "UNAVAILABLE",
+      "status": "TRUE_FULL_PASS",
+      "payload": {
+        "validator": {
+          "kind": "EvidenceValidatorResult",
+          "status": "TRUE_FULL_PASS",
+          "code": "TRUE_FULL_PASS",
+          "reasons": [],
+          "sensitive_diff_blocked": [],
+          "command_results": [
+            {
+              "id": "marker-exists",
+              "argv": [
+                "bash",
+                "-lc",
+                "test -f '/home/gaab/orca/workspaces/EvolveLoop/seagrass/.evolveloop/live-wt/20261121T190707Z/fire-4/.evolveloop/circuit-markers/fire-4.txt'"
+              ],
+              "exit_code": 0,
+              "status": "ok",
+              "duration_ms": 21
+            },
+            {
+              "id": "marker-content",
+              "argv": [
+                "bash",
+                "-lc",
+                "test \"$(cat '/home/gaab/orca/workspaces/EvolveLoop/seagrass/.evolveloop/live-wt/20261121T190707Z/fire-4/.evolveloop/circuit-markers/fire-4.txt')\" = 'fire-4'"
+              ],
+              "exit_code": 0,
+              "status": "ok",
+              "duration_ms": 21
+            }
+          ],
+          "evaluated_at": "2026-11-21T19:12:58.612Z",
+          "limitations": [
+            "Validator runs outside agent session via ExecutionRunner",
+            "TRUE_FULL_PASS requires mandatory criteria PASS + commands exit 0 + no unauthorized sensitive diffs"
+          ]
+        }
+      },
+      "created_at": "2026-11-21T19:12:58.701Z"
+    },
+    {
+      "entry_id": "tl-285b57dc-0dbb-492d-9130-e69ffe069a29",
+      "work_id": "work-fire5-1795288029434",
+      "task_id": "fire-4",
+      "goal_contract_id": "gc-fire-4",
+      "subsystem": "circuit.adapter",
+      "provider_id": "ollama",
+      "adapter_id": "cursor",
+      "model": "bonsai-64k:latest",
+      "model_requested": "bonsai-64k:latest",
+      "model_served": "bonsai-64k:latest",
+      "tokens_in": null,
+      "tokens_out": null,
+      "tokens_system": null,
+      "tokens_context": null,
+      "tokens_tools": null,
+      "tokens_output": null,
+      "tokens_cache_hit": null,
+      "latency_ms": 83058,
+      "cost_usd": null,
+      "cost_provenance": "UNAVAILABLE",
+      "status": "ok",
+      "payload": {
+        "adapter_health": {
+          "kind": "AdapterHealth",
+          "adapter_id": "cursor",
+          "ok": true,
+          "code": "OK",
+          "message": "cursor-agent available at /home/gaab/.local/bin/agent",
+          "cli_path": "/home/gaab/.local/bin/agent",
+          "checked_at": "2026-11-21T19:11:33.260Z",
+          "limitations": [
+            "V0 agent adapter slot — Cursor via cursor-agent CLI",
+            "invoke requires EVOLVELOOP_HARNESS_CONSENT=true for real spawn",
+            "All spawn routed through ExecutionRunner"
+          ]
+        },
+        "model_health": {
+          "local": {
+            "kind": "ModelHealth",
+            "provider_id": "ollama",
+            "ok": true,
+            "code": "OK",
+            "message": "Ollama ok; model=bonsai-64k:latest",
+            "model": "bonsai-64k:latest",
+            "base_url": "http://127.0.0.1:11434",
+            "checked_at": "2026-11-21T19:11:32.559Z",
+            "limitations": [
+              "Local Ollama only — no FreeLLMAPI gateway",
+              "Availability is probed via GET /api/tags"
+            ]
+          },
+          "remote": {
+            "kind": "ModelHealth",
+            "provider_id": "openrouter",
+            "ok": false,
+            "code": "MISSING_CREDENTIALS",
+            "message": "OpenRouter API key absent — healthCheck failed honestly",
+            "base_url": "https://openrouter.ai/api/v1",
+            "model": "openai/gpt-4o-mini",
+            "checked_at": "2026-11-21T19:11:32.559Z",
+            "limitations": [
+              "Remote OpenRouter never used as silent default",
+              "Requires OPENROUTER_API_KEY or EVOLVELOOP_OPENROUTER_API_KEY",
+              "Does not invent cost when usage fields absent"
+            ]
+          }
+        },
+        "adapter_code": "EXIT_ZERO"
+      },
+      "created_at": "2026-11-21T19:12:58.603Z"
+    },
+    {
+      "entry_id": "tl-3b987837-e25c-447e-a04c-0257a4e25814",
+      "work_id": "work-fire5-1795288029434",
+      "task_id": "fire-3",
+      "goal_contract_id": "gc-fire-3",
+      "subsystem": "circuit.evidence_validator",
+      "provider_id": "evidence-validator",
+      "adapter_id": "cursor",
+      "tokens_in": null,
+      "tokens_out": null,
+      "tokens_system": null,
+      "tokens_context": null,
+      "tokens_tools": null,
+      "tokens_output": null,
+      "tokens_cache_hit": null,
+      "latency_ms": 48,
+      "cost_usd": null,
+      "cost_provenance": "UNAVAILABLE",
+      "status": "TRUE_FULL_PASS",
+      "payload": {
+        "validator": {
+          "kind": "EvidenceValidatorResult",
+          "status": "TRUE_FULL_PASS",
+          "code": "TRUE_FULL_PASS",
+          "reasons": [],
+          "sensitive_diff_blocked": [],
+          "command_results": [
+            {
+              "id": "marker-exists",
+              "argv": [
+                "bash",
+                "-lc",
+                "test -f '/home/gaab/orca/workspaces/EvolveLoop/seagrass/.evolveloop/live-wt/20261121T190707Z/fire-3/.evolveloop/circuit-markers/fire-3.txt'"
+              ],
+              "exit_code": 0,
+              "status": "ok",
+              "duration_ms": 26
+            },
+            {
+              "id": "marker-content",
+              "argv": [
+                "bash",
+                "-lc",
+                "test \"$(cat '/home/gaab/orca/workspaces/EvolveLoop/seagrass/.evolveloop/live-wt/20261121T190707Z/fire-3/.evolveloop/circuit-markers/fire-3.txt')\" = 'fire-3'"
+              ],
+              "exit_code": 0,
+              "status": "ok",
+              "duration_ms": 22
+            }
+          ],
+          "evaluated_at": "2026-11-21T19:11:32.125Z",
+          "limitations": [
+            "Validator runs outside agent session via ExecutionRunner",
+            "TRUE_FULL_PASS requires mandatory criteria PASS + commands exit 0 + no unauthorized sensitive diffs"
+          ]
+        }
+      },
+      "created_at": "2026-11-21T19:11:32.189Z"
+    },
+    {
+      "entry_id": "tl-414f203b-2f27-4f91-bc14-945deacf4cc6",
+      "work_id": "work-fire5-1795288029434",
+      "task_id": "fire-3",
+      "goal_contract_id": "gc-fire-3",
+      "subsystem": "circuit.adapter",
+      "provider_id": "ollama",
+      "adapter_id": "cursor",
+      "model": "bonsai-64k:latest",
+      "model_requested": "bonsai-64k:latest",
+      "model_served": "bonsai-64k:latest",
+      "tokens_in": null,
+      "tokens_out": null,
+      "tokens_system": null,
+      "tokens_context": null,
+      "tokens_tools": null,
+      "tokens_output": null,
+      "tokens_cache_hit": null,
+      "latency_ms": 85790,
+      "cost_usd": null,
+      "cost_provenance": "UNAVAILABLE",
+      "status": "ok",
+      "payload": {
+        "adapter_health": {
+          "kind": "AdapterHealth",
+          "adapter_id": "cursor",
+          "ok": true,
+          "code": "OK",
+          "message": "cursor-agent available at /home/gaab/.local/bin/agent",
+          "cli_path": "/home/gaab/.local/bin/agent",
+          "checked_at": "2026-11-21T19:10:03.906Z",
+          "limitations": [
+            "V0 agent adapter slot — Cursor via cursor-agent CLI",
+            "invoke requires EVOLVELOOP_HARNESS_CONSENT=true for real spawn",
+            "All spawn routed through ExecutionRunner"
+          ]
+        },
+        "model_health": {
+          "local": {
+            "kind": "ModelHealth",
+            "provider_id": "ollama",
+            "ok": true,
+            "code": "OK",
+            "message": "Ollama ok; model=bonsai-64k:latest",
+            "model": "bonsai-64k:latest",
+            "base_url": "http://127.0.0.1:11434",
+            "checked_at": "2026-11-21T19:10:03.207Z",
+            "limitations": [
+              "Local Ollama only — no FreeLLMAPI gateway",
+              "Availability is probed via GET /api/tags"
+            ]
+          },
+          "remote": {
+            "kind": "ModelHealth",
+            "provider_id": "openrouter",
+            "ok": false,
+            "code": "MISSING_CREDENTIALS",
+            "message": "OpenRouter API key absent — healthCheck failed honestly",
+            "base_url": "https://openrouter.ai/api/v1",
+            "model": "openai/gpt-4o-mini",
+            "checked_at": "2026-11-21T19:10:03.208Z",
+            "limitations": [
+              "Remote OpenRouter never used as silent default",
+              "Requires OPENROUTER_API_KEY or EVOLVELOOP_OPENROUTER_API_KEY",
+              "Does not invent cost when usage fields absent"
+            ]
+          }
+        },
+        "adapter_code": "EXIT_ZERO"
+      },
+      "created_at": "2026-11-21T19:11:32.002Z"
+    },
+    {
+      "entry_id": "tl-9c4474ed-76af-4007-b046-d78e83495434",
+      "work_id": "work-fire5-1795288029434",
+      "task_id": "fire-2",
+      "goal_contract_id": "gc-fire-2",
+      "subsystem": "circuit.evidence_validator",
+      "provider_id": "evidence-validator",
+      "adapter_id": "cursor",
+      "tokens_in": null,
+      "tokens_out": null,
+      "tokens_system": null,
+      "tokens_context": null,
+      "tokens_tools": null,
+      "tokens_output": null,
+      "tokens_cache_hit": null,
+      "latency_ms": 44,
+      "cost_usd": null,
+      "cost_provenance": "UNAVAILABLE",
+      "status": "TRUE_FULL_PASS",
+      "payload": {
+        "validator": {
+          "kind": "EvidenceValidatorResult",
+          "status": "TRUE_FULL_PASS",
+          "code": "TRUE_FULL_PASS",
+          "reasons": [],
+          "sensitive_diff_blocked": [],
+          "command_results": [
+            {
+              "id": "marker-exists",
+              "argv": [
+                "bash",
+                "-lc",
+                "test -f '/home/gaab/orca/workspaces/EvolveLoop/seagrass/.evolveloop/live-wt/20261121T190707Z/fire-2/.evolveloop/circuit-markers/fire-2.txt'"
+              ],
+              "exit_code": 0,
+              "status": "ok",
+              "duration_ms": 21
+            },
+            {
+              "id": "marker-content",
+              "argv": [
+                "bash",
+                "-lc",
+                "test \"$(cat '/home/gaab/orca/workspaces/EvolveLoop/seagrass/.evolveloop/live-wt/20261121T190707Z/fire-2/.evolveloop/circuit-markers/fire-2.txt')\" = 'fire-2'"
+              ],
+              "exit_code": 0,
+              "status": "ok",
+              "duration_ms": 23
+            }
+          ],
+          "evaluated_at": "2026-11-21T19:10:02.819Z",
+          "limitations": [
+            "Validator runs outside agent session via ExecutionRunner",
+            "TRUE_FULL_PASS requires mandatory criteria PASS + commands exit 0 + no unauthorized sensitive diffs"
+          ]
+        }
+      },
+      "created_at": "2026-11-21T19:10:02.926Z"
+    },
+    {
+      "entry_id": "tl-a3448876-98a1-4e34-86c4-8b287d7dd4b5",
+      "work_id": "work-fire5-1795288029434",
+      "task_id": "fire-2",
+      "goal_contract_id": "gc-fire-2",
+      "subsystem": "circuit.adapter",
+      "provider_id": "ollama",
+      "adapter_id": "cursor",
+      "model": "bonsai-64k:latest",
+      "model_requested": "bonsai-64k:latest",
+      "model_served": "bonsai-64k:latest",
+      "tokens_in": null,
+      "tokens_out": null,
+      "tokens_system": null,
+      "tokens_context": null,
+      "tokens_tools": null,
+      "tokens_output": null,
+      "tokens_cache_hit": null,
+      "latency_ms": 81509,
+      "cost_usd": null,
+      "cost_provenance": "UNAVAILABLE",
+      "status": "ok",
+      "payload": {
+        "adapter_health": {
+          "kind": "AdapterHealth",
+          "adapter_id": "cursor",
+          "ok": true,
+          "code": "OK",
+          "message": "cursor-agent available at /home/gaab/.local/bin/agent",
+          "cli_path": "/home/gaab/.local/bin/agent",
+          "checked_at": "2026-11-21T19:08:38.900Z",
+          "limitations": [
+            "V0 agent adapter slot — Cursor via cursor-agent CLI",
+            "invoke requires EVOLVELOOP_HARNESS_CONSENT=true for real spawn",
+            "All spawn routed through ExecutionRunner"
+          ]
+        },
+        "model_health": {
+          "local": {
+            "kind": "ModelHealth",
+            "provider_id": "ollama",
+            "ok": true,
+            "code": "OK",
+            "message": "Ollama ok; model=bonsai-64k:latest",
+            "model": "bonsai-64k:latest",
+            "base_url": "http://127.0.0.1:11434",
+            "checked_at": "2026-11-21T19:08:38.195Z",
+            "limitations": [
+              "Local Ollama only — no FreeLLMAPI gateway",
+              "Availability is probed via GET /api/tags"
+            ]
+          },
+          "remote": {
+            "kind": "ModelHealth",
+            "provider_id": "openrouter",
+            "ok": false,
+            "code": "MISSING_CREDENTIALS",
+            "message": "OpenRouter API key absent — healthCheck failed honestly",
+            "base_url": "https://openrouter.ai/api/v1",
+            "model": "openai/gpt-4o-mini",
+            "checked_at": "2026-11-21T19:08:38.196Z",
+            "limitations": [
+              "Remote OpenRouter never used as silent default",
+              "Requires OPENROUTER_API_KEY or EVOLVELOOP_OPENROUTER_API_KEY",
+              "Does not invent cost when usage fields absent"
+            ]
+          }
+        },
+        "adapter_code": "EXIT_ZERO"
+      },
+      "created_at": "2026-11-21T19:10:02.642Z"
+    },
+    {
+      "entry_id": "tl-8dead648-b259-43e2-a0c8-3ebe77f1878d",
+      "work_id": "work-fire5-1795288029434",
+      "task_id": "fire-1",
+      "goal_contract_id": "gc-fire-1",
+      "subsystem": "circuit.evidence_validator",
+      "provider_id": "evidence-validator",
+      "adapter_id": "cursor",
+      "tokens_in": null,
+      "tokens_out": null,
+      "tokens_system": null,
+      "tokens_context": null,
+      "tokens_tools": null,
+      "tokens_output": null,
+      "tokens_cache_hit": null,
+      "latency_ms": 44,
+      "cost_usd": null,
+      "cost_provenance": "UNAVAILABLE",
+      "status": "TRUE_FULL_PASS",
+      "payload": {
+        "validator": {
+          "kind": "EvidenceValidatorResult",
+          "status": "TRUE_FULL_PASS",
+          "code": "TRUE_FULL_PASS",
+          "reasons": [],
+          "sensitive_diff_blocked": [],
+          "command_results": [
+            {
+              "id": "marker-exists",
+              "argv": [
+                "bash",
+                "-lc",
+                "test -f '/home/gaab/orca/workspaces/EvolveLoop/seagrass/.evolveloop/live-wt/20261121T190707Z/fire-1/.evolveloop/circuit-markers/fire-1.txt'"
+              ],
+              "exit_code": 0,
+              "status": "ok",
+              "duration_ms": 21
+            },
+            {
+              "id": "marker-content",
+              "argv": [
+                "bash",
+                "-lc",
+                "test \"$(cat '/home/gaab/orca/workspaces/EvolveLoop/seagrass/.evolveloop/live-wt/20261121T190707Z/fire-1/.evolveloop/circuit-markers/fire-1.txt')\" = 'fire-1'"
+              ],
+              "exit_code": 0,
+              "status": "ok",
+              "duration_ms": 23
+            }
+          ],
+          "evaluated_at": "2026-11-21T19:08:37.549Z",
+          "limitations": [
+            "Validator runs outside agent session via ExecutionRunner",
+            "TRUE_FULL_PASS requires mandatory criteria PASS + commands exit 0 + no unauthorized sensitive diffs"
+          ]
+        }
+      },
+      "created_at": "2026-11-21T19:08:37.604Z"
+    },
+    {
+      "entry_id": "tl-88d8943b-ed17-4152-8ee0-a87ebfca68cb",
+      "work_id": "work-fire5-1795288029434",
+      "task_id": "fire-1",
+      "goal_contract_id": "gc-fire-1",
+      "subsystem": "circuit.adapter",
+      "provider_id": "ollama",
+      "adapter_id": "cursor",
+      "model": "bonsai-64k:latest",
+      "model_requested": "bonsai-64k:latest",
+      "model_served": "bonsai-64k:latest",
+      "tokens_in": null,
+      "tokens_out": null,
+      "tokens_system": null,
+      "tokens_context": null,
+      "tokens_tools": null,
+      "tokens_output": null,
+      "tokens_cache_hit": null,
+      "latency_ms": 82120,
+      "cost_usd": null,
+      "cost_provenance": "UNAVAILABLE",
+      "status": "ok",
+      "payload": {
+        "adapter_health": {
+          "kind": "AdapterHealth",
+          "adapter_id": "cursor",
+          "ok": true,
+          "code": "OK",
+          "message": "cursor-agent available at /home/gaab/.local/bin/agent",
+          "cli_path": "/home/gaab/.local/bin/agent",
+          "checked_at": "2026-11-21T19:07:10.272Z",
+          "limitations": [
+            "V0 agent adapter slot — Cursor via cursor-agent CLI",
+            "invoke requires EVOLVELOOP_HARNESS_CONSENT=true for real spawn",
+            "All spawn routed through ExecutionRunner"
+          ]
+        },
+        "model_health": {
+          "local": {
+            "kind": "ModelHealth",
+            "provider_id": "ollama",
+            "ok": true,
+            "code": "OK",
+            "message": "Ollama ok; model=bonsai-64k:latest",
+            "model": "bonsai-64k:latest",
+            "base_url": "http://127.0.0.1:11434",
+            "checked_at": "2026-11-21T19:07:09.435Z",
+            "limitations": [
+              "Local Ollama only — no FreeLLMAPI gateway",
+              "Availability is probed via GET /api/tags"
+            ]
+          },
+          "remote": {
+            "kind": "ModelHealth",
+            "provider_id": "openrouter",
+            "ok": false,
+            "code": "MISSING_CREDENTIALS",
+            "message": "OpenRouter API key absent — healthCheck failed honestly",
+            "base_url": "https://openrouter.ai/api/v1",
+            "model": "openai/gpt-4o-mini",
+            "checked_at": "2026-11-21T19:07:09.453Z",
+            "limitations": [
+              "Remote OpenRouter never used as silent default",
+              "Requires OPENROUTER_API_KEY or EVOLVELOOP_OPENROUTER_API_KEY",
+              "Does not invent cost when usage fields absent"
+            ]
+          }
+        },
+        "adapter_code": "EXIT_ZERO"
+      },
+      "created_at": "2026-11-21T19:08:37.525Z"
+    }
+  ],
+  "circuit_runs": [
+    {
+      "run_id": "cr-35a99f70-95ca-4f8d-835c-741706fa2c78",
+      "work_id": "work-fire5-1795288029434",
+      "task_id": "fire-5",
+      "goal_contract_id": "gc-fire-5",
+      "status": "TRUE_FULL_PASS",
+      "reason": "TRUE_FULL_PASS",
+      "workspace_path": "/home/gaab/orca/workspaces/EvolveLoop/seagrass/.evolveloop/live-wt/20261121T190707Z/fire-5",
+      "payload": {
+        "adapter_result": {
+          "kind": "NormalizedAdapterResult",
+          "adapter_id": "cursor",
+          "status": "ok",
+          "code": "EXIT_ZERO",
+          "message": "Marcador criado: `.evolveloop/circuit-markers/fire-5.txt` com conteúdo exato `fire-5`.\n",
+          "exit_code": 0,
+          "stdout": "Marcador criado: `.evolveloop/circuit-markers/fire-5.txt` com conteúdo exato `fire-5`.\n",
+          "stderr": "",
+          "duration_ms": 81749,
+          "pid": 1435978,
+          "pgid": 1435978,
+          "tokens_in": null,
+          "tokens_out": null,
+          "cost_usd": null,
+          "cost_provenance": "UNAVAILABLE",
+          "limitations": [
+            "Not an OS sandbox — confinement is realpath + cwd + env scrub only",
+            "Cancel uses kill(-pgid) SIGTERM→SIGKILL with /proc starttime reuse guard",
+            "Env allowlist strict: PATH, LANG, TERM + ephemeral HOME",
+            "Stdout/stderr pass deterministic secret redaction",
+            "env_scrubbed_strict_allowlist",
+            "token_usage_not_reported_by_cli"
+          ],
+          "raw_runner": {
+            "kind": "ExecutionRunnerResult",
+            "status": "ok",
+            "code": "EXIT_ZERO",
+            "exit_code": 0,
+            "signal": null,
+            "stdout": "Marcador criado: `.evolveloop/circuit-markers/fire-5.txt` com conteúdo exato `fire-5`.\n",
+            "stderr": "",
+            "duration_ms": 81749,
+            "pid": 1435978,
+            "pgid": 1435978,
+            "argv": [
+              "/home/gaab/.local/bin/agent",
+              "-p",
+              "--output-format",
+              "text",
+              "--trust",
+              "--workspace",
+              "/home/gaab/orca/workspaces/EvolveLoop/seagrass/.evolveloop/live-wt/20261121T190707Z/fire-5",
+              "--force",
+              "Read the prompt file at /home/gaab/orca/workspaces/EvolveLoop/seagrass/.evolveloop/live-wt/20261121T190707Z/fire-5/.evolveloop/harness-prompts/sess-02854f89-26c1-43ea-97c2-5d04614b5986.md and complete the assigned task. Stay strictly inside the workspace."
+            ],
+            "cwd": "/home/gaab/orca/workspaces/EvolveLoop/seagrass/.evolveloop/live-wt/20261121T190707Z/fire-5",
+            "ephemeral_home": "/tmp/evolveloop-ephemeral-home/home-hhKem5",
+            "limitations": [
+              "Not an OS sandbox — confinement is realpath + cwd + env scrub only",
+              "Cancel uses kill(-pgid) SIGTERM→SIGKILL with /proc starttime reuse guard",
+              "Env allowlist strict: PATH, LANG, TERM + ephemeral HOME",
+              "Stdout/stderr pass deterministic secret redaction",
+              "env_scrubbed_strict_allowlist"
+            ]
+          },
+          "session_id": "sess-02854f89-26c1-43ea-97c2-5d04614b5986"
+        },
+        "validator": {
+          "kind": "EvidenceValidatorResult",
+          "status": "TRUE_FULL_PASS",
+          "code": "TRUE_FULL_PASS",
+          "reasons": [],
+          "sensitive_diff_blocked": [],
+          "command_results": [
+            {
+              "id": "marker-exists",
+              "argv": [
+                "bash",
+                "-lc",
+                "test -f '/home/gaab/orca/workspaces/EvolveLoop/seagrass/.evolveloop/live-wt/20261121T190707Z/fire-5/.evolveloop/circuit-markers/fire-5.txt'"
+              ],
+              "exit_code": 0,
+              "status": "ok",
+              "duration_ms": 21
+            },
+            {
+              "id": "marker-content",
+              "argv": [
+                "bash",
+                "-lc",
+                "test \"$(cat '/home/gaab/orca/workspaces/EvolveLoop/seagrass/.evolveloop/live-wt/20261121T190707Z/fire-5/.evolveloop/circuit-markers/fire-5.txt')\" = 'fire-5'"
+              ],
+              "exit_code": 0,
+              "status": "ok",
+              "duration_ms": 21
+            }
+          ],
+          "evaluated_at": "2026-11-21T19:14:24.544Z",
+          "limitations": [
+            "Validator runs outside agent session via ExecutionRunner",
+            "TRUE_FULL_PASS requires mandatory criteria PASS + commands exit 0 + no unauthorized sensitive diffs"
+          ]
+        },
+        "model_health": {
+          "local": {
+            "kind": "ModelHealth",
+            "provider_id": "ollama",
+            "ok": true,
+            "code": "OK",
+            "message": "Ollama ok; model=bonsai-64k:latest",
+            "model": "bonsai-64k:latest",
+            "base_url": "http://127.0.0.1:11434",
+            "checked_at": "2026-11-21T19:12:59.423Z",
+            "limitations": [
+              "Local Ollama only — no FreeLLMAPI gateway",
+              "Availability is probed via GET /api/tags"
+            ]
+          },
+          "remote": {
+            "kind": "ModelHealth",
+            "provider_id": "openrouter",
+            "ok": false,
+            "code": "MISSING_CREDENTIALS",
+            "message": "OpenRouter API key absent — healthCheck failed honestly",
+            "base_url": "https://openrouter.ai/api/v1",
+            "model": "openai/gpt-4o-mini",
+            "checked_at": "2026-11-21T19:12:59.423Z",
+            "limitations": [
+              "Remote OpenRouter never used as silent default",
+              "Requires OPENROUTER_API_KEY or EVOLVELOOP_OPENROUTER_API_KEY",
+              "Does not invent cost when usage fields absent"
+            ]
+          }
+        }
+      },
+      "created_at": "2026-11-21T19:14:24.629Z"
+    },
+    {
+      "run_id": "cr-21e14572-a203-4ee5-90f7-f1a4e4b44284",
+      "work_id": "work-fire5-1795288029434",
+      "task_id": "fire-4",
+      "goal_contract_id": "gc-fire-4",
+      "status": "TRUE_FULL_PASS",
+      "reason": "TRUE_FULL_PASS",
+      "workspace_path": "/home/gaab/orca/workspaces/EvolveLoop/seagrass/.evolveloop/live-wt/20261121T190707Z/fire-4",
+      "payload": {
+        "adapter_result": {
+          "kind": "NormalizedAdapterResult",
+          "adapter_id": "cursor",
+          "status": "ok",
+          "code": "EXIT_ZERO",
+          "message": "Marcador criado: `.evolveloop/circuit-markers/fire-4.txt` com conteúdo exato `fire-4`.\n",
+          "exit_code": 0,
+          "stdout": "Marcador criado: `.evolveloop/circuit-markers/fire-4.txt` com conteúdo exato `fire-4`.\n",
+          "stderr": "",
+          "duration_ms": 83058,
+          "pid": 1408789,
+          "pgid": 1408789,
+          "tokens_in": null,
+          "tokens_out": null,
+          "cost_usd": null,
+          "cost_provenance": "UNAVAILABLE",
+          "limitations": [
+            "Not an OS sandbox — confinement is realpath + cwd + env scrub only",
+            "Cancel uses kill(-pgid) SIGTERM→SIGKILL with /proc starttime reuse guard",
+            "Env allowlist strict: PATH, LANG, TERM + ephemeral HOME",
+            "Stdout/stderr pass deterministic secret redaction",
+            "env_scrubbed_strict_allowlist",
+            "token_usage_not_reported_by_cli"
+          ],
+          "raw_runner": {
+            "kind": "ExecutionRunnerResult",
+            "status": "ok",
+            "code": "EXIT_ZERO",
+            "exit_code": 0,
+            "signal": null,
+            "stdout": "Marcador criado: `.evolveloop/circuit-markers/fire-4.txt` com conteúdo exato `fire-4`.\n",
+            "stderr": "",
+            "duration_ms": 83058,
+            "pid": 1408789,
+            "pgid": 1408789,
+            "argv": [
+              "/home/gaab/.local/bin/agent",
+              "-p",
+              "--output-format",
+              "text",
+              "--trust",
+              "--workspace",
+              "/home/gaab/orca/workspaces/EvolveLoop/seagrass/.evolveloop/live-wt/20261121T190707Z/fire-4",
+              "--force",
+              "Read the prompt file at /home/gaab/orca/workspaces/EvolveLoop/seagrass/.evolveloop/live-wt/20261121T190707Z/fire-4/.evolveloop/harness-prompts/sess-5b31dd95-438a-4234-aaa4-b0862f7fff97.md and complete the assigned task. Stay strictly inside the workspace."
+            ],
+            "cwd": "/home/gaab/orca/workspaces/EvolveLoop/seagrass/.evolveloop/live-wt/20261121T190707Z/fire-4",
+            "ephemeral_home": "/tmp/evolveloop-ephemeral-home/home-qwBuKX",
+            "limitations": [
+              "Not an OS sandbox — confinement is realpath + cwd + env scrub only",
+              "Cancel uses kill(-pgid) SIGTERM→SIGKILL with /proc starttime reuse guard",
+              "Env allowlist strict: PATH, LANG, TERM + ephemeral HOME",
+              "Stdout/stderr pass deterministic secret redaction",
+              "env_scrubbed_strict_allowlist"
+            ]
+          },
+          "session_id": "sess-5b31dd95-438a-4234-aaa4-b0862f7fff97"
+        },
+        "validator": {
+          "kind": "EvidenceValidatorResult",
+          "status": "TRUE_FULL_PASS",
+          "code": "TRUE_FULL_PASS",
+          "reasons": [],
+          "sensitive_diff_blocked": [],
+          "command_results": [
+            {
+              "id": "marker-exists",
+              "argv": [
+                "bash",
+                "-lc",
+                "test -f '/home/gaab/orca/workspaces/EvolveLoop/seagrass/.evolveloop/live-wt/20261121T190707Z/fire-4/.evolveloop/circuit-markers/fire-4.txt'"
+              ],
+              "exit_code": 0,
+              "status": "ok",
+              "duration_ms": 21
+            },
+            {
+              "id": "marker-content",
+              "argv": [
+                "bash",
+                "-lc",
+                "test \"$(cat '/home/gaab/orca/workspaces/EvolveLoop/seagrass/.evolveloop/live-wt/20261121T190707Z/fire-4/.evolveloop/circuit-markers/fire-4.txt')\" = 'fire-4'"
+              ],
+              "exit_code": 0,
+              "status": "ok",
+              "duration_ms": 21
+            }
+          ],
+          "evaluated_at": "2026-11-21T19:12:58.612Z",
+          "limitations": [
+            "Validator runs outside agent session via ExecutionRunner",
+            "TRUE_FULL_PASS requires mandatory criteria PASS + commands exit 0 + no unauthorized sensitive diffs"
+          ]
+        },
+        "model_health": {
+          "local": {
+            "kind": "ModelHealth",
+            "provider_id": "ollama",
+            "ok": true,
+            "code": "OK",
+            "message": "Ollama ok; model=bonsai-64k:latest",
+            "model": "bonsai-64k:latest",
+            "base_url": "http://127.0.0.1:11434",
+            "checked_at": "2026-11-21T19:11:32.559Z",
+            "limitations": [
+              "Local Ollama only — no FreeLLMAPI gateway",
+              "Availability is probed via GET /api/tags"
+            ]
+          },
+          "remote": {
+            "kind": "ModelHealth",
+            "provider_id": "openrouter",
+            "ok": false,
+            "code": "MISSING_CREDENTIALS",
+            "message": "OpenRouter API key absent — healthCheck failed honestly",
+            "base_url": "https://openrouter.ai/api/v1",
+            "model": "openai/gpt-4o-mini",
+            "checked_at": "2026-11-21T19:11:32.559Z",
+            "limitations": [
+              "Remote OpenRouter never used as silent default",
+              "Requires OPENROUTER_API_KEY or EVOLVELOOP_OPENROUTER_API_KEY",
+              "Does not invent cost when usage fields absent"
+            ]
+          }
+        }
+      },
+      "created_at": "2026-11-21T19:12:58.944Z"
+    },
+    {
+      "run_id": "cr-75fd2577-1f03-4a76-bca1-6351499d0718",
+      "work_id": "work-fire5-1795288029434",
+      "task_id": "fire-3",
+      "goal_contract_id": "gc-fire-3",
+      "status": "TRUE_FULL_PASS",
+      "reason": "TRUE_FULL_PASS",
+      "workspace_path": "/home/gaab/orca/workspaces/EvolveLoop/seagrass/.evolveloop/live-wt/20261121T190707Z/fire-3",
+      "payload": {
+        "adapter_result": {
+          "kind": "NormalizedAdapterResult",
+          "adapter_id": "cursor",
+          "status": "ok",
+          "code": "EXIT_ZERO",
+          "message": "Marcador criado: `.evolveloop/circuit-markers/fire-3.txt` com o conteúdo exacto `fire-3`.\n",
+          "exit_code": 0,
+          "stdout": "Marcador criado: `.evolveloop/circuit-markers/fire-3.txt` com o conteúdo exacto `fire-3`.\n",
+          "stderr": "",
+          "duration_ms": 85790,
+          "pid": 1381072,
+          "pgid": 1381072,
+          "tokens_in": null,
+          "tokens_out": null,
+          "cost_usd": null,
+          "cost_provenance": "UNAVAILABLE",
+          "limitations": [
+            "Not an OS sandbox — confinement is realpath + cwd + env scrub only",
+            "Cancel uses kill(-pgid) SIGTERM→SIGKILL with /proc starttime reuse guard",
+            "Env allowlist strict: PATH, LANG, TERM + ephemeral HOME",
+            "Stdout/stderr pass deterministic secret redaction",
+            "env_scrubbed_strict_allowlist",
+            "token_usage_not_reported_by_cli"
+          ],
+          "raw_runner": {
+            "kind": "ExecutionRunnerResult",
+            "status": "ok",
+            "code": "EXIT_ZERO",
+            "exit_code": 0,
+            "signal": null,
+            "stdout": "Marcador criado: `.evolveloop/circuit-markers/fire-3.txt` com o conteúdo exacto `fire-3`.\n",
+            "stderr": "",
+            "duration_ms": 85790,
+            "pid": 1381072,
+            "pgid": 1381072,
+            "argv": [
+              "/home/gaab/.local/bin/agent",
+              "-p",
+              "--output-format",
+              "text",
+              "--trust",
+              "--workspace",
+              "/home/gaab/orca/workspaces/EvolveLoop/seagrass/.evolveloop/live-wt/20261121T190707Z/fire-3",
+              "--force",
+              "Read the prompt file at /home/gaab/orca/workspaces/EvolveLoop/seagrass/.evolveloop/live-wt/20261121T190707Z/fire-3/.evolveloop/harness-prompts/sess-5b2eb5fe-c159-434c-b248-040a4033263c.md and complete the assigned task. Stay strictly inside the workspace."
+            ],
+            "cwd": "/home/gaab/orca/workspaces/EvolveLoop/seagrass/.evolveloop/live-wt/20261121T190707Z/fire-3",
+            "ephemeral_home": "/tmp/evolveloop-ephemeral-home/home-54HBjl",
+            "limitations": [
+              "Not an OS sandbox — confinement is realpath + cwd + env scrub only",
+              "Cancel uses kill(-pgid) SIGTERM→SIGKILL with /proc starttime reuse guard",
+              "Env allowlist strict: PATH, LANG, TERM + ephemeral HOME",
+              "Stdout/stderr pass deterministic secret redaction",
+              "env_scrubbed_strict_allowlist"
+            ]
+          },
+          "session_id": "sess-5b2eb5fe-c159-434c-b248-040a4033263c"
+        },
+        "validator": {
+          "kind": "EvidenceValidatorResult",
+          "status": "TRUE_FULL_PASS",
+          "code": "TRUE_FULL_PASS",
+          "reasons": [],
+          "sensitive_diff_blocked": [],
+          "command_results": [
+            {
+              "id": "marker-exists",
+              "argv": [
+                "bash",
+                "-lc",
+                "test -f '/home/gaab/orca/workspaces/EvolveLoop/seagrass/.evolveloop/live-wt/20261121T190707Z/fire-3/.evolveloop/circuit-markers/fire-3.txt'"
+              ],
+              "exit_code": 0,
+              "status": "ok",
+              "duration_ms": 26
+            },
+            {
+              "id": "marker-content",
+              "argv": [
+                "bash",
+                "-lc",
+                "test \"$(cat '/home/gaab/orca/workspaces/EvolveLoop/seagrass/.evolveloop/live-wt/20261121T190707Z/fire-3/.evolveloop/circuit-markers/fire-3.txt')\" = 'fire-3'"
+              ],
+              "exit_code": 0,
+              "status": "ok",
+              "duration_ms": 22
+            }
+          ],
+          "evaluated_at": "2026-11-21T19:11:32.125Z",
+          "limitations": [
+            "Validator runs outside agent session via ExecutionRunner",
+            "TRUE_FULL_PASS requires mandatory criteria PASS + commands exit 0 + no unauthorized sensitive diffs"
+          ]
+        },
+        "model_health": {
+          "local": {
+            "kind": "ModelHealth",
+            "provider_id": "ollama",
+            "ok": true,
+            "code": "OK",
+            "message": "Ollama ok; model=bonsai-64k:latest",
+            "model": "bonsai-64k:latest",
+            "base_url": "http://127.0.0.1:11434",
+            "checked_at": "2026-11-21T19:10:03.207Z",
+            "limitations": [
+              "Local Ollama only — no FreeLLMAPI gateway",
+              "Availability is probed via GET /api/tags"
+            ]
+          },
+          "remote": {
+            "kind": "ModelHealth",
+            "provider_id": "openrouter",
+            "ok": false,
+            "code": "MISSING_CREDENTIALS",
+            "message": "OpenRouter API key absent — healthCheck failed honestly",
+            "base_url": "https://openrouter.ai/api/v1",
+            "model": "openai/gpt-4o-mini",
+            "checked_at": "2026-11-21T19:10:03.208Z",
+            "limitations": [
+              "Remote OpenRouter never used as silent default",
+              "Requires OPENROUTER_API_KEY or EVOLVELOOP_OPENROUTER_API_KEY",
+              "Does not invent cost when usage fields absent"
+            ]
+          }
+        }
+      },
+      "created_at": "2026-11-21T19:11:32.193Z"
+    },
+    {
+      "run_id": "cr-aa3cfb92-2fc9-44ea-8a13-e607ac70c11a",
+      "work_id": "work-fire5-1795288029434",
+      "task_id": "fire-2",
+      "goal_contract_id": "gc-fire-2",
+      "status": "TRUE_FULL_PASS",
+      "reason": "TRUE_FULL_PASS",
+      "workspace_path": "/home/gaab/orca/workspaces/EvolveLoop/seagrass/.evolveloop/live-wt/20261121T190707Z/fire-2",
+      "payload": {
+        "adapter_result": {
+          "kind": "NormalizedAdapterResult",
+          "adapter_id": "cursor",
+          "status": "ok",
+          "code": "EXIT_ZERO",
+          "message": "Marcador criado: `.evolveloop/circuit-markers/fire-2.txt` com o conteúdo exato `fire-2`.\n",
+          "exit_code": 0,
+          "stdout": "Marcador criado: `.evolveloop/circuit-markers/fire-2.txt` com o conteúdo exato `fire-2`.\n",
+          "stderr": "",
+          "duration_ms": 81509,
+          "pid": 1354410,
+          "pgid": 1354410,
+          "tokens_in": null,
+          "tokens_out": null,
+          "cost_usd": null,
+          "cost_provenance": "UNAVAILABLE",
+          "limitations": [
+            "Not an OS sandbox — confinement is realpath + cwd + env scrub only",
+            "Cancel uses kill(-pgid) SIGTERM→SIGKILL with /proc starttime reuse guard",
+            "Env allowlist strict: PATH, LANG, TERM + ephemeral HOME",
+            "Stdout/stderr pass deterministic secret redaction",
+            "env_scrubbed_strict_allowlist",
+            "token_usage_not_reported_by_cli"
+          ],
+          "raw_runner": {
+            "kind": "ExecutionRunnerResult",
+            "status": "ok",
+            "code": "EXIT_ZERO",
+            "exit_code": 0,
+            "signal": null,
+            "stdout": "Marcador criado: `.evolveloop/circuit-markers/fire-2.txt` com o conteúdo exato `fire-2`.\n",
+            "stderr": "",
+            "duration_ms": 81509,
+            "pid": 1354410,
+            "pgid": 1354410,
+            "argv": [
+              "/home/gaab/.local/bin/agent",
+              "-p",
+              "--output-format",
+              "text",
+              "--trust",
+              "--workspace",
+              "/home/gaab/orca/workspaces/EvolveLoop/seagrass/.evolveloop/live-wt/20261121T190707Z/fire-2",
+              "--force",
+              "Read the prompt file at /home/gaab/orca/workspaces/EvolveLoop/seagrass/.evolveloop/live-wt/20261121T190707Z/fire-2/.evolveloop/harness-prompts/sess-db225450-0b0f-4600-92c2-e24f1ab3b1df.md and complete the assigned task. Stay strictly inside the workspace."
+            ],
+            "cwd": "/home/gaab/orca/workspaces/EvolveLoop/seagrass/.evolveloop/live-wt/20261121T190707Z/fire-2",
+            "ephemeral_home": "/tmp/evolveloop-ephemeral-home/home-fYsIUH",
+            "limitations": [
+              "Not an OS sandbox — confinement is realpath + cwd + env scrub only",
+              "Cancel uses kill(-pgid) SIGTERM→SIGKILL with /proc starttime reuse guard",
+              "Env allowlist strict: PATH, LANG, TERM + ephemeral HOME",
+              "Stdout/stderr pass deterministic secret redaction",
+              "env_scrubbed_strict_allowlist"
+            ]
+          },
+          "session_id": "sess-db225450-0b0f-4600-92c2-e24f1ab3b1df"
+        },
+        "validator": {
+          "kind": "EvidenceValidatorResult",
+          "status": "TRUE_FULL_PASS",
+          "code": "TRUE_FULL_PASS",
+          "reasons": [],
+          "sensitive_diff_blocked": [],
+          "command_results": [
+            {
+              "id": "marker-exists",
+              "argv": [
+                "bash",
+                "-lc",
+                "test -f '/home/gaab/orca/workspaces/EvolveLoop/seagrass/.evolveloop/live-wt/20261121T190707Z/fire-2/.evolveloop/circuit-markers/fire-2.txt'"
+              ],
+              "exit_code": 0,
+              "status": "ok",
+              "duration_ms": 21
+            },
+            {
+              "id": "marker-content",
+              "argv": [
+                "bash",
+                "-lc",
+                "test \"$(cat '/home/gaab/orca/workspaces/EvolveLoop/seagrass/.evolveloop/live-wt/20261121T190707Z/fire-2/.evolveloop/circuit-markers/fire-2.txt')\" = 'fire-2'"
+              ],
+              "exit_code": 0,
+              "status": "ok",
+              "duration_ms": 23
+            }
+          ],
+          "evaluated_at": "2026-11-21T19:10:02.819Z",
+          "limitations": [
+            "Validator runs outside agent session via ExecutionRunner",
+            "TRUE_FULL_PASS requires mandatory criteria PASS + commands exit 0 + no unauthorized sensitive diffs"
+          ]
+        },
+        "model_health": {
+          "local": {
+            "kind": "ModelHealth",
+            "provider_id": "ollama",
+            "ok": true,
+            "code": "OK",
+            "message": "Ollama ok; model=bonsai-64k:latest",
+            "model": "bonsai-64k:latest",
+            "base_url": "http://127.0.0.1:11434",
+            "checked_at": "2026-11-21T19:08:38.195Z",
+            "limitations": [
+              "Local Ollama only — no FreeLLMAPI gateway",
+              "Availability is probed via GET /api/tags"
+            ]
+          },
+          "remote": {
+            "kind": "ModelHealth",
+            "provider_id": "openrouter",
+            "ok": false,
+            "code": "MISSING_CREDENTIALS",
+            "message": "OpenRouter API key absent — healthCheck failed honestly",
+            "base_url": "https://openrouter.ai/api/v1",
+            "model": "openai/gpt-4o-mini",
+            "checked_at": "2026-11-21T19:08:38.196Z",
+            "limitations": [
+              "Remote OpenRouter never used as silent default",
+              "Requires OPENROUTER_API_KEY or EVOLVELOOP_OPENROUTER_API_KEY",
+              "Does not invent cost when usage fields absent"
+            ]
+          }
+        }
+      },
+      "created_at": "2026-11-21T19:10:03.015Z"
+    },
+    {
+      "run_id": "cr-240647eb-dca1-4add-8bf2-d49435c4559e",
+      "work_id": "work-fire5-1795288029434",
+      "task_id": "fire-1",
+      "goal_contract_id": "gc-fire-1",
+      "status": "TRUE_FULL_PASS",
+      "reason": "TRUE_FULL_PASS",
+      "workspace_path": "/home/gaab/orca/workspaces/EvolveLoop/seagrass/.evolveloop/live-wt/20261121T190707Z/fire-1",
+      "payload": {
+        "adapter_result": {
+          "kind": "NormalizedAdapterResult",
+          "adapter_id": "cursor",
+          "status": "ok",
+          "code": "EXIT_ZERO",
+          "message": "Wiki: n/a (trivial)\n\nMarcador criado: `.evolveloop/circuit-markers/fire-1.txt` com conteúdo exato `fire-1`.\n",
+          "exit_code": 0,
+          "stdout": "Wiki: n/a (trivial)\n\nMarcador criado: `.evolveloop/circuit-markers/fire-1.txt` com conteúdo exato `fire-1`.\n",
+          "stderr": "",
+          "duration_ms": 82120,
+          "pid": 1327867,
+          "pgid": 1327867,
+          "tokens_in": null,
+          "tokens_out": null,
+          "cost_usd": null,
+          "cost_provenance": "UNAVAILABLE",
+          "limitations": [
+            "Not an OS sandbox — confinement is realpath + cwd + env scrub only",
+            "Cancel uses kill(-pgid) SIGTERM→SIGKILL with /proc starttime reuse guard",
+            "Env allowlist strict: PATH, LANG, TERM + ephemeral HOME",
+            "Stdout/stderr pass deterministic secret redaction",
+            "env_scrubbed_strict_allowlist",
+            "token_usage_not_reported_by_cli"
+          ],
+          "raw_runner": {
+            "kind": "ExecutionRunnerResult",
+            "status": "ok",
+            "code": "EXIT_ZERO",
+            "exit_code": 0,
+            "signal": null,
+            "stdout": "Wiki: n/a (trivial)\n\nMarcador criado: `.evolveloop/circuit-markers/fire-1.txt` com conteúdo exato `fire-1`.\n",
+            "stderr": "",
+            "duration_ms": 82120,
+            "pid": 1327867,
+            "pgid": 1327867,
+            "argv": [
+              "/home/gaab/.local/bin/agent",
+              "-p",
+              "--output-format",
+              "text",
+              "--trust",
+              "--workspace",
+              "/home/gaab/orca/workspaces/EvolveLoop/seagrass/.evolveloop/live-wt/20261121T190707Z/fire-1",
+              "--force",
+              "Read the prompt file at /home/gaab/orca/workspaces/EvolveLoop/seagrass/.evolveloop/live-wt/20261121T190707Z/fire-1/.evolveloop/harness-prompts/sess-08dc29d2-d412-45b3-8167-1075b7e5efb2.md and complete the assigned task. Stay strictly inside the workspace."
+            ],
+            "cwd": "/home/gaab/orca/workspaces/EvolveLoop/seagrass/.evolveloop/live-wt/20261121T190707Z/fire-1",
+            "ephemeral_home": "/tmp/evolveloop-ephemeral-home/home-Fcey7N",
+            "limitations": [
+              "Not an OS sandbox — confinement is realpath + cwd + env scrub only",
+              "Cancel uses kill(-pgid) SIGTERM→SIGKILL with /proc starttime reuse guard",
+              "Env allowlist strict: PATH, LANG, TERM + ephemeral HOME",
+              "Stdout/stderr pass deterministic secret redaction",
+              "env_scrubbed_strict_allowlist"
+            ]
+          },
+          "session_id": "sess-08dc29d2-d412-45b3-8167-1075b7e5efb2"
+        },
+        "validator": {
+          "kind": "EvidenceValidatorResult",
+          "status": "TRUE_FULL_PASS",
+          "code": "TRUE_FULL_PASS",
+          "reasons": [],
+          "sensitive_diff_blocked": [],
+          "command_results": [
+            {
+              "id": "marker-exists",
+              "argv": [
+                "bash",
+                "-lc",
+                "test -f '/home/gaab/orca/workspaces/EvolveLoop/seagrass/.evolveloop/live-wt/20261121T190707Z/fire-1/.evolveloop/circuit-markers/fire-1.txt'"
+              ],
+              "exit_code": 0,
+              "status": "ok",
+              "duration_ms": 21
+            },
+            {
+              "id": "marker-content",
+              "argv": [
+                "bash",
+                "-lc",
+                "test \"$(cat '/home/gaab/orca/workspaces/EvolveLoop/seagrass/.evolveloop/live-wt/20261121T190707Z/fire-1/.evolveloop/circuit-markers/fire-1.txt')\" = 'fire-1'"
+              ],
+              "exit_code": 0,
+              "status": "ok",
+              "duration_ms": 23
+            }
+          ],
+          "evaluated_at": "2026-11-21T19:08:37.549Z",
+          "limitations": [
+            "Validator runs outside agent session via ExecutionRunner",
+            "TRUE_FULL_PASS requires mandatory criteria PASS + commands exit 0 + no unauthorized sensitive diffs"
+          ]
+        },
+        "model_health": {
+          "local": {
+            "kind": "ModelHealth",
+            "provider_id": "ollama",
+            "ok": true,
+            "code": "OK",
+            "message": "Ollama ok; model=bonsai-64k:latest",
+            "model": "bonsai-64k:latest",
+            "base_url": "http://127.0.0.1:11434",
+            "checked_at": "2026-11-21T19:07:09.435Z",
+            "limitations": [
+              "Local Ollama only — no FreeLLMAPI gateway",
+              "Availability is probed via GET /api/tags"
+            ]
+          },
+          "remote": {
+            "kind": "ModelHealth",
+            "provider_id": "openrouter",
+            "ok": false,
+            "code": "MISSING_CREDENTIALS",
+            "message": "OpenRouter API key absent — healthCheck failed honestly",
+            "base_url": "https://openrouter.ai/api/v1",
+            "model": "openai/gpt-4o-mini",
+            "checked_at": "2026-11-21T19:07:09.453Z",
+            "limitations": [
+              "Remote OpenRouter never used as silent default",
+              "Requires OPENROUTER_API_KEY or EVOLVELOOP_OPENROUTER_API_KEY",
+              "Does not invent cost when usage fields absent"
+            ]
+          }
+        }
+      },
+      "created_at": "2026-11-21T19:08:37.700Z"
+    }
+  ]
+}

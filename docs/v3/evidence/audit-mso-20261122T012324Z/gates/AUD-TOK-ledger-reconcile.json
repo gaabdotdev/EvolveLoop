@@ -1,0 +1,27 @@
+{
+  "kind": "AUD-TOK-Ledger-Reconcile",
+  "ts": "2026-11-22T02:03:12.880Z",
+  "provider_invoke": {
+    "status": "blocked",
+    "code": "NEEDSKEY",
+    "tokens_in": null,
+    "tokens_out": null,
+    "cost_provenance": "UNAVAILABLE"
+  },
+  "ledger_row": {
+    "entry_id": "tl-76f0608b-1574-4906-868e-e3351c5db07c",
+    "tokens_in": null,
+    "tokens_out": null,
+    "cost_provenance": "UNAVAILABLE",
+    "model_requested": "auto",
+    "model_served": null,
+    "status": "blocked"
+  },
+  "listed_count": 1,
+  "reconcile": {
+    "tokens_match_provider": true,
+    "provenance_match": true,
+    "no_silent_zero": true,
+    "ok": true
+  }
+}

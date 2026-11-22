@@ -1,0 +1,15 @@
+ orchestrator/src/v3/security/enforcer.ts | 34 +++++++++++++++++++++++++++++++-
+ orchestrator/src/v3/security/index.ts    |  7 +++++++
+ orchestrator/src/v3/security/types.ts    | 21 +++++++++-----------
+ 3 files changed, 49 insertions(+), 13 deletions(-)
+ M orchestrator/src/v3/security/enforcer.ts
+ M orchestrator/src/v3/security/index.ts
+ M orchestrator/src/v3/security/types.ts
+?? orchestrator/src/v3/security/capability-gate.ts
+?? orchestrator/src/v3/security/credential-proxy.ts
+?? orchestrator/src/v3/security/delegation.ts
+?? orchestrator/src/v3/security/dlp-egress.ts
+?? orchestrator/src/v3/security/holdout.ts
+?? orchestrator/src/v3/security/quarantine.ts
+?? orchestrator/src/v3/security/taint.ts
+?? orchestrator/tests/unit/v3-sec-02-dlp-egress.test.ts

@@ -1,0 +1,68 @@
+{
+  "kind": "V0LivePassMetrics",
+  "goals": [
+    "V0-TEST-F",
+    "V0-EXIT-02"
+  ],
+  "stack": "1+1+1 (ollama local + openrouter remote slot + cursor adapter)",
+  "task_count": 5,
+  "pass_at_1": {
+    "successes": 5,
+    "total": 5,
+    "rate": 1
+  },
+  "pass_pow_3": {
+    "successes": 5,
+    "total": 5,
+    "rate": 1
+  },
+  "tasks": [
+    {
+      "task_id": "fire-1",
+      "attempts": 1,
+      "attempt_statuses": [
+        "TRUE_FULL_PASS"
+      ],
+      "pass_at_1": true,
+      "pass_pow_3": true
+    },
+    {
+      "task_id": "fire-2",
+      "attempts": 1,
+      "attempt_statuses": [
+        "TRUE_FULL_PASS"
+      ],
+      "pass_at_1": true,
+      "pass_pow_3": true
+    },
+    {
+      "task_id": "fire-3",
+      "attempts": 1,
+      "attempt_statuses": [
+        "TRUE_FULL_PASS"
+      ],
+      "pass_at_1": true,
+      "pass_pow_3": true
+    },
+    {
+      "task_id": "fire-4",
+      "attempts": 1,
+      "attempt_statuses": [
+        "TRUE_FULL_PASS"
+      ],
+      "pass_at_1": true,
+      "pass_pow_3": true
+    },
+    {
+      "task_id": "fire-5",
+      "attempts": 1,
+      "attempt_statuses": [
+        "TRUE_FULL_PASS"
+      ],
+      "pass_at_1": true,
+      "pass_pow_3": true
+    }
+  ],
+  "consecutive_true_full_pass_at_1": true,
+  "exit02_verdict": "TRUE-FULL-PASS_x5_consecutive"
+}

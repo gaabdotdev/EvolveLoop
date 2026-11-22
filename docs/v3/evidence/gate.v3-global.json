@@ -1,0 +1,83 @@
+{
+  "kind": "gate.v3-global",
+  "at": "2026-11-11T22:37:16.451Z",
+  "commit": "a92a839ea3c6075837751d2570272cccbe06e26a",
+  "version_target": "V3",
+  "based_on": {
+    "v33_freeze": "v3.3-freeze",
+    "v34_engineering": "v3.4-engineering"
+  },
+  "environment": {
+    "node": "v22.15.0",
+    "platform": "linux",
+    "consent": false
+  },
+  "criteria": {
+    "gate_a_generalization": {
+      "state": "PASS",
+      "implementation": "orchestrator/src/v3/evaluation/runner.ts",
+      "test": "tests/integration/v3-eval-battery.integration.test.ts",
+      "evidence": "gate.v3-generalization.json"
+    },
+    "gate_b_reliability": {
+      "state": "PASS",
+      "implementation": "orchestrator/src/v3/failure-injection/engineering-battery.ts",
+      "test": "tests/integration/v3-eval-battery.integration.test.ts",
+      "evidence": "gate.v3-reliability.json"
+    },
+    "gate_c_evaluation": {
+      "state": "PASS",
+      "implementation": "orchestrator/src/v3/evaluation/verified-pass.ts",
+      "test": "tests/unit/verified-pass-adversarial.test.ts",
+      "evidence": "gate.v3-evaluator.json"
+    },
+    "gate_d_harnesses": {
+      "state": "PASS",
+      "notes": [
+        "consent=false",
+        "claude_status=DRY_RUN_OR_BLOCKED",
+        "Live Claude/Codex/Antigravity spawn requires EVOLVELOOP_HARNESS_CONSENT=true; Cursor ExecutionBridge is the real Core harness path"
+      ],
+      "implementation": "orchestrator/src/v3/engineering/harness-matrix.ts",
+      "test": "tests/integration/v34-engineering-loop.integration.test.ts",
+      "evidence": "gate.v3-harnesses.json"
+    },
+    "gate_e_benchmarks": {
+      "state": "PASS",
+      "notes": [
+        "token_reduction_vs_proxy=25.9%",
+        "Token figures are deterministic proxies (no live LLM metering in this gate)",
+        "Held-out tasks T09/T10 not used to tune solvers during this gate run"
+      ],
+      "implementation": "benchmarks/v3/tasks.json",
+      "test": "tests/integration/v3-eval-battery.integration.test.ts",
+      "evidence": "gate.v3-benchmarks.json"
+    },
+    "gate_f_release": {
+      "state": "PASS",
+      "implementation": "docs/v3/V3-COMPLETE.md",
+      "test": "scripts/v3/run-v3-finalization-gate.mjs",
+      "evidence": "gate.v3-global.json"
+    }
+  },
+  "global_status": "V3_COMPLETE",
+  "artifact_hashes": {
+    "gate.v3-generalization.json": "94b20401f1295ee539dc1813ddccebd5831d52bb1a3f60df7117d8dd5d7f0430",
+    "gate.v3-reliability.json": "3ecc7f7543dfc2dc11cd3ad252107b612dc67dddb1f44deb199f58dbe0d97532",
+    "gate.v3-evaluator.json": "c50ff1d4ea91477b25d8525b991b7b687102937e25b39b400fab46b316d4d633",
+    "gate.v3-harnesses.json": "1211747b5714607c686da0e55890191af4e480f725f2299dfe9977d0d603e361",
+    "gate.v3-benchmarks.json": "875cc48e9befd0cbd7be45694fb942ec99f3f321747546dd7771b68ac37c30d2"
+  },
+  "limitations": [
+    "Solvers are DETERMINISTIC_SOLVER (not LLM) \u2014 proves Core generalization/orchestration path",
+    "Token/cost figures are deterministic proxies unless live provider metering is attached",
+    "Fixtures are curated multi-module repos, not proprietary third-party codebases",
+    "ephemeral workspaces under /tmp/evolveloop-v3-eval-battery-9941c809 may be removed by OS",
+    "Live multi-harness LLM sessions not required for V3_COMPLETE when Cursor Core path is real and others honestly DRY_RUN/PROBE_ONLY/BLOCKED",
+    "Token/cost metrics are proxies unless provider metering is attached"
+  ],
+  "freeze_note": "Tag v3-complete marks the evidence tip; code_freeze_commit is the implementation freeze (a92a839). Commit field names the audited code tip.",
+  "tag": "v3-complete",
+  "code_freeze_commit": "a92a839ea3c6075837751d2570272cccbe06e26a",
+  "evidence_tip_at_tag": true
+}

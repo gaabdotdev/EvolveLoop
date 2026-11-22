@@ -1,0 +1,17 @@
+{
+  "kind": "v3_test_02_dst_probe",
+  "task": "M19-V3-TEST-02-DST",
+  "ts": "20261122T003424Z",
+  "schema_version": 1,
+  "seed": 1404750588,
+  "n": 10000,
+  "deadlocks": 0,
+  "split_brains": 0,
+  "scenarios_ok": 10000,
+  "transcript_hash": "903885b3c2004a39284216ccc3ca4e166e99ff29ae22ebaa45316745a59ed6d2",
+  "event_count": 493570,
+  "wall_ms": 203,
+  "gate_ok": true,
+  "repro_ok": true,
+  "repro_hash": "903885b3c2004a39284216ccc3ca4e166e99ff29ae22ebaa45316745a59ed6d2"
+}

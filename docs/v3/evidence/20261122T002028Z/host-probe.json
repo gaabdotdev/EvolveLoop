@@ -1,0 +1,19 @@
+{
+  "kind": "v3_evol_01_host_probe",
+  "task": "M17-V3-EVOL-01-SHADOW-REPLAY",
+  "ts": "20261122T002028Z",
+  "schema_version": "1",
+  "rollback_command": "evolution.rollbackProduction()",
+  "baseline_success_rate": 0.6,
+  "baseline_events_scored": 5,
+  "passed_count": 1,
+  "rejected_count": 2,
+  "passed_ids": ["cand-beneficial"],
+  "rejected_ids": ["cand-neutral", "cand-subtle-regression"],
+  "promote_beneficial": true,
+  "promote_neutral_denied": true,
+  "rollback_ok": true,
+  "gate_status": "PASS_UNIT",
+  "honesty": "fixture_historical_corpus",
+  "note": "Historical events are fixture corpus shaped as real events; not a live production event-store replay"
+}

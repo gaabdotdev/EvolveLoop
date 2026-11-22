@@ -1,0 +1,17 @@
+{
+  "kind": "v3_sec_04_redteam_gate",
+  "task": "M16-V3-SEC-04-REDTEAM",
+  "attempt": "1/3",
+  "ts": "20261122T001528Z",
+  "status": "PASS_SIMULATED",
+  "bypass_rate": 0,
+  "zero_bypass": true,
+  "catalog_size": 31,
+  "total_attack_cases": 28,
+  "blocked_count": 28,
+  "vitest_exit": 0,
+  "vitest_tests": "9/9",
+  "regression_exit": 0,
+  "regression_tests": "85 passed",
+  "honesty": "PASS_LIVE not claimed — synthetic in-process oracles only; no live network attacks"
+}

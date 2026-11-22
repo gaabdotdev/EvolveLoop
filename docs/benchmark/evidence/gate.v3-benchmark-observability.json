@@ -1,0 +1,1393 @@
+{
+  "kind": "gate.v3-benchmark-observability",
+  "at": "2026-11-12T21:29:39.820Z",
+  "commit": "253a76b115a10a3ec941f6b8f8b63b1075d1580d",
+  "preserves_v3_complete": {
+    "tag": "v3-complete",
+    "tag_commit": "6b69c3f8dfde36b0f0282accff3aae3595dcc6fd",
+    "note": "Historical V3_COMPLETE evidence untouched"
+  },
+  "historical_proxy_disclaimer": "docs/v3/evidence/gate.v3-benchmarks.json token_reduction_vs_proxy (~25.9%) is DETERMINISTIC PROXY only — not live economy evidence",
+  "doctor": {
+    "ok": true,
+    "measurement_root": "/tmp/bench-obs-gate-n5n82w/measurement/measurement",
+    "run_count": 12,
+    "experiments": 1,
+    "local_first": true,
+    "notes": [
+      "Measurement Plane stores data only under local --data-dir/measurement"
+    ]
+  },
+  "experiment_id": "exp_9df05a7e6ba7",
+  "compare_summary": {
+    "arms": {
+      "A_single_agent": {
+        "sample_size": 4,
+        "invalid_or_incomplete": 0,
+        "verified_completion_rate": 1,
+        "mean_duration_ms": 2.75,
+        "cost_per_verified_completion": {
+          "metric": "cost_per_verified_completion",
+          "value": null,
+          "unit": "USD",
+          "provenance": "UNAVAILABLE"
+        },
+        "wasted_cost": {
+          "metric": "wasted_cost_usd",
+          "value": 0,
+          "unit": "USD",
+          "provenance": "OBSERVED"
+        },
+        "mean_delegation_depth": 0,
+        "mean_subagent_count": 0,
+        "mean_agent_count": 1
+      },
+      "B_evolveloop_no_delegation": {
+        "sample_size": 4,
+        "invalid_or_incomplete": 0,
+        "verified_completion_rate": 1,
+        "mean_duration_ms": 1.25,
+        "cost_per_verified_completion": {
+          "metric": "cost_per_verified_completion",
+          "value": null,
+          "unit": "USD",
+          "provenance": "UNAVAILABLE"
+        },
+        "wasted_cost": {
+          "metric": "wasted_cost_usd",
+          "value": 0,
+          "unit": "USD",
+          "provenance": "OBSERVED"
+        },
+        "mean_delegation_depth": 0,
+        "mean_subagent_count": 0,
+        "mean_agent_count": 1
+      },
+      "C_evolveloop_adaptive": {
+        "sample_size": 4,
+        "invalid_or_incomplete": 0,
+        "verified_completion_rate": 1,
+        "mean_duration_ms": 1.75,
+        "cost_per_verified_completion": {
+          "metric": "cost_per_verified_completion",
+          "value": null,
+          "unit": "USD",
+          "provenance": "UNAVAILABLE"
+        },
+        "wasted_cost": {
+          "metric": "wasted_cost_usd",
+          "value": 0,
+          "unit": "USD",
+          "provenance": "OBSERVED"
+        },
+        "mean_delegation_depth": 1.5,
+        "mean_subagent_count": 1.5,
+        "mean_agent_count": 2.5
+      }
+    },
+    "delegation_roi": {
+      "by_case": [
+        {
+          "baseline_strategy": "A_single_agent",
+          "candidate_strategy": "B_evolveloop_no_delegation",
+          "case_id": "BO-ORCH-01",
+          "sample_size_baseline": 1,
+          "sample_size_candidate": 1,
+          "reliability": "insufficient_sample",
+          "quality": {
+            "verified_completion_rate_baseline": 1,
+            "verified_completion_rate_candidate": 1,
+            "delta": 0
+          },
+          "latency": {
+            "mean_ms_baseline": 4,
+            "mean_ms_candidate": 1,
+            "delta_ms": -3
+          },
+          "cost": {
+            "cost_per_verified_baseline": null,
+            "cost_per_verified_candidate": null,
+            "delta": null,
+            "provenance": "UNAVAILABLE"
+          },
+          "tokens": {
+            "total_reported_baseline": null,
+            "total_reported_candidate": null,
+            "delta": null,
+            "provenance": "UNAVAILABLE"
+          },
+          "rework": {
+            "mean_rework_rate_baseline": null,
+            "mean_rework_rate_candidate": null,
+            "delta": null
+          },
+          "coordination": {
+            "mean_coordination_share_baseline": 0.5,
+            "mean_coordination_share_candidate": 0.5,
+            "delta": 0
+          },
+          "hierarchy_context": {
+            "mean_depth_baseline": 0,
+            "mean_depth_candidate": 0,
+            "mean_subagents_baseline": 0,
+            "mean_subagents_candidate": 0,
+            "note": "Contextual only — interpret with quality/latency/cost/rework components."
+          },
+          "interpretation_notes": [
+            "ROI is decomposed; no single opaque score.",
+            "Hierarchy depth/subagent counts are context only — not proof of beneficial delegation.",
+            "Tokens/costs remain UNAVAILABLE unless PROVIDER_REPORTED/HARNESS_REPORTED/DERIVED from priced usage.",
+            "Sample reliability=insufficient_sample (n_min=1)."
+          ]
+        },
+        {
+          "baseline_strategy": "A_single_agent",
+          "candidate_strategy": "C_evolveloop_adaptive",
+          "case_id": "BO-ORCH-01",
+          "sample_size_baseline": 1,
+          "sample_size_candidate": 1,
+          "reliability": "insufficient_sample",
+          "quality": {
+            "verified_completion_rate_baseline": 1,
+            "verified_completion_rate_candidate": 1,
+            "delta": 0
+          },
+          "latency": {
+            "mean_ms_baseline": 4,
+            "mean_ms_candidate": 1,
+            "delta_ms": -3
+          },
+          "cost": {
+            "cost_per_verified_baseline": null,
+            "cost_per_verified_candidate": null,
+            "delta": null,
+            "provenance": "UNAVAILABLE"
+          },
+          "tokens": {
+            "total_reported_baseline": null,
+            "total_reported_candidate": null,
+            "delta": null,
+            "provenance": "UNAVAILABLE"
+          },
+          "rework": {
+            "mean_rework_rate_baseline": null,
+            "mean_rework_rate_candidate": null,
+            "delta": null
+          },
+          "coordination": {
+            "mean_coordination_share_baseline": 0.5,
+            "mean_coordination_share_candidate": 0.5,
+            "delta": 0
+          },
+          "hierarchy_context": {
+            "mean_depth_baseline": 0,
+            "mean_depth_candidate": 0,
+            "mean_subagents_baseline": 0,
+            "mean_subagents_candidate": 0,
+            "note": "Contextual only — interpret with quality/latency/cost/rework components."
+          },
+          "interpretation_notes": [
+            "ROI is decomposed; no single opaque score.",
+            "Hierarchy depth/subagent counts are context only — not proof of beneficial delegation.",
+            "Tokens/costs remain UNAVAILABLE unless PROVIDER_REPORTED/HARNESS_REPORTED/DERIVED from priced usage.",
+            "Sample reliability=insufficient_sample (n_min=1)."
+          ]
+        },
+        {
+          "baseline_strategy": "B_evolveloop_no_delegation",
+          "candidate_strategy": "C_evolveloop_adaptive",
+          "case_id": "BO-ORCH-01",
+          "sample_size_baseline": 1,
+          "sample_size_candidate": 1,
+          "reliability": "insufficient_sample",
+          "quality": {
+            "verified_completion_rate_baseline": 1,
+            "verified_completion_rate_candidate": 1,
+            "delta": 0
+          },
+          "latency": {
+            "mean_ms_baseline": 1,
+            "mean_ms_candidate": 1,
+            "delta_ms": 0
+          },
+          "cost": {
+            "cost_per_verified_baseline": null,
+            "cost_per_verified_candidate": null,
+            "delta": null,
+            "provenance": "UNAVAILABLE"
+          },
+          "tokens": {
+            "total_reported_baseline": null,
+            "total_reported_candidate": null,
+            "delta": null,
+            "provenance": "UNAVAILABLE"
+          },
+          "rework": {
+            "mean_rework_rate_baseline": null,
+            "mean_rework_rate_candidate": null,
+            "delta": null
+          },
+          "coordination": {
+            "mean_coordination_share_baseline": 0.5,
+            "mean_coordination_share_candidate": 0.5,
+            "delta": 0
+          },
+          "hierarchy_context": {
+            "mean_depth_baseline": 0,
+            "mean_depth_candidate": 0,
+            "mean_subagents_baseline": 0,
+            "mean_subagents_candidate": 0,
+            "note": "Contextual only — interpret with quality/latency/cost/rework components."
+          },
+          "interpretation_notes": [
+            "ROI is decomposed; no single opaque score.",
+            "Hierarchy depth/subagent counts are context only — not proof of beneficial delegation.",
+            "Tokens/costs remain UNAVAILABLE unless PROVIDER_REPORTED/HARNESS_REPORTED/DERIVED from priced usage.",
+            "Sample reliability=insufficient_sample (n_min=1)."
+          ]
+        },
+        {
+          "baseline_strategy": "A_single_agent",
+          "candidate_strategy": "B_evolveloop_no_delegation",
+          "case_id": "BO-ORCH-02",
+          "sample_size_baseline": 1,
+          "sample_size_candidate": 1,
+          "reliability": "insufficient_sample",
+          "quality": {
+            "verified_completion_rate_baseline": 1,
+            "verified_completion_rate_candidate": 1,
+            "delta": 0
+          },
+          "latency": {
+            "mean_ms_baseline": 3,
+            "mean_ms_candidate": 2,
+            "delta_ms": -1
+          },
+          "cost": {
+            "cost_per_verified_baseline": null,
+            "cost_per_verified_candidate": null,
+            "delta": null,
+            "provenance": "UNAVAILABLE"
+          },
+          "tokens": {
+            "total_reported_baseline": null,
+            "total_reported_candidate": null,
+            "delta": null,
+            "provenance": "UNAVAILABLE"
+          },
+          "rework": {
+            "mean_rework_rate_baseline": null,
+            "mean_rework_rate_candidate": null,
+            "delta": null
+          },
+          "coordination": {
+            "mean_coordination_share_baseline": 0.5,
+            "mean_coordination_share_candidate": 0.5,
+            "delta": 0
+          },
+          "hierarchy_context": {
+            "mean_depth_baseline": 0,
+            "mean_depth_candidate": 0,
+            "mean_subagents_baseline": 0,
+            "mean_subagents_candidate": 0,
+            "note": "Contextual only — interpret with quality/latency/cost/rework components."
+          },
+          "interpretation_notes": [
+            "ROI is decomposed; no single opaque score.",
+            "Hierarchy depth/subagent counts are context only — not proof of beneficial delegation.",
+            "Tokens/costs remain UNAVAILABLE unless PROVIDER_REPORTED/HARNESS_REPORTED/DERIVED from priced usage.",
+            "Sample reliability=insufficient_sample (n_min=1)."
+          ]
+        },
+        {
+          "baseline_strategy": "A_single_agent",
+          "candidate_strategy": "C_evolveloop_adaptive",
+          "case_id": "BO-ORCH-02",
+          "sample_size_baseline": 1,
+          "sample_size_candidate": 1,
+          "reliability": "insufficient_sample",
+          "quality": {
+            "verified_completion_rate_baseline": 1,
+            "verified_completion_rate_candidate": 1,
+            "delta": 0
+          },
+          "latency": {
+            "mean_ms_baseline": 3,
+            "mean_ms_candidate": 2,
+            "delta_ms": -1
+          },
+          "cost": {
+            "cost_per_verified_baseline": null,
+            "cost_per_verified_candidate": null,
+            "delta": null,
+            "provenance": "UNAVAILABLE"
+          },
+          "tokens": {
+            "total_reported_baseline": null,
+            "total_reported_candidate": null,
+            "delta": null,
+            "provenance": "UNAVAILABLE"
+          },
+          "rework": {
+            "mean_rework_rate_baseline": null,
+            "mean_rework_rate_candidate": null,
+            "delta": null
+          },
+          "coordination": {
+            "mean_coordination_share_baseline": 0.5,
+            "mean_coordination_share_candidate": 0.7142857142857143,
+            "delta": 0.2142857142857143
+          },
+          "hierarchy_context": {
+            "mean_depth_baseline": 0,
+            "mean_depth_candidate": 2,
+            "mean_subagents_baseline": 0,
+            "mean_subagents_candidate": 2,
+            "note": "Contextual only — interpret with quality/latency/cost/rework components."
+          },
+          "interpretation_notes": [
+            "ROI is decomposed; no single opaque score.",
+            "Hierarchy depth/subagent counts are context only — not proof of beneficial delegation.",
+            "Tokens/costs remain UNAVAILABLE unless PROVIDER_REPORTED/HARNESS_REPORTED/DERIVED from priced usage.",
+            "Sample reliability=insufficient_sample (n_min=1)."
+          ]
+        },
+        {
+          "baseline_strategy": "B_evolveloop_no_delegation",
+          "candidate_strategy": "C_evolveloop_adaptive",
+          "case_id": "BO-ORCH-02",
+          "sample_size_baseline": 1,
+          "sample_size_candidate": 1,
+          "reliability": "insufficient_sample",
+          "quality": {
+            "verified_completion_rate_baseline": 1,
+            "verified_completion_rate_candidate": 1,
+            "delta": 0
+          },
+          "latency": {
+            "mean_ms_baseline": 2,
+            "mean_ms_candidate": 2,
+            "delta_ms": 0
+          },
+          "cost": {
+            "cost_per_verified_baseline": null,
+            "cost_per_verified_candidate": null,
+            "delta": null,
+            "provenance": "UNAVAILABLE"
+          },
+          "tokens": {
+            "total_reported_baseline": null,
+            "total_reported_candidate": null,
+            "delta": null,
+            "provenance": "UNAVAILABLE"
+          },
+          "rework": {
+            "mean_rework_rate_baseline": null,
+            "mean_rework_rate_candidate": null,
+            "delta": null
+          },
+          "coordination": {
+            "mean_coordination_share_baseline": 0.5,
+            "mean_coordination_share_candidate": 0.7142857142857143,
+            "delta": 0.2142857142857143
+          },
+          "hierarchy_context": {
+            "mean_depth_baseline": 0,
+            "mean_depth_candidate": 2,
+            "mean_subagents_baseline": 0,
+            "mean_subagents_candidate": 2,
+            "note": "Contextual only — interpret with quality/latency/cost/rework components."
+          },
+          "interpretation_notes": [
+            "ROI is decomposed; no single opaque score.",
+            "Hierarchy depth/subagent counts are context only — not proof of beneficial delegation.",
+            "Tokens/costs remain UNAVAILABLE unless PROVIDER_REPORTED/HARNESS_REPORTED/DERIVED from priced usage.",
+            "Sample reliability=insufficient_sample (n_min=1)."
+          ]
+        },
+        {
+          "baseline_strategy": "A_single_agent",
+          "candidate_strategy": "B_evolveloop_no_delegation",
+          "case_id": "BO-T01",
+          "sample_size_baseline": 1,
+          "sample_size_candidate": 1,
+          "reliability": "insufficient_sample",
+          "quality": {
+            "verified_completion_rate_baseline": 1,
+            "verified_completion_rate_candidate": 1,
+            "delta": 0
+          },
+          "latency": {
+            "mean_ms_baseline": 2,
+            "mean_ms_candidate": 1,
+            "delta_ms": -1
+          },
+          "cost": {
+            "cost_per_verified_baseline": null,
+            "cost_per_verified_candidate": null,
+            "delta": null,
+            "provenance": "UNAVAILABLE"
+          },
+          "tokens": {
+            "total_reported_baseline": null,
+            "total_reported_candidate": null,
+            "delta": null,
+            "provenance": "UNAVAILABLE"
+          },
+          "rework": {
+            "mean_rework_rate_baseline": null,
+            "mean_rework_rate_candidate": null,
+            "delta": null
+          },
+          "coordination": {
+            "mean_coordination_share_baseline": 0.5,
+            "mean_coordination_share_candidate": 0.5,
+            "delta": 0
+          },
+          "hierarchy_context": {
+            "mean_depth_baseline": 0,
+            "mean_depth_candidate": 0,
+            "mean_subagents_baseline": 0,
+            "mean_subagents_candidate": 0,
+            "note": "Contextual only — interpret with quality/latency/cost/rework components."
+          },
+          "interpretation_notes": [
+            "ROI is decomposed; no single opaque score.",
+            "Hierarchy depth/subagent counts are context only — not proof of beneficial delegation.",
+            "Tokens/costs remain UNAVAILABLE unless PROVIDER_REPORTED/HARNESS_REPORTED/DERIVED from priced usage.",
+            "Sample reliability=insufficient_sample (n_min=1)."
+          ]
+        },
+        {
+          "baseline_strategy": "A_single_agent",
+          "candidate_strategy": "C_evolveloop_adaptive",
+          "case_id": "BO-T01",
+          "sample_size_baseline": 1,
+          "sample_size_candidate": 1,
+          "reliability": "insufficient_sample",
+          "quality": {
+            "verified_completion_rate_baseline": 1,
+            "verified_completion_rate_candidate": 1,
+            "delta": 0
+          },
+          "latency": {
+            "mean_ms_baseline": 2,
+            "mean_ms_candidate": 2,
+            "delta_ms": 0
+          },
+          "cost": {
+            "cost_per_verified_baseline": null,
+            "cost_per_verified_candidate": null,
+            "delta": null,
+            "provenance": "UNAVAILABLE"
+          },
+          "tokens": {
+            "total_reported_baseline": null,
+            "total_reported_candidate": null,
+            "delta": null,
+            "provenance": "UNAVAILABLE"
+          },
+          "rework": {
+            "mean_rework_rate_baseline": null,
+            "mean_rework_rate_candidate": null,
+            "delta": null
+          },
+          "coordination": {
+            "mean_coordination_share_baseline": 0.5,
+            "mean_coordination_share_candidate": 0.7142857142857143,
+            "delta": 0.2142857142857143
+          },
+          "hierarchy_context": {
+            "mean_depth_baseline": 0,
+            "mean_depth_candidate": 2,
+            "mean_subagents_baseline": 0,
+            "mean_subagents_candidate": 2,
+            "note": "Contextual only — interpret with quality/latency/cost/rework components."
+          },
+          "interpretation_notes": [
+            "ROI is decomposed; no single opaque score.",
+            "Hierarchy depth/subagent counts are context only — not proof of beneficial delegation.",
+            "Tokens/costs remain UNAVAILABLE unless PROVIDER_REPORTED/HARNESS_REPORTED/DERIVED from priced usage.",
+            "Sample reliability=insufficient_sample (n_min=1)."
+          ]
+        },
+        {
+          "baseline_strategy": "B_evolveloop_no_delegation",
+          "candidate_strategy": "C_evolveloop_adaptive",
+          "case_id": "BO-T01",
+          "sample_size_baseline": 1,
+          "sample_size_candidate": 1,
+          "reliability": "insufficient_sample",
+          "quality": {
+            "verified_completion_rate_baseline": 1,
+            "verified_completion_rate_candidate": 1,
+            "delta": 0
+          },
+          "latency": {
+            "mean_ms_baseline": 1,
+            "mean_ms_candidate": 2,
+            "delta_ms": 1
+          },
+          "cost": {
+            "cost_per_verified_baseline": null,
+            "cost_per_verified_candidate": null,
+            "delta": null,
+            "provenance": "UNAVAILABLE"
+          },
+          "tokens": {
+            "total_reported_baseline": null,
+            "total_reported_candidate": null,
+            "delta": null,
+            "provenance": "UNAVAILABLE"
+          },
+          "rework": {
+            "mean_rework_rate_baseline": null,
+            "mean_rework_rate_candidate": null,
+            "delta": null
+          },
+          "coordination": {
+            "mean_coordination_share_baseline": 0.5,
+            "mean_coordination_share_candidate": 0.7142857142857143,
+            "delta": 0.2142857142857143
+          },
+          "hierarchy_context": {
+            "mean_depth_baseline": 0,
+            "mean_depth_candidate": 2,
+            "mean_subagents_baseline": 0,
+            "mean_subagents_candidate": 2,
+            "note": "Contextual only — interpret with quality/latency/cost/rework components."
+          },
+          "interpretation_notes": [
+            "ROI is decomposed; no single opaque score.",
+            "Hierarchy depth/subagent counts are context only — not proof of beneficial delegation.",
+            "Tokens/costs remain UNAVAILABLE unless PROVIDER_REPORTED/HARNESS_REPORTED/DERIVED from priced usage.",
+            "Sample reliability=insufficient_sample (n_min=1)."
+          ]
+        },
+        {
+          "baseline_strategy": "A_single_agent",
+          "candidate_strategy": "B_evolveloop_no_delegation",
+          "case_id": "BO-T04",
+          "sample_size_baseline": 1,
+          "sample_size_candidate": 1,
+          "reliability": "insufficient_sample",
+          "quality": {
+            "verified_completion_rate_baseline": 1,
+            "verified_completion_rate_candidate": 1,
+            "delta": 0
+          },
+          "latency": {
+            "mean_ms_baseline": 2,
+            "mean_ms_candidate": 1,
+            "delta_ms": -1
+          },
+          "cost": {
+            "cost_per_verified_baseline": null,
+            "cost_per_verified_candidate": null,
+            "delta": null,
+            "provenance": "UNAVAILABLE"
+          },
+          "tokens": {
+            "total_reported_baseline": null,
+            "total_reported_candidate": null,
+            "delta": null,
+            "provenance": "UNAVAILABLE"
+          },
+          "rework": {
+            "mean_rework_rate_baseline": null,
+            "mean_rework_rate_candidate": null,
+            "delta": null
+          },
+          "coordination": {
+            "mean_coordination_share_baseline": 0.5,
+            "mean_coordination_share_candidate": 0.5,
+            "delta": 0
+          },
+          "hierarchy_context": {
+            "mean_depth_baseline": 0,
+            "mean_depth_candidate": 0,
+            "mean_subagents_baseline": 0,
+            "mean_subagents_candidate": 0,
+            "note": "Contextual only — interpret with quality/latency/cost/rework components."
+          },
+          "interpretation_notes": [
+            "ROI is decomposed; no single opaque score.",
+            "Hierarchy depth/subagent counts are context only — not proof of beneficial delegation.",
+            "Tokens/costs remain UNAVAILABLE unless PROVIDER_REPORTED/HARNESS_REPORTED/DERIVED from priced usage.",
+            "Sample reliability=insufficient_sample (n_min=1)."
+          ]
+        },
+        {
+          "baseline_strategy": "A_single_agent",
+          "candidate_strategy": "C_evolveloop_adaptive",
+          "case_id": "BO-T04",
+          "sample_size_baseline": 1,
+          "sample_size_candidate": 1,
+          "reliability": "insufficient_sample",
+          "quality": {
+            "verified_completion_rate_baseline": 1,
+            "verified_completion_rate_candidate": 1,
+            "delta": 0
+          },
+          "latency": {
+            "mean_ms_baseline": 2,
+            "mean_ms_candidate": 2,
+            "delta_ms": 0
+          },
+          "cost": {
+            "cost_per_verified_baseline": null,
+            "cost_per_verified_candidate": null,
+            "delta": null,
+            "provenance": "UNAVAILABLE"
+          },
+          "tokens": {
+            "total_reported_baseline": null,
+            "total_reported_candidate": null,
+            "delta": null,
+            "provenance": "UNAVAILABLE"
+          },
+          "rework": {
+            "mean_rework_rate_baseline": null,
+            "mean_rework_rate_candidate": null,
+            "delta": null
+          },
+          "coordination": {
+            "mean_coordination_share_baseline": 0.5,
+            "mean_coordination_share_candidate": 0.7142857142857143,
+            "delta": 0.2142857142857143
+          },
+          "hierarchy_context": {
+            "mean_depth_baseline": 0,
+            "mean_depth_candidate": 2,
+            "mean_subagents_baseline": 0,
+            "mean_subagents_candidate": 2,
+            "note": "Contextual only — interpret with quality/latency/cost/rework components."
+          },
+          "interpretation_notes": [
+            "ROI is decomposed; no single opaque score.",
+            "Hierarchy depth/subagent counts are context only — not proof of beneficial delegation.",
+            "Tokens/costs remain UNAVAILABLE unless PROVIDER_REPORTED/HARNESS_REPORTED/DERIVED from priced usage.",
+            "Sample reliability=insufficient_sample (n_min=1)."
+          ]
+        },
+        {
+          "baseline_strategy": "B_evolveloop_no_delegation",
+          "candidate_strategy": "C_evolveloop_adaptive",
+          "case_id": "BO-T04",
+          "sample_size_baseline": 1,
+          "sample_size_candidate": 1,
+          "reliability": "insufficient_sample",
+          "quality": {
+            "verified_completion_rate_baseline": 1,
+            "verified_completion_rate_candidate": 1,
+            "delta": 0
+          },
+          "latency": {
+            "mean_ms_baseline": 1,
+            "mean_ms_candidate": 2,
+            "delta_ms": 1
+          },
+          "cost": {
+            "cost_per_verified_baseline": null,
+            "cost_per_verified_candidate": null,
+            "delta": null,
+            "provenance": "UNAVAILABLE"
+          },
+          "tokens": {
+            "total_reported_baseline": null,
+            "total_reported_candidate": null,
+            "delta": null,
+            "provenance": "UNAVAILABLE"
+          },
+          "rework": {
+            "mean_rework_rate_baseline": null,
+            "mean_rework_rate_candidate": null,
+            "delta": null
+          },
+          "coordination": {
+            "mean_coordination_share_baseline": 0.5,
+            "mean_coordination_share_candidate": 0.7142857142857143,
+            "delta": 0.2142857142857143
+          },
+          "hierarchy_context": {
+            "mean_depth_baseline": 0,
+            "mean_depth_candidate": 2,
+            "mean_subagents_baseline": 0,
+            "mean_subagents_candidate": 2,
+            "note": "Contextual only — interpret with quality/latency/cost/rework components."
+          },
+          "interpretation_notes": [
+            "ROI is decomposed; no single opaque score.",
+            "Hierarchy depth/subagent counts are context only — not proof of beneficial delegation.",
+            "Tokens/costs remain UNAVAILABLE unless PROVIDER_REPORTED/HARNESS_REPORTED/DERIVED from priced usage.",
+            "Sample reliability=insufficient_sample (n_min=1)."
+          ]
+        }
+      ],
+      "aggregate": [
+        {
+          "baseline_strategy": "A_single_agent",
+          "candidate_strategy": "B_evolveloop_no_delegation",
+          "sample_size_baseline": 4,
+          "sample_size_candidate": 4,
+          "reliability": "low",
+          "quality": {
+            "verified_completion_rate_baseline": 1,
+            "verified_completion_rate_candidate": 1,
+            "delta": 0
+          },
+          "latency": {
+            "mean_ms_baseline": 2.75,
+            "mean_ms_candidate": 1.25,
+            "delta_ms": -1.5
+          },
+          "cost": {
+            "cost_per_verified_baseline": null,
+            "cost_per_verified_candidate": null,
+            "delta": null,
+            "provenance": "UNAVAILABLE"
+          },
+          "tokens": {
+            "total_reported_baseline": null,
+            "total_reported_candidate": null,
+            "delta": null,
+            "provenance": "UNAVAILABLE"
+          },
+          "rework": {
+            "mean_rework_rate_baseline": null,
+            "mean_rework_rate_candidate": null,
+            "delta": null
+          },
+          "coordination": {
+            "mean_coordination_share_baseline": 0.5,
+            "mean_coordination_share_candidate": 0.5,
+            "delta": 0
+          },
+          "hierarchy_context": {
+            "mean_depth_baseline": 0,
+            "mean_depth_candidate": 0,
+            "mean_subagents_baseline": 0,
+            "mean_subagents_candidate": 0,
+            "note": "Contextual only — interpret with quality/latency/cost/rework components."
+          },
+          "interpretation_notes": [
+            "ROI is decomposed; no single opaque score.",
+            "Hierarchy depth/subagent counts are context only — not proof of beneficial delegation.",
+            "Tokens/costs remain UNAVAILABLE unless PROVIDER_REPORTED/HARNESS_REPORTED/DERIVED from priced usage.",
+            "Sample reliability=low (n_min=4)."
+          ]
+        },
+        {
+          "baseline_strategy": "A_single_agent",
+          "candidate_strategy": "C_evolveloop_adaptive",
+          "sample_size_baseline": 4,
+          "sample_size_candidate": 4,
+          "reliability": "low",
+          "quality": {
+            "verified_completion_rate_baseline": 1,
+            "verified_completion_rate_candidate": 1,
+            "delta": 0
+          },
+          "latency": {
+            "mean_ms_baseline": 2.75,
+            "mean_ms_candidate": 1.75,
+            "delta_ms": -1
+          },
+          "cost": {
+            "cost_per_verified_baseline": null,
+            "cost_per_verified_candidate": null,
+            "delta": null,
+            "provenance": "UNAVAILABLE"
+          },
+          "tokens": {
+            "total_reported_baseline": null,
+            "total_reported_candidate": null,
+            "delta": null,
+            "provenance": "UNAVAILABLE"
+          },
+          "rework": {
+            "mean_rework_rate_baseline": null,
+            "mean_rework_rate_candidate": null,
+            "delta": null
+          },
+          "coordination": {
+            "mean_coordination_share_baseline": 0.5,
+            "mean_coordination_share_candidate": 0.6607142857142858,
+            "delta": 0.1607142857142858
+          },
+          "hierarchy_context": {
+            "mean_depth_baseline": 0,
+            "mean_depth_candidate": 1.5,
+            "mean_subagents_baseline": 0,
+            "mean_subagents_candidate": 1.5,
+            "note": "Contextual only — interpret with quality/latency/cost/rework components."
+          },
+          "interpretation_notes": [
+            "ROI is decomposed; no single opaque score.",
+            "Hierarchy depth/subagent counts are context only — not proof of beneficial delegation.",
+            "Tokens/costs remain UNAVAILABLE unless PROVIDER_REPORTED/HARNESS_REPORTED/DERIVED from priced usage.",
+            "Sample reliability=low (n_min=4)."
+          ]
+        },
+        {
+          "baseline_strategy": "B_evolveloop_no_delegation",
+          "candidate_strategy": "C_evolveloop_adaptive",
+          "sample_size_baseline": 4,
+          "sample_size_candidate": 4,
+          "reliability": "low",
+          "quality": {
+            "verified_completion_rate_baseline": 1,
+            "verified_completion_rate_candidate": 1,
+            "delta": 0
+          },
+          "latency": {
+            "mean_ms_baseline": 1.25,
+            "mean_ms_candidate": 1.75,
+            "delta_ms": 0.5
+          },
+          "cost": {
+            "cost_per_verified_baseline": null,
+            "cost_per_verified_candidate": null,
+            "delta": null,
+            "provenance": "UNAVAILABLE"
+          },
+          "tokens": {
+            "total_reported_baseline": null,
+            "total_reported_candidate": null,
+            "delta": null,
+            "provenance": "UNAVAILABLE"
+          },
+          "rework": {
+            "mean_rework_rate_baseline": null,
+            "mean_rework_rate_candidate": null,
+            "delta": null
+          },
+          "coordination": {
+            "mean_coordination_share_baseline": 0.5,
+            "mean_coordination_share_candidate": 0.6607142857142858,
+            "delta": 0.1607142857142858
+          },
+          "hierarchy_context": {
+            "mean_depth_baseline": 0,
+            "mean_depth_candidate": 1.5,
+            "mean_subagents_baseline": 0,
+            "mean_subagents_candidate": 1.5,
+            "note": "Contextual only — interpret with quality/latency/cost/rework components."
+          },
+          "interpretation_notes": [
+            "ROI is decomposed; no single opaque score.",
+            "Hierarchy depth/subagent counts are context only — not proof of beneficial delegation.",
+            "Tokens/costs remain UNAVAILABLE unless PROVIDER_REPORTED/HARNESS_REPORTED/DERIVED from priced usage.",
+            "Sample reliability=low (n_min=4)."
+          ]
+        }
+      ],
+      "latency_distributions": {
+        "A_single_agent": {
+          "sample_size": 4,
+          "mean_ms": 2.75,
+          "median_ms": 2.5,
+          "p50_ms": 2.5,
+          "p90_ms": null,
+          "p95_ms": null,
+          "min_ms": 2,
+          "max_ms": 4,
+          "reliability": "low"
+        },
+        "B_evolveloop_no_delegation": {
+          "sample_size": 4,
+          "mean_ms": 1.25,
+          "median_ms": 1,
+          "p50_ms": 1,
+          "p90_ms": null,
+          "p95_ms": null,
+          "min_ms": 1,
+          "max_ms": 2,
+          "reliability": "low"
+        },
+        "C_evolveloop_adaptive": {
+          "sample_size": 4,
+          "mean_ms": 1.75,
+          "median_ms": 2,
+          "p50_ms": 2,
+          "p90_ms": null,
+          "p95_ms": null,
+          "min_ms": 1,
+          "max_ms": 2,
+          "reliability": "low"
+        }
+      }
+    },
+    "notes": [
+      "Strategies compared on same cases when eligible.",
+      "Cost requires price table + reported usage; otherwise UNAVAILABLE (never invented).",
+      "Adaptive strategy is not assumed to win.",
+      "Delegation ROI is decomposed; depth/subagent counts are contextual only.",
+      "Smoke ≠ conclusive: check sample_size and reliability flags."
+    ]
+  },
+  "live": {
+    "kind": "LiveValidationSuiteReport",
+    "readiness": {
+      "kind": "LiveLlmReadiness",
+      "state": "READY",
+      "consent": true,
+      "executable": true,
+      "selected_harness": "cursor-agent",
+      "providers": [
+        {
+          "id": "cursor-agent",
+          "available": true,
+          "auth": "logged_in",
+          "detail": "✓ Logged in as gabriel.prossional@gmail.com"
+        },
+        {
+          "id": "claude-code",
+          "available": true,
+          "auth": "none",
+          "detail": "claude auth status loggedIn=false or unparseable"
+        },
+        {
+          "id": "openai",
+          "available": false,
+          "auth": "none",
+          "detail": "OPENAI_API_KEY unset"
+        },
+        {
+          "id": "openrouter",
+          "available": false,
+          "auth": "none",
+          "detail": "OPENROUTER_API_KEY unset"
+        }
+      ],
+      "blockers": [],
+      "notes": [
+        "Does not set EVOLVELOOP_HARNESS_CONSENT",
+        "Does not invent tokens or API keys",
+        "Deterministic solvers remain the CI regression path — never used for LIVE claims"
+      ],
+      "checks": {
+        "consent": {
+          "ok": true,
+          "detail": "EVOLVELOOP_HARNESS_CONSENT=true (process-scoped)"
+        },
+        "harness_cursor_agent": {
+          "ok": true,
+          "detail": "path=/home/gaab/.local/bin/agent"
+        },
+        "harness_claude": {
+          "ok": true,
+          "detail": "path=/home/gaab/.local/bin/claude"
+        },
+        "auth_cursor_agent": {
+          "ok": true,
+          "detail": "✓ Logged in as gabriel.prossional@gmail.com"
+        },
+        "auth_claude": {
+          "ok": false,
+          "detail": "claude auth status loggedIn=false or unparseable"
+        },
+        "model": {
+          "ok": true,
+          "detail": "cursor-agent account/default model usable for -p invoke"
+        },
+        "can_start": {
+          "ok": true,
+          "detail": "cursor-agent ask-mode smoke READY (72857ms)"
+        }
+      }
+    },
+    "results": [
+      {
+        "kind": "LiveEngineeringRunResult",
+        "run_id": "live-91587ca6-1",
+        "task_id": "T01",
+        "strategy": "A_single_agent",
+        "readiness": {
+          "kind": "LiveLlmReadiness",
+          "state": "READY",
+          "consent": true,
+          "executable": true,
+          "selected_harness": "cursor-agent",
+          "providers": [
+            {
+              "id": "cursor-agent",
+              "available": true,
+              "auth": "logged_in",
+              "detail": "✓ Logged in as gabriel.prossional@gmail.com"
+            },
+            {
+              "id": "claude-code",
+              "available": true,
+              "auth": "none",
+              "detail": "claude auth status loggedIn=false or unparseable"
+            },
+            {
+              "id": "openai",
+              "available": false,
+              "auth": "none",
+              "detail": "OPENAI_API_KEY unset"
+            },
+            {
+              "id": "openrouter",
+              "available": false,
+              "auth": "none",
+              "detail": "OPENROUTER_API_KEY unset"
+            }
+          ],
+          "blockers": [],
+          "notes": [
+            "Does not set EVOLVELOOP_HARNESS_CONSENT",
+            "Does not invent tokens or API keys",
+            "Deterministic solvers remain the CI regression path — never used for LIVE claims"
+          ],
+          "checks": {
+            "consent": {
+              "ok": true,
+              "detail": "EVOLVELOOP_HARNESS_CONSENT=true (process-scoped)"
+            },
+            "harness_cursor_agent": {
+              "ok": true,
+              "detail": "path=/home/gaab/.local/bin/agent"
+            },
+            "harness_claude": {
+              "ok": true,
+              "detail": "path=/home/gaab/.local/bin/claude"
+            },
+            "auth_cursor_agent": {
+              "ok": true,
+              "detail": "✓ Logged in as gabriel.prossional@gmail.com"
+            },
+            "auth_claude": {
+              "ok": false,
+              "detail": "claude auth status loggedIn=false or unparseable"
+            },
+            "model": {
+              "ok": true,
+              "detail": "cursor-agent account/default model usable for -p invoke"
+            },
+            "can_start": {
+              "ok": true,
+              "detail": "cursor-agent ask-mode smoke READY (72857ms)"
+            }
+          }
+        },
+        "mode": "LIVE",
+        "harness_id": "cursor-agent",
+        "workspace": "/tmp/el-live-gate-l/live-workspaces/live-91587ca6-1",
+        "files_changed": [
+          "src/math.js",
+          "test/math.test.js"
+        ],
+        "exploration_file_count": 4,
+        "true_full_pass": true,
+        "worker": {
+          "agent_id": "w-live-91587ca6-1-live-worker",
+          "session_id": "live-worker-37c6b20c",
+          "status": "spawned",
+          "duration_ms": 92249
+        },
+        "review": {
+          "independent": true,
+          "session_separated": true,
+          "agent_id": "w-live-91587ca6-1-live-reviewer",
+          "session_id": "live-reviewer-3bda76ff",
+          "verdict": "PASS",
+          "provenance": "reviewer=w-live-91587ca6-1-live-reviewer;session=live-reviewer-3bda76ff;status=spawned;harness=cursor-agent",
+          "raw": "{\"verdict\":\"PASS\",\"findings\":[],\"recommendation\":\"Aceitar a correção: clamp agora aplica o limite inferior, a cobertura clamp lower foi adicionada e a suíte passou com exit=0 e fail=0.\"}\n"
+        },
+        "provider_usage": {
+          "provenance": "UNAVAILABLE"
+        },
+        "measurement_run_id": "live-91587ca6-1",
+        "limitations": [
+          "Does not set EVOLVELOOP_HARNESS_CONSENT",
+          "Does not invent tokens or API keys",
+          "Deterministic solvers remain the CI regression path — never used for LIVE claims",
+          "TRUE_FULL_PASS still requires verified evidence; LLM review does not replace evaluator",
+          "No DETERMINISTIC_SOLVER applied in this path",
+          "Explicit process consent: EVOLVELOOP_HARNESS_CONSENT=true; harness=cursor-agent"
+        ],
+        "reasons": []
+      },
+      {
+        "kind": "LiveEngineeringRunResult",
+        "run_id": "live-d0a806aa-0",
+        "task_id": "T04",
+        "strategy": "B_evolveloop_no_delegation",
+        "readiness": {
+          "kind": "LiveLlmReadiness",
+          "state": "READY",
+          "consent": true,
+          "executable": true,
+          "selected_harness": "cursor-agent",
+          "providers": [
+            {
+              "id": "cursor-agent",
+              "available": true,
+              "auth": "logged_in",
+              "detail": "✓ Logged in as gabriel.prossional@gmail.com"
+            },
+            {
+              "id": "claude-code",
+              "available": true,
+              "auth": "none",
+              "detail": "claude auth status loggedIn=false or unparseable"
+            },
+            {
+              "id": "openai",
+              "available": false,
+              "auth": "none",
+              "detail": "OPENAI_API_KEY unset"
+            },
+            {
+              "id": "openrouter",
+              "available": false,
+              "auth": "none",
+              "detail": "OPENROUTER_API_KEY unset"
+            }
+          ],
+          "blockers": [],
+          "notes": [
+            "Does not set EVOLVELOOP_HARNESS_CONSENT",
+            "Does not invent tokens or API keys",
+            "Deterministic solvers remain the CI regression path — never used for LIVE claims"
+          ],
+          "checks": {
+            "consent": {
+              "ok": true,
+              "detail": "EVOLVELOOP_HARNESS_CONSENT=true (process-scoped)"
+            },
+            "harness_cursor_agent": {
+              "ok": true,
+              "detail": "path=/home/gaab/.local/bin/agent"
+            },
+            "harness_claude": {
+              "ok": true,
+              "detail": "path=/home/gaab/.local/bin/claude"
+            },
+            "auth_cursor_agent": {
+              "ok": true,
+              "detail": "✓ Logged in as gabriel.prossional@gmail.com"
+            },
+            "auth_claude": {
+              "ok": false,
+              "detail": "claude auth status loggedIn=false or unparseable"
+            },
+            "model": {
+              "ok": true,
+              "detail": "cursor-agent account/default model usable for -p invoke"
+            },
+            "can_start": {
+              "ok": true,
+              "detail": "cursor-agent ask-mode smoke READY (72857ms)"
+            }
+          }
+        },
+        "mode": "LIVE",
+        "harness_id": "cursor-agent",
+        "workspace": "/tmp/el-live-gate-l/live-workspaces/live-d0a806aa-0",
+        "files_changed": [
+          ".evolveloop/progress.md",
+          "lib/store.js",
+          "src/cart.js",
+          "test/cart.test.js"
+        ],
+        "exploration_file_count": 6,
+        "true_full_pass": true,
+        "worker": {
+          "agent_id": "w-live-d0a806aa-0-live-worker-sub-ho-47672",
+          "session_id": "live-substitute-0c97830d",
+          "status": "spawned",
+          "duration_ms": 101471
+        },
+        "review": {
+          "independent": true,
+          "session_separated": true,
+          "agent_id": "w-live-d0a806aa-0-live-reviewer",
+          "session_id": "live-reviewer-cfc4d226",
+          "verdict": "PASS",
+          "provenance": "reviewer=w-live-d0a806aa-0-live-reviewer;session=live-reviewer-cfc4d226;status=spawned;harness=cursor-agent",
+          "raw": "{\"verdict\":\"PASS\",\"findings\":[],\"recommendation\":\"Aceitar: zero qty remove a chave via del, remoção parcial preservada, e a suíte passou com exit=0 e fail=0.\"}\n"
+        },
+        "recovery": {
+          "used": true,
+          "handoff_status": "applied",
+          "original_agent_id": "w-live-d0a806aa-0-live-worker",
+          "substitute_agent_id": "w-live-d0a806aa-0-live-worker-sub-ho-47672",
+          "original_session_id": "live-worker-partial-7ecdc2d7",
+          "partial_files_before_handoff": [
+            ".evolveloop/progress.md",
+            "lib/store.js",
+            "src/cart.js"
+          ],
+          "substitute_session_id": "live-substitute-0c97830d"
+        },
+        "provider_usage": {
+          "provenance": "UNAVAILABLE"
+        },
+        "measurement_run_id": "live-d0a806aa-0",
+        "limitations": [
+          "Does not set EVOLVELOOP_HARNESS_CONSENT",
+          "Does not invent tokens or API keys",
+          "Deterministic solvers remain the CI regression path — never used for LIVE claims",
+          "TRUE_FULL_PASS still requires verified evidence; LLM review does not replace evaluator",
+          "No DETERMINISTIC_SOLVER applied in this path",
+          "Explicit process consent: EVOLVELOOP_HARNESS_CONSENT=true; harness=cursor-agent"
+        ],
+        "reasons": []
+      },
+      {
+        "kind": "LiveEngineeringRunResult",
+        "run_id": "live-c5dd1922-8",
+        "task_id": "T07",
+        "strategy": "C_evolveloop_adaptive",
+        "readiness": {
+          "kind": "LiveLlmReadiness",
+          "state": "READY",
+          "consent": true,
+          "executable": true,
+          "selected_harness": "cursor-agent",
+          "providers": [
+            {
+              "id": "cursor-agent",
+              "available": true,
+              "auth": "logged_in",
+              "detail": "✓ Logged in as gabriel.prossional@gmail.com"
+            },
+            {
+              "id": "claude-code",
+              "available": true,
+              "auth": "none",
+              "detail": "claude auth status loggedIn=false or unparseable"
+            },
+            {
+              "id": "openai",
+              "available": false,
+              "auth": "none",
+              "detail": "OPENAI_API_KEY unset"
+            },
+            {
+              "id": "openrouter",
+              "available": false,
+              "auth": "none",
+              "detail": "OPENROUTER_API_KEY unset"
+            }
+          ],
+          "blockers": [],
+          "notes": [
+            "Does not set EVOLVELOOP_HARNESS_CONSENT",
+            "Does not invent tokens or API keys",
+            "Deterministic solvers remain the CI regression path — never used for LIVE claims"
+          ],
+          "checks": {
+            "consent": {
+              "ok": true,
+              "detail": "EVOLVELOOP_HARNESS_CONSENT=true (process-scoped)"
+            },
+            "harness_cursor_agent": {
+              "ok": true,
+              "detail": "path=/home/gaab/.local/bin/agent"
+            },
+            "harness_claude": {
+              "ok": true,
+              "detail": "path=/home/gaab/.local/bin/claude"
+            },
+            "auth_cursor_agent": {
+              "ok": true,
+              "detail": "✓ Logged in as gabriel.prossional@gmail.com"
+            },
+            "auth_claude": {
+              "ok": false,
+              "detail": "claude auth status loggedIn=false or unparseable"
+            },
+            "model": {
+              "ok": true,
+              "detail": "cursor-agent account/default model usable for -p invoke"
+            },
+            "can_start": {
+              "ok": true,
+              "detail": "cursor-agent ask-mode smoke READY (72857ms)"
+            }
+          }
+        },
+        "mode": "LIVE",
+        "harness_id": "cursor-agent",
+        "workspace": "/tmp/el-live-gate-l/live-workspaces/live-c5dd1922-8",
+        "files_changed": [
+          "src/router.js",
+          "test/router.test.js"
+        ],
+        "exploration_file_count": 6,
+        "true_full_pass": true,
+        "worker": {
+          "agent_id": "w-live-c5dd1922-8-live-worker",
+          "session_id": "live-worker-c68f7924",
+          "status": "spawned",
+          "duration_ms": 100363
+        },
+        "review": {
+          "independent": true,
+          "session_separated": true,
+          "agent_id": "w-live-c5dd1922-8-live-reviewer",
+          "session_id": "live-reviewer-874f9d06",
+          "verdict": "PASS",
+          "provenance": "reviewer=w-live-c5dd1922-8-live-reviewer;session=live-reviewer-874f9d06;status=spawned;harness=cursor-agent",
+          "raw": "{\"verdict\":\"PASS\",\"findings\":[],\"recommendation\":\"Aceitar: /echo autenticado retorna o body, não autorizado responde 401, rotas existentes intactas, e os testes passaram com exit=0 e fail=0.\"}\n"
+        },
+        "provider_usage": {
+          "provenance": "UNAVAILABLE"
+        },
+        "measurement_run_id": "live-c5dd1922-8",
+        "limitations": [
+          "Does not set EVOLVELOOP_HARNESS_CONSENT",
+          "Does not invent tokens or API keys",
+          "Deterministic solvers remain the CI regression path — never used for LIVE claims",
+          "TRUE_FULL_PASS still requires verified evidence; LLM review does not replace evaluator",
+          "No DETERMINISTIC_SOLVER applied in this path",
+          "Explicit process consent: EVOLVELOOP_HARNESS_CONSENT=true; harness=cursor-agent"
+        ],
+        "reasons": []
+      }
+    ],
+    "gate_l_state": "PASS",
+    "at": "2026-11-12T21:28:58.327Z"
+  },
+  "criteria": {
+    "gate_O_observability": {
+      "state": "PASS",
+      "evidence": "tests/unit/measurement-plane"
+    },
+    "gate_M_metrics": {
+      "state": "PASS",
+      "evidence": "measurement-plane/metrics/*"
+    },
+    "gate_B_benchmark": {
+      "state": "PASS",
+      "evidence": "benchmarks/bench-obs + runner"
+    },
+    "gate_L_live_llm": {
+      "state": "PASS",
+      "evidence": "eval live-suite",
+      "blockers": []
+    },
+    "gate_E_evaluation_integrity": {
+      "state": "PASS",
+      "evidence": "verified-pass-adversarial + measurement evaluation engine"
+    },
+    "gate_P_privacy_performance": {
+      "state": "PASS",
+      "evidence": "docs/bench-obs/OVERHEAD.md + local-first collector",
+      "notes": [
+        "overhead methodology documented; full instrumentation A/B not claiming statistical significance"
+      ]
+    }
+  },
+  "global_status": "PASS",
+  "limitations": [
+    "Live LLM Gate L executed with process-scoped EVOLVELOOP_HARNESS_CONSENT=true",
+    "Deterministic solvers preserved for CI; live path never applies DETERMINISTIC_SOLVER",
+    "TUI/dashboard deferred until data reliability (spec)",
+    "Reused live suite report: /tmp/el-live-gate-l/live-suite-report.json"
+  ]
+}

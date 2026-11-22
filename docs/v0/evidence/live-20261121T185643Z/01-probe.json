@@ -1,0 +1,47 @@
+{
+  "kind": "V0CircuitProbe",
+  "rule": "1+1+1",
+  "local_model": {
+    "kind": "ModelHealth",
+    "provider_id": "ollama",
+    "ok": true,
+    "code": "OK",
+    "message": "Ollama ok; model=bonsai-64k:latest",
+    "model": "bonsai-64k:latest",
+    "base_url": "http://127.0.0.1:11434",
+    "checked_at": "2026-11-21T18:56:43.512Z",
+    "limitations": [
+      "Local Ollama only — no FreeLLMAPI gateway",
+      "Availability is probed via GET /api/tags"
+    ]
+  },
+  "remote_provider": {
+    "kind": "ModelHealth",
+    "provider_id": "openrouter",
+    "ok": false,
+    "code": "MISSING_CREDENTIALS",
+    "message": "OpenRouter API key absent — healthCheck failed honestly",
+    "base_url": "https://openrouter.ai/api/v1",
+    "model": "openai/gpt-4o-mini",
+    "checked_at": "2026-11-21T18:56:43.528Z",
+    "limitations": [
+      "Remote OpenRouter never used as silent default",
+      "Requires OPENROUTER_API_KEY or EVOLVELOOP_OPENROUTER_API_KEY",
+      "Does not invent cost when usage fields absent"
+    ]
+  },
+  "agent_adapter": {
+    "kind": "AdapterHealth",
+    "adapter_id": "cursor",
+    "ok": true,
+    "code": "OK",
+    "message": "cursor-agent available at /home/gaab/.local/bin/agent",
+    "cli_path": "/home/gaab/.local/bin/agent",
+    "checked_at": "2026-11-21T18:56:44.183Z",
+    "limitations": [
+      "V0 agent adapter slot — Cursor via cursor-agent CLI",
+      "invoke requires EVOLVELOOP_HARNESS_CONSENT=true for real spawn",
+      "All spawn routed through ExecutionRunner"
+    ]
+  }
+}

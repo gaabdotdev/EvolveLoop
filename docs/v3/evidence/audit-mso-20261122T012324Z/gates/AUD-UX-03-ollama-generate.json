@@ -1,0 +1,1 @@
+{"model":"bonsai-64k:latest","created_at":"2026-11-22T02:28:38.601947885Z","response":"\n\n\u003cthink\u003e\nHere","done":true,"done_reason":"length","context":[44240,10092,271,248068,198,8160],"total_duration":784942993,"load_duration":310478210,"prompt_eval_count":2,"prompt_eval_duration":166155000,"eval_count":4,"eval_duration":224845000}

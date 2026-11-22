@@ -1,0 +1,24 @@
+=== knip --files POST-PRUNE 2026-11-22T01:57:15Z ===
+Unused files (22)
+scripts/v3-adapters-runtime-probe.mts                   
+scripts/v3-dist-01-probe.mts                            
+scripts/v3-exit-03-scale-probe.mts                      
+scripts/v3-integral-harness.mjs                         
+scripts/v3-product-goals-meta-status.mjs                
+scripts/v35-live-e2e-resume.mjs                         
+scripts/v35-live-e2e.mjs                                
+scripts/v36-live-multi-workflow.mjs                     
+src/cli/apply-context-budget.ts                         
+tests/fixtures/v3-eval/alpha-lib/src/index.js           
+tests/fixtures/v3-eval/alpha-lib/src/math.js            
+tests/fixtures/v3-eval/alpha-lib/test/math.test.js      
+tests/fixtures/v3-eval/beta-app/lib/store.js            
+tests/fixtures/v3-eval/beta-app/src/cart.js             
+tests/fixtures/v3-eval/beta-app/src/checkout.js         
+tests/fixtures/v3-eval/beta-app/test/cart.test.js       
+tests/fixtures/v3-eval/beta-app/test/checkout.test.js   
+tests/fixtures/v3-eval/gamma-service/src/auth.js        
+tests/fixtures/v3-eval/gamma-service/src/config.js      
+tests/fixtures/v3-eval/gamma-service/src/router.js      
+tests/fixtures/v3-eval/gamma-service/test/router.test.js
+vitest.v1-gate-compat.config.ts                         

@@ -1,0 +1,24 @@
+{
+  "gate": "AUD-UX-01-external-repos-inventory",
+  "eligible_git_repos": [
+    {
+      "path": "/home/gaab/Documentos/gitHub/KernelBot",
+      "is_git": true,
+      "head": "8b0b2ef",
+      "branch": "aud-ux-01/live-stress-20261122",
+      "outside_seagrass": true
+    },
+    {
+      "path": "/home/gaab/Documentos/gitHub/OrbitBot",
+      "is_git": true,
+      "head": "53841ee",
+      "branch": "aud-ux-01/live-stress-20261122",
+      "outside_seagrass": true
+    }
+  ],
+  "count_eligible": 2,
+  "live_tasks_executed_this_session": 8,
+  "pass_at_1": 0.875,
+  "pass_cubed": 1.0,
+  "honesty": "Live dogfooding completed attempt 2/3. See AUD-UX-01-live.json for per-task ledger. OB-T3 fail@1 (nesting rework), pass within 3."
+}

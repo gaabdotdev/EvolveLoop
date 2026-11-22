@@ -1,0 +1,14 @@
+
+ RUN  v2.1.9 /home/gaab/orca/workspaces/EvolveLoop/seagrass/orchestrator
+
+ ✓ tests/unit/v1-sec-02-credential-proxy.test.ts (6 tests) 14ms
+ ✓ tests/unit/v2-sec-02-credential-policies.test.ts (20 tests) 13ms
+ ✓ tests/unit/v3-sec-02-dlp-egress.test.ts (23 tests) 19ms
+ ✓ tests/unit/v3-sec-01-microvm.test.ts (15 tests) 32ms
+ ✓ tests/unit/v1-sec-01-bwrap-wrapper.test.ts (6 tests | 1 skipped) 56ms
+
+ Test Files  5 passed (5)
+      Tests  69 passed | 1 skipped (70)
+   Start at  21:03:25
+   Duration  566ms (transform 331ms, setup 59ms, collect 694ms, tests 134ms, environment 1ms, prepare 372ms)
+

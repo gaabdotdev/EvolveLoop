@@ -1,0 +1,136 @@
+{
+  "kind": "CircuitRunResult",
+  "run_id": "cr-bdaaa897-8a3d-4925-a150-8ecb01cdc07d",
+  "work_id": "work-fire5-1795281734029",
+  "task_id": "fire-2",
+  "status": "TRUE_FULL_PASS",
+  "reason": "TRUE_FULL_PASS",
+  "goal_contract_id": "gc-fire-2",
+  "workspace_path": "/tmp/v0-m3-recovery2-wt/fire-2",
+  "model_health": {
+    "local": {
+      "kind": "ModelHealth",
+      "provider_id": "ollama",
+      "ok": true,
+      "code": "OK",
+      "message": "Ollama ok; model=bonsai-64k:latest",
+      "model": "bonsai-64k:latest",
+      "base_url": "http://127.0.0.1:11434",
+      "checked_at": "2026-11-21T17:23:33.857Z",
+      "limitations": [
+        "Local Ollama only — no FreeLLMAPI gateway",
+        "Availability is probed via GET /api/tags"
+      ]
+    },
+    "remote": {
+      "kind": "ModelHealth",
+      "provider_id": "openrouter",
+      "ok": false,
+      "code": "MISSING_CREDENTIALS",
+      "message": "OpenRouter API key absent — healthCheck failed honestly",
+      "base_url": "https://openrouter.ai/api/v1",
+      "model": "openai/gpt-4o-mini",
+      "checked_at": "2026-11-21T17:23:33.858Z",
+      "limitations": [
+        "Remote OpenRouter never used as silent default",
+        "Requires OPENROUTER_API_KEY or EVOLVELOOP_OPENROUTER_API_KEY",
+        "Does not invent cost when usage fields absent"
+      ]
+    }
+  },
+  "adapter_health_ok": true,
+  "adapter_result": {
+    "kind": "NormalizedAdapterResult",
+    "adapter_id": "cursor",
+    "status": "ok",
+    "code": "EXIT_ZERO",
+    "message": "Marcador criado: `.evolveloop/circuit-markers/fire-2.txt` com o conteúdo exato `fire-2`.\n",
+    "exit_code": 0,
+    "stdout": "Marcador criado: `.evolveloop/circuit-markers/fire-2.txt` com o conteúdo exato `fire-2`.\n",
+    "stderr": "",
+    "duration_ms": 78665,
+    "pid": 752767,
+    "pgid": 752767,
+    "tokens_in": null,
+    "tokens_out": null,
+    "cost_usd": null,
+    "cost_provenance": "UNAVAILABLE",
+    "limitations": [
+      "Not an OS sandbox — confinement is realpath + cwd + env scrub only",
+      "Cancel uses kill(-pgid) with /proc starttime reuse guard when available",
+      "env_scrubbed_allowlist",
+      "token_usage_not_reported_by_cli"
+    ],
+    "raw_runner": {
+      "kind": "ExecutionRunnerResult",
+      "status": "ok",
+      "code": "EXIT_ZERO",
+      "exit_code": 0,
+      "signal": null,
+      "stdout": "Marcador criado: `.evolveloop/circuit-markers/fire-2.txt` com o conteúdo exato `fire-2`.\n",
+      "stderr": "",
+      "duration_ms": 78665,
+      "pid": 752767,
+      "pgid": 752767,
+      "argv": [
+        "/home/gaab/.local/bin/agent",
+        "-p",
+        "--output-format",
+        "text",
+        "--trust",
+        "--workspace",
+        "/tmp/v0-m3-recovery2-wt/fire-2",
+        "--force",
+        "Read the prompt file at /tmp/v0-m3-recovery2-wt/fire-2/.evolveloop/harness-prompts/sess-5b5d3303-d8d4-4747-97cf-ea08d22dad89.md and complete the assigned task. Stay strictly inside the workspace."
+      ],
+      "cwd": "/tmp/v0-m3-recovery2-wt/fire-2",
+      "limitations": [
+        "Not an OS sandbox — confinement is realpath + cwd + env scrub only",
+        "Cancel uses kill(-pgid) with /proc starttime reuse guard when available",
+        "env_scrubbed_allowlist"
+      ]
+    },
+    "session_id": "sess-5b5d3303-d8d4-4747-97cf-ea08d22dad89"
+  },
+  "validator": {
+    "kind": "EvidenceValidatorResult",
+    "status": "TRUE_FULL_PASS",
+    "code": "TRUE_FULL_PASS",
+    "reasons": [],
+    "sensitive_diff_blocked": [],
+    "command_results": [
+      {
+        "id": "marker-exists",
+        "argv": [
+          "bash",
+          "-lc",
+          "test -f '/tmp/v0-m3-recovery2-wt/fire-2/.evolveloop/circuit-markers/fire-2.txt'"
+        ],
+        "exit_code": 0,
+        "status": "ok",
+        "duration_ms": 20
+      },
+      {
+        "id": "marker-content",
+        "argv": [
+          "bash",
+          "-lc",
+          "test \"$(cat '/tmp/v0-m3-recovery2-wt/fire-2/.evolveloop/circuit-markers/fire-2.txt')\" = 'fire-2'"
+        ],
+        "exit_code": 0,
+        "status": "ok",
+        "duration_ms": 21
+      }
+    ],
+    "evaluated_at": "2026-11-21T17:24:54.736Z",
+    "limitations": [
+      "Validator runs outside agent session via ExecutionRunner",
+      "TRUE_FULL_PASS requires mandatory criteria PASS + commands exit 0 + no unauthorized sensitive diffs"
+    ]
+  },
+  "token_ledger_entry_id": "tl-31bf388c-af24-4f26-b673-7ac8b441e2a7",
+  "limitations": [
+    "V0 Bloco 3 circuit — no FreeLLMAPI/bwrap/daemon/Laya",
+    "TRUE_FULL_PASS only via Evidence Validator (not agent prose)"
+  ]
+}

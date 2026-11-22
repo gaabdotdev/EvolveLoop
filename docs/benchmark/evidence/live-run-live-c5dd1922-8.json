@@ -1,0 +1,112 @@
+{
+  "kind": "LiveEngineeringRunResult",
+  "run_id": "live-c5dd1922-8",
+  "task_id": "T07",
+  "strategy": "C_evolveloop_adaptive",
+  "readiness": {
+    "kind": "LiveLlmReadiness",
+    "state": "READY",
+    "consent": true,
+    "executable": true,
+    "selected_harness": "cursor-agent",
+    "providers": [
+      {
+        "id": "cursor-agent",
+        "available": true,
+        "auth": "logged_in",
+        "detail": "✓ Logged in as gabriel.prossional@gmail.com"
+      },
+      {
+        "id": "claude-code",
+        "available": true,
+        "auth": "none",
+        "detail": "claude auth status loggedIn=false or unparseable"
+      },
+      {
+        "id": "openai",
+        "available": false,
+        "auth": "none",
+        "detail": "OPENAI_API_KEY unset"
+      },
+      {
+        "id": "openrouter",
+        "available": false,
+        "auth": "none",
+        "detail": "OPENROUTER_API_KEY unset"
+      }
+    ],
+    "blockers": [],
+    "notes": [
+      "Does not set EVOLVELOOP_HARNESS_CONSENT",
+      "Does not invent tokens or API keys",
+      "Deterministic solvers remain the CI regression path — never used for LIVE claims"
+    ],
+    "checks": {
+      "consent": {
+        "ok": true,
+        "detail": "EVOLVELOOP_HARNESS_CONSENT=true (process-scoped)"
+      },
+      "harness_cursor_agent": {
+        "ok": true,
+        "detail": "path=/home/gaab/.local/bin/agent"
+      },
+      "harness_claude": {
+        "ok": true,
+        "detail": "path=/home/gaab/.local/bin/claude"
+      },
+      "auth_cursor_agent": {
+        "ok": true,
+        "detail": "✓ Logged in as gabriel.prossional@gmail.com"
+      },
+      "auth_claude": {
+        "ok": false,
+        "detail": "claude auth status loggedIn=false or unparseable"
+      },
+      "model": {
+        "ok": true,
+        "detail": "cursor-agent account/default model usable for -p invoke"
+      },
+      "can_start": {
+        "ok": true,
+        "detail": "cursor-agent ask-mode smoke READY (72857ms)"
+      }
+    }
+  },
+  "mode": "LIVE",
+  "harness_id": "cursor-agent",
+  "workspace": "/tmp/el-live-gate-l/live-workspaces/live-c5dd1922-8",
+  "files_changed": [
+    "src/router.js",
+    "test/router.test.js"
+  ],
+  "exploration_file_count": 6,
+  "true_full_pass": true,
+  "worker": {
+    "agent_id": "w-live-c5dd1922-8-live-worker",
+    "session_id": "live-worker-c68f7924",
+    "status": "spawned",
+    "duration_ms": 100363
+  },
+  "review": {
+    "independent": true,
+    "session_separated": true,
+    "agent_id": "w-live-c5dd1922-8-live-reviewer",
+    "session_id": "live-reviewer-874f9d06",
+    "verdict": "PASS",
+    "provenance": "reviewer=w-live-c5dd1922-8-live-reviewer;session=live-reviewer-874f9d06;status=spawned;harness=cursor-agent",
+    "raw": "{\"verdict\":\"PASS\",\"findings\":[],\"recommendation\":\"Aceitar: /echo autenticado retorna o body, não autorizado responde 401, rotas existentes intactas, e os testes passaram com exit=0 e fail=0.\"}\n"
+  },
+  "provider_usage": {
+    "provenance": "UNAVAILABLE"
+  },
+  "measurement_run_id": "live-c5dd1922-8",
+  "limitations": [
+    "Does not set EVOLVELOOP_HARNESS_CONSENT",
+    "Does not invent tokens or API keys",
+    "Deterministic solvers remain the CI regression path — never used for LIVE claims",
+    "TRUE_FULL_PASS still requires verified evidence; LLM review does not replace evaluator",
+    "No DETERMINISTIC_SOLVER applied in this path",
+    "Explicit process consent: EVOLVELOOP_HARNESS_CONSENT=true; harness=cursor-agent"
+  ],
+  "reasons": []
+}

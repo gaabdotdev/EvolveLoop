@@ -1,0 +1,18 @@
+apiVersion: capability-orchestrator.io/v2
+kind: CapabilityGraph
+metadata:
+  id: v3-filesystem-read
+  ir_version: "2.0.0"
+  policy_ref: high-reliability
+spec:
+  nodes:
+    - id: read-root
+      capability: filesystem.read
+      type: worker
+      dependencies: []
+      inputs: []
+      outputs: []
+      constraints:
+        path: "orchestrator/package.json"
+      # Empty DoD: deterministic filesystem.read evidence is complete without mock marks.
+      definition_of_done: []

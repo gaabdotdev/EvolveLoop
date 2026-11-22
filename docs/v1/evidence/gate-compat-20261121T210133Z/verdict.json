@@ -1,0 +1,77 @@
+{
+  "kind": "V1GateCompatVerdict",
+  "pass": true,
+  "label": "V1-GATE-COMPAT_PASS",
+  "reasons": [
+    "OK_MATRIX_AND_FAULT_INJECTION"
+  ],
+  "vitest_exit": 0,
+  "live_probe": {
+    "base_url": "http://localhost:3001/v1",
+    "state": "needsKey",
+    "message": "catalog HTTP 401",
+    "models_count": 0,
+    "honest": true,
+    "invented_ready": false
+  },
+  "agents": [
+    "cursor",
+    "antigravity"
+  ],
+  "protocols": [
+    "openai_compatible",
+    "anthropic",
+    "responses",
+    "gemini"
+  ],
+  "models": [
+    "bonsai-64k:latest",
+    "openrouter/auto-cheap",
+    "openrouter/frontier"
+  ],
+  "matrix_cells": 24,
+  "fault_injection": [
+    {
+      "label": "http_429",
+      "fault_kind": "http_429",
+      "bucket": "INFRA_QUOTA",
+      "burns_task_attempt": false,
+      "cooldown_ms": 10000,
+      "fallback_recommended": true,
+      "circuit_attempts_after": 0,
+      "ok": true
+    },
+    {
+      "label": "timeout_mid_stream",
+      "fault_kind": "timeout_mid_stream",
+      "bucket": "INFRA_QUOTA",
+      "burns_task_attempt": false,
+      "cooldown_ms": 5000,
+      "fallback_recommended": true,
+      "circuit_attempts_after": 0,
+      "ok": true
+    },
+    {
+      "label": "truncated_json",
+      "fault_kind": "truncated_json",
+      "bucket": "INFRA_QUOTA",
+      "burns_task_attempt": false,
+      "cooldown_ms": 5000,
+      "fallback_recommended": true,
+      "circuit_attempts_after": 0,
+      "ok": true
+    },
+    {
+      "label": "unreachable",
+      "fault_kind": "unreachable",
+      "bucket": "INFRA_QUOTA",
+      "burns_task_attempt": false,
+      "cooldown_ms": 5000,
+      "fallback_recommended": true,
+      "circuit_attempts_after": 0,
+      "ok": true
+    }
+  ],
+  "ts": "20261121T210133Z",
+  "evidence_dir": "/home/gaab/orca/workspaces/EvolveLoop/seagrass/docs/v1/evidence/gate-compat-20261121T210133Z"
+}

@@ -1,0 +1,13 @@
+
+ RUN  v2.1.9 /home/gaab/orca/workspaces/EvolveLoop/seagrass/orchestrator
+
+stdout | tests/unit/v2-orch-04-live-saturation.test.ts > V2-ORCH-04 live saturation backpressure > rate-limit + mem saturation reduce concurrency without crash; VRAM probed
+ORCH04_EVIDENCE_JSON={"kind":"ORCH04LiveSaturation","host_mem_percent":68.94715709849814,"vram":{"status":"AVAILABLE","totalBytes":8573157376,"usedBytes":8236425216,"usedPercent":96.0722503363503,"source":"/sys/class/drm/card0/device/mem_info_vram_total"},"vram_decision":"REDUCED_WITH_REAL_PROBE usedPercent_probe=96.07 injected=90","final_max_in_progress":5,"newly_started":5,"deferred":3,"crash":false}
+
+ ✓ tests/unit/v2-orch-04-live-saturation.test.ts (1 test) 12ms
+
+ Test Files  1 passed (1)
+      Tests  1 passed (1)
+   Start at  19:43:10
+   Duration  415ms (transform 113ms, setup 11ms, collect 153ms, tests 12ms, environment 0ms, prepare 57ms)
+

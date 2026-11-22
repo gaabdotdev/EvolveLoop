@@ -1,0 +1,24 @@
+
+ RUN  v2.1.9 /home/gaab/orca/workspaces/EvolveLoop/seagrass/orchestrator
+
+stdout | tests/unit/v2-orch-04-live-saturation.test.ts > V2-ORCH-04 live saturation backpressure > rate-limit + mem saturation reduce concurrency without crash; VRAM probed
+ORCH04_EVIDENCE_JSON={"kind":"ORCH04LiveSaturation","host_mem_percent":57.81976810923104,"vram":{"status":"AVAILABLE","totalBytes":8573157376,"usedBytes":1480474624,"usedPercent":17.26872095156556,"source":"/sys/class/drm/card0/device/mem_info_vram_total"},"vram_decision":"REDUCED_WITH_REAL_PROBE usedPercent_probe=17.27 injected=90","final_max_in_progress":5,"newly_started":5,"deferred":3,"crash":false}
+
+ ✓ tests/unit/v2-orch-04-live-saturation.test.ts (1 test) 19ms
+ ✓ tests/unit/v2-orch-04-backpressure.test.ts (7 tests) 29ms
+ ✓ tests/unit/v3-orch-01-critical-path.test.ts (8 tests) 29ms
+ ✓ tests/unit/v2-orch-01-file-ownership.test.ts (8 tests) 42ms
+ ✓ tests/unit/v3-orch-02-dynamic-dag.test.ts (15 tests) 25ms
+ ✓ tests/unit/v2-orch-01-live-worktrees.test.ts (1 test) 219ms
+(node:2576696) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ tests/unit/v2-orch-03-idempotency-saga.test.ts (8 tests) 77ms
+ ✓ tests/unit/v2-orch-02-merge-queue.test.ts (7 tests) 149ms
+ ✓ tests/unit/v2-orch-02-live-corpus.test.ts (1 test) 1433ms
+   ✓ V2-ORCH-02 live syntactic corpus > corpus ≥20 conflicts: syntactic_ratio ≥ 0.9; git merge path + post-merge test green 1423ms
+
+ Test Files  9 passed (9)
+      Tests  56 passed (56)
+   Start at  20:40:37
+   Duration  2.36s (transform 998ms, setup 157ms, collect 3.52s, tests 2.02s, environment 2ms, prepare 806ms)
+

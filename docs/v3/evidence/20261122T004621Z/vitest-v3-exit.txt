@@ -1,0 +1,48 @@
+
+ RUN  v2.1.9 /home/gaab/orca/workspaces/EvolveLoop/seagrass/orchestrator
+
+ ✓ tests/unit/v3-sec-03-ebpf-audit.test.ts (12 tests) 20ms
+ ✓ tests/unit/v3-sec-02-dlp-egress.test.ts (23 tests) 22ms
+ ✓ tests/unit/v3-orch-04-best-of-n.test.ts (12 tests) 32ms
+ ✓ tests/unit/v3-orch-03-sub-mso.test.ts (13 tests) 19ms
+ ✓ tests/unit/v3-orch-02-dynamic-dag.test.ts (15 tests) 30ms
+ ✓ tests/unit/v3-mem-05-bitemporal.test.ts (10 tests) 41ms
+ ✓ tests/unit/v3-mem-06-utility-decay.test.ts (8 tests) 56ms
+stdout | tests/unit/v3-mem-04-multihop.test.ts > V3-MEM-04 Multi-Hop Synthesis (live Ollama optional) > probe Ollama; if ready close dossier via synthesizeLocal else document UNAVAILABLE
+MEM04_OLLAMA_PROBE_JSON={"ok":true,"base_url":"http://127.0.0.1:11434","model":"bonsai-64k:latest","code":"OK","detail":"model=bonsai-64k:latest"}
+
+ ✓ tests/unit/v3-dist-01-ops.test.ts (10 tests) 68ms
+(node:2895934) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ tests/unit/v3-orch-01-critical-path.test.ts (8 tests) 37ms
+ ✓ tests/unit/v3-sec-01-microvm.test.ts (15 tests) 69ms
+ ✓ tests/unit/v3-evol-01-shadow-replay.test.ts (7 tests) 10ms
+ ✓ tests/unit/v3-mem-07-federated-sanitize.test.ts (9 tests) 16ms
+ ✓ tests/unit/v3-sec-04-redteam.test.ts (9 tests) 30ms
+stdout | tests/unit/v3-mem-03-virtual-memory.test.ts > V3-MEM-03 Virtual Memory (MemGPT paging) > token budget does not grow with 100× history (measured)
+{"gate":"V3-MEM-03","token_budget":800,"baseline_n":4,"scale":100,"history_n":400,"baseline_tokens":656,"final_tokens":795,"growth_ratio":1.2119,"resident":1,"tombstoned":45,"pages_total":46,"naive_full_history_tokens":62245,"TOKEN_BUDGET_100X":"BOUNDED"}
+
+ ✓ tests/unit/v3-mem-03-virtual-memory.test.ts (7 tests) 615ms
+   ✓ V3-MEM-03 Virtual Memory (MemGPT paging) > token budget does not grow with 100× history (measured) 576ms
+stdout | tests/unit/v3-mem-02-pyramid.test.ts > V3-MEM-02 Pyramid Index (RAPTOR) > measures p95 coarse-to-fine latency on fixture ≥1k nodes (real ms)
+{"gate":"V3-MEM-02","fixture_n0":1200,"fixture_nodes":1358,"by_level":{"0":1200,"1":153,"2":4,"3":1},"samples":40,"p50_ms":0.551,"p95_ms":2.084,"max_ms":4.644,"limitation":"Fixture scale = ≥1k pyramid nodes (not 100k events). Full Suíte E 100k deferred."}
+
+ ✓ tests/unit/v3-mem-02-pyramid.test.ts (4 tests) 126ms
+ ✓ tests/unit/v3-mem-01-cold-storage.test.ts (6 tests) 36ms
+ ✓ tests/unit/v3-test-01-metamorphic.test.ts (11 tests) 21ms
+ ✓ tests/unit/v3-orch-05-pbt-fuzz.test.ts (10 tests) 830ms
+   ✓ V3-ORCH-05 PBT fuzz — MSO transitions + fencing > property: StateDb enforces matrix + fencing > seeded fencing steals (150): obsolete writer tokens rejected 310ms
+ ✓ tests/unit/v3-test-02-dst.test.ts (7 tests) 568ms
+   ✓ V3-TEST-02 DST — runScenarios gate (≥10k) > runScenarios(seed, 10000) → 0 deadlock, 0 split-brain + seed reproducibility 456ms
+ ✓ tests/unit/v3-mem-04-multihop.test.ts (11 tests) 8115ms
+   ✓ V3-MEM-04 Multi-Hop Synthesis (live Ollama optional) > probe Ollama; if ready close dossier via synthesizeLocal else document UNAVAILABLE 8043ms
+stdout | tests/unit/v3-mem-04-multihop.test.ts > V3-MEM-04 Multi-Hop Synthesis (live Ollama optional) > probe Ollama; if ready close dossier via synthesizeLocal else document UNAVAILABLE
+MEM04_LIVE_DOSSIER_JSON={"status":"CLOSED_DETERMINISTIC_STUB","closed":true,"synthesizer":"deterministic_stub","evidence_count":3,"limitations":["STATUS=CLOSED_DETERMINISTIC_STUB","No LLM used — structured evidence dump only","Ollama path available when probe succeeds","ollama_probe=OK:model=bonsai-64k:latest","ollama_generate_failed=generate_empty_response","fell_back_to_deterministic_stub"]}
+MEM04_LIVE_STATUS=CLOSED_DETERMINISTIC_STUB
+
+
+ Test Files  20 passed (20)
+      Tests  207 passed (207)
+   Start at  21:45:02
+   Duration  9.11s (transform 2.56s, setup 403ms, collect 7.58s, tests 10.76s, environment 4ms, prepare 2.16s)
+

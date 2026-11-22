@@ -1,0 +1,18 @@
+{
+  "kind": "v3_test_01_host_probe",
+  "task": "M18-V3-TEST-01-METAMORPHIC",
+  "ts": "20261122T002551Z",
+  "schema_version": 1,
+  "required_paraphrases": 3,
+  "paraphrase_count": 3,
+  "decomposition_stable": true,
+  "route_stable": true,
+  "true_full_pass_stable": true,
+  "reference_fingerprint": "f637111d35a6a204",
+  "reference_pass_eligible": true,
+  "gate_status": "PASS_UNIT",
+  "gate_passed": true,
+  "bias_detected_when_surface_router": true,
+  "honesty": "stub_router_deterministic_PASS_UNIT",
+  "note": "Harness uses stub decomposer + stub router; not a live multi-model LLM run"
+}

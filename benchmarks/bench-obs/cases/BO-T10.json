@@ -1,0 +1,19 @@
+{
+  "case_id": "BO-T10",
+  "name": "Security-compatible config change",
+  "objective": "Change requiring review + compatibility",
+  "repo": "gamma-service",
+  "fixture_path": "orchestrator/tests/fixtures/v3-eval/gamma-service",
+  "preconditions": [],
+  "acceptance_criteria": [
+    {"id": "c1", "description": "compat preserved", "mandatory": true, "evaluator": "test"},
+    {"id": "c2", "description": "review approved", "mandatory": true, "evaluator": "manual"}
+  ],
+  "timeout_ms": 60000,
+  "strategies": ["A_single_agent", "B_evolveloop_no_delegation", "C_evolveloop_adaptive"],
+  "invalidation_rules": ["critical_telemetry_loss"],
+  "difficulty": "hard",
+  "class": "review_security",
+  "multi_file": true,
+  "split": "held_out"
+}

@@ -1,0 +1,14 @@
+=== scoped status ===
+ M orchestrator/src/v3/parallel/index.ts
+?? docs/v3/evidence/20261121T233047Z/
+?? orchestrator/src/v3/parallel/critical-path.ts
+?? orchestrator/tests/unit/v3-orch-01-critical-path.test.ts
+
+=== tracked diff --stat ===
+ orchestrator/src/v3/parallel/index.ts | 87 +++++++++++++++++++++++++++++++++++
+ 1 file changed, 87 insertions(+)
+
+=== new file line counts ===
+  674 orchestrator/src/v3/parallel/critical-path.ts
+  297 orchestrator/tests/unit/v3-orch-01-critical-path.test.ts
+  971 total

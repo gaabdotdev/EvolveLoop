@@ -1,0 +1,18 @@
+
+ RUN  v2.1.9 /home/gaab/orca/workspaces/EvolveLoop/seagrass/orchestrator
+
+stdout | tests/unit/v3-mem-04-multihop.test.ts > V3-MEM-04 Multi-Hop Synthesis (live Ollama optional) > probe Ollama; if ready close dossier via synthesizeLocal else document UNAVAILABLE
+MEM04_OLLAMA_PROBE_JSON={"ok":true,"base_url":"http://127.0.0.1:11434","model":"bonsai-64k:latest","code":"OK","detail":"model=bonsai-64k:latest"}
+
+stdout | tests/unit/v3-mem-04-multihop.test.ts > V3-MEM-04 Multi-Hop Synthesis (live Ollama optional) > probe Ollama; if ready close dossier via synthesizeLocal else document UNAVAILABLE
+MEM04_LIVE_DOSSIER_JSON={"status":"CLOSED_DETERMINISTIC_STUB","closed":true,"synthesizer":"deterministic_stub","evidence_count":3,"limitations":["STATUS=CLOSED_DETERMINISTIC_STUB","No LLM used — structured evidence dump only","Ollama path available when probe succeeds","ollama_probe=OK:model=bonsai-64k:latest","ollama_generate_failed=generate_empty_response","fell_back_to_deterministic_stub"]}
+MEM04_LIVE_STATUS=CLOSED_DETERMINISTIC_STUB
+
+ ✓ tests/unit/v3-mem-04-multihop.test.ts (11 tests) 559ms
+   ✓ V3-MEM-04 Multi-Hop Synthesis (live Ollama optional) > probe Ollama; if ready close dossier via synthesizeLocal else document UNAVAILABLE 517ms
+
+ Test Files  1 passed (1)
+      Tests  11 passed (11)
+   Start at  20:07:09
+   Duration  996ms (transform 162ms, setup 12ms, collect 196ms, tests 559ms, environment 0ms, prepare 58ms)
+

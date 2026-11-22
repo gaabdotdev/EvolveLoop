@@ -1,0 +1,12 @@
+
+ RUN  v2.1.9 /home/gaab/orca/workspaces/EvolveLoop/seagrass/orchestrator
+
+ ✓ tests/unit/v2-mem-03-memory-eval.test.ts (7 tests) 13ms
+ ✓ tests/unit/v2-mem-01-consolidation.test.ts (10 tests) 13ms
+ ✓ tests/unit/v2-mem-02-hybrid-graph.test.ts (8 tests) 25ms
+
+ Test Files  3 passed (3)
+      Tests  25 passed (25)
+   Start at  19:50:59
+   Duration  485ms (transform 198ms, setup 25ms, collect 568ms, tests 51ms, environment 0ms, prepare 209ms)
+

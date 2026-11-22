@@ -60,7 +60,9 @@ describe("CursorSkillProvider", () => {
     });
 
     expect(result.success).toBe(true);
-    expect(result.evidence?.spec.verdict).toBe("passed");
+    expect(result.evidence?.spec.verdict).not.toBe("passed");
+    expect(result.evidence?.spec.checks[0]?.result).not.toBe("pass");
+    expect(result.evidence?.spec.checks[0]?.exit_code).toBe(0);
   });
 
   it("returns SKILL_NOT_FOUND for invalid path", async () => {
@@ -113,9 +115,10 @@ describe("CursorSkillProvider", () => {
     });
 
     expect(result.error?.code).toBe("JOB_PENDING");
-    const job = JSON.parse(readFileSync(resolve(dir, "run-job-1.json"), "utf-8"));
-    expect(job.kind).toBe("SkillJob");
-    expect(job.capability).toBe("testing");
+    const { JobStore } = await import("../../src/jobs/job-store.js");
+    const job = new JobStore(dir).readJob("run-job-1");
+    expect(job?.kind).toBe("SkillJob");
+    expect(job?.capability).toBe("testing");
   });
 });
 

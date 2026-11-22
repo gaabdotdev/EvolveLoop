@@ -1,0 +1,2 @@
+153:INT02_BENCH_JSON={"invention_baseline":0,"invention_candidate":0,"calibration_baseline":true,"calibration_candidate":true,"abstention_rate_candidate":1,"verdict":"PLUGGABLE_KEEP_BASELINE","case_count":6,"latency_mean_ms":6980.322015166667}
+154:INT02_STATUS=PASS_LIVE

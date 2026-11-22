@@ -1,0 +1,27 @@
+
+ RUN  v2.1.9 /home/gaab/orca/workspaces/EvolveLoop/seagrass/orchestrator
+
+ ✓ tests/unit/v3-mem-01-cold-storage.test.ts (6 tests) 25ms
+stdout | tests/unit/v3-mem-04-multihop.test.ts > V3-MEM-04 Multi-Hop Synthesis (live Ollama optional) > probe Ollama; if ready close dossier via synthesizeLocal else document UNAVAILABLE
+MEM04_OLLAMA_PROBE_JSON={"ok":true,"base_url":"http://127.0.0.1:11434","model":"bonsai-64k:latest","code":"OK","detail":"model=bonsai-64k:latest"}
+
+stdout | tests/unit/v3-mem-02-pyramid.test.ts > V3-MEM-02 Pyramid Index (RAPTOR) > measures p95 coarse-to-fine latency on fixture ≥1k nodes (real ms)
+{"gate":"V3-MEM-02","fixture_n0":1200,"fixture_nodes":1358,"by_level":{"0":1200,"1":153,"2":4,"3":1},"samples":40,"p50_ms":0.476,"p95_ms":0.854,"max_ms":2.542,"limitation":"Fixture scale = ≥1k pyramid nodes (not 100k events). Full Suíte E 100k deferred."}
+
+ ✓ tests/unit/v3-mem-02-pyramid.test.ts (4 tests) 70ms
+stdout | tests/unit/v3-mem-03-virtual-memory.test.ts > V3-MEM-03 Virtual Memory (MemGPT paging) > token budget does not grow with 100× history (measured)
+{"gate":"V3-MEM-03","token_budget":800,"baseline_n":4,"scale":100,"history_n":400,"baseline_tokens":656,"final_tokens":795,"growth_ratio":1.2119,"resident":1,"tombstoned":45,"pages_total":46,"naive_full_history_tokens":62245,"TOKEN_BUDGET_100X":"BOUNDED"}
+
+ ✓ tests/unit/v3-mem-03-virtual-memory.test.ts (7 tests) 320ms
+stdout | tests/unit/v3-mem-04-multihop.test.ts > V3-MEM-04 Multi-Hop Synthesis (live Ollama optional) > probe Ollama; if ready close dossier via synthesizeLocal else document UNAVAILABLE
+MEM04_LIVE_DOSSIER_JSON={"status":"CLOSED_DETERMINISTIC_STUB","closed":true,"synthesizer":"deterministic_stub","evidence_count":3,"limitations":["STATUS=CLOSED_DETERMINISTIC_STUB","No LLM used — structured evidence dump only","Ollama path available when probe succeeds","ollama_probe=OK:model=bonsai-64k:latest","ollama_generate_failed=generate_empty_response","fell_back_to_deterministic_stub"]}
+MEM04_LIVE_STATUS=CLOSED_DETERMINISTIC_STUB
+
+ ✓ tests/unit/v3-mem-04-multihop.test.ts (11 tests) 587ms
+   ✓ V3-MEM-04 Multi-Hop Synthesis (live Ollama optional) > probe Ollama; if ready close dossier via synthesizeLocal else document UNAVAILABLE 543ms
+
+ Test Files  4 passed (4)
+      Tests  28 passed (28)
+   Start at  20:12:31
+   Duration  1.07s (transform 223ms, setup 26ms, collect 818ms, tests 1.00s, environment 1ms, prepare 311ms)
+

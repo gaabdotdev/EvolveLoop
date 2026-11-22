@@ -1,0 +1,77 @@
+{
+  "kind": "v3_sec_03_host_probe",
+  "task": "M15-V3-SEC-03-EBPF-AUDIT",
+  "ts": "20261122T000803Z",
+  "detection": {
+    "kind": "EbpfCapabilityDetection",
+    "schema_version": "1",
+    "backend_status": "unavailable",
+    "cap_bpf_effective": false,
+    "cap_perfmon_effective": false,
+    "cap_sys_admin_effective": false,
+    "bpftool_path": null,
+    "bpf_fs_accessible": false,
+    "notes": [
+      "cap_bpf_not_effective",
+      "cap_perfmon_not_effective",
+      "bpftool_unavailable",
+      "bpf_fs_inaccessible",
+      "UNAVAILABLE_live_ebpf_requires_cap_bpf_or_sys_admin_and_bpftool"
+    ],
+    "honesty": "reported"
+  },
+  "evaluation": {
+    "gate_status": "PASS_SIMULATED",
+    "backend_status": "unavailable",
+    "mode": "simulated",
+    "bypass_rate": 0,
+    "zero_bypass": true,
+    "case_count": 10,
+    "battery_case_ids": [
+      "B01_FILE_OMIT",
+      "B02_FILE_ALTER_SUBJECT",
+      "B03_FILE_HONEST",
+      "B04_PROC_OMIT",
+      "B05_PROC_ALTER_ACTION",
+      "B06_PROC_HONEST",
+      "B07_NET_OMIT",
+      "B08_NET_ALTER_SUBJECT",
+      "B09_NET_HONEST",
+      "B10_FILE_ALTER_ACTION"
+    ],
+    "evidence": {
+      "backend_status": {
+        "value": "unavailable",
+        "honesty": "reported"
+      },
+      "gate_status": {
+        "value": "PASS_SIMULATED",
+        "honesty": "reported"
+      },
+      "cap_bpf_effective": {
+        "value": false,
+        "honesty": "reported"
+      },
+      "bpftool_present": {
+        "value": false,
+        "honesty": "reported"
+      },
+      "bypass_rate": {
+        "value": 0,
+        "honesty": "reported"
+      },
+      "zero_bypass": {
+        "value": true,
+        "honesty": "reported"
+      }
+    },
+    "notes": [
+      "cap_bpf_not_effective",
+      "cap_perfmon_not_effective",
+      "bpftool_unavailable",
+      "bpf_fs_inaccessible",
+      "UNAVAILABLE_live_ebpf_requires_cap_bpf_or_sys_admin_and_bpftool",
+      "PASS_SIMULATED_deterministic_oob_correlation"
+    ]
+  }
+}

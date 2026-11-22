@@ -1,0 +1,16 @@
+{
+  "cycle_id": "v3-phase0-c2",
+  "cli": "orchestrator/src/cli/evolve.js",
+  "npm_script": "evolve",
+  "tests_green": [
+    "tests/unit/agent-registry.test.ts",
+    "tests/unit/coordinator.test.ts",
+    "tests/integration/evolve-cli.integration.test.ts"
+  ],
+  "limitations": [
+    "coordinator start is in-process marker only",
+    "no TUI",
+    "Grill-Me intake not wired",
+    "Master/leader hierarchy not auto-spawned beyond master stub on work init"
+  ]
+}

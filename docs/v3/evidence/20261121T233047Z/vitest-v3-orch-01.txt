@@ -1,0 +1,10 @@
+
+ RUN  v2.1.9 /home/gaab/orca/workspaces/EvolveLoop/seagrass/orchestrator
+
+ ✓ tests/unit/v3-orch-01-critical-path.test.ts (8 tests) 18ms
+
+ Test Files  1 passed (1)
+      Tests  8 passed (8)
+   Start at  20:30:47
+   Duration  414ms (transform 115ms, setup 12ms, collect 153ms, tests 18ms, environment 0ms, prepare 50ms)
+

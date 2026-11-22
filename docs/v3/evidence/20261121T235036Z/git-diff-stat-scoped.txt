@@ -1,0 +1,9 @@
+?? docs/v3/evidence/20261121T235036Z/
+?? orchestrator/src/v3/mso/index.ts
+?? orchestrator/src/v3/mso/pbt-fuzz.ts
+?? orchestrator/tests/unit/v3-orch-05-pbt-fuzz.test.ts
+---
+---untracked---
+  156 orchestrator/src/v3/mso/pbt-fuzz.ts
+  359 orchestrator/tests/unit/v3-orch-05-pbt-fuzz.test.ts
+  515 total

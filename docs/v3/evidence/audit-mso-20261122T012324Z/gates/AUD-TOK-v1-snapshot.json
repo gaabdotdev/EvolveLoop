@@ -1,0 +1,184 @@
+{
+  "kind": "AUD-TOK-V1-Evidence-Snapshot",
+  "source": "docs/v1/evidence/gate-tok-20261121T210140Z/metrics.json",
+  "combined_gate": {
+    "baseline_total": 11630,
+    "phase_total": 2845,
+    "reduction_pct": 75.53740326741186,
+    "meets_target": true,
+    "target_min_pct": 75,
+    "honesty": "estimated",
+    "notes": [
+      "Same prompt+stdout surface as V0 compare",
+      "V1 adds pin reuse + nl-compress + crystallizer 0-token on tasks 4-5"
+    ]
+  },
+  "live_llm_savings": "UNAVAILABLE",
+  "openrouter": "UNAVAILABLE",
+  "prefix_pinning_cache_hit": {
+    "hits": 4,
+    "turns": 5,
+    "rate_all_turns": 0.8,
+    "rate_after_turn1": 1.0,
+    "meets_70pct_all_turns": true,
+    "meets_70pct_after_warm": true,
+    "honesty": [
+      "cache_hit charges dynamic suffix only after turn 1",
+      "simulated identical prefix hashes (KV-cache concept)"
+    ]
+  },
+  "context_slicing": {
+    "reduction_pct": 98.40798704803022,
+    "honesty": "estimated"
+  },
+  "o1_snapshot": null,
+  "constrained": {
+    "n": 100,
+    "grammar_attach_ok": 100,
+    "parse_failures": 0,
+    "parse_failure_pct": 0,
+    "adversarial_rejected": true,
+    "ollama": "UNAVAILABLE_offline_grammar_validate_loop",
+    "honesty": "estimated",
+    "samples_head_tail": [
+      {
+        "i": 0,
+        "sample": "ok",
+        "valid": true,
+        "constrained": true
+      },
+      {
+        "i": 1,
+        "sample": "fail",
+        "valid": true,
+        "constrained": true
+      },
+      {
+        "i": 2,
+        "sample": "ok",
+        "valid": true,
+        "constrained": true
+      },
+      {
+        "i": 3,
+        "sample": "fail",
+        "valid": true,
+        "constrained": true
+      },
+      {
+        "i": 4,
+        "sample": "ok",
+        "valid": true,
+        "constrained": true
+      },
+      {
+        "i": 98,
+        "sample": "ok",
+        "valid": true,
+        "constrained": true
+      },
+      {
+        "i": 99,
+        "sample": "fail",
+        "valid": true,
+        "constrained": true
+      }
+    ],
+    "notes": [
+      "Offline grammar validate loop \u2014 not live Ollama constrained decode",
+      "0% parse failures required on 100 grammar-shaped calls"
+    ]
+  },
+  "speculative": null,
+  "crystallizer": {
+    "threshold": 3,
+    "runs": [
+      {
+        "status": "recorded",
+        "tokens_used": 100,
+        "success_count": 1,
+        "crystallized": false
+      },
+      {
+        "status": "recorded",
+        "tokens_used": 100,
+        "success_count": 2,
+        "crystallized": false
+      },
+      {
+        "status": "crystallized",
+        "tokens_used": 100,
+        "success_count": 3,
+        "crystallized": true
+      },
+      {
+        "status": "zero_token_script",
+        "tokens_used": 0,
+        "success_count": 3,
+        "crystallized": true
+      }
+    ],
+    "zero_token_proven": true,
+    "honesty": "estimated"
+  },
+  "o1_stateless_snapshot": {
+    "iterations": 5,
+    "sizes": [
+      1652,
+      1652,
+      1652,
+      1652,
+      1652
+    ],
+    "byte_length": 1652,
+    "proven": true,
+    "honesty": "estimated"
+  },
+  "speculative_local_resolution": {
+    "fixture_count": 5,
+    "local_resolved": 4,
+    "local_resolution_rate": 0.8,
+    "layer2_invocations": 1,
+    "reports": [
+      {
+        "id": "local-green-1",
+        "layer2_invoked": false,
+        "final_ok": true,
+        "reason": "green_local_path",
+        "tokens_proxy": 8
+      },
+      {
+        "id": "local-green-2",
+        "layer2_invoked": false,
+        "final_ok": true,
+        "reason": "green_local_path",
+        "tokens_proxy": 8
+      },
+      {
+        "id": "local-green-3",
+        "layer2_invoked": false,
+        "final_ok": true,
+        "reason": "green_local_path",
+        "tokens_proxy": 8
+      },
+      {
+        "id": "local-fail-escalate",
+        "layer2_invoked": true,
+        "final_ok": true,
+        "reason": "escalated_ok",
+        "tokens_proxy": 48
+      },
+      {
+        "id": "local-green-4",
+        "layer2_invoked": false,
+        "final_ok": true,
+        "reason": "green_local_path",
+        "tokens_proxy": 8
+      }
+    ],
+    "honesty": "estimated",
+    "notes": [
+      "fixture set; not live LLM"
+    ]
+  }
+}

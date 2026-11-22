@@ -1,0 +1,52 @@
+{
+  "backend_status": "unavailable",
+  "gate_status": "PASS_SIMULATED",
+  "kvm_present": {
+    "value": true,
+    "honesty": "reported"
+  },
+  "firecracker_path": null,
+  "runsc_path": null,
+  "seccomp_mode": "simulated",
+  "battery_all_denied": {
+    "value": true,
+    "honesty": "reported"
+  },
+  "denied_syscall_count": {
+    "value": 29,
+    "honesty": "reported"
+  },
+  "escape_cases": 10,
+  "evidence": {
+    "backend_status": {
+      "value": "unavailable",
+      "honesty": "reported"
+    },
+    "gate_status": {
+      "value": "PASS_SIMULATED",
+      "honesty": "reported"
+    },
+    "kvm_present": {
+      "value": true,
+      "honesty": "reported"
+    },
+    "denied_syscall_count": {
+      "value": 29,
+      "honesty": "reported"
+    },
+    "battery_all_denied": {
+      "value": true,
+      "honesty": "reported"
+    }
+  },
+  "notes": [
+    "firecracker_not_on_path",
+    "runsc_not_on_path",
+    "kvm_device_present_informational_only",
+    "backend_status=UNAVAILABLE",
+    "seccomp_mode=simulated",
+    "battery_mode=simulated",
+    "battery_all_denied=true",
+    "gate=PASS_SIMULATED"
+  ]
+}

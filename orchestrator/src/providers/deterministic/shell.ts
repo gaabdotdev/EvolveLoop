@@ -2,24 +2,28 @@ import { spawn } from "node:child_process";
 import type { ExecutionResult } from "../../capabilities/results.js";
 import { cleanOutput } from "../../capabilities/results.js";
 import { resolveWorkspacePath } from "./paths.js";
+import { buildScrubbedEnv } from "./shell-env.js";
 
 export interface ShellExecuteOptions {
   command: string;
   cwd?: string;
   timeoutMs?: number;
   workspaceRoot: string;
+  /** Optional allowlisted env overlays (see buildScrubbedEnv). */
+  env?: Record<string, string>;
 }
 
 export function shellExecute(opts: ShellExecuteOptions): Promise<ExecutionResult> {
   const cwd = resolveWorkspacePath(opts.workspaceRoot, opts.cwd ?? ".");
   const timeoutMs = opts.timeoutMs ?? 30_000;
   const start = Date.now();
+  const env = buildScrubbedEnv(process.env, opts.env);
 
   return new Promise((resolvePromise) => {
     const child = spawn(opts.command, {
       cwd,
       shell: true,
-      env: { ...process.env },
+      env,
     });
 
     let stdout = "";

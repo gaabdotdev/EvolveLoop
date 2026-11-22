@@ -1,0 +1,17 @@
+{
+  "gate": "V3-MEM-02",
+  "fixture_n0": 1200,
+  "fixture_nodes": 1358,
+  "by_level": {
+    "0": 1200,
+    "1": 153,
+    "2": 4,
+    "3": 1
+  },
+  "samples": 40,
+  "p50_ms": 0.402,
+  "p95_ms": 0.77,
+  "max_ms": 1.775,
+  "limitation": "Fixture scale = >=1k pyramid nodes (not 100k events). Full Suite E 100k deferred.",
+  "source_log": "vitest-v3-mem-02.txt"
+}

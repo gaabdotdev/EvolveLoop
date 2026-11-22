@@ -82,6 +82,26 @@ export type {
   EventCoverageMode,
 } from "./evolveloop/index.js";
 
+export {
+  deriveContextOwnerId,
+  validateSpawnContext,
+  parseGateBundle,
+  prepareSpawnContext,
+  prepareSpawnContextWithTelemetry,
+  applyContextBudget,
+  getCompactionReinjectContract,
+  assertReinjectAllowed,
+  countTokens,
+  resolveTokenizer,
+  sliceFromFile,
+  appendContextBudgetEvidenceFields,
+  emitContextBudgetTelemetry,
+  type GateBundleFields,
+  type ContextBudgetLimits,
+  type ContextSlice,
+  type ContextBudgetTelemetry,
+  type SpawnContextValidation,
+} from "./context/index.js";
 export { PolicyEngine } from "./policies/policy-engine.js";
 export { RegistryClient, buildRegistryFromManifests } from "./registry/registry-client.js";
 export {
@@ -100,8 +120,57 @@ export type {
   KnowledgeInspectResult,
 } from "./knowledge/backend/types.js";
 export { resolveKnowledgeBackend, resetKnowledgeBackendCache } from "./knowledge/backend/resolve.js";
-export { WikiKnowledgeBackend, resolveWikiRoot, resolveWikiCliModule } from "./knowledge/backend/wiki-backend.js";
+export {
+  WikiKnowledgeBackend,
+  resolveWikiRoot,
+  resolveWikiCliModule,
+  parseWikiSearchStdout,
+} from "./knowledge/backend/wiki-backend.js";
 export { FakeKnowledgeBackend } from "./knowledge/backend/fake-backend.js";
+export {
+  ProjectKnowledgeRuntime,
+  fenceEvidenceSet,
+  assertEveryHitHasProvenance,
+} from "./knowledge/truth-source/runtime.js";
+export type {
+  TruthSourcedItem,
+  TruthSourceTier,
+  TruthFenceResult,
+  ProjectIsolationReport,
+} from "./knowledge/truth-source/types.js";
+export {
+  applyTruthFence,
+  codeOverridesWiki,
+} from "./knowledge/truth-source/fence.js";
+export { normalizeAiPageStatus, isProvenanceComplete } from "./knowledge/truth-source/provenance.js";
+export {
+  detectCrossProjectLeakage,
+  projectScopeId,
+  scopedGraphCacheDir,
+} from "./knowledge/truth-source/isolation.js";
+export {
+  redactSecrets,
+  sanitizeDeep,
+  assertNoCanaryInPublishedEvidence,
+  EVIDENCE_SECRET_CANARY,
+} from "./evidence/secret-redaction.js";
+export {
+  sanitizeEvidenceForPublish,
+  serializeEvidenceForPublish,
+  serializeForPublish,
+} from "./evidence/publish-sanitize.js";
+export {
+  resolveEvidenceDir,
+  persistNodeEvidence,
+  persistRunSummary,
+  writeSanitizedJsonFile,
+  writeSanitizedTextFile,
+  copySanitizedEvidenceToJobsDir,
+} from "./evidence/evidence-bus.js";
+export {
+  isTruthFenceEnabled,
+  resolveKnowledgeProjectRoot,
+} from "./providers/deterministic/knowledge.js";
 export {
   loadMegaBrainProfile,
   loadEvolveLoopProfile,
@@ -133,8 +202,9 @@ export {
   type SkillTelemetryRecord,
   type SkillTelemetryEventType,
   type SkillUsageAggregate,
-  type ObservationWindow,
+  type ObservationWindow as SkillTelemetryObservationWindow,
 } from "./telemetry/skill-telemetry.js";
+export * from "./telemetry/measurement-plane/index.js";
 export {
   evaluateGrillMeRequired,
   evaluateGrillMeTransition,
@@ -191,6 +261,90 @@ export {
 } from "./evidence/builders.js";
 export * from "./capabilities/results.js";
 export { JobStore, type SkillJob, type SkillJobResult } from "./jobs/job-store.js";
-export { invokePickup, buildPickupPrompt, type PickupPlan } from "./jobs/job-pickup.js";
+export {
+  invokePickup,
+  buildPickupPrompt,
+  type PickupPlan,
+} from "./jobs/job-pickup.js";
+export {
+  preparePickupSpawnContext,
+  extractGateBundleFromRequest,
+  extractContextRetrievalFromRequest,
+} from "./jobs/spawn-pickup-context.js";
+export { runB0Retrieval, anchorRecall, runRg, type BenchTask } from "./context/bench-retrieval.js";
 export { jobResultToExecuteResult, loadEvidenceFile } from "./jobs/job-resume.js";
-export { saveCheckpoint, loadCheckpoint, clearCheckpoint, type EngineCheckpoint } from "./jobs/checkpoint.js";
+export { saveCheckpoint, loadCheckpoint, clearCheckpoint, CheckpointError, type EngineCheckpoint } from "./jobs/checkpoint.js";
+export {
+  buildSessionContinuitySnapshot,
+  persistSessionContinuity,
+  loadSessionContinuity,
+  clearSessionContinuity,
+  applySessionContinuityToMemory,
+  continuityEvidencePath,
+  SESSION_CONTINUITY_VERSION,
+  type SessionContinuitySnapshot,
+  type SessionNextAction,
+} from "./session/session-continuity.js";
+export {
+  isGraphifyExperimentEnabled,
+  isCavemanBrevityEnabled,
+  isPromptCacheEnabled,
+} from "./v22/feature-flags.js";
+export {
+  queryGraphifyCodeStructure,
+  detectGraphifyCli,
+  formatGraphifyContext,
+  type GraphifyQueryResult,
+} from "./v22/graphify-adapter.js";
+export {
+  applyCavemanBrevity,
+  applyCavemanToBriefingSection,
+  brevityPreservesNegation,
+} from "./v22/brevity-caveman.js";
+export {
+  PromptCacheHttpAdapter,
+  buildStablePromptPrefix,
+  computePromptCacheKey,
+  type PromptCacheMetrics,
+} from "./v22/prompt-cache-http.js";
+export {
+  measureP2OnBenchTasks,
+  measureV22Goals009010,
+  type V22MeasureReport,
+} from "./v22/p2-bench-measure.js";
+export {
+  measurePickupPromptsForBench,
+  type PickupPromptMeasureReport,
+} from "./v22/measure-pickup-prompts.js";
+export {
+  measurePromptCachePrefixStability,
+  splitPickupPromptCacheRegions,
+  VENDOR_HTTP_CACHE_LABEL,
+  type PromptCacheStabilityReport,
+} from "./v22/measure-prompt-cache-prefix.js";
+export { countBenchTokens, benchTokenizerLabel, BENCH_TOKENIZER_PROXY } from "./v22/bench-tokenizer.js";
+export { BENCH_H_TASKS } from "./v22/bench-h-tasks.js";
+export { BENCH_R_TASKS } from "./v22/bench-r-tasks.js";
+export { estimateWhitespaceTokens } from "./v22/token-estimate.js";
+export {
+  parseAnthropicCacheUsage,
+  parseOpenAiCacheUsage,
+  type VendorCacheUsage,
+  type LlmVendorId,
+} from "./providers/llm/vendor-cache-usage.js";
+export {
+  LlmHttpProviderAdapter,
+  buildAnthropicMessagesBody,
+  buildOpenAiChatBody,
+  type LlmAdapterResult,
+} from "./providers/llm/llm-http-provider-adapter.js";
+export {
+  buildVendorCacheTelemetry,
+  persistVendorCacheTelemetry,
+  VENDOR_CACHE_TELEMETRY_VERSION,
+  type VendorCacheTelemetryRecord,
+} from "./providers/llm/vendor-cache-telemetry.js";
+export {
+  probeVendorCacheLive,
+  type VendorLiveProbeReport,
+} from "./providers/llm/vendor-cache-live-probe.js";
