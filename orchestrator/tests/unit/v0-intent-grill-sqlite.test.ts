@@ -40,11 +40,11 @@ describe("V0 Bloco 2 — silent scan + Grill-Me + SQLite", () => {
     expect(matchTrivialIntent("implement auth flow")).toBeUndefined();
   });
 
-  it("Grill-Me builds 3–5 PT questions with defaults; never exceeds cap", () => {
+  it("Grill-Me builds 2–3 PT questions (vague) with defaults; never exceeds cap", () => {
     const scan = silentScan(tmp);
     const qs = buildGrillMeQuestions("Adicionar endpoint de health", scan);
-    expect(qs.length).toBeGreaterThanOrEqual(3);
-    expect(qs.length).toBeLessThanOrEqual(5);
+    expect(qs.length).toBeGreaterThanOrEqual(2);
+    expect(qs.length).toBeLessThanOrEqual(3);
     for (const q of qs) {
       expect(q.prompt_pt.length).toBeGreaterThan(5);
       expect(q.internal_en.length).toBeGreaterThan(3);
@@ -69,7 +69,7 @@ describe("V0 Bloco 2 — silent scan + Grill-Me + SQLite", () => {
     expect(out.kind).toBe("goal_contract");
     if (out.kind !== "goal_contract") return;
 
-    expect(out.question_count).toBeGreaterThanOrEqual(3);
+    expect(out.question_count).toBeGreaterThanOrEqual(2);
     expect(out.question_count).toBeLessThanOrEqual(5);
     expect(out.question_count).toBeLessThanOrEqual(4); // ready criterion: ≤4 Qs
     expect(out.tokens_used).toBe(0);

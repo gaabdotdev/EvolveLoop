@@ -7,6 +7,7 @@
  *
  * Installable: repo bin/evolve → orchestrator/dist/cli/evolve.js
  */
+import "./silence-experimental-sqlite.js";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { resolveV3DataPaths } from "../v3/paths.js";
@@ -28,6 +29,8 @@ import {
   detectWorkspaceSession,
   runFirstRunSetup,
 } from "../v3/evolve-shell/index.js";
+import { runInkEvolveShell, shouldUseInkTui } from "./tui/index.js";
+import { hydrateHarnessConsentFromConfig } from "../v3/security/harness-consent.js";
 import { defaultStateDbPath, StateDb } from "../v3/state-db/store.js";
 import {
   runFireFive,
@@ -219,6 +222,7 @@ function defaultCriteria(objective: string): GoalContractCreateInput["criteria"]
 }
 
 async function main() {
+  hydrateHarnessConsentFromConfig();
   const argv = process.argv;
   const first = argv[2];
 
@@ -238,7 +242,10 @@ async function main() {
         return process.cwd();
       })(),
     );
-    const result = await runEvolveShell({ workspace });
+    const shellOpts = { workspace };
+    const result = shouldUseInkTui(shellOpts)
+      ? await runInkEvolveShell(shellOpts)
+      : await runEvolveShell(shellOpts);
     process.exitCode = result.exit_code;
     return;
   }

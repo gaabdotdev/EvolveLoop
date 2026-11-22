@@ -47,16 +47,16 @@ function emptySession(over: Partial<WorkspaceSessionSnapshot> = {}): WorkspaceSe
 }
 
 describe("M1 — Banner Núcleo+Órbita", () => {
-  it("wide (≥80): 8 lines, 18-col glyph + metadata", () => {
+  it("wide (≥80): 8 lines, progressive metadata (sem UNAVAILABLE)", () => {
     const out = renderBanner(baseMeta(), { columns: 100, color: false, isTTY: true });
     const lines = out.split("\n");
     expect(lines).toHaveLength(8);
     expect(lines[0]).toContain("EvolveLoop v" + EVOLVELOOP_UX_VERSION);
-    expect(lines[1]).toContain("MSO: INIT");
-    expect(lines[1]).toContain("Daemon: OFF");
-    expect(lines[5]).toContain("Sandbox: bwrap ON");
-    expect(lines[4]).toContain("Tokens: MSO UNAVAILABLE");
-    expect(lines[4]).toContain("Workers UNAVAILABLE");
+    expect(out).toContain("Estado: Pronto");
+    expect(out).toContain("Sandbox: bwrap ON");
+    expect(out).not.toContain("UNAVAILABLE");
+    expect(out).not.toContain("Daemon: UNAVAILABLE");
+    expect(out).not.toContain("Tokens: MSO UNAVAILABLE");
     for (const line of lines) {
       const left = line.slice(0, 18);
       expect(left.length).toBe(18);
@@ -64,15 +64,35 @@ describe("M1 — Banner Núcleo+Órbita", () => {
     expect(lines.some((l) => l.includes("████"))).toBe(true);
   });
 
+  it("wide: tokens/contract só quando há valores reais", () => {
+    const out = renderBanner(
+      baseMeta({
+        contract: "v2",
+        meta_progress: "1/3",
+        tokens_mso: "4.2k",
+        tokens_workers: "1.1k",
+        providers: "Ollama",
+        daemon: "ON (attached)",
+      }),
+      { columns: 100, color: false, isTTY: true },
+    );
+    expect(out).toContain("Providers: Ollama");
+    expect(out).toContain("Contract: v2 · Meta: 1/3");
+    expect(out).toContain("Tokens: MSO 4.2k │ Workers 1.1k");
+    expect(out).toContain("Daemon: ON (attached)");
+    expect(out).not.toContain("UNAVAILABLE");
+  });
+
   it("narrow (<80): compact 2-line header", () => {
     const out = renderBanner(baseMeta(), { columns: 70, color: false, isTTY: true });
     const lines = out.split("\n");
     expect(lines).toHaveLength(2);
     expect(lines[0]).toMatch(/^◉ EvolveLoop v/);
-    expect(lines[0]).toContain("MSO: INIT");
+    expect(lines[0]).toContain("Estado: Pronto");
     expect(lines[0]).toContain("bwrap ON");
     expect(lines[1]).toBe("~/projetos/evolveloop");
     expect(out).not.toContain("████");
+    expect(out).not.toContain("UNAVAILABLE");
   });
 
   it("NO_COLOR / !TTY: no ANSI escape sequences", () => {
@@ -94,7 +114,7 @@ describe("M1 — Banner Núcleo+Órbita", () => {
 });
 
 describe("M3 — Footer telemetria honesta", () => {
-  it("absent Session fields → UNAVAILABLE (never silent 0)", () => {
+  it("idle (pre-execução): IDLE · 0 tasks e — (sem spam UNAVAILABLE); modelo ainda UNAVAILABLE no data", () => {
     const tel = buildFooterTelemetry(emptySession(), { home: "/home/gaab" });
     expect(tel.sandbox).toBe("UNAVAILABLE");
     expect(tel.mso_model).toBe("UNAVAILABLE");
@@ -103,18 +123,37 @@ describe("M3 — Footer telemetria honesta", () => {
     expect(tel.tok_workers.provenance).toBe("UNAVAILABLE");
     expect(tel.git_branch).toBe("UNAVAILABLE");
     expect(tel.workspace_display).toBe("~/projetos/evolveloop");
+    expect(tel.idle).toBe(true);
 
     const text = renderFooter(tel, { color: false });
     const lines = text.split("\n");
     expect(lines).toHaveLength(3);
-    expect(lines[0]).toMatch(/^\[INIT\] · 0 tasks · Sandbox: bwrap UNAVAILABLE$/);
-    expect(lines[1]).toContain("ctx UNAVAILABLE");
-    expect(lines[1]).toContain("tok UNAVAILABLE");
-    expect(lines[1]).toContain("Workers: UNAVAILABLE");
+    expect(lines[0]).toMatch(/^\[IDLE\] · 0 tasks · Sandbox: —$/);
+    expect(lines[1]).toContain("ctx —");
+    expect(lines[1]).toContain("tok —");
+    expect(lines[1]).toContain("Workers: —");
+    expect(text).not.toContain("UNAVAILABLE");
     expect(lines[1]).not.toMatch(/tok 0(?!\d)/);
     expect(lines[1]).not.toContain("Workers: 0");
-    expect(lines[2]).toContain("UNAVAILABLE");
     expect(lines[2]).toContain("Ctrl+P Pause");
+  });
+
+  it("executing + absent worker metric → UNAVAILABLE (honest, not silent 0)", () => {
+    const tel = buildFooterTelemetry(emptySession(), {
+      home: "/home/gaab",
+      executing: true,
+      mso_state: "DELEGATING",
+      tasks: [{ name: "agy" }],
+      sandbox: "ON",
+      mso_model: "auto:smart",
+      ctx: { value: 10, provenance: "reported" },
+      tok_mso: { value: 100, provenance: "reported" },
+    });
+    expect(tel.idle).toBe(false);
+    const text = renderFooter(tel, { color: false });
+    expect(text).toContain("[DELEGATING]");
+    expect(text).toContain("Workers: UNAVAILABLE");
+    expect(text).not.toContain("Workers: 0");
   });
 
   it("reported metrics show value + provenance; UNAVAILABLE stays red when colored", () => {
@@ -134,7 +173,7 @@ describe("M3 — Footer telemetria honesta", () => {
     expect(plain.split("\n")[0]).toBe(
       "[DELEGATING] · 2 tasks (agy, test-runner) · Sandbox: bwrap ON",
     );
-    expect(plain).toContain("MSO: auto:smart");
+    expect(plain).toContain("Modelo: auto:smart");
     expect(plain).toContain("ctx 26.9%");
     expect(plain).toContain("tok 4.2k (reported)");
     expect(plain).toContain("Workers: 18.4k (reported)");

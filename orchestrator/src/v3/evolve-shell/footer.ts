@@ -1,6 +1,7 @@
 /**
  * Fixed 3-line telemetry footer (UX spec §4).
- * Missing metrics → UNAVAILABLE (never silent 0 without provenance).
+ * Idle (pre-execution): show IDLE + em-dash for unused fields (no UNAVAILABLE spam).
+ * During execution: missing metrics → UNAVAILABLE (never silent 0 without provenance).
  */
 
 import { colorEnabled, dim, green, red, yellow } from "./colors.js";
@@ -38,6 +39,11 @@ export interface FooterTelemetry {
   workspace_display: string;
   git_branch: string;
   shortcuts: string;
+  /**
+   * When true (or auto-detected), render IDLE + "—" for unused fields.
+   * Force false during live execution to keep UNAVAILABLE honesty.
+   */
+  idle?: boolean;
 }
 
 export interface FooterRenderOptions {
@@ -57,12 +63,42 @@ export interface BuildFooterExtras {
   git_branch?: string;
   shortcuts?: string;
   home?: string;
+  /** Override idle detection (tests / TUI). */
+  idle?: boolean;
+  /** True while an authorized execution is in progress. */
+  executing?: boolean;
 }
 
 const UNAVAILABLE = "UNAVAILABLE" as const;
+const IDLE_DASH = "—";
 
 function unavailableMetric(): HonestMetric {
   return { provenance: "UNAVAILABLE" };
+}
+
+function metricAbsent(metric: HonestMetric): boolean {
+  return (
+    metric.provenance === "UNAVAILABLE" ||
+    metric.value === undefined ||
+    metric.value === null ||
+    metric.value === ""
+  );
+}
+
+/** Idle = no tasks, no token/ctx consumption yet, MSO still at INIT (pre-execution). */
+export function isFooterIdle(telemetry: FooterTelemetry): boolean {
+  if (telemetry.idle === true) return true;
+  if (telemetry.idle === false) return false;
+  const state = telemetry.mso_state;
+  const preExec = state === "INIT" || state === "IDLE" || !state;
+  return (
+    preExec &&
+    telemetry.tasks.length === 0 &&
+    metricAbsent(telemetry.ctx) &&
+    metricAbsent(telemetry.tok_mso) &&
+    metricAbsent(telemetry.tok_workers) &&
+    (telemetry.mso_model === UNAVAILABLE || !telemetry.mso_model)
+  );
 }
 
 /** Format token counts for HUD (e.g. 4200 → "4.2k", 18400 → "18.4k"). */
@@ -79,15 +115,11 @@ export function formatTokDisplay(value: number): string {
 
 export function formatHonestMetric(
   metric: HonestMetric,
-  opts?: { percent?: boolean; color?: boolean },
+  opts?: { percent?: boolean; color?: boolean; idle?: boolean },
 ): string {
   const color = opts?.color ?? false;
-  if (
-    metric.provenance === "UNAVAILABLE" ||
-    metric.value === undefined ||
-    metric.value === null ||
-    metric.value === ""
-  ) {
+  if (metricAbsent(metric)) {
+    if (opts?.idle) return IDLE_DASH;
     return red(UNAVAILABLE, color);
   }
   let body: string;
@@ -107,15 +139,8 @@ export function formatHonestMetric(
   return body;
 }
 
-function formatCtx(metric: HonestMetric, color: boolean): string {
-  if (
-    metric.provenance === "UNAVAILABLE" ||
-    metric.value === undefined ||
-    metric.value === null ||
-    metric.value === ""
-  ) {
-    return red(UNAVAILABLE, color);
-  }
+function formatCtx(metric: HonestMetric, color: boolean, idle: boolean): string {
+  if (metricAbsent(metric)) return idle ? IDLE_DASH : red(UNAVAILABLE, color);
   const num = typeof metric.value === "number" ? metric.value : Number(metric.value);
   const label = Number.isFinite(num)
     ? `${Number.isInteger(num) ? String(num) : num.toFixed(1)}%`
@@ -126,15 +151,8 @@ function formatCtx(metric: HonestMetric, color: boolean): string {
   return label;
 }
 
-function formatTokField(metric: HonestMetric, color: boolean): string {
-  if (
-    metric.provenance === "UNAVAILABLE" ||
-    metric.value === undefined ||
-    metric.value === null ||
-    metric.value === ""
-  ) {
-    return red(UNAVAILABLE, color);
-  }
+function formatTokField(metric: HonestMetric, color: boolean, idle: boolean): string {
+  if (metricAbsent(metric)) return idle ? IDLE_DASH : red(UNAVAILABLE, color);
   const body =
     typeof metric.value === "number" ? formatTokDisplay(metric.value) : String(metric.value);
   if (metric.provenance === "estimated") {
@@ -146,9 +164,9 @@ function formatTokField(metric: HonestMetric, color: boolean): string {
   return body;
 }
 
-function formatSandbox(status: SandboxFooterStatus, color: boolean): string {
+function formatSandbox(status: SandboxFooterStatus, color: boolean, idle: boolean): string {
   if (status === "UNAVAILABLE") {
-    return `Sandbox: ${red("bwrap UNAVAILABLE", color)}`;
+    return idle ? `Sandbox: ${IDLE_DASH}` : `Sandbox: ${red("bwrap UNAVAILABLE", color)}`;
   }
   if (status === "OFF") {
     return `Sandbox: ${red("bwrap OFF", color)}`;
@@ -159,14 +177,9 @@ function formatSandbox(status: SandboxFooterStatus, color: boolean): string {
   return `Sandbox: ${green("bwrap ON", color)}`;
 }
 
-function formatWorkers(metric: HonestMetric, color: boolean): string {
-  if (
-    metric.provenance === "UNAVAILABLE" ||
-    metric.value === undefined ||
-    metric.value === null ||
-    metric.value === ""
-  ) {
-    return `Workers: ${red(UNAVAILABLE, color)}`;
+function formatWorkers(metric: HonestMetric, color: boolean, idle: boolean): string {
+  if (metricAbsent(metric)) {
+    return idle ? `Workers: ${IDLE_DASH}` : `Workers: ${red(UNAVAILABLE, color)}`;
   }
   const body =
     typeof metric.value === "number" ? formatTokDisplay(metric.value) : String(metric.value);
@@ -181,15 +194,18 @@ function formatWorkers(metric: HonestMetric, color: boolean): string {
 
 /**
  * Build footer telemetry from workspace session.
- * Fields absent on Session/StateDb snapshot are UNAVAILABLE (never invented as 0).
+ * Fields absent on Session/StateDb snapshot are UNAVAILABLE in the model
+ * (render layer maps them to "—" when idle).
  */
 export function buildFooterTelemetry(
   session: WorkspaceSessionSnapshot,
   extras: BuildFooterExtras = {},
 ): FooterTelemetry {
-  return {
-    mso_state: resolvePanelMsoState(session, extras.mso_state),
-    tasks: extras.tasks ?? [],
+  const mso_state = resolvePanelMsoState(session, extras.mso_state);
+  const tasks = extras.tasks ?? [];
+  const tel: FooterTelemetry = {
+    mso_state,
+    tasks,
     sandbox: extras.sandbox ?? "UNAVAILABLE",
     mso_model: extras.mso_model ?? UNAVAILABLE,
     ctx: extras.ctx ?? unavailableMetric(),
@@ -200,6 +216,14 @@ export function buildFooterTelemetry(
     shortcuts:
       extras.shortcuts ?? "Ctrl+P Pause · Ctrl+C Stop · Ctrl+D Detach",
   };
+  if (extras.executing) {
+    tel.idle = false;
+  } else if (extras.idle !== undefined) {
+    tel.idle = extras.idle;
+  } else {
+    tel.idle = isFooterIdle(tel);
+  }
+  return tel;
 }
 
 export function renderFooter(
@@ -208,23 +232,31 @@ export function renderFooter(
 ): string {
   const color =
     opts.color ?? colorEnabled({ env: opts.env, isTTY: opts.isTTY });
+  const idle = isFooterIdle(telemetry);
 
   const n = telemetry.tasks.length;
   const names =
     n === 0 ? "" : ` (${telemetry.tasks.map((t) => t.name).join(", ")})`;
-  const line1 = `[${telemetry.mso_state}] · ${n} tasks${names} · ${formatSandbox(telemetry.sandbox, color)}`;
+  const stateLabel = idle ? "IDLE" : telemetry.mso_state;
+  const line1 = `[${stateLabel}] · ${n} tasks${names} · ${formatSandbox(telemetry.sandbox, color, idle)}`;
 
   const model =
-    telemetry.mso_model === UNAVAILABLE
-      ? red(UNAVAILABLE, color)
+    telemetry.mso_model === UNAVAILABLE || !telemetry.mso_model
+      ? idle
+        ? IDLE_DASH
+        : red(UNAVAILABLE, color)
       : telemetry.mso_model;
-  const line2 = `MSO: ${model} · ctx ${formatCtx(telemetry.ctx, color)} · tok ${formatTokField(telemetry.tok_mso, color)} │ ${formatWorkers(telemetry.tok_workers, color)}`;
+  const line2 = `Modelo: ${model} · ctx ${formatCtx(telemetry.ctx, color, idle)} · tok ${formatTokField(telemetry.tok_mso, color, idle)} │ ${formatWorkers(telemetry.tok_workers, color, idle)}`;
 
+  const branch =
+    telemetry.git_branch === UNAVAILABLE || !telemetry.git_branch
+      ? idle
+        ? IDLE_DASH
+        : red(UNAVAILABLE, color)
+      : telemetry.git_branch;
   const line3 = [
     dim(telemetry.workspace_display, color),
-    telemetry.git_branch === UNAVAILABLE
-      ? red(UNAVAILABLE, color)
-      : telemetry.git_branch,
+    branch,
     dim(telemetry.shortcuts, color),
   ].join(" · ");
 

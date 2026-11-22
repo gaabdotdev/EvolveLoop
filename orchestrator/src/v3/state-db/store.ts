@@ -42,6 +42,7 @@ import type {
   EvidenceRecordRow,
   EvidenceStatus,
 } from "./types.js";
+import { extractShellHolderPid, isPidAlive } from "./process-alive.js";
 
 /** Avoid static `import "node:sqlite"` — Vite/Vitest cannot resolve the stripped `sqlite` id. */
 type DatabaseSyncInstance = {
@@ -731,12 +732,15 @@ export class StateDb {
    * Acquire or renew exclusive MSO lease for a workspace.
    * Monotonic fencing_token: increments on every new holder / steal-after-expiry.
    * Rejects split-brain: second active holder without expiry fails.
+   * Auto-heals stale `shell-<pid>` locks when the holder PID is dead (ESRCH).
    */
   acquireWorkspaceLease(input: {
     workspace_id: string;
     holder_id: string;
     lease_ms?: number;
     now?: Date;
+    /** Discrete log hook when a dead shell lock is reclaimed. */
+    on_stale_cleared?: (info: { pid: number; previous_holder: string; message: string }) => void;
   }): WorkspaceLease {
     const now = input.now ?? new Date();
     const leaseMs = input.lease_ms ?? 60_000;
@@ -747,17 +751,29 @@ export class StateDb {
       const current = this.getWorkspaceLease(input.workspace_id);
       if (current && current.status === "active" && Date.parse(current.expires_at) > now.getTime()) {
         if (current.holder_id !== input.holder_id) {
-          throw new StateDbError(
-            "LEASE_HELD",
-            `workspace '${input.workspace_id}' held by ${current.holder_id} fencing=${current.fencing_token}`,
-          );
+          const pid = extractShellHolderPid(current.holder_id);
+          const stale = pid !== undefined && !isPidAlive(pid);
+          if (!stale) {
+            throw new StateDbError(
+              "LEASE_HELD",
+              `workspace '${input.workspace_id}' held by ${current.holder_id} fencing=${current.fencing_token}`,
+            );
+          }
+          const message = `Lock órfão de PID ${pid} limpo automaticamente`;
+          input.on_stale_cleared?.({
+            pid: pid!,
+            previous_holder: current.holder_id,
+            message,
+          });
+          // Fall through: steal with incremented fencing_token.
+        } else {
+          this.db
+            .prepare(
+              `UPDATE workspace_leases SET renewed_at = ?, expires_at = ? WHERE workspace_id = ?`,
+            )
+            .run(ts, expires, input.workspace_id);
+          return this.getWorkspaceLease(input.workspace_id)!;
         }
-        this.db
-          .prepare(
-            `UPDATE workspace_leases SET renewed_at = ?, expires_at = ? WHERE workspace_id = ?`,
-          )
-          .run(ts, expires, input.workspace_id);
-        return this.getWorkspaceLease(input.workspace_id)!;
       }
 
       const nextToken = current ? current.fencing_token + 1 : 1;

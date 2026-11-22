@@ -1,13 +1,14 @@
 /**
  * V0 Grill-Me session (deterministic, no LLM).
  * Internal prompts: English telegraphic. User UX: Portuguese.
- * Hard cap 3–5 high-impact questions; each has a default (Enter/ok).
+ * Adaptive: detailed intents → review-only; vague → 2–3 high-impact questions.
  */
 
 import type { SilentScanResult } from "../workspace-scan/silent-scan.js";
 import type { GrillMeResult } from "./types.js";
+import { assessIntentDetail, scrubInternalJargon } from "./adaptive.js";
 
-export const GRILL_ME_MIN_QUESTIONS = 3;
+export const GRILL_ME_MIN_QUESTIONS = 2;
 export const GRILL_ME_MAX_QUESTIONS = 5;
 
 export interface GrillMeQuestion {
@@ -19,6 +20,8 @@ export interface GrillMeQuestion {
   /** Default recommendation (Enter / ok) */
   default_answer: string;
   field: "scope" | "out_of_scope" | "acceptance" | "constraints" | "confirm";
+  /** Optional select choices for interactive UX (Ink Select / MultiSelect). */
+  choices?: string[];
 }
 
 export interface GrillMeAnswer {
@@ -27,43 +30,56 @@ export interface GrillMeAnswer {
   used_default: boolean;
 }
 
-function clampQuestions(qs: GrillMeQuestion[]): GrillMeQuestion[] {
-  if (qs.length <= GRILL_ME_MAX_QUESTIONS) {
-    if (qs.length >= GRILL_ME_MIN_QUESTIONS) return qs;
-    // Ensure minimum by keeping confirm last; pad should not happen with builder
-    return qs;
-  }
-  return qs.slice(0, GRILL_ME_MAX_QUESTIONS);
+function clampQuestions(qs: GrillMeQuestion[], max: number): GrillMeQuestion[] {
+  const capped = qs.slice(0, Math.min(max, GRILL_ME_MAX_QUESTIONS));
+  if (capped.length >= GRILL_ME_MIN_QUESTIONS) return capped;
+  return capped;
 }
 
 /**
  * Build high-impact questions from intent + silent scan.
  * Never asks what the scan already answered (language, package manager, git dirty).
+ * Never embeds internal EvolveLoop roadmap jargon in defaults.
  */
 export function buildGrillMeQuestions(intent: string, scan: SilentScanResult): GrillMeQuestion[] {
   const objective = intent.trim();
+  const assessment = assessIntentDetail(objective);
   const langHint = scan.languages[0] ?? "stack detectada no scan";
-  // V0 ready path: exactly 4 high-impact questions (within rigid 3–5 cap).
-  // Repo facts (lang/pm/git) come from silent scan — never re-asked here.
   const constraintDefault =
     scan.git.dirty || scan.languages.length > 1
       ? `Não editar fora do repo; sem push; dirty=${scan.git.dirty}; langs=${scan.languages.join(",") || langHint}.`
       : "Não editar fora do repo; sem push; preservar working tree coerente.";
 
-  const qs: GrillMeQuestion[] = [
+  const oosDefault = scrubInternalJargon(
+    "Mudanças fora do pedido; push remoto; refactors amplos não solicitados.",
+  );
+
+  const all: GrillMeQuestion[] = [
     {
       id: "q-scope",
       prompt_pt: `Qual é o escopo IN (o que entra nesta entrega)?`,
       internal_en: `scope.in intent="${objective.slice(0, 80)}"`,
-      default_answer: `Entregar: ${objective}`,
+      default_answer: scrubInternalJargon(`Entregar: ${objective}`),
       field: "scope",
+      choices: [
+        `Entregar: ${objective.slice(0, 80)}${objective.length > 80 ? "…" : ""}`,
+        "Só o mínimo viável para fechar o objetivo",
+        "Incluir testes + docs curta",
+        "Outro...",
+      ],
     },
     {
       id: "q-oos",
       prompt_pt: `O que fica FORA de escopo nesta rodada?`,
       internal_en: `scope.out skip_repo_facts lang=${langHint}`,
-      default_answer: "Sem Bloco 3 / adapters E2E / refactors amplos; só o necessário para o objetivo.",
+      default_answer: oosDefault,
       field: "out_of_scope",
+      choices: [
+        oosDefault,
+        "Sem alterações de dependências / lockfiles",
+        "Sem mudanças de API pública",
+        "Outro...",
+      ],
     },
     {
       id: "q-accept",
@@ -71,6 +87,12 @@ export function buildGrillMeQuestions(intent: string, scan: SilentScanResult): G
       internal_en: `acceptance.default build+unit_tests green`,
       default_answer: "Build e testes relevantes verdes; Goal Contract validado no SQLite.",
       field: "acceptance",
+      choices: [
+        "Build e testes relevantes verdes",
+        "Comportamento descrito reproduzível manualmente",
+        "Diff revisável + testes pontuais",
+        "Outro...",
+      ],
     },
     {
       id: "q-constraints",
@@ -78,21 +100,33 @@ export function buildGrillMeQuestions(intent: string, scan: SilentScanResult): G
       internal_en: `constraints.git_dirty=${scan.git.dirty} langs=${scan.languages.join(",")}`,
       default_answer: constraintDefault,
       field: "constraints",
+      choices: [
+        constraintDefault,
+        "Permitir editar só ficheiros já tocados pelo pedido",
+        "Sem instalar pacotes novos",
+        "Outro...",
+      ],
     },
   ];
 
-  // Optional 5th (still ≤5): shared-understanding confirm when intent is long/ambiguous
+  // Optional 5th when ambiguous — still ≤ max
   if (objective.length > 90 || /\b(talvez|maybe|ou|or)\b/i.test(objective)) {
-    qs.push({
+    all.push({
       id: "q-confirm",
       prompt_pt: `Confirma entendimento partilhado do objetivo "${objective.slice(0, 60)}${objective.length > 60 ? "…" : ""}"?`,
       internal_en: `confirm.shared_understanding=true`,
       default_answer: "ok",
       field: "confirm",
+      choices: ["ok", "Preciso ajustar o objetivo", "Outro..."],
     });
   }
 
-  return clampQuestions(qs);
+  const max =
+    assessment.mode === "detailed_review"
+      ? Math.min(4, all.length) // still materialize defaults for the review card
+      : Math.max(GRILL_ME_MIN_QUESTIONS, Math.min(assessment.max_questions, 3));
+
+  return clampQuestions(all, max);
 }
 
 export function resolveAnswers(
@@ -108,9 +142,13 @@ export function resolveAnswers(
     }
     const trimmed = value?.trim();
     if (!trimmed || trimmed.toLowerCase() === "ok" || trimmed === "") {
-      return { id: q.id, value: q.default_answer, used_default: !trimmed || trimmed.toLowerCase() === "ok" };
+      return {
+        id: q.id,
+        value: scrubInternalJargon(q.default_answer),
+        used_default: !trimmed || trimmed.toLowerCase() === "ok",
+      };
     }
-    return { id: q.id, value: trimmed, used_default: false };
+    return { id: q.id, value: scrubInternalJargon(trimmed), used_default: false };
   });
 }
 

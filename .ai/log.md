@@ -603,3 +603,35 @@ Fault injection audit: 8/8 detected; evidence under docs/v3/evidence/audit-mso-2
 - Evidence: docs/v3/evidence/audit-mso-20261122T012324Z/gates/AUD-UX-01.md + AUD-UX-01-live.json + BM-10.md
 - Wiki vault pack EvolveLoop: PACK_NOT_FOUND (GAP); grounding via kernelbot-rag + orbitbot-kernel
 - No push / no force / no reset --hard / no rm -rf
+
+## 2026-11-22T03:13:07Z
+- HUD probes: bwrap/providers/git wired into evolve shell (false UNAVAILABLE sandbox fixed).
+- Note: ~/.config/evolveloop/config.yaml empty; secrets.env missing → FreeLLMAPI(needsKey).
+
+## 2026-11-22T03:19:00Z
+- Fix: pós Grill-Me, "continuar/ok" inicia MSO+adapter (antes travava / re-grillava).
+
+## 2026-11-22T03:47:53Z — Ink TUI + 5 UX fixes (CLI interactive)
+- Ink/React TUI em `orchestrator/src/cli/tui/` (TTY); fallback classic REPL quando `!isTTY` / `inputLines`.
+- Footer IDLE: `IDLE · 0 tasks` + `—` (sem spam UNAVAILABLE); execução mantém UNAVAILABLE honesto.
+- Input multilinha + bracketed paste (Enter envia; Shift/Alt+Enter newline).
+- Grill-Me adaptativo: intenção detalhada → card único Enter=executar; vaga → 2–3 Qs; zero "Bloco 3".
+- Stale lock: `shell-<pid>` morto auto-cura + fencing++; PID vivo bloqueia.
+- Provider readiness inline (FreeLLMAPI key 0600 / Ollama) antes do prompt de tarefa.
+- Silence SQLite ExperimentalWarning no entrypoint.
+- Tests novos: v0-stale-lock-heal, v0-grill-adaptive, v0-footer-idle.
+- build exit 0; suite: 1167 pass / 2 fail pré-existentes (v22-session-continuity, v22-p0-baseline) — confirmado via stash sem estas mudanças.
+- npm link: `which evolve` → ~/.local/bin/evolve; `evolve --help` ok fora do repo.
+- Wiki: PACK_NOT_FOUND EvolveLoop no ground pack name; vault path EvolveLoop/ usado para log.
+
+## 2026-11-22T13:25:47Z — TUI Ink ergonomics redesign (Fases 1–4)
+- Banner progressivo: idle sem UNAVAILABLE (versão · cwd · providers · sandbox · Estado: Pronto); tokens/contract só com valores reais.
+- Rodapé compacto Ink: 1 linha idle · 2 linhas executing (só métricas reais).
+- Input em bloco (`→` + placeholder) + histórico ↑/↓ (últimos 20) + bracketed paste intacto.
+- Execução viva: spinner · fase · [MM:SS] · janela deslizante ≤5 · aviso silêncio >30s · bell TTY ao fim/pausa.
+- Slash: /config /diff /status /clear; card Entrega Final (PASS/BLOCKED/FAILED + diff --stat + teclas).
+- Goal Contract: Objetivo título curto · Escopo sem eco do prompt; cards Grill-Me/Contract com border round.
+- Lógica de negócio (Evidence Validator / Token Ledger / Reconciler / ExecutionRunner) intacta — só consumo para display.
+- Tests: `v0-tui-ergonomics.test.ts` (12); `npm run build` exit 0; `test:v0-offline` 138/138 pass.
+- npm link: `which evolve` → /home/gaab/.local/bin/evolve; `evolve --help` exit 0 em /tmp.
+- Wiki: PACK_NOT_FOUND EvolveLoop (GAP); log em vault EvolveLoop/ + .ai/log.md.

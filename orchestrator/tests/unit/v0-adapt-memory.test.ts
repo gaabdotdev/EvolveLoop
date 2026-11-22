@@ -96,9 +96,10 @@ describe("V0-ADAPT 1+1+1 + adapter contract + stubs", () => {
     expect(runner.lastCancelPid).toBe(999);
     expect(cancelled.signalled).toBe(true);
 
-    // invoke without consent stays blocked (still goes through contract path)
+    // invoke without consent stays blocked (still goes through contract path).
+    // Force env=false so ~/.config/evolveloop/config.yaml cannot grant consent in CI/dev hosts.
     const prev = process.env.EVOLVELOOP_HARNESS_CONSENT;
-    delete process.env.EVOLVELOOP_HARNESS_CONSENT;
+    process.env.EVOLVELOOP_HARNESS_CONSENT = "false";
     try {
       if (health.ok) {
         const blocked = await adapter.invoke({
@@ -111,7 +112,8 @@ describe("V0-ADAPT 1+1+1 + adapter contract + stubs", () => {
         expect(blocked.code).toBe("CONSENT_REQUIRED");
       }
     } finally {
-      if (prev !== undefined) process.env.EVOLVELOOP_HARNESS_CONSENT = prev;
+      if (prev === undefined) delete process.env.EVOLVELOOP_HARNESS_CONSENT;
+      else process.env.EVOLVELOOP_HARNESS_CONSENT = prev;
     }
   });
 

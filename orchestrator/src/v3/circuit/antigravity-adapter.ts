@@ -18,9 +18,10 @@ import type {
   CircuitAgentAdapter,
   NormalizedAdapterResult,
 } from "./adapter-types.js";
+import { harnessConsentGranted } from "../security/harness-consent.js";
 
 function consentOk(): boolean {
-  return process.env.EVOLVELOOP_HARNESS_CONSENT === "true";
+  return harnessConsentGranted();
 }
 
 export class AntigravityCircuitAdapter implements CircuitAgentAdapter {

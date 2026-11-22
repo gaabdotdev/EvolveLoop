@@ -62,14 +62,32 @@ function baseMeta(over: Partial<BannerMeta> = {}): BannerMeta {
 }
 
 describe("M8.1 — footer UNAVAILABLE when metric absent (never tok 0 without provenance)", () => {
-  it("buildFooterTelemetry + renderFooter never invent silent tok 0", () => {
+  it("idle: provenance UNAVAILABLE no modelo; render usa — (sem tok 0 inventado)", () => {
     const tel = buildFooterTelemetry(emptySession(), { home: "/home/gaab" });
     expect(tel.tok_mso.provenance).toBe("UNAVAILABLE");
     expect(tel.tok_workers.provenance).toBe("UNAVAILABLE");
+    expect(tel.idle).toBe(true);
     const text = renderFooter(tel, { color: false });
-    expect(text).toContain("tok UNAVAILABLE");
-    expect(text).toContain("Workers: UNAVAILABLE");
+    expect(text).toContain("tok —");
+    expect(text).toContain("Workers: —");
     expect(text).not.toMatch(/tok 0(?!\d)/);
+    expect(text).not.toContain("Workers: 0");
+  });
+
+  it("executing: absent worker metric still renders UNAVAILABLE (never silent 0)", () => {
+    const tel = buildFooterTelemetry(emptySession(), {
+      home: "/home/gaab",
+      executing: true,
+      mso_state: "DELEGATING",
+      tasks: [{ name: "agy" }],
+      sandbox: "ON",
+      mso_model: "auto",
+      ctx: { value: 1, provenance: "reported" },
+      tok_mso: { value: 10, provenance: "reported" },
+    });
+    expect(tel.idle).toBe(false);
+    const text = renderFooter(tel, { color: false });
+    expect(text).toContain("Workers: UNAVAILABLE");
     expect(text).not.toContain("Workers: 0");
   });
 });

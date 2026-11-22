@@ -17,4 +17,5 @@ if [[ ! -f "${EVOLVE_JS}" ]]; then
   echo "evolve: missing ${EVOLVE_JS} — run: (cd orchestrator && npm run build)" >&2
   exit 1
 fi
+# SQLite ExperimentalWarning is also filtered inside evolve.js; keep real errors.
 exec node "${EVOLVE_JS}" "$@"

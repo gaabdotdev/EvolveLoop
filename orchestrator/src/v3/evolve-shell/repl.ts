@@ -7,8 +7,16 @@
 import * as readline from "node:readline";
 import { resolve } from "node:path";
 import { runIntentFlow } from "../intake/intent-flow.js";
-import { formatQuestionForUser, type GrillMeQuestion } from "../grill-me/session.js";
+import { formatQuestionForUser, resolveAnswers, type GrillMeQuestion } from "../grill-me/session.js";
+import { isDetailedIntent } from "../grill-me/adaptive.js";
 import { StateDb, defaultStateDbPath } from "../state-db/index.js";
+import {
+  needsInlineProviderSetup,
+  probeProviderReadiness,
+  writeFreellmKeySecure,
+  pingFreellmWithKey,
+  pingOllamaLocal,
+} from "./provider-readiness.js";
 import {
   attachKeybindings,
   attachSigint,
@@ -20,10 +28,16 @@ import {
   type KeybindingController,
 } from "./keybindings.js";
 import { renderBootBanner, renderSessionFooter } from "./hud.js";
+import { probeHudEnvironment } from "./hud-probes.js";
+import {
+  isProceedAfterConfirmIntent,
+  startAuthorizedExecution,
+} from "./shell-start-execution.js";
 import { renderActiveAgentsTree, type ActiveAgentView } from "./layout.js";
 import { buildStatusPanel, renderStatusPanelPt } from "./status-panel.js";
 import { detectWorkspaceSession } from "./workspace-session.js";
 import { colorEnabled } from "./colors.js";
+import { hydrateHarnessConsentFromConfig } from "../security/harness-consent.js";
 import {
   formatDaemonBannerLabel,
   formatInboxStreamLine,
@@ -123,15 +137,62 @@ async function collectAnswersInteractive(
   onAwaiting?: () => void,
 ): Promise<string[]> {
   const answers: string[] = [];
-  for (let i = 0; i < questions.length; i++) {
-    const q = questions[i]!;
-    write(formatQuestionForUser(q, i + 1, questions.length));
+  const capped = questions.slice(0, Math.min(3, questions.length));
+  for (let i = 0; i < capped.length; i++) {
+    const q = capped[i]!;
+    write(formatQuestionForUser(q, i + 1, capped.length));
+    if (q.choices?.length) {
+      q.choices.forEach((c, ci) => write(`  ${ci + 1}) ${c}`));
+    }
     const raw = await withInputLock(bus, onAwaiting, () =>
-      ask(rl, "Resposta (Enter/ok = recomendação)> "),
+      ask(rl, "Resposta (Enter/ok = recomendação · nº = escolha)> "),
     );
-    answers.push(raw);
+    const trimmed = raw.trim();
+    const asNum = Number(trimmed);
+    if (trimmed && Number.isInteger(asNum) && asNum >= 1 && q.choices?.[asNum - 1]) {
+      const picked = q.choices[asNum - 1]!;
+      answers.push(/^outro/i.test(picked) ? "" : picked);
+    } else {
+      answers.push(raw);
+    }
   }
   return answers;
+}
+
+async function ensureProviderReadyClassic(
+  rl: readline.Interface,
+  write: (s: string) => void,
+  bus: ShellEventBus,
+  onAwaiting?: () => void,
+): Promise<boolean> {
+  const snap = probeProviderReadiness();
+  if (!needsInlineProviderSetup(snap)) return true;
+  write(`Provider readiness: ${snap.summary}`);
+  write("1) Inserir API Key do FreeLLMAPI agora");
+  write("2) Usar Ollama local (localhost:11434)");
+  write("3) Configurar outra API Key");
+  const choice = await withInputLock(bus, onAwaiting, () => ask(rl, "Escolha [1-3]> "));
+  const n = choice.trim();
+  if (n === "2") {
+    const ping = pingOllamaLocal();
+    write(ping.message);
+    return ping.ok;
+  }
+  if (n === "1" || n === "3") {
+    const key = await withInputLock(bus, onAwaiting, () => ask(rl, "API Key (não será ecoada em logs)> "));
+    if (!key.trim()) {
+      write("Chave vazia — provider não configurado.");
+      return false;
+    }
+    writeFreellmKeySecure(key);
+    process.env.FREELLMAPI_API_KEY = key.trim();
+    process.env.EVOLVELOOP_FREELLMAPI_API_KEY = key.trim();
+    const ping = await pingFreellmWithKey(key.trim());
+    write(ping.message);
+    return ping.ok;
+  }
+  write("Opção inválida.");
+  return false;
 }
 
 function writeGoalOutcome(
@@ -181,6 +242,7 @@ export async function runEvolveShell(opts: EvolveShellOptions = {}): Promise<Evo
   let pendingDetachConfirm = false;
 
   const session = detectWorkspaceSession(workspace);
+  hydrateHarnessConsentFromConfig();
   const hudColor = colorEnabled({
     isTTY: Boolean(process.stdout.isTTY) && !opts.inputLines && !opts.disable_raw_mode,
   });
@@ -199,11 +261,14 @@ export async function runEvolveShell(opts: EvolveShellOptions = {}): Promise<Evo
     });
   }
 
+  // Live probes (bwrap / providers / git) — absent metrics stay UNAVAILABLE.
+  const hudProbe = probeHudEnvironment(workspace);
+
   // M1 — Núcleo+Órbita banner once at boot (no ANSI when NO_COLOR / non-TTY / test inject).
   write(
     renderBootBanner(
       session,
-      { daemon: daemon_label },
+      { daemon: daemon_label, ...hudProbe.banner },
       {
         columns: opts.columns ?? process.stdout.columns ?? 80,
         color: hudColor,
@@ -255,10 +320,12 @@ export async function runEvolveShell(opts: EvolveShellOptions = {}): Promise<Evo
     const shortcuts = daemonInfo.active
       ? "Ctrl+P Pause · Ctrl+C Stop · Ctrl+D Detach"
       : "Ctrl+P Pause · Ctrl+C Stop";
+    // Refresh cheap probes each footer paint (bwrap/git/providers).
+    const live = probeHudEnvironment(workspace);
     write(
       renderSessionFooter(
         snap,
-        { shortcuts },
+        { shortcuts, ...live.footer },
         { color: hudColor, isTTY: hudColor },
       ),
     );
@@ -389,6 +456,37 @@ export async function runEvolveShell(opts: EvolveShellOptions = {}): Promise<Evo
       return "continue";
     }
 
+    // Post–Grill-Me: "ok/continuar" starts MSO execution instead of re-grilling.
+    if (isProceedAfterConfirmIntent(line)) {
+      try {
+        const canAskConsent = Boolean(rl) && !opts.answers;
+        const kick = await startAuthorizedExecution({
+          workspace,
+          write,
+          requestConsent:
+            canAskConsent && rl
+              ? async () => {
+                  write(
+                    "Isto autoriza spawn real do cursor-agent/agy neste host (só para EvolveLoop).",
+                  );
+                  const ans = await withInputLock(eventBus, opts.on_awaiting_input, () =>
+                    ask(rl, "Autorizar harness? (Enter/sim)> "),
+                  );
+                  return isGoalContractConfirmAnswer(ans);
+                }
+              : undefined,
+        });
+        write(kick.message_pt);
+        writeMiddleAndFooter();
+        return opts.one_shot ? "quit" : "continue";
+      } catch (err) {
+        write(`Erro ao iniciar execução: ${err instanceof Error ? err.message : String(err)}`);
+        exit_code = exit_code === 130 ? 130 : 1;
+        writeMiddleAndFooter();
+        return "continue";
+      }
+    }
+
     try {
       const interactive = Boolean(rl) && !opts.answers;
 
@@ -411,16 +509,32 @@ export async function runEvolveShell(opts: EvolveShellOptions = {}): Promise<Evo
           return opts.one_shot ? "quit" : "continue";
         }
         if (preview.kind !== "goal_contract") {
+          write(
+            `Intenção não gerou Goal Contract (kind=${"kind" in preview ? String((preview as { kind?: string }).kind) : "unknown"}). Reformule ou use 'continuar' se o MSO já estiver confirmado.`,
+          );
+          writeMiddleAndFooter();
           return "continue";
         }
-        write("Entrevista Grill-Me (3–5 perguntas). Enter/ok aceita a recomendação.");
-        const collected = await collectAnswersInteractive(
-          rl,
-          preview.questions,
-          write,
-          eventBus,
-          opts.on_awaiting_input,
-        );
+
+        const detailed = isDetailedIntent(line);
+        let collected: string[];
+        if (detailed) {
+          write("Intenção detalhada — a saltar entrevista sequencial. Revise o Goal Contract:");
+          collected = resolveAnswers(
+            preview.questions,
+            preview.questions.map(() => "ok"),
+          ).map((a) => a.value);
+        } else {
+          write("Grill-Me adaptativo (2–3 perguntas). Enter/ok aceita a recomendação.");
+          collected = await collectAnswersInteractive(
+            rl,
+            preview.questions,
+            write,
+            eventBus,
+            opts.on_awaiting_input,
+          );
+        }
+
         const drafted = runIntentFlow({
           workspace,
           intent: line,
@@ -429,11 +543,70 @@ export async function runEvolveShell(opts: EvolveShellOptions = {}): Promise<Evo
           persist: true,
         });
         if (drafted.kind === "goal_contract") {
-          write(cardFromGoalOut(drafted));
+          const card = cardFromGoalOut(drafted);
+          if (/Bloco\s*3/i.test(card)) {
+            write("Erro interno: jargão de domínio vazou para o card — abortado.");
+            writeMiddleAndFooter();
+            return "continue";
+          }
+          write(card);
+          write("[Enter] Confirmar e executar agora · [E] Ajustar · [Esc/n] Cancelar");
           const conf = await withInputLock(eventBus, opts.on_awaiting_input, () =>
-            ask(rl, "Confirmar Goal Contract? (Enter/sim)> "),
+            ask(rl, "Ação> "),
           );
-          if (isGoalContractConfirmAnswer(conf)) {
+          const t = conf.trim().toLowerCase();
+          if (t === "e" || t === "edit" || t === "ajustar") {
+            write("Ajuste: responda 2–3 perguntas.");
+            const edited = await collectAnswersInteractive(
+              rl,
+              drafted.questions,
+              write,
+              eventBus,
+              opts.on_awaiting_input,
+            );
+            const redrafted = runIntentFlow({
+              workspace,
+              intent: line,
+              answers: edited,
+              confirm_mso: false,
+              persist: true,
+            });
+            if (redrafted.kind === "goal_contract") {
+              write(cardFromGoalOut(redrafted));
+              const conf2 = await withInputLock(eventBus, opts.on_awaiting_input, () =>
+                ask(rl, "[Enter] Confirmar e executar agora> "),
+              );
+              if (isGoalContractConfirmAnswer(conf2)) {
+                const db = new StateDb(defaultStateDbPath(workspace));
+                try {
+                  db.confirmMso(redrafted.contract.goal_contract_id);
+                } finally {
+                  db.close();
+                }
+                writeGoalOutcome(write, redrafted);
+                const kick = await startAuthorizedExecution({
+                  workspace,
+                  write,
+                  requestConsent: async () => {
+                    write(
+                      "Isto autoriza spawn real do cursor-agent/agy neste host (só para EvolveLoop).",
+                    );
+                    const ans = await withInputLock(eventBus, opts.on_awaiting_input, () =>
+                      ask(rl, "Autorizar harness? (Enter/sim)> "),
+                    );
+                    return isGoalContractConfirmAnswer(ans);
+                  },
+                });
+                write(kick.message_pt);
+              } else {
+                write("Confirmação cancelada.");
+                writeGoalOutcome(write, redrafted);
+              }
+            }
+          } else if (t === "n" || t === "nao" || t === "não" || t === "cancel" || t === "esc") {
+            write("Confirmação cancelada — Goal Contract guardado sem MSO confirmado.");
+            writeGoalOutcome(write, drafted);
+          } else if (isGoalContractConfirmAnswer(conf) || t === "") {
             const db = new StateDb(defaultStateDbPath(workspace));
             try {
               db.confirmMso(drafted.contract.goal_contract_id);
@@ -441,7 +614,20 @@ export async function runEvolveShell(opts: EvolveShellOptions = {}): Promise<Evo
               db.close();
             }
             writeGoalOutcome(write, drafted);
-            write("MSO marcado como confirmado (pronto para planeamento autorizado).");
+            const kick = await startAuthorizedExecution({
+              workspace,
+              write,
+              requestConsent: async () => {
+                write(
+                  "Isto autoriza spawn real do cursor-agent/agy neste host (só para EvolveLoop).",
+                );
+                const ans = await withInputLock(eventBus, opts.on_awaiting_input, () =>
+                  ask(rl, "Autorizar harness? (Enter/sim)> "),
+                );
+                return isGoalContractConfirmAnswer(ans);
+              },
+            });
+            write(kick.message_pt);
           } else {
             write("Confirmação cancelada — Goal Contract guardado sem MSO confirmado.");
             writeGoalOutcome(write, drafted);
@@ -462,6 +648,8 @@ export async function runEvolveShell(opts: EvolveShellOptions = {}): Promise<Evo
         } else if (out.kind === "goal_contract") {
           write(out.grill_prompts_pt.join("\n---\n"));
           writeGoalOutcome(write, out);
+        } else {
+          write("Sem ação para esta linha (não foi Goal Contract nem bypass trivial).");
         }
       }
 
@@ -491,6 +679,28 @@ export async function runEvolveShell(opts: EvolveShellOptions = {}): Promise<Evo
         output: process.stdout,
         terminal: Boolean(process.stdin.isTTY),
       });
+      const providerOk = await ensureProviderReadyClassic(
+        rl,
+        write,
+        eventBus,
+        opts.on_awaiting_input,
+      );
+      if (!providerOk) {
+        write("Sem provider validado — configure uma chave ou Ollama antes de aceitar tarefas.");
+        exit_code = exit_code === 130 ? 130 : 1;
+        rl.close();
+        return {
+          lines,
+          exit_code,
+          resumed: session.initialized,
+          paused,
+          interrupted,
+          interrupt_forced,
+          detached,
+          daemon_label,
+          keybindings: { raw_mode_active: keyCtrl?.raw_mode_active ?? false },
+        };
+      }
       write("Digite a intenção (ou status / pausar / sair):");
       while (!interrupted) {
         const answer = await withInputLock(eventBus, opts.on_awaiting_input, () =>

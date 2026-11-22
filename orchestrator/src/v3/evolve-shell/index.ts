@@ -81,6 +81,8 @@ export {
   renderBanner,
   renderBannerWide,
   renderBannerCompact,
+  buildBannerProgressiveLines,
+  bannerHasUnavailable,
   shortenHomePath,
   type BannerMeta,
   type BannerRenderOptions,
@@ -92,6 +94,7 @@ export {
   renderFooterBlock,
   formatTokDisplay,
   formatHonestMetric,
+  isFooterIdle,
   type MetricProvenance,
   type SandboxFooterStatus,
   type HonestMetric,
@@ -100,6 +103,22 @@ export {
   type FooterRenderOptions,
   type BuildFooterExtras,
 } from "./footer.js";
+
+export { probeHudEnvironment, type HudProbeResult } from "./hud-probes.js";
+
+export {
+  probeProviderReadiness,
+  needsInlineProviderSetup,
+  writeFreellmKeySecure,
+  evolveloopSecretsPath,
+  type ProviderReadinessSnapshot,
+} from "./provider-readiness.js";
+
+export {
+  isProceedAfterConfirmIntent,
+  startAuthorizedExecution,
+  type ShellStartExecutionResult,
+} from "./shell-start-execution.js";
 
 export {
   renderActiveAgentsTree,

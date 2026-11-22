@@ -19,6 +19,13 @@ export {
   type GrillMeAnswer,
 } from "./session.js";
 export {
+  assessIntentDetail,
+  isDetailedIntent,
+  scrubInternalJargon,
+  type GrillMeInterviewMode,
+  type IntentDetailAssessment,
+} from "./adaptive.js";
+export {
   matchTrivialIntent,
   applyTrivialBypass,
   type TrivialBypassResult,

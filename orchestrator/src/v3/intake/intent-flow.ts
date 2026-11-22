@@ -174,7 +174,7 @@ export function runIntentFlow(opts: IntentFlowOptions): IntentFlowResult {
     const scale = classifyRequestScale(intent);
     const scan = silentScan(workspace);
     const questions = buildGrillMeQuestions(intent, scan);
-    if (questions.length < 3 || questions.length > 5) {
+    if (questions.length < 2 || questions.length > 5) {
       throw new Error(`Grill-Me question count out of bounds: ${questions.length}`);
     }
 

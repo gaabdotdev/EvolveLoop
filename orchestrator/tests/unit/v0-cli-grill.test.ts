@@ -94,14 +94,15 @@ describe("V0-GRILL + V0-CLI", () => {
     expect(a.context_block).toContain("WORKSPACE_SCAN");
   });
 
-  it("V0-GRILL-03: adaptive interview 3–5 with default approvable by ok", () => {
+  it("V0-GRILL-03: adaptive interview 2–3 (vague) with default approvable by ok", () => {
     const scan = silentScan(tmp);
     const qs = buildGrillMeQuestions("Implementar persistência SQLite do goal contract", scan);
-    expect(qs.length).toBeGreaterThanOrEqual(3);
-    expect(qs.length).toBeLessThanOrEqual(5);
+    expect(qs.length).toBeGreaterThanOrEqual(2);
+    expect(qs.length).toBeLessThanOrEqual(3);
     const answers = resolveAnswers(qs, qs.map(() => "ok"));
     expect(answers.every((a) => a.used_default)).toBe(true);
     expect(answers.every((a) => a.value.length > 0)).toBe(true);
+    expect(qs.every((q) => !/Bloco\s*3/i.test(q.default_answer))).toBe(true);
   });
 
   it("V0-GRILL-04: Goal Document + Contract persist with structural validation", () => {
