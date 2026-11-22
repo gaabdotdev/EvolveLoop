@@ -19,6 +19,7 @@ import type {
   NormalizedAdapterResult,
 } from "./adapter-types.js";
 import { harnessConsentGranted } from "../security/harness-consent.js";
+import { registerOwnedProcessSession } from "../lifecycle/run-controls.js";
 
 function consentOk(): boolean {
   return harnessConsentGranted();
@@ -218,6 +219,19 @@ export class CursorCircuitAdapter implements CircuitAgentAdapter {
         "NO_PROXY",
       ],
       stdout_deny_patterns: [/api[_-]?key/i, /authorization:\s*bearer/i],
+      onSpawned: (identity) => {
+        registerOwnedProcessSession({
+          workspace: req.workspace_path,
+          work_id: req.work_id,
+          task_id: req.task_id,
+          session_id,
+          adapter_id: "cursor",
+          pid: identity.pid,
+          command: args,
+          prompt_path: promptPath,
+          limitations: ["circuit_cursor_registered"],
+        });
+      },
     });
 
     return this.normalizeResult(runnerResult, { session_id });

@@ -235,3 +235,32 @@ export interface EvidenceRecordRow {
   created_at: string;
   updated_at: string;
 }
+
+/** V5-M01 — durable Attempt row (additive; not FailedAttemptRecord). */
+export type AttemptExecutionModeRow = "harness" | "native" | "unknown";
+export type AttemptStatusRow =
+  | "pending"
+  | "running"
+  | "succeeded"
+  | "failed"
+  | "cancelled"
+  | "superseded";
+
+export interface AttemptRow {
+  attempt_id: string;
+  work_id: string;
+  task_id: string;
+  agent_id?: string;
+  /** Selected executor (often agent_id; may be native run id). */
+  executor_id?: string;
+  /** Adapter that owns/bridges this attempt when known. */
+  adapter_id?: string;
+  process_session_id?: string;
+  run_id?: string;
+  execution_mode: AttemptExecutionModeRow;
+  status: AttemptStatusRow;
+  idempotency_key?: string;
+  payload: Record<string, unknown>;
+  created_at: string;
+  updated_at: string;
+}

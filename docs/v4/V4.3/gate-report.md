@@ -1,10 +1,10 @@
 # V4.3 — Relatório de gate (V43-M4)
 
-**Versão:** V4.3 Consolidation  
-**Data (UTC):** 2026-11-22T18:38:19Z  
-**Formato:** `V4-Tests-and-Benchmarks.md` §9  
-**Gate obrigatório (§7):** E2E, regressão, resiliência, benchmarks comparativos e documentação de release concluídos  
-**Regra de conclusão (Consolidation §7):** experiência coerente; regressões avaliadas; compat documentada; usabilidade/confiabilidade/performance com evidências reproduzíveis.  
+**Versão:** V4.3 Consolidation
+**Data (UTC):** 2026-11-22T18:38:19Z
+**Formato:** `V4-Tests-and-Benchmarks.md` §9
+**Gate obrigatório (§7):** E2E, regressão, resiliência, benchmarks comparativos e documentação de release concluídos
+**Regra de conclusão (Consolidation §7):** experiência coerente; regressões avaliadas; compat documentada; usabilidade/confiabilidade/performance com evidências reproduzíveis.
 **Proibido:** liberar limpo com N=0 humanos; inventar %; declarar estabilidade sem evidência.
 
 ---
@@ -92,11 +92,11 @@ Detalhe: `baseline/comparative-final.md`.
 
 ## 6. Regressões conhecidas / limitações
 
-1. Usabilidade humana N=0 — **bloqueia liberar limpo**.  
-2. Ink TTY / kill hard mid-lease / attach tmux vivo — LIMITATION.  
-3. Δ positivos vs V4.2 em `history`/`config`/classic — documentados; sem patch §10.  
-4. Credenciais: duas casas — LIMITATION aceite no release (P2-5).  
-5. Wiki pack EvolveLoop ausente (P2-6 LIMITATION).  
+1. Usabilidade humana N=0 — **bloqueia liberar limpo**.
+2. Ink TTY / kill hard mid-lease / attach tmux vivo — LIMITATION.
+3. Δ positivos vs V4.2 em `history`/`config`/classic — documentados; sem patch §10.
+4. Credenciais: duas casas — LIMITATION aceite no release (P2-5).
+5. Wiki pack EvolveLoop ausente (P2-6 LIMITATION).
 6. Migrator schema / non-ASCII / Zellij — herdados V4.2.
 
 ---
@@ -105,16 +105,24 @@ Detalhe: `baseline/comparative-final.md`.
 
 Cada **APROVADO** acima aponta path; amostra:
 
-- Estado pause/delivery → `orchestrator/src/cli/tui/journey-pause.ts` + `delivery-verify.ts` + `v43-p0-pause-delivery.test.ts`  
-- Falhas honestas → `delivery-status.ts` + `e2e-full.md`  
-- Handles → `agent-handles/attach.ts` + `v43-p0-regression-handles.test.ts`  
-- E2E/resiliência → `tests/e2e-full.md` + `tests/resilience.md` + `v43-p2-e2e-resilience.test.ts`  
-- Regressão → `tests/regression.md` + `v43-p2-telemetry-regression.test.ts`  
-- Benchmarks → `baseline/comparative-final.md`  
-- Release docs → `quickstart.md` … `rollback-plan.md`  
-- Telemetria → `honest-telemetry.ts` + P2-4 test  
-- Credenciais LIMITATION → `credentials-paths.ts` + `known-limits.md` L-CREDS  
+- Estado pause/delivery → `orchestrator/src/cli/tui/journey-pause.ts` + `delivery-verify.ts` + `v43-p0-pause-delivery.test.ts`
+- Falhas honestas → `delivery-status.ts` + `e2e-full.md`
+- Handles → `agent-handles/attach.ts` + `v43-p0-regression-handles.test.ts`
+- E2E/resiliência → `tests/e2e-full.md` + `tests/resilience.md` + `v43-p2-e2e-resilience.test.ts`
+- Regressão → `tests/regression.md` + `v43-p2-telemetry-regression.test.ts`
+- Benchmarks → `baseline/comparative-final.md`
+- Release docs → `quickstart.md` … `rollback-plan.md`
+- Telemetria → `honest-telemetry.ts` + P2-4 test
+- Credenciais LIMITATION → `credentials-paths.ts` + `known-limits.md` L-CREDS
 
 ---
 
 *Fim — gate-report.md · decisão: liberar com ressalvas*
+
+---
+
+## APPEND — REMED-M6 (2026-11-22T21:04:19Z)
+
+Auditoria de remediação M1–M6: decisão **liberar com ressalvas** reconfirmada após suite completa (1408 pass) + harness integração.
+Relatório dedicado: [`remediation/gate-report.md`](./remediation/gate-report.md).
+Ressalvas inalteradas: humano N=0; Ink TTY live LIMITATION.

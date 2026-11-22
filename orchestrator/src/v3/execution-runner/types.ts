@@ -44,6 +44,15 @@ export interface ExecutionRunnerRequest {
   os_sandbox?: boolean | "require";
   /** V1-SEC-03 — force --unshare-net inside os_sandbox wrap. */
   unshare_net?: boolean;
+  /**
+   * Called once after detached spawn + identity attach (pid/pgid/starttime).
+   * Used to register ProcessSession for real pause/resume/cancel.
+   */
+  onSpawned?: (identity: {
+    pid: number;
+    pgid: number;
+    starttime: string;
+  }) => void;
 }
 
 export interface ExecutionRunnerResult {

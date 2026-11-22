@@ -95,13 +95,15 @@ evolve approvals list
 Cartão **Delivery** separa:
 
 - processo terminou
-- objetivo **validado** (PASS só com evidência de verificação)
+- objetivo **validado** (PASS só com execução local `local_execution` exit 0)
+- atestado externo (`--exit-code`) → **ATTESTED**, não é PASS verificado
 
 ```text
 /delivery
+/delivery validate --run "npm test"
 ```
 
-Não trate UNVERIFIED como sucesso.
+Não trate UNVERIFIED nem ATTESTED como sucesso verificado.
 
 ---
 

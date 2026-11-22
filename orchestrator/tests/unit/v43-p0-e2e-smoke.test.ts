@@ -147,7 +147,7 @@ describe("P0-3 E2E smoke (cheap / non-TTY)", () => {
   it("delivery evidence: approved vs failing tests", () => {
     attachDeliveryVerification(
       ws,
-      { command: "npm test", exit_code: 0 },
+      { command: "npm test", exit_code: 0, provenance: "local_execution" },
       { work_id: "w-ok" },
     );
     expect(
@@ -155,7 +155,7 @@ describe("P0-3 E2E smoke (cheap / non-TTY)", () => {
     ).toBe("PASS");
     attachDeliveryVerification(
       ws,
-      { command: "npm test", exit_code: 1 },
+      { command: "npm test", exit_code: 1, provenance: "local_execution" },
       { work_id: "w-bad" },
     );
     expect(

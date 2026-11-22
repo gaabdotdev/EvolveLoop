@@ -2,7 +2,7 @@
  * EvolveLoop Ink TUI — V4.1 P0 journey (home → Task → Plan → state → Delivery).
  */
 
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Box, Text, Static, useApp, useInput } from "ink";
 import { resolve } from "node:path";
 import { MultilineInput } from "./MultilineInput.js";
@@ -31,10 +31,12 @@ import {
 } from "./task-controls.js";
 import {
   clearJourneyPauseOnCancel,
+  formatJourneyRunControlMessage,
   getJourneyPause,
   pauseJourneyTask,
   resumeJourneyTask,
 } from "./journey-pause.js";
+import { INTERRUPT_FORCE_WINDOW_MS } from "../../v3/evolve-shell/keybindings.js";
 import { ApprovalFacade } from "../../v3/approvals/facade.js";
 import { ApprovalStore } from "../../v3/approvals/store.js";
 import type { ApprovalCardView } from "../../v3/approvals/facade.js";
@@ -154,6 +156,8 @@ export function EvolveInkApp({ workspace: wsIn, onDone }: InkAppProps): React.Re
   const [phaseBeforeApproval, setPhaseBeforeApproval] = useState<Phase>("ready");
   const [taskCancelArmed, setTaskCancelArmed] = useState(false);
   const [deferredApprovalIds, setDeferredApprovalIds] = useState<string[]>([]);
+  /** Ctrl+C first press arms cancel; second within window confirms (≠ Ctrl+D detach). */
+  const interruptArmedAt = useRef(0);
 
   const providerSnap = useMemo(() => probeProviderReadiness(), []);
   const needProvider = needsInlineProviderSetup(providerSnap);
@@ -295,26 +299,47 @@ export function EvolveInkApp({ workspace: wsIn, onDone }: InkAppProps): React.Re
 
   useInput((input, key) => {
     if (key.ctrl && input === "c") {
+      const now = Date.now();
+      if (
+        interruptArmedAt.current > 0 &&
+        now - interruptArmedAt.current <= INTERRUPT_FORCE_WINDOW_MS
+      ) {
+        interruptArmedAt.current = 0;
+        // Confirmed cancel — evidence via ProcessSession cancel before TUI exit.
+        const cancelled = clearJourneyPauseOnCancel(workspace, "tui");
+        setPaused(false);
+        appendSystem(
+          formatJourneyRunControlMessage({
+            ...cancelled,
+            run_control: cancelled.run_control,
+          }),
+        );
+        appendSystem("Cancel confirmado (2× Ctrl+C) — ≠ detach.");
+        finish({ interrupted: true, interrupt_forced: true, exit_code: 130 });
+        return;
+      }
+      interruptArmedAt.current = now;
       appendSystem(taskControlMessage("interrupt").message_pt);
-      finish({ interrupted: true, exit_code: 130 });
       return;
     }
     if (key.ctrl && input === "d") {
       // Navigation / detach — NEVER kill Agent or session-cancel (ADR Q3/Q4).
+      interruptArmedAt.current = 0;
       appendSystem(taskControlMessage("detach").message_pt);
       finish({ detached: true, exit_code: 0 });
       return;
     }
     if (key.ctrl && input === "p") {
-      // V4.3 P0-1 — persist journey pause (same axis as evolve pause|resume).
+      // Ctrl+P = pause/resume only — never cancel/detach.
+      interruptArmedAt.current = 0;
       if (paused) {
-        resumeJourneyTask(workspace, "tui");
+        const resumed = resumeJourneyTask(workspace, "tui");
         setPaused(false);
-        appendSystem(taskControlMessage("resume", { wasPaused: true }).message_pt);
+        appendSystem(formatJourneyRunControlMessage(resumed));
       } else {
-        pauseJourneyTask(workspace, "tui");
+        const pausedState = pauseJourneyTask(workspace, "tui");
         setPaused(true);
-        appendSystem(taskControlMessage("pause").message_pt);
+        appendSystem(formatJourneyRunControlMessage(pausedState));
         ringTerminalBell();
       }
     }
@@ -433,9 +458,9 @@ export function EvolveInkApp({ workspace: wsIn, onDone }: InkAppProps): React.Re
         return;
       }
       if (cmd === "pause") {
-        pauseJourneyTask(workspace, "slash");
+        const pausedState = pauseJourneyTask(workspace, "slash");
         setPaused(true);
-        appendSystem(runSlashHandler("pause").message);
+        appendSystem(formatJourneyRunControlMessage(pausedState));
         ringTerminalBell();
         return;
       }
@@ -445,9 +470,10 @@ export function EvolveInkApp({ workspace: wsIn, onDone }: InkAppProps): React.Re
           appendSystem(runSlashHandler("cancel").message);
           return;
         }
+        const cancelled = clearJourneyPauseOnCancel(workspace, "slash");
+        appendSystem(formatJourneyRunControlMessage(cancelled));
         appendSystem("Task cancelada (confirmação via /cancel). Voltando ao ready.");
         setTaskCancelArmed(false);
-        clearJourneyPauseOnCancel(workspace, "slash");
         setPaused(false);
         setExecuting(false);
         setPendingIntent("");
@@ -464,8 +490,9 @@ export function EvolveInkApp({ workspace: wsIn, onDone }: InkAppProps): React.Re
             appendSystem(
               [
                 "Uso: /delivery validate --run \"<comando>\"",
-                "Ou:  evolve delivery validate --command \"npm test\" --exit-code 0",
-                "Sem --run não executa (não inventar PASS).",
+                "  → EvolveLoop executa; PASS só com local_execution exit 0",
+                "CLI atestado: evolve delivery validate --command \"…\" --exit-code 0 → ATTESTED",
+                "Sem --run → provenance=absent (não inventar PASS).",
               ].join("\n"),
             );
             return;
@@ -674,17 +701,17 @@ export function EvolveInkApp({ workspace: wsIn, onDone }: InkAppProps): React.Re
 
     const control = parseTaskControlLine(line);
     if (control === "pause") {
-      pauseJourneyTask(workspace, "tui");
+      const pausedState = pauseJourneyTask(workspace, "tui");
       setPaused(true);
-      appendSystem(taskControlMessage("pause").message_pt);
+      appendSystem(formatJourneyRunControlMessage(pausedState));
       ringTerminalBell();
       return;
     }
     if (control === "resume" || (paused && control === null && /^(continuar|resume|retomar)$/i.test(line))) {
-      resumeJourneyTask(workspace, "tui");
+      const resumed = resumeJourneyTask(workspace, "tui");
       setPaused(false);
       setTaskCancelArmed(false);
-      appendSystem(taskControlMessage("resume", { wasPaused: true }).message_pt);
+      appendSystem(formatJourneyRunControlMessage(resumed));
       return;
     }
     if (control === "cancel") {
@@ -693,9 +720,10 @@ export function EvolveInkApp({ workspace: wsIn, onDone }: InkAppProps): React.Re
         appendSystem(taskControlMessage("cancel").message_pt);
         return;
       }
+      const cancelled = clearJourneyPauseOnCancel(workspace, "tui");
+      appendSystem(formatJourneyRunControlMessage(cancelled));
       appendSystem("Task cancelada (confirmação). Voltando ao ready.");
       setTaskCancelArmed(false);
-      clearJourneyPauseOnCancel(workspace, "tui");
       setPaused(false);
       setExecuting(false);
       setPendingIntent("");

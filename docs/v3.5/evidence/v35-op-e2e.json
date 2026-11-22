@@ -2,14 +2,14 @@
   "kind": "V35_OP_E2E_Evidence",
   "work_id": "work-eng",
   "goal_id": "gc-eng",
-  "worktree_id": "wt-work-eng-1795319169451",
-  "branch": "evolveloop/work-eng/wt-work-eng-1795319169451",
+  "worktree_id": "wt-work-eng-1795386790268",
+  "branch": "evolveloop/work-eng/wt-work-eng-1795386790268",
   "sandbox_os_applied": true,
-  "approval_id": "apr-3a220b3c-f269-4061-8684-8657c44c3777",
-  "integrated_commit": "14c7917367244b9cf780dc52ff070c47a0e03e00",
+  "approval_id": "apr-0e14e122-36b4-4174-b47e-e1b386fe4a5c",
+  "integrated_commit": "3b5db86713931d4342a676ac98fda2f51f7039f9",
   "post_merge": {
     "kind": "PostMergeResult",
-    "repo": "/tmp/el-e2e-eng-85W0Xn",
+    "repo": "/tmp/el-e2e-eng-nEjYBd",
     "checks": [
       {
         "id": "npm_run_build",
@@ -25,7 +25,7 @@
         "exit_code": 0,
         "stdout_tail": "",
         "stderr_tail": "",
-        "duration_ms": 218
+        "duration_ms": 180
       },
       {
         "id": "npm_run_test",
@@ -39,9 +39,9 @@
         "present": true,
         "ran": true,
         "exit_code": 0,
-        "stdout_tail": "TAP version 13\n# Subtest: greet\nok 1 - greet\n  ---\n  duration_ms: 2.040414\n  type: 'test'\n  ...\n# Subtest: shout\nok 2 - shout\n  ---\n  duration_ms: 0.791889\n  type: 'test'\n  ...\n1..2\n# tests 2\n# suites 0\n# pass 2\n# fail 0\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 113.559334\n",
+        "stdout_tail": "TAP version 13\n# Subtest: greet\nok 1 - greet\n  ---\n  duration_ms: 0.955603\n  type: 'test'\n  ...\n# Subtest: shout\nok 2 - shout\n  ---\n  duration_ms: 3.371851\n  type: 'test'\n  ...\n1..2\n# tests 2\n# suites 0\n# pass 2\n# fail 0\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 99.578465\n",
         "stderr_tail": "",
-        "duration_ms": 330
+        "duration_ms": 307
       }
     ],
     "overall": "PASS",
@@ -50,7 +50,7 @@
   "human_dirty_preserved": true,
   "harness_llm": {
     "status": "BLOCKED_AUTH",
-    "claude_execution_path": "dry_run",
+    "claude_execution_path": "real_eligible",
     "note": "File edits performed under sandbox/worktree; LLM body not forged"
   },
   "real": [

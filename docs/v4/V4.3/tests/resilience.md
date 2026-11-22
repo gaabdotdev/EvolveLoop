@@ -1,8 +1,8 @@
 # V4.3 — Resiliência (§6)
 
-**Data:** 2026-11-22  
-**Spec:** `V4-Tests-and-Benchmarks.md` §6 — Testes de resiliência  
-**Harness:** `orchestrator/tests/unit/v43-p2-e2e-resilience.test.ts`  
+**Data:** 2026-11-22
+**Spec:** `V4-Tests-and-Benchmarks.md` §6 — Testes de resiliência
+**Harness:** `orchestrator/tests/unit/v43-p2-e2e-resilience.test.ts`
 **Regra:** falha honesta > falso sucesso; evidências não inventadas.
 
 ---
@@ -24,8 +24,8 @@
 
 ## LIMITATION
 
-- Kill real de processo agent / Ink mid-flight: sem harness OS signal nesta fatia.  
-- Persistência fail depende de permissões FS (alguns mounts ignoram chmod em dir).  
+- Kill real de processo agent / Ink mid-flight: sem harness OS signal nesta fatia.
+- Persistência fail depende de permissões FS (alguns mounts ignoram chmod em dir).
 - Viewer≠kill validado em API; pane tmux vivo = LIMITATION herdada V4.1.
 
 ---
@@ -41,3 +41,19 @@ npx vitest run --pool=forks --poolOptions.forks.singleFork \
 ---
 
 *MSO TASK V43-M4 — P2-1*
+
+---
+
+## APPEND — REMED-M6 (2026-11-22T21:04:19Z)
+
+Reconfirmado via `remed-m6-full-integration.test.ts` + `remed-m2-lifecycle-controls.test.ts`:
+
+| Cenário | Status |
+|---|---|
+| CLI restart com pause StateDb | **PASS** |
+| pause→SIGSTOP→resume→SIGCONT→cancel | **PASS** (POSIX `/proc`) |
+| closeViewer ≠ kill | **PASS** |
+| Isolamento workspace A≠B | **PASS** |
+
+Kill Ink mid-lease / attach pane vivo: **LIMITATION** herdada.
+Artefacto: `/tmp/remed-m6-remed-suite.txt` (57 pass).

@@ -17,8 +17,9 @@ export function formatAgentLogsHuman(
   opts?: { processSessions?: ProcessSessionRecord[] },
 ): AgentLogsHuman {
   const life = classifyHandleLifecycle(agent);
+  // Exact agent_id only (REMED-M3).
   const sessions = (opts?.processSessions ?? []).filter(
-    (s) => s.agent_id === agent.agent_id || s.session_id === agent.session_id,
+    (s) => s.agent_id === agent.agent_id,
   );
 
   const lines: string[] = [
@@ -37,6 +38,7 @@ export function formatAgentLogsHuman(
       lines.push(
         `  ProcessSession ${s.session_id}: status=${s.status}` +
           (s.pid != null ? ` pid=${s.pid}` : "") +
+          (s.mux_session ? ` mux=${s.mux_backend ?? "mux"}:${s.mux_session}` : "") +
           (s.ended_at ? ` ended=${s.ended_at}` : "") +
           (s.exit_code != null ? ` exit=${s.exit_code}` : ""),
       );

@@ -20,6 +20,7 @@ import {
   SQLITE_SYNC_FULL,
   STATE_DB_SCHEMA_SQL,
   STATE_DB_SCHEMA_VERSION,
+  ATTEMPTS_V8_COLUMNS,
   TOKEN_LEDGER_V5_COLUMNS,
 } from "./schema.js";
 import type {
@@ -41,6 +42,9 @@ import type {
   EventRow,
   EvidenceRecordRow,
   EvidenceStatus,
+  AttemptRow,
+  AttemptExecutionModeRow,
+  AttemptStatusRow,
 } from "./types.js";
 import { extractShellHolderPid, isPidAlive } from "./process-alive.js";
 
@@ -95,6 +99,7 @@ export class StateDb {
     this.db = new DatabaseSync(this.path);
     this.db.exec(STATE_DB_SCHEMA_SQL);
     this.migrateTokenLedgerV5();
+    this.migrateAttemptsV8();
     this.db
       .prepare(
         `INSERT INTO schema_meta(key, value) VALUES ('schema_version', ?)
@@ -112,6 +117,18 @@ export class StateDb {
     for (const col of TOKEN_LEDGER_V5_COLUMNS) {
       if (have.has(col.name)) continue;
       this.db.exec(`ALTER TABLE token_ledger ADD COLUMN ${col.name} ${col.sqlType}`);
+    }
+  }
+
+  /** Idempotent ALTER for attempts created at schema v7 (V5-M02). */
+  private migrateAttemptsV8(): void {
+    const cols = this.db
+      .prepare(`PRAGMA table_info(attempts)`)
+      .all() as Array<{ name: string }>;
+    const have = new Set(cols.map((c) => c.name));
+    for (const col of ATTEMPTS_V8_COLUMNS) {
+      if (have.has(col.name)) continue;
+      this.db.exec(`ALTER TABLE attempts ADD COLUMN ${col.name} ${col.sqlType}`);
     }
   }
 
@@ -1653,5 +1670,245 @@ export class StateDb {
       created_at: r.created_at,
       updated_at: r.updated_at,
     }));
+  }
+
+  // ── Attempts (V5-M01 — additive; same StateDb, no second SQLite) ────────────
+
+  private mapAttemptRow(r: {
+    attempt_id: string;
+    work_id: string;
+    task_id: string;
+    agent_id: string | null;
+    executor_id: string | null;
+    adapter_id: string | null;
+    process_session_id: string | null;
+    run_id: string | null;
+    execution_mode: string;
+    status: string;
+    idempotency_key: string | null;
+    payload_json: string;
+    created_at: string;
+    updated_at: string;
+  }): AttemptRow {
+    return {
+      attempt_id: r.attempt_id,
+      work_id: r.work_id,
+      task_id: r.task_id,
+      agent_id: r.agent_id ?? undefined,
+      executor_id: r.executor_id ?? undefined,
+      adapter_id: r.adapter_id ?? undefined,
+      process_session_id: r.process_session_id ?? undefined,
+      run_id: r.run_id ?? undefined,
+      execution_mode: r.execution_mode as AttemptExecutionModeRow,
+      status: r.status as AttemptStatusRow,
+      idempotency_key: r.idempotency_key ?? undefined,
+      payload: JSON.parse(r.payload_json) as Record<string, unknown>,
+      created_at: r.created_at,
+      updated_at: r.updated_at,
+    };
+  }
+
+  private readonly attemptSelectCols = `attempt_id, work_id, task_id, agent_id, executor_id, adapter_id,
+                process_session_id, run_id, execution_mode, status, idempotency_key,
+                payload_json, created_at, updated_at`;
+
+  getAttempt(attemptId: string): AttemptRow | undefined {
+    const row = this.db
+      .prepare(
+        `SELECT ${this.attemptSelectCols}
+         FROM attempts WHERE attempt_id = ?`,
+      )
+      .get(attemptId) as
+      | {
+          attempt_id: string;
+          work_id: string;
+          task_id: string;
+          agent_id: string | null;
+          executor_id: string | null;
+          adapter_id: string | null;
+          process_session_id: string | null;
+          run_id: string | null;
+          execution_mode: string;
+          status: string;
+          idempotency_key: string | null;
+          payload_json: string;
+          created_at: string;
+          updated_at: string;
+        }
+      | undefined;
+    return row ? this.mapAttemptRow(row) : undefined;
+  }
+
+  findAttemptByIdempotency(workId: string, idempotencyKey: string): AttemptRow | undefined {
+    const row = this.db
+      .prepare(
+        `SELECT ${this.attemptSelectCols}
+         FROM attempts WHERE work_id = ? AND idempotency_key = ?`,
+      )
+      .get(workId, idempotencyKey) as
+      | {
+          attempt_id: string;
+          work_id: string;
+          task_id: string;
+          agent_id: string | null;
+          executor_id: string | null;
+          adapter_id: string | null;
+          process_session_id: string | null;
+          run_id: string | null;
+          execution_mode: string;
+          status: string;
+          idempotency_key: string | null;
+          payload_json: string;
+          created_at: string;
+          updated_at: string;
+        }
+      | undefined;
+    return row ? this.mapAttemptRow(row) : undefined;
+  }
+
+  /**
+   * Create Attempt (idempotent when idempotency_key set — returns existing row).
+   */
+  createAttempt(input: {
+    attempt_id?: string;
+    work_id: string;
+    task_id: string;
+    agent_id?: string;
+    executor_id?: string;
+    adapter_id?: string;
+    process_session_id?: string;
+    run_id?: string;
+    execution_mode?: AttemptExecutionModeRow;
+    status?: AttemptStatusRow;
+    idempotency_key?: string;
+    payload?: Record<string, unknown>;
+  }): AttemptRow {
+    const key = input.idempotency_key?.trim();
+    if (key) {
+      const existing = this.findAttemptByIdempotency(input.work_id, key);
+      if (existing) return existing;
+    }
+    const now = new Date().toISOString();
+    const attempt_id = input.attempt_id ?? `att-${randomUUID()}`;
+    const payload = input.payload ?? {};
+    const execution_mode = input.execution_mode ?? "unknown";
+    const status = input.status ?? "pending";
+    const executor_id = input.executor_id ?? input.agent_id ?? null;
+    try {
+      this.db
+        .prepare(
+          `INSERT INTO attempts(
+             attempt_id, work_id, task_id, agent_id, executor_id, adapter_id,
+             process_session_id, run_id, execution_mode, status, idempotency_key,
+             payload_json, created_at, updated_at
+           ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        )
+        .run(
+          attempt_id,
+          input.work_id,
+          input.task_id,
+          input.agent_id ?? null,
+          executor_id,
+          input.adapter_id ?? null,
+          input.process_session_id ?? null,
+          input.run_id ?? null,
+          execution_mode,
+          status,
+          key ?? null,
+          JSON.stringify(payload),
+          now,
+          now,
+        );
+    } catch (err) {
+      // Race on unique idempotency index — return winner.
+      if (key) {
+        const raced = this.findAttemptByIdempotency(input.work_id, key);
+        if (raced) return raced;
+      }
+      throw err;
+    }
+    return this.getAttempt(attempt_id)!;
+  }
+
+  updateAttemptStatus(
+    attemptId: string,
+    status: AttemptStatusRow,
+    patch?: {
+      process_session_id?: string;
+      run_id?: string;
+      agent_id?: string;
+      executor_id?: string;
+      adapter_id?: string;
+      execution_mode?: AttemptExecutionModeRow;
+      payload?: Record<string, unknown>;
+    },
+  ): AttemptRow {
+    const existing = this.getAttempt(attemptId);
+    if (!existing) throw new StateDbError("NOT_FOUND", `attempt '${attemptId}' not found`);
+    const now = new Date().toISOString();
+    const payload = patch?.payload ? { ...existing.payload, ...patch.payload } : existing.payload;
+    const execution_mode = patch?.execution_mode ?? existing.execution_mode;
+    this.db
+      .prepare(
+        `UPDATE attempts SET
+           status = ?,
+           process_session_id = COALESCE(?, process_session_id),
+           run_id = COALESCE(?, run_id),
+           agent_id = COALESCE(?, agent_id),
+           executor_id = COALESCE(?, executor_id),
+           adapter_id = COALESCE(?, adapter_id),
+           execution_mode = ?,
+           payload_json = ?,
+           updated_at = ?
+         WHERE attempt_id = ?`,
+      )
+      .run(
+        status,
+        patch?.process_session_id ?? null,
+        patch?.run_id ?? null,
+        patch?.agent_id ?? null,
+        patch?.executor_id ?? null,
+        patch?.adapter_id ?? null,
+        execution_mode,
+        JSON.stringify(payload),
+        now,
+        attemptId,
+      );
+    return this.getAttempt(attemptId)!;
+  }
+
+  listAttempts(workId: string, filter?: { task_id?: string }): AttemptRow[] {
+    type AttemptSqlRow = {
+      attempt_id: string;
+      work_id: string;
+      task_id: string;
+      agent_id: string | null;
+      executor_id: string | null;
+      adapter_id: string | null;
+      process_session_id: string | null;
+      run_id: string | null;
+      execution_mode: string;
+      status: string;
+      idempotency_key: string | null;
+      payload_json: string;
+      created_at: string;
+      updated_at: string;
+    };
+    const rows = (
+      filter?.task_id
+        ? (this.db
+            .prepare(
+              `SELECT ${this.attemptSelectCols}
+               FROM attempts WHERE work_id = ? AND task_id = ? ORDER BY created_at ASC`,
+            )
+            .all(workId, filter.task_id) as AttemptSqlRow[])
+        : (this.db
+            .prepare(
+              `SELECT ${this.attemptSelectCols}
+               FROM attempts WHERE work_id = ? ORDER BY created_at ASC`,
+            )
+            .all(workId) as AttemptSqlRow[])
+    );
+    return rows.map((r) => this.mapAttemptRow(r));
   }
 }

@@ -159,6 +159,7 @@ export class CliProcessAdapterDriver implements AgentAdapterDriver {
       work_id: request.work_id,
       task_id: request.task_id,
       adapter_id: this.adapter_id,
+      agent_id: request.agent_id,
       pid: child.pid,
       status: "running",
       started_at,

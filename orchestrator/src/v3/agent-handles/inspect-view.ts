@@ -49,8 +49,13 @@ export function formatAgentInspectHuman(
         (view.process_session.pid != null ? `, pid=${view.process_session.pid}` : "") +
         ")",
     );
+    if (view.process_session.mux_backend || view.process_session.mux_session) {
+      lines.push(
+        `  mux: ${view.process_session.mux_backend ?? "?"} / ${view.process_session.mux_session ?? "(none)"}`,
+      );
+    }
   } else {
-    lines.push("  ProcessSession: (nenhuma associada)");
+    lines.push("  ProcessSession: (nenhuma associada por agent_id exacto)");
   }
   lines.push("");
   lines.push(view.note_pt);

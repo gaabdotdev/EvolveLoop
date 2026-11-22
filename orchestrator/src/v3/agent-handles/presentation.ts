@@ -60,6 +60,8 @@ export interface AgentVsSessionView {
     session_id: string;
     status: ProcessSessionRecord["status"];
     pid?: number;
+    mux_backend?: ProcessSessionRecord["mux_backend"];
+    mux_session?: string;
   };
   /** Orchestration session id on the agent record (MSO/harness), if any. */
   agent_session_id?: string;
@@ -74,10 +76,8 @@ export function buildAgentVsSessionView(
   opts?: { handoff?: HandoffPackage },
 ): AgentVsSessionView {
   const life = classifyHandleLifecycle(agent);
-  const proc =
-    processSessions.find(
-      (s) => s.agent_id === agent.agent_id || s.session_id === agent.session_id,
-    ) ?? processSessions.find((s) => s.agent_id === agent.agent_id);
+  // Exact agent_id only (REMED-M3) — never approximate via session_id alone.
+  const proc = processSessions.find((s) => s.agent_id === agent.agent_id);
 
   const noteParts = [
     `Agent state (${agent.state}) ≠ Session/terminal state`,
@@ -109,6 +109,8 @@ export function buildAgentVsSessionView(
           session_id: proc.session_id,
           status: proc.status,
           pid: proc.pid,
+          mux_backend: proc.mux_backend,
+          mux_session: proc.mux_session,
         }
       : undefined,
     agent_session_id: agent.session_id,

@@ -28,4 +28,7 @@ export type {
   TaskSubstateRow,
   EvidenceStatus,
   EvidenceRecordRow,
+  AttemptExecutionModeRow,
+  AttemptStatusRow,
+  AttemptRow,
 } from "./types.js";

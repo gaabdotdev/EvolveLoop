@@ -26,7 +26,7 @@ export function taskControlMessage(
         destructive: false,
         shortcut: "Ctrl+P",
         message_pt:
-          "Task em pausa (Ctrl+P) — persistida em StateDb; mesmo eixo que `evolve pause`. Novas entradas aguardam. Digite 'continuar', Ctrl+P ou `evolve resume`. ≠ workflow pause.",
+          "Task em pausa (Ctrl+P) — StateDb + SIGSTOP em ProcessSessions owned (identidade verificada). Mesmo eixo que `evolve pause`. Digite 'continuar', Ctrl+P ou `evolve resume`. ≠ workflow pause.",
       };
     case "resume":
       return {
@@ -34,7 +34,7 @@ export function taskControlMessage(
         destructive: false,
         shortcut: "Ctrl+P",
         message_pt: opts?.wasPaused
-          ? "Task retomada — StateDb limpou a pausa de jornada (mesmo eixo CLI/TUI)."
+          ? "Task retomada — SIGCONT + StateDb limpou a pausa de jornada (mesmo eixo CLI/TUI)."
           : "Task já ativa (resume idempotente).",
       };
     case "cancel":
@@ -42,7 +42,7 @@ export function taskControlMessage(
         action: "cancel",
         destructive: true,
         message_pt:
-          "Cancelar Task pedido — destrutivo para a jornada atual (não é só navegação). Confirme com 'cancelar task' ou continue.",
+          "Cancelar Task pedido — destrutivo (SIGTERM→SIGKILL owned). ≠ detach. Confirme com 'cancelar' de novo ou /cancel.",
       };
     case "detach":
       return {
@@ -50,14 +50,15 @@ export function taskControlMessage(
         destructive: false,
         shortcut: "Ctrl+D",
         message_pt:
-          "Detach (Ctrl+D) — sair da TUI sem matar Agent / sem session-cancel.",
+          "Detach (Ctrl+D) — sair da TUI sem matar Agent / sem cancel de ProcessSession (≠ Ctrl+C / cancel).",
       };
     case "interrupt":
       return {
         action: "interrupt",
         destructive: true,
         shortcut: "Ctrl+C",
-        message_pt: "Interrompido (Ctrl+C) — ação destrutiva de paragem.",
+        message_pt:
+          "Interromper (Ctrl+C) — pedirá confirmação; 2.º Ctrl+C cancela processos owned. ≠ detach (Ctrl+D).",
       };
   }
 }

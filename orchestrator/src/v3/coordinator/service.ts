@@ -362,6 +362,31 @@ export class CoordinatorService {
     };
   }
 
+  /**
+   * V5-M01 — pause Work metadata (BLOCKED + reason). Does not delete Work or agents.
+   * Durable on disk; closing TUI does not clear this record.
+   */
+  pauseWork(workId: string, reason: string): CoordinatorWorkRecord {
+    const state = this.loadState();
+    const work = state.works.find((w) => w.work_id === workId);
+    if (!work) throw new CoordinatorError("WORK_NOT_FOUND", workId);
+    const ts = nowIso();
+    work.work_state = "BLOCKED";
+    work.pause_reason = reason;
+    work.updated_at = ts;
+    state.updated_at = ts;
+    state.notes.push(`pauseWork work=${workId} reason=${reason}`);
+    this.save(state);
+    try {
+      this.ledger.recordStateChange(workId, "BLOCKED", "coordinator.pauseWork", {
+        pause_reason: reason,
+      });
+    } catch {
+      /* ledger may be absent in exotic fixtures */
+    }
+    return work;
+  }
+
   private save(state: CoordinatorState): void {
     atomicWrite(this.statePath, JSON.stringify(state, null, 2));
   }

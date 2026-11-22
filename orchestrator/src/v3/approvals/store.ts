@@ -42,6 +42,7 @@ export class ApprovalStore {
       goal_id: input.goal_id,
       task_id: input.task_id,
       agent_id: input.agent_id,
+      attempt_id: input.attempt_id,
       operation: input.operation,
       resource: input.resource,
       justification: input.justification,
@@ -80,10 +81,17 @@ export class ApprovalStore {
     return JSON.parse(readFileSync(path, "utf-8")) as ApprovalRequest;
   }
 
-  list(filter?: { work_id?: string; state?: ApprovalState }): ApprovalRequest[] {
+  list(filter?: {
+    work_id?: string;
+    attempt_id?: string;
+    state?: ApprovalState;
+  }): ApprovalRequest[] {
     const files = readdirSync(this.rootDir).filter((f) => f.endsWith(".json"));
     let items = files.map((f) => JSON.parse(readFileSync(join(this.rootDir, f), "utf-8")) as ApprovalRequest);
     if (filter?.work_id) items = items.filter((a) => a.work_id === filter.work_id);
+    if (filter?.attempt_id) {
+      items = items.filter((a) => a.attempt_id === filter.attempt_id);
+    }
     if (filter?.state) items = items.filter((a) => a.state === filter.state);
     return items.sort((a, b) => a.created_at.localeCompare(b.created_at));
   }

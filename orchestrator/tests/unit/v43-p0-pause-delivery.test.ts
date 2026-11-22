@@ -109,7 +109,7 @@ describe("P0-2 Delivery verification evidence", () => {
   it("attach passing verification → PASS; failing → FAILED", () => {
     attachDeliveryVerification(
       ws,
-      { command: "npm test", exit_code: 0 },
+      { command: "npm test", exit_code: 0, provenance: "local_execution" },
       { work_id: "w-pass" },
     );
     const pass = deriveDeliveryFromWorkspace(ws, {
@@ -122,7 +122,7 @@ describe("P0-2 Delivery verification evidence", () => {
 
     attachDeliveryVerification(
       ws,
-      { command: "npm test", exit_code: 1 },
+      { command: "npm test", exit_code: 1, provenance: "local_execution" },
       { work_id: "w-fail", evidence_id: "evd-fail-1" },
     );
     const fail = deriveDeliveryFromWorkspace(ws, {
@@ -138,8 +138,9 @@ describe("P0-2 Delivery verification evidence", () => {
       exit_code: 0,
       work_id: "w-val",
     });
-    expect(view.status).toBe("PASS");
+    expect(view.status).toBe("ATTESTED");
     expect(view.from_evidence).toBe(true);
+    expect(view.verification?.provenance).toBe("external_attestation");
 
     const fail = validateDelivery(ws, {
       command: "fixture:unit",
@@ -200,7 +201,7 @@ describe("P0-2 Delivery verification evidence", () => {
     }
     attachDeliveryVerification(
       ws,
-      { command: "true", exit_code: 0 },
+      { command: "true", exit_code: 0, provenance: "local_execution" },
       { work_id: "w-hist", goal_contract_id: "gc-1" },
     );
     const list = buildTaskHistoryView(ws);
@@ -234,7 +235,7 @@ describe("P0-2 Delivery verification evidence", () => {
         work_id: "w",
         status: "VALID" as const,
         kind: "delivery_verification",
-        payload: { command: "npm test", exit_code: 0 },
+        payload: { command: "npm test", exit_code: 0, provenance: "local_execution" },
         created_at: "2021-01-01",
         updated_at: "2021-01-01",
       },

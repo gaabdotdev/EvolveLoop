@@ -182,7 +182,10 @@ describe("V0-GRILL + V0-CLI", () => {
     expect(after.state_db_exists).toBe(true);
     expect(after.contracts_count).toBeGreaterThanOrEqual(1);
     expect(after.latest_mso_session?.session_id).toBe("mso-resume-1");
-    expect(after.message_pt).toMatch(/Sessão MSO reconhecida|Projeto inicializado/);
+    // V4.3 product copy: Session (EN token), not legacy "Sessão MSO".
+    expect(after.message_pt).toMatch(
+      /Session reconhecida|Workspace inicializado|Projeto inicializado/,
+    );
   });
 
   it("V0-CLI-02: shell resume + keybinding hooks without raw mode", async () => {

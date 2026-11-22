@@ -8,7 +8,7 @@
 
 ## Requisitos
 
-- **Node ≥ 20** (`orchestrator/package.json` engines)
+- **Node ≥ 22.5.0** (`orchestrator/package.json` engines; necessário para `node:sqlite`)
 - Git; shell bash/zsh
 - Workspace com permissão de escrita (cria `.evolveloop/`)
 
@@ -48,7 +48,7 @@ evolve help advanced   # L2/L3
 2. Descrever Task em linguagem natural **ou** `evolve intent --text "…"`  
 3. Rever **Plan** → confirmar  
 4. Acompanhar footer **Task / Session / Agents**  
-5. `/delivery` ou `evolve delivery show|validate` (PASS só com evidência)
+5. `/delivery` ou `evolve delivery validate --run "…"` — PASS só com `local_execution` exit 0; `--exit-code` → ATTESTED (nunca PASS)
 
 Handles: **OFF** por default (`evolve config set agent-handles on` só se precisar).
 

@@ -159,18 +159,18 @@ describe("P1-5 / P1-6 release + compat docs exist", () => {
     "docs/v4/V4.3/redundancy-report.md",
   ];
 
-  it("all P1 release/compat docs present and mention Node >=20 where relevant", () => {
+  it("all P1 release/compat docs present and mention Node >=22.5 where relevant", () => {
     for (const rel of required) {
       const p = join(REPO_ROOT, rel);
       expect(existsSync(p), rel).toBe(true);
     }
     const compat = readFileSync(join(REPO_ROOT, "docs/v4/V4.3/compat-matrix.md"), "utf-8");
-    expect(compat).toMatch(/≥\s*20|>=20/);
+    expect(compat).toMatch(/≥\s*22\.5|>=22\.5/);
     expect(compat).toMatch(/LIMITATION/);
   });
 
-  it("advanced help documents Node >=20", () => {
-    expect(formatAdvancedHelp()).toMatch(/Node suportado: >=20/);
+  it("advanced help documents Node >=22.5.0", () => {
+    expect(formatAdvancedHelp()).toMatch(/Node suportado: >=22\.5\.0/);
   });
 });
 

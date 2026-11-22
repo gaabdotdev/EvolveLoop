@@ -8,11 +8,23 @@ import { existsSync, mkdirSync, readFileSync, renameSync, writeFileSync } from "
 import { join } from "node:path";
 import type { AdapterId } from "../types.js";
 import {
-  cancelProcessTree,
+  cancelProcessTreeEscalatingSync,
   identifyProcess,
+  isProcessLive,
+  isProcessStopped,
   sameProcess,
+  signalProcessTree,
+  sleepMs,
   type SupervisedProcessIdentity,
 } from "../../sandbox/process-supervisor.js";
+
+export type ProcessSessionStatus =
+  | "running"
+  | "paused"
+  | "exited"
+  | "cancelled"
+  | "dry_run"
+  | "orphaned";
 
 export interface ProcessSessionRecord {
   kind: "ProcessSessionRecord";
@@ -25,13 +37,16 @@ export interface ProcessSessionRecord {
   pgid?: number;
   /** /proc/<pid>/stat starttime — fencing against PID reuse */
   starttime?: string;
-  status: "running" | "exited" | "cancelled" | "dry_run" | "orphaned";
+  status: ProcessSessionStatus;
   started_at: string;
   ended_at?: string;
   exit_code?: number | null;
   command: string[];
   prompt_path?: string;
   limitations: string[];
+  /** Optional multiplexer session name (tmux/zellij) when Agent Handles ON. */
+  mux_backend?: "tmux" | "zellij";
+  mux_session?: string;
 }
 
 export class ProcessSessionStore {
@@ -76,38 +91,170 @@ export class ProcessSessionStore {
     return rec;
   }
 
-  cancel(workId: string, sessionId: string): ProcessSessionRecord {
+  private identityOf(
+    rec: ProcessSessionRecord,
+  ): SupervisedProcessIdentity | undefined {
+    if (rec.pid == null || !rec.starttime) return undefined;
+    return {
+      pid: rec.pid,
+      pgid: rec.pgid ?? rec.pid,
+      starttime: rec.starttime,
+      cmdline: rec.command.join(" "),
+    };
+  }
+
+  /**
+   * SIGSTOP owned running session. Refuses without starttime fence.
+   * Persists status=paused only after operational stop is confirmed (or documents limitation).
+   */
+  pause(workId: string, sessionId: string): ProcessSessionRecord {
     const all = this.load(workId);
     const rec = all.find((s) => s.session_id === sessionId);
     if (!rec) throw new Error(`SESSION_NOT_FOUND: ${sessionId}`);
-    if (rec.status === "running" && rec.pid != null && rec.starttime) {
+    if (rec.status === "paused") {
+      rec.limitations.push("pause:idempotent_already_paused");
+      this.save(workId, all);
+      return rec;
+    }
+    if (rec.status !== "running") {
+      rec.limitations.push(`pause:refused_status_${rec.status}`);
+      this.save(workId, all);
+      return rec;
+    }
+    const identity = this.identityOf(rec);
+    if (!identity) {
+      rec.limitations.push("pause:refused_no_starttime_fence");
+      this.save(workId, all);
+      return rec;
+    }
+    if (!sameProcess(identity)) {
+      rec.status = existsSync(`/proc/${rec.pid}`) ? "orphaned" : "exited";
+      rec.ended_at = new Date().toISOString();
+      rec.limitations.push("pause:pid_reuse_or_gone");
+      this.save(workId, all);
+      return rec;
+    }
+    const result = signalProcessTree(identity, "SIGSTOP");
+    rec.limitations.push(`pause:${result.reason}`);
+    if (result.signalled) {
+      // Kernel may lag briefly before state=T — confirm before claiming pause.
+      sleepMs(40);
+      if (isProcessStopped(identity)) {
+        rec.status = "paused";
+      } else {
+        sleepMs(60);
+        if (isProcessStopped(identity)) {
+          rec.status = "paused";
+        } else {
+          rec.limitations.push(
+            "pause:LIMITATION_not_stopped_after_SIGSTOP_not_claiming_paused",
+          );
+        }
+      }
+    } else {
+      rec.limitations.push("pause:LIMITATION_signal_failed_not_claiming_paused");
+    }
+    this.save(workId, all);
+    return rec;
+  }
+
+  /**
+   * SIGCONT owned paused (or still-running) session. Idempotent when already running.
+   */
+  resume(workId: string, sessionId: string): ProcessSessionRecord {
+    const all = this.load(workId);
+    const rec = all.find((s) => s.session_id === sessionId);
+    if (!rec) throw new Error(`SESSION_NOT_FOUND: ${sessionId}`);
+    if (rec.status === "running") {
+      rec.limitations.push("resume:idempotent_already_running");
+      this.save(workId, all);
+      return rec;
+    }
+    if (rec.status !== "paused") {
+      rec.limitations.push(`resume:refused_status_${rec.status}`);
+      this.save(workId, all);
+      return rec;
+    }
+    const identity = this.identityOf(rec);
+    if (!identity) {
+      rec.limitations.push("resume:refused_no_starttime_fence");
+      this.save(workId, all);
+      return rec;
+    }
+    if (!sameProcess(identity)) {
+      rec.status = existsSync(`/proc/${rec.pid}`) ? "orphaned" : "exited";
+      rec.ended_at = new Date().toISOString();
+      rec.limitations.push("resume:pid_reuse_or_gone");
+      this.save(workId, all);
+      return rec;
+    }
+    const result = signalProcessTree(identity, "SIGCONT");
+    rec.limitations.push(`resume:${result.reason}`);
+    if (result.signalled) {
+      sleepMs(40);
+      if (isProcessStopped(identity)) {
+        rec.limitations.push("resume:LIMITATION_still_stopped_after_SIGCONT");
+      } else {
+        rec.status = "running";
+      }
+    } else {
+      rec.limitations.push("resume:LIMITATION_signal_failed");
+    }
+    this.save(workId, all);
+    return rec;
+  }
+
+  /**
+   * Cancel owned session: escalate SIGTERM→SIGKILL with fence; persist
+   * cancelled only after the process is confirmed dead (or already gone).
+   */
+  cancel(
+    workId: string,
+    sessionId: string,
+    opts?: { grace_ms?: number },
+  ): ProcessSessionRecord {
+    const all = this.load(workId);
+    const rec = all.find((s) => s.session_id === sessionId);
+    if (!rec) throw new Error(`SESSION_NOT_FOUND: ${sessionId}`);
+    if (rec.status === "cancelled" || rec.status === "exited") {
+      rec.limitations.push("cancel:idempotent_already_terminal");
+      this.save(workId, all);
+      return rec;
+    }
+    if (
+      (rec.status === "running" || rec.status === "paused") &&
+      rec.pid != null &&
+      rec.starttime
+    ) {
       const identity: SupervisedProcessIdentity = {
         pid: rec.pid,
         pgid: rec.pgid ?? rec.pid,
         starttime: rec.starttime,
         cmdline: rec.command.join(" "),
       };
-      const result = cancelProcessTree(identity, "SIGTERM");
+      const result = cancelProcessTreeEscalatingSync(identity, {
+        grace_ms: opts?.grace_ms ?? 1_500,
+      });
       rec.limitations.push(`cancel:${result.reason}`);
-      if (result.signalled) {
-        // Escalate if still same process after short wait is left to supervisor loop.
-        setTimeout(() => {
-          if (sameProcess(identity)) {
-            cancelProcessTree(identity, "SIGKILL");
-          }
-        }, 2000).unref?.();
+      if (result.dead) {
+        rec.status = "cancelled";
+        rec.ended_at = new Date().toISOString();
+      } else {
+        rec.limitations.push(
+          "cancel:LIMITATION_not_claiming_cancelled_process_still_alive",
+        );
       }
-    } else if (rec.status === "running" && rec.pid != null) {
-      // Legacy records without starttime — SIGTERM pid only, document limitation.
-      try {
-        process.kill(rec.pid, "SIGTERM");
-        rec.limitations.push("cancel:legacy_pid_only_no_starttime");
-      } catch {
-        /* already gone */
-      }
+    } else if (
+      (rec.status === "running" || rec.status === "paused") &&
+      rec.pid != null
+    ) {
+      // Legacy records without starttime — refuse bare kill as verified cancel.
+      rec.limitations.push(
+        "cancel:LIMITATION_refused_no_starttime_fence_not_claiming_cancelled",
+      );
+    } else {
+      rec.limitations.push(`cancel:refused_status_${rec.status}`);
     }
-    rec.status = "cancelled";
-    rec.ended_at = new Date().toISOString();
     this.save(workId, all);
     return rec;
   }
@@ -116,7 +263,12 @@ export class ProcessSessionStore {
     const all = this.load(workId);
     let changed = false;
     for (const rec of all) {
-      if (rec.status !== "running" || rec.pid == null) continue;
+      if (
+        (rec.status !== "running" && rec.status !== "paused") ||
+        rec.pid == null
+      ) {
+        continue;
+      }
       if (!rec.starttime) {
         if (!existsSync(`/proc/${rec.pid}`)) {
           rec.status = "exited";
@@ -131,10 +283,25 @@ export class ProcessSessionStore {
         starttime: rec.starttime,
         cmdline: "",
       };
-      if (!sameProcess(identity)) {
-        rec.status = existsSync(`/proc/${rec.pid}`) ? "orphaned" : "exited";
+      if (!isProcessLive(identity)) {
+        rec.status = "exited";
         rec.ended_at = new Date().toISOString();
-        rec.limitations.push("reconcile:pid_gone_or_reused");
+        rec.limitations.push(
+          sameProcess(identity)
+            ? "reconcile:zombie_or_unreaped"
+            : existsSync(`/proc/${rec.pid}`)
+              ? "reconcile:pid_reused"
+              : "reconcile:pid_gone",
+        );
+        changed = true;
+      } else if (rec.status === "paused" && !isProcessStopped(identity)) {
+        // Persist honest state if OS resumed out-of-band.
+        rec.status = "running";
+        rec.limitations.push("reconcile:paused_but_not_stopped");
+        changed = true;
+      } else if (rec.status === "running" && isProcessStopped(identity)) {
+        rec.status = "paused";
+        rec.limitations.push("reconcile:running_but_stopped");
         changed = true;
       }
     }

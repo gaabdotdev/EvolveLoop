@@ -1,8 +1,8 @@
 # V4.3 — Regressão (§6)
 
-**Data:** 2026-11-22  
-**Spec:** `V4-Tests-and-Benchmarks.md` §6 — Testes de regressão  
-**Harness:** `v43-p0-regression-handles.test.ts`, `v43-p1-consolidation.test.ts`, `v43-p2-telemetry-regression.test.ts`, suites v41/v42  
+**Data:** 2026-11-22
+**Spec:** `V4-Tests-and-Benchmarks.md` §6 — Testes de regressão
+**Harness:** `v43-p0-regression-handles.test.ts`, `v43-p1-consolidation.test.ts`, `v43-p2-telemetry-regression.test.ts`, suites v41/v42
 **Regra:** não confundir unit com prova de jornada humana.
 
 ---
@@ -33,3 +33,12 @@ npx vitest run --pool=forks --poolOptions.forks.singleFork \
 ---
 
 *MSO TASK V43-M4 — P2-1 / P2-4 / P2-5*
+
+---
+
+## APPEND — REMED-M6 (2026-11-22T21:04:19Z)
+
+**Suite completa** (não só v4*): `npm test` → 252 ficheiros · 1408 pass · exit **0** (`/tmp/remed-m6-full-test.txt`).
+**Copy drift:** `Session reconhecida` (produto) — assert `v0-cli-grill` alinhado (ex. Sessão→Session).
+**Baseline V22 P0:** golden re-pinado (`p0-baseline-report.json`, `tree_sha=53ad059…`) após drift tokens pré-existente vs HEAD.
+**Remed pack:** 57 pass. Gate: [`../remediation/gate-report.md`](../remediation/gate-report.md).

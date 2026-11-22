@@ -11,11 +11,36 @@ import { formatCredentialsCanonicalLines } from "./credentials-paths.js";
 export const EVOLVE_CLI_PRODUCT_VERSION = "2.0.0";
 export const EVOLVE_CLI_LEGACY_LABEL = "0.1.0-v0-cli";
 
-/** Short everyday journey help (default `evolve --help` / `evolve help`). */
+/**
+ * V5-M07 — Simple/Advanced help layer labels.
+ * Simple = journey (default); Advanced = full progressive/legacy map.
+ */
+export const HELP_LAYER_SIMPLE = "simple" as const;
+export const HELP_LAYER_ADVANCED = "advanced" as const;
+
+export function describeHelpLayers(): {
+  simple: { alias: string; cli: string; description: string };
+  advanced: { alias: string; cli: string; description: string };
+} {
+  return {
+    simple: {
+      alias: HELP_LAYER_SIMPLE,
+      cli: "evolve help",
+      description: "Jornada cotidiana (Simple mode)",
+    },
+    advanced: {
+      alias: HELP_LAYER_ADVANCED,
+      cli: "evolve help advanced",
+      description: "Mapa L2/legado completo (Advanced mode)",
+    },
+  };
+}
+
+/** Short everyday journey help (default `evolve --help` / `evolve help`). = Simple layer */
 export function formatJourneyHelp(): string {
   const credLines = formatCredentialsCanonicalLines();
   return [
-    "evolve — jornada cotidiana (V4.3)",
+    "evolve — jornada cotidiana (Simple / V4.3+V5)",
     "",
     "Workspace: o cwd atual (.evolveloop/) — estado da jornada.",
     "           (≠ `evolve workspace` = integration/worktree; alias: `evolve integration`)",
@@ -32,10 +57,12 @@ export function formatJourneyHelp(): string {
     "           evolve pause | evolve resume",
     "Histórico: /history  ·  evolve history list|show <id>",
     "Prefs:     /config  ·  evolve config prefs|set|validate",
+    "           evolve mode simple|advanced  (V5-M07)",
     "Trocar WS: evolve use list|active|<path>  ·  evolve --workspace <path>",
     "Entrega:   /delivery  ·  evolve delivery show|validate",
     "           (PASS só com evidência; adapter ok ≠ PASS)",
     "Agents:    /agents  ·  evolve agents [inspect|attach|logs] <id>",
+    "Work:      evolve work list|status|show|attempts  (V5 PWR)",
     "",
     "TUI:       Ink (`evolve`) = jornada default.",
     "           `evolve tui run|status` = ops Core (board/coordinator) — não jornada.",
@@ -47,16 +74,20 @@ export function formatJourneyHelp(): string {
     "  evolve config set agent-handles off",
     "  evolve history list && evolve history show <id>",
     "  evolve use ~/proj && evolve --workspace ~/proj",
+    "  evolve work list && evolve work status",
     "",
     "Slash TUI: /plan /approvals /agents /pause /cancel /delivery",
     "           /history /status /diff /config /clear",
     "",
     "Handles:   opcionais (default OFF). evolve config set agent-handles on|off",
     "           Session de processo sob Handles: evolve agents attach|inspect",
+    "Camadas:   Simple = este help · Advanced = evolve help advanced",
+    "           Preferência: evolve mode simple|advanced",
     "Avançado:  evolve help advanced",
     "Guias:     docs/v4/V4.1/user-guide-everyday.md",
     "           docs/v4/V4.3/quickstart.md",
     "           docs/v4/V4.3/compat-matrix.md",
+    "           docs/v5/M07/README.md",
   ].join("\n");
 }
 
@@ -90,8 +121,9 @@ export function formatAdvancedHelp(): string {
     pause: ["journey Task pause → StateDb (mesmo eixo TUI; ≠ workflow)"],
     resume: ["limpa journey pause + session detect (idempotente)"],
     delivery: [
-      "show — re-deriva Delivery de evidências",
-      "validate — anexa verification real (PASS só exit 0)",
+      "show — re-deriva Delivery de evidências (absent → UNVERIFIED)",
+      "validate --run — execução local EvolveLoop (PASS só local_execution exit 0)",
+      "validate --exit-code — atestado externo → ATTESTED (nunca PASS)",
     ],
     progress: ["trivial zero-token progress from TaskGraph/SQLite"],
     circuit: [
@@ -102,7 +134,14 @@ export function formatAdvancedHelp(): string {
     ],
     grill: ["apply", "validate"],
     goal: ["create", "show", "evaluate", "criterion"],
-    work: ["init", "status"],
+    work: [
+      "list|status|show|attempts — Persistent Work Runtime (V5-M07)",
+      "init — legado (--data-dir)",
+    ],
+    mode: [
+      "simple|advanced|show — Experience preference (V5-M07)",
+      "Simple = journey help; Advanced = this map",
+    ],
     hierarchy: ["spawn", "approve", "aux"],
     task: ["add", "approve-plan", "show"],
     agents: [
@@ -222,7 +261,7 @@ export function formatAdvancedHelp(): string {
         "Isolamento: state.db por path — Tasks não vazam entre Workspaces.",
         "Trivial ops (status|pause|resume|progress|help|tsc|test) bypass Grill-Me with zero tokens.",
         "Install: bash scripts/install-evolve-cli.sh (symlink bin/evolve onto PATH).",
-        "Node suportado: >=20 (package engines); ver docs/v4/V4.3/compat-matrix.md.",
+        "Node suportado: >=22.5.0 (package engines; node:sqlite); ver docs/v4/V4.3/compat-matrix.md.",
         "Identity map: docs/v4/V4.3/identity-copy-map.md",
       ],
       journey_examples: [

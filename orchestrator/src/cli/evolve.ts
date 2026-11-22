@@ -104,6 +104,8 @@ import { formatAdvancedHelp, formatJourneyHelp } from "./help-usage.js";
 import { handleConfigSurface } from "./config-surface.js";
 import { handleHistorySurface } from "./tui/task-history.js";
 import { handleDeliverySurface } from "./delivery-surface.js";
+import { handleWorkSurface } from "./work-surface.js";
+import { handleModeSurface } from "./mode-surface.js";
 import {
   getJourneyPause,
   resumeJourneyTask,
@@ -260,6 +262,17 @@ async function main() {
         return;
       }
     }
+    // V5-M07 — experience mode simple|advanced
+    if (args.group === "mode") {
+      const surface = handleModeSurface(args, {
+        printJson: print,
+        argv: process.argv,
+      });
+      if (surface.handled) {
+        if (surface.exitCode != null) process.exitCode = surface.exitCode;
+        return;
+      }
+    }
     // V4.2 P0-4 — task/contract history
     if (args.group === "history") {
       const surface = handleHistorySurface(args, {
@@ -298,9 +311,17 @@ async function main() {
       if (args["freellmapi-key"]) {
         credentials.push({ name: "FREELLMAPI_API_KEY", value: args["freellmapi-key"] });
       }
+      const handlesArg = (args["agent-handles"] ?? args.handles ?? "").toLowerCase();
+      const agent_handles_enabled =
+        handlesArg === "on" || handlesArg === "true"
+          ? true
+          : handlesArg === "off" || handlesArg === "false"
+            ? false
+            : undefined;
       const report = await runFirstRunSetup({
         workspace,
         non_interactive: true,
+        agent_handles_enabled,
         credentials: credentials.length ? credentials : undefined,
         limits: {
           max_parallel_tasks: args["max-parallel"]
@@ -728,6 +749,15 @@ async function main() {
     }
 
     if (args.group === "work") {
+      // V5-M02 — Persistent Work Runtime show|attempts (before legacy init|status)
+      const workSurface = handleWorkSurface(args, {
+        printJson: print,
+        argv: process.argv,
+      });
+      if (workSurface.handled) {
+        if (workSurface.exitCode != null) process.exitCode = workSurface.exitCode;
+        return;
+      }
       const paths = requireDataDir(args);
       const coordinator = new CoordinatorService(paths);
       if (args.command === "init") {

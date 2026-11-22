@@ -1,9 +1,9 @@
 # V4.2 — Relatório de gate (V42-M4)
 
-**Versão:** V4.2 Operational Excellence  
-**Data (UTC):** 2026-11-22T18:07:50Z  
-**Formato:** `V4-Tests-and-Benchmarks.md` §9  
-**Gate obrigatório (§7):** Configuração, workspace, histórico, observabilidade e compatibilidade validados  
+**Versão:** V4.2 Operational Excellence
+**Data (UTC):** 2026-11-22T18:07:50Z
+**Formato:** `V4-Tests-and-Benchmarks.md` §9
+**Gate obrigatório (§7):** Configuração, workspace, histórico, observabilidade e compatibilidade validados
 **Regra de conclusão (Operational §7):** operação recorrente consistente, mensurável, sem depender de conhecimento interno do repo.
 
 ---
@@ -84,12 +84,12 @@ Detalhe: `baseline/comparative-report.md`.
 
 ## 6. Regressões conhecidas / limitações
 
-1. Usabilidade humana N=0.  
-2. Ink TTY / update-durante-execução / onboarding timed — LIMITATION.  
-3. Migrator schema antigo — LIMITATION.  
-4. Non-ASCII / symlink / Node multi-versão / Zellij — LIMITATION.  
-5. P2-3: sem otimização adicional de render (LIMITATION explícita).  
-6. Credenciais: duas casas documentadas, **não** unificadas em um ficheiro.  
+1. Usabilidade humana N=0.
+2. Ink TTY / update-durante-execução / onboarding timed — LIMITATION.
+3. Migrator schema antigo — LIMITATION.
+4. Non-ASCII / symlink / Node multi-versão / Zellij — LIMITATION.
+5. P2-3: sem otimização adicional de render (LIMITATION explícita).
+6. Credenciais: duas casas documentadas, **não** unificadas em um ficheiro.
 7. Wiki pack EvolveLoop ausente.
 
 ---
@@ -98,15 +98,23 @@ Detalhe: `baseline/comparative-report.md`.
 
 Cada **APROVADO** acima aponta path; amostra:
 
-- Prefs → `orchestrator/src/cli/config-surface.ts` + `tests/unit/v42-p0-operational.test.ts`  
-- Validate → `orchestrator/src/config/profile.ts` + migration-notes  
-- Workspace → `workspace-product-surface.ts` + `v42-p1`  
-- History → `task-history.ts` + functional #7–8  
-- Obs → footer-compact / delivery-card-view + P0-5  
-- Compat → `compat-matrix.md`  
-- Perf → `baseline/comparative-report.md`  
+- Prefs → `orchestrator/src/cli/config-surface.ts` + `tests/unit/v42-p0-operational.test.ts`
+- Validate → `orchestrator/src/config/profile.ts` + migration-notes
+- Workspace → `workspace-product-surface.ts` + `v42-p1`
+- History → `task-history.ts` + functional #7–8
+- Obs → footer-compact / delivery-card-view + P0-5
+- Compat → `compat-matrix.md`
+- Perf → `baseline/comparative-report.md`
 - Vitest → `automated-test-results.md` (70/70)
 
 ---
 
 *Fim — gate-report.md · decisão: liberar com ressalvas*
+
+
+---
+
+## APPEND — REMED-M6 (2026-11-22T21:04:19Z)
+
+Revalidação pós-remediação: prefs/history/workspace isolation (V4.2) cobertos em `remed-m4`/`remed-m6`; `npm test` completo exit 0.
+Decisão REMED: **liberar com ressalvas** — `docs/v4/V4.3/remediation/gate-report.md`.

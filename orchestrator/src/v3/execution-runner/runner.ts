@@ -310,7 +310,18 @@ export class ExecutionRunner implements ExecutionRunnerPort {
     });
 
     const identity = child.pid != null ? identifyProcess(child.pid) : undefined;
-    if (identity) this.active.set(identity.pid, identity);
+    if (identity) {
+      this.active.set(identity.pid, identity);
+      try {
+        req.onSpawned?.({
+          pid: identity.pid,
+          pgid: identity.pgid,
+          starttime: identity.starttime,
+        });
+      } catch {
+        /* registration must not break the run */
+      }
+    }
 
     let stdout = "";
     let stderr = "";

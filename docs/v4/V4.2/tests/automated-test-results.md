@@ -1,6 +1,6 @@
 # V4.2 — Automated test results
 
-**Data (UTC):** 2026-11-22T18:07:34Z (vitest) / 18:07:50Z (build+bench)  
+**Data (UTC):** 2026-11-22T18:07:34Z (vitest) / 18:07:50Z (build+bench)
 **Commands:**
 
 ```bash
@@ -53,3 +53,15 @@ Build: `npm run build` → **exit 0**.
 | `node dist/cli/evolve.js config prefs` | 0 | Handles OFF |
 | `node dist/cli/evolve.js history list` | 0 | vazio + limitações |
 | `node dist/cli/evolve.js use list` | 0 | ativo + recentes |
+
+
+---
+
+## APPEND — REMED-M6 (2026-11-22T21:04:19Z)
+
+```bash
+cd orchestrator && npm test  # FULL_TEST_EXIT=0 · 252 files · 1408 passed
+npm run test:bench          # BENCH_EXIT=0 · 18 passed
+```
+
+HEAD `53ad059…` · Node `v22.15.0` · ver `docs/v4/V4.3/remediation/gate-report.md`.

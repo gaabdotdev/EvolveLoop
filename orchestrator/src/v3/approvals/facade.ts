@@ -1,9 +1,10 @@
 /**
  * Approval UX facade over ApprovalStore (ADR Q4) — does not migrate consent/Goal gates.
+ * V5-M05: work_id + attempt_id surfaced on create/card when present.
  */
 
 import { ApprovalStore } from "./store.js";
-import type { ApprovalRequest } from "./types.js";
+import type { ApprovalCreateInput, ApprovalRequest } from "./types.js";
 
 export interface ApprovalCardView {
   approval_id: string;
@@ -16,6 +17,8 @@ export interface ApprovalCardView {
   risk: ApprovalRequest["risk"];
   state: ApprovalRequest["state"];
   work_id: string;
+  /** V5-M05 — Attempt binding when known. */
+  attempt_id?: string;
   resource: string;
   operation: string;
   expires_at: string;
@@ -32,6 +35,7 @@ export function toApprovalCardView(req: ApprovalRequest): ApprovalCardView {
     risk: req.risk,
     state: req.state,
     work_id: req.work_id,
+    attempt_id: req.attempt_id,
     resource: req.resource,
     operation: String(req.operation),
     expires_at: req.expires_at,
@@ -56,24 +60,50 @@ function riskImpactFallback(
 }
 
 export function formatApprovalCardLines(card: ApprovalCardView): string[] {
-  return [
+  const lines = [
     `Approval ${card.approval_id} [${card.state}]`,
     `  O quê:    ${card.what}`,
     `  Porquê:   ${card.why}`,
     `  Impacto:  ${card.impact}`,
     `  Risco:    ${card.risk}`,
     `  work_id:  ${card.work_id}`,
+  ];
+  if (card.attempt_id) {
+    lines.push(`  attempt:  ${card.attempt_id}`);
+  }
+  lines.push(
     `  Expira:   ${card.expires_at}`,
     "  Ações: approve | reject  (Ctrl+D = detach ≠ kill Agent)",
-  ];
+  );
+  return lines;
 }
 
 export class ApprovalFacade {
   constructor(private readonly store: ApprovalStore) {}
 
-  listPending(workId?: string): ApprovalCardView[] {
+  /**
+   * Create approval with work_id (required) and optional attempt_id (V5-M05 bridge).
+   */
+  create(input: ApprovalCreateInput): ApprovalCardView {
+    if (!input.work_id?.trim()) {
+      throw new Error("APPROVAL_FACADE:work_id_required");
+    }
+    return toApprovalCardView(
+      this.store.create({
+        ...input,
+        work_id: input.work_id.trim(),
+        attempt_id: input.attempt_id?.trim() || undefined,
+      }),
+    );
+  }
+
+  listPending(workId?: string, attemptId?: string): ApprovalCardView[] {
     return this.store
-      .list({ work_id: workId, state: "PENDING" })
+      .list({
+        work_id: workId,
+        attempt_id: attemptId,
+        state: "PENDING",
+      })
       .map(toApprovalCardView);
   }
 

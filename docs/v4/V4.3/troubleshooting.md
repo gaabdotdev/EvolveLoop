@@ -16,8 +16,11 @@
 
 | Sintoma | Causa | Acção |
 |---|---|---|
-| UNVERIFIED após adapter ok | Adapter ok ≠ Delivery PASS | `evolve delivery validate` |
+| UNVERIFIED após adapter ok | Adapter ok ≠ Delivery PASS | `evolve delivery validate --run "…"` |
+| ATTESTED com exit 0 | `--exit-code` = atestado externo, não execução local | Usar `--run` para PASS verificado |
 | PASS sem verificação | Não deve acontecer | Reportar; ver `delivery-status.ts` |
+| Evidência ignorada | STALE / outro work_id / outra goal version / outro workspace | Re-validar no âmbito correcto |
+| provenance absent/invalid/stale | Sem prova aceite pelo contrato | `evolve delivery show` + re-`validate --run` |
 
 ## TUI / REPL
 
@@ -38,7 +41,7 @@
 | Sintoma | Causa | Acção |
 |---|---|---|
 | Profile rejeitado | YAML/chave inválida | `evolve config validate` |
-| Node &lt; 20 | Fora de engines | Instalar Node ≥ 20 |
+| Node &lt; 22.5 | Fora de engines / sem `node:sqlite` | Instalar Node ≥ 22.5.0 |
 
 ---
 

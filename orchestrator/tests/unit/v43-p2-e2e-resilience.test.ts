@@ -258,7 +258,7 @@ describe("P2-1 E2E §6 (cheap / non-TTY)", () => {
   it("delivery pass / fail / unverified without inventing evidence", () => {
     attachDeliveryVerification(
       ws,
-      { command: "npm test", exit_code: 0 },
+      { command: "npm test", exit_code: 0, provenance: "local_execution" },
       { work_id: "w-pass" },
     );
     expect(
@@ -268,7 +268,7 @@ describe("P2-1 E2E §6 (cheap / non-TTY)", () => {
 
     attachDeliveryVerification(
       ws,
-      { command: "npm test", exit_code: 2 },
+      { command: "npm test", exit_code: 2, provenance: "local_execution" },
       { work_id: "w-fail" },
     );
     expect(

@@ -211,12 +211,15 @@ describe("M15 — card de entrega final", () => {
       verification: {
         command: "npx vitest run tests/unit/m13-m14-m15-tui.test.ts",
         exit_code: 0,
+        provenance: "local_execution",
       },
       tokens_mso: 1500,
       tokens_workers: 420,
     });
 
-    expect(view.title).toBe("Delivery · Entrega aceita");
+    expect(view.title).toBe(
+      "Delivery · Entrega aceita (execução local verificada)",
+    );
     expect(view.status).toBe("PASS");
     expect(view.diff_stat).toContain("file.ts");
     expect(view.diff_stat).toContain("1 file changed");

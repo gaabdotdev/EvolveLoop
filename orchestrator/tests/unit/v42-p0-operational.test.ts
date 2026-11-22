@@ -343,7 +343,7 @@ describe("P0-5 honest metrics compact + Delivery", () => {
     const card = buildDeliveryCardView({
       status: "PASS",
       diff_stat: "a.ts | 1 +",
-      verification: { command: "npm test", exit_code: 0 },
+      verification: { command: "npm test", exit_code: 0, provenance: "local_execution" },
       tok_mso: { value: 42, provenance: "reported" },
       tok_workers: { provenance: "UNAVAILABLE" },
     });

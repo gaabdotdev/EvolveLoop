@@ -26,10 +26,20 @@ export {
 } from "./inspect-view.js";
 export {
   attachAgentHandle,
+  bindExactSessionToTmux,
   closeAgentViewer,
+  defaultInteractiveAttach,
+  ensureTmuxSession,
+  killTmuxSession,
+  probeTmuxSession,
+  resolveExactProcessSessions,
+  safeMuxSessionName,
+  tmuxSessionExists,
+  ZELLIJ_ATTACH_LIMITATION,
   type AttachResult,
   type AttachBackend,
   type AttachDeps,
+  type AttachOpts,
   type CloseViewerResult,
 } from "./attach.js";
 export { formatAgentLogsHuman, type AgentLogsHuman } from "./logs.js";

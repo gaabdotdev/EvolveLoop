@@ -41,17 +41,90 @@ export function readProcCmdline(pid: number): string {
 export function identifyProcess(pid: number): SupervisedProcessIdentity | undefined {
   const starttime = readProcStarttime(pid);
   if (starttime == null) return undefined;
+  // Prefer real PGRP from /proc; detached leaders still have pgid === pid.
+  let pgid = pid;
+  try {
+    const raw = readFileSync(`/proc/${pid}/stat`, "utf-8");
+    const closeParen = raw.lastIndexOf(")");
+    if (closeParen >= 0) {
+      const rest = raw.slice(closeParen + 2).split(" ");
+      const pgrp = Number(rest[2]);
+      if (Number.isFinite(pgrp) && pgrp > 0) pgid = pgrp;
+    }
+  } catch {
+    /* keep pid fallback */
+  }
   return {
     pid,
-    pgid: pid, // when spawned detached, pgid === pid
+    pgid,
     starttime,
     cmdline: readProcCmdline(pid),
   };
 }
 
+/** Short sleep without async (cancel/pause confirmation paths). */
+export function sleepMs(ms: number): void {
+  if (ms <= 0) return;
+  try {
+    const buf = new SharedArrayBuffer(4);
+    Atomics.wait(new Int32Array(buf), 0, 0, ms);
+  } catch {
+    const end = Date.now() + ms;
+    while (Date.now() < end) {
+      /* spin fallback */
+    }
+  }
+}
+
 export function sameProcess(identity: SupervisedProcessIdentity): boolean {
   const current = readProcStarttime(identity.pid);
   return current != null && current === identity.starttime;
+}
+
+/**
+ * Live (runnable/stopped) process with matching starttime.
+ * Zombies (`Z`) still occupy the PID slot in /proc but are not live — treat as dead
+ * so cancel confirmation does not hang on unreaped children.
+ */
+export function isProcessLive(identity: SupervisedProcessIdentity): boolean {
+  if (!sameProcess(identity)) return false;
+  const state = readProcState(identity.pid);
+  return state != null && state !== "Z";
+}
+
+/**
+ * Read single-char process state from /proc/<pid>/stat (R/S/D/T/Z/…).
+ * `T` = stopped (SIGSTOP/SIGTSTP). Returns undefined when pid is gone.
+ */
+export function readProcState(pid: number): string | undefined {
+  const statPath = `/proc/${pid}/stat`;
+  if (!existsSync(statPath)) return undefined;
+  try {
+    const raw = readFileSync(statPath, "utf-8");
+    const closeParen = raw.lastIndexOf(")");
+    if (closeParen < 0) return undefined;
+    const rest = raw.slice(closeParen + 2).split(" ");
+    return rest[0];
+  } catch {
+    return undefined;
+  }
+}
+
+/** True when the same process identity is in state T (stopped). */
+export function isProcessStopped(identity: SupervisedProcessIdentity): boolean {
+  if (!isProcessLive(identity)) return false;
+  return readProcState(identity.pid) === "T";
+}
+
+/**
+ * Signal a verified process tree (PGID preferred). Refuses PID reuse.
+ * Use for SIGSTOP / SIGCONT / SIGTERM / SIGKILL — never without identity fencing.
+ */
+export function signalProcessTree(
+  identity: SupervisedProcessIdentity,
+  signal: NodeJS.Signals,
+): { signalled: boolean; reason: string } {
+  return cancelProcessTree(identity, signal);
 }
 
 export function cancelProcessTree(identity: SupervisedProcessIdentity, signal: NodeJS.Signals = "SIGTERM"): {
@@ -77,34 +150,83 @@ export function cancelProcessTree(identity: SupervisedProcessIdentity, signal: N
   }
 }
 
+export interface CancelEscalateResult {
+  signalled: boolean;
+  reason: string;
+  escalated: boolean;
+  /** True when identity no longer matches a live process (gone or reused). */
+  dead: boolean;
+}
+
+/**
+ * Sync SIGTERM → grace → SIGKILL with identity fence. Prefer this when the
+ * caller must confirm death before persisting cancelled / updating TUI.
+ */
+export function cancelProcessTreeEscalatingSync(
+  identity: SupervisedProcessIdentity,
+  opts?: { grace_ms?: number },
+): CancelEscalateResult {
+  const grace_ms = opts?.grace_ms ?? 2_000;
+  if (!isProcessLive(identity)) {
+    return {
+      signalled: false,
+      reason: sameProcess(identity) ? "already_zombie" : "pid_reuse_or_gone",
+      escalated: false,
+      dead: true,
+    };
+  }
+  // Stopped tasks may defer SIGTERM until continued — nudge then terminate.
+  if (isProcessStopped(identity)) {
+    cancelProcessTree(identity, "SIGCONT");
+    sleepMs(30);
+  }
+  const first = cancelProcessTree(identity, "SIGTERM");
+  if (!first.signalled && first.reason === "pid_reuse_or_gone") {
+    return { ...first, escalated: false, dead: true };
+  }
+  const deadline = Date.now() + grace_ms;
+  while (Date.now() < deadline) {
+    if (!isProcessLive(identity)) {
+      return {
+        signalled: first.signalled,
+        reason: "terminated_after_SIGTERM",
+        escalated: false,
+        dead: true,
+      };
+    }
+    sleepMs(50);
+  }
+  if (!isProcessLive(identity)) {
+    return {
+      signalled: first.signalled,
+      reason: "terminated_after_SIGTERM",
+      escalated: false,
+      dead: true,
+    };
+  }
+  const second = cancelProcessTree(identity, "SIGKILL");
+  sleepMs(80);
+  const dead = !isProcessLive(identity);
+  return {
+    signalled: second.signalled || first.signalled,
+    reason: dead
+      ? second.signalled
+        ? "escalated_SIGKILL"
+        : "terminated_after_SIGTERM"
+      : "LIMITATION_still_alive_after_SIGKILL",
+    escalated: true,
+    dead,
+  };
+}
+
 /**
  * V0-SEC-04 — full-tree kill with SIGTERM → grace → SIGKILL escalation.
  */
 export async function cancelProcessTreeEscalating(
   identity: SupervisedProcessIdentity,
   opts?: { grace_ms?: number },
-): Promise<{ signalled: boolean; reason: string; escalated: boolean }> {
-  const grace_ms = opts?.grace_ms ?? 2_000;
-  const first = cancelProcessTree(identity, "SIGTERM");
-  if (!first.signalled && first.reason === "pid_reuse_or_gone") {
-    return { ...first, escalated: false };
-  }
-  const deadline = Date.now() + grace_ms;
-  while (Date.now() < deadline) {
-    if (!sameProcess(identity)) {
-      return { signalled: first.signalled, reason: "terminated_after_SIGTERM", escalated: false };
-    }
-    await new Promise((r) => setTimeout(r, 50));
-  }
-  if (!sameProcess(identity)) {
-    return { signalled: first.signalled, reason: "terminated_after_SIGTERM", escalated: false };
-  }
-  const second = cancelProcessTree(identity, "SIGKILL");
-  return {
-    signalled: second.signalled || first.signalled,
-    reason: second.signalled ? "escalated_SIGKILL" : first.reason,
-    escalated: true,
-  };
+): Promise<CancelEscalateResult> {
+  return cancelProcessTreeEscalatingSync(identity, opts);
 }
 
 export interface SpawnSupervisedOptions {

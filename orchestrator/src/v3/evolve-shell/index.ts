@@ -58,12 +58,17 @@ export {
   writeCredentialsSecure,
   buildReadinessReport,
   defaultReadinessPrefs,
+  prefsForHandles,
+  formatAgentHandlesChoicePrompt,
+  detectMuxBackend,
+  HANDLES_ON_NO_BACKEND_WARNING,
   DEFAULT_LIMITS,
   type FirstRunSetupInput,
   type ReadinessReport,
   type ReadinessPrefs,
   type ProbeResult,
   type ConcurrencyLimits,
+  type MuxBackendPresence,
 } from "./first-run-setup.js";
 
 export {

@@ -1,8 +1,8 @@
 # V4.2 — Matriz de compatibilidade (smoke)
 
-**Status:** P1-6 + P2-2 actualização M4  
-**Data:** 2026-11-22  
-**Regra:** não inventar passes; marcar N/A / LIMITATION quando não exercitado.  
+**Status:** P1-6 + P2-2 actualização M4
+**Data:** 2026-11-22
+**Regra:** não inventar passes; marcar N/A / LIMITATION quando não exercitado.
 **Relacionado:** `docs/v4/V4.1/tests/backend-matrix.md`; `layout-narrow.ts`; `v42-p1-*.ts`; `v42-p2-perf-a11y.test.ts`; `navigation-a11y.md`
 
 ---
@@ -81,3 +81,11 @@
 ---
 
 *MSO TASK V42-M3 + M4 — compat-matrix.md*
+
+
+---
+
+## APPEND — REMED-M6 (2026-11-22T21:04:19Z)
+
+Compat reconfirmada em V4.3/remed-m6: Node ≥22.5 (`v22.15.0`), tmux 3.5a, paths com espaço, narrow, NO_COLOR, Handles OFF. Zellij/non-ASCII LIMITATION.
+Detalhe: `docs/v4/V4.3/compat-matrix.md` + `docs/v4/V4.3/remediation/gate-report.md`.

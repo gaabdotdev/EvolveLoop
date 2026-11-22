@@ -108,6 +108,7 @@ function processOutcomeLine(status: DeliveryStatus): string {
 
 function objectiveValidatedLine(status: DeliveryStatus): string {
   if (status === "PASS") return "Objetivo: validado";
+  if (status === "ATTESTED") return "Objetivo: atestado externo (não verificado localmente)";
   return "Objetivo: não validado";
 }
 

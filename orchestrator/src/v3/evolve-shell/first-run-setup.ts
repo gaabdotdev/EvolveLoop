@@ -7,8 +7,19 @@
 import { chmodSync, existsSync, mkdirSync, writeFileSync, readFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { spawnSync } from "node:child_process";
+import {
+  HANDLES_CONSEQUENCE_OFF,
+  HANDLES_CONSEQUENCE_ON,
+  writeWorkspaceAgentHandles,
+} from "../agent-handles/preference.js";
 
 export type ProbeStatus = "ok" | "warn" | "missing" | "error";
+
+export type MuxBackendPresence = {
+  tmux: boolean;
+  zellij: boolean;
+  any: boolean;
+};
 
 export interface ProbeResult {
   id: string;
@@ -43,6 +54,26 @@ export interface FirstRunSetupInput {
   credentials_path?: string;
   /** Override limits config path (tests). */
   limits_path?: string;
+  /**
+   * Agent Handles preference for this workspace.
+   * - undefined + non_interactive → OFF (safe default)
+   * - undefined + interactive → ask via `ask_agent_handles` (or OFF if no asker)
+   * - skip / absence never defaults to ON
+   */
+  agent_handles_enabled?: boolean;
+  /**
+   * Injectable prompt for Handles ON/OFF (tests / TTY).
+   * Return true=ON, false=OFF, undefined=skip→OFF.
+   */
+  ask_agent_handles?: () =>
+    | boolean
+    | undefined
+    | Promise<boolean | undefined>;
+  /**
+   * Injectable mux detection (tests). Default: real `which tmux|zellij`.
+   * ON without backend → actionable warning; never claim fully functional.
+   */
+  detect_mux_backend?: () => MuxBackendPresence;
 }
 
 export interface ReadinessPrefs {
@@ -249,17 +280,54 @@ export function writeLimitsConfig(path: string, limits: ConcurrencyLimits): Conc
   return limits;
 }
 
-const HANDLES_OFF_CONSEQUENCE =
-  "OFF (default): sem janelas/sessões auxiliares; jornada TUI completa; attach soft-fail.";
+const PREFS_HINT =
+  "Alterar sem editar YAML: evolve config set agent-handles on|off · /config handles";
+
+/** Actionable copy when Handles ON but no mux backend on PATH. */
+export const HANDLES_ON_NO_BACKEND_WARNING =
+  "Agent Handles ON sem tmux/Zellij no PATH — attach usa fallback CLI (não é sessão auxiliar completa). Instale tmux (recomendado) ou: evolve config set agent-handles off";
 
 export function defaultReadinessPrefs(): ReadinessPrefs {
   return {
     agent_handles: {
       enabled: false,
-      consequence: HANDLES_OFF_CONSEQUENCE,
+      consequence: HANDLES_CONSEQUENCE_OFF,
     },
-    hint: "Alterar sem editar YAML: evolve config set agent-handles on|off · /config handles",
+    hint: PREFS_HINT,
   };
+}
+
+export function prefsForHandles(enabled: boolean): ReadinessPrefs {
+  return {
+    agent_handles: {
+      enabled,
+      consequence: enabled ? HANDLES_CONSEQUENCE_ON : HANDLES_CONSEQUENCE_OFF,
+    },
+    hint: PREFS_HINT,
+  };
+}
+
+/**
+ * Explicit ON/OFF choice text (consequences match config prefs / config set).
+ * Skip → OFF; never presents ON as default.
+ */
+export function formatAgentHandlesChoicePrompt(): string[] {
+  return [
+    "Agent Handles (opcional) — escolha explícita:",
+    `  [on]  ${HANDLES_CONSEQUENCE_ON}`,
+    `  [off] ${HANDLES_CONSEQUENCE_OFF}`,
+    "  [skip] → OFF (default seguro; sem sessões auxiliares)",
+    "Persistência: <workspace>/.evolveloop/config.yaml (não altera o profile global).",
+    PREFS_HINT,
+  ];
+}
+
+/** Detect tmux or zellij on PATH — used to warn when ON without backend. */
+export function detectMuxBackend(): MuxBackendPresence {
+  const tmux = spawnSync("which", ["tmux"], { encoding: "utf-8" }).status === 0;
+  const zellij =
+    spawnSync("which", ["zellij"], { encoding: "utf-8" }).status === 0;
+  return { tmux, zellij, any: tmux || zellij };
 }
 
 export function buildReadinessReport(input: {
@@ -273,6 +341,10 @@ export function buildReadinessReport(input: {
   const ready = !hardFail && input.probes.some((p) => p.id === "workspace" && p.status === "ok");
   const warnCount = input.probes.filter((p) => p.status === "warn" || p.status === "missing").length;
   const prefs = input.prefs ?? defaultReadinessPrefs();
+  const handlesLabel = prefs.agent_handles.enabled ? "ON" : "OFF";
+  const handlesSuffix = prefs.agent_handles.enabled
+    ? "Agent Handles ON."
+    : "Agent Handles OFF (default).";
   return {
     kind: "EvolveReadinessReport",
     workspace: resolve(input.workspace),
@@ -287,8 +359,8 @@ export function buildReadinessReport(input: {
     prefs,
     message_pt: ready
       ? warnCount > 0
-        ? `Pronto com avisos (${warnCount}). Credenciais nunca aparecem em logs. Agent Handles OFF.`
-        : "Pronto. Setup concluído. Agent Handles OFF (default)."
+        ? `Pronto com avisos (${warnCount}). Credenciais nunca aparecem em logs. Agent Handles ${handlesLabel}.`
+        : `Pronto. Setup concluído. ${handlesSuffix}`
       : "Não pronto — Node/workspace em falta.",
     limitations: [
       "Optional backends (Ollama/FreeLLMAPI) may be down without blocking setup",
@@ -296,7 +368,7 @@ export function buildReadinessReport(input: {
       SECRET_NAME_RE.source.includes("key")
         ? "Secrets matched by name heuristics are redacted in probe text"
         : "redaction active",
-      `Agent Handles ${prefs.agent_handles.enabled ? "ON" : "OFF"}: ${prefs.agent_handles.consequence}`,
+      `Agent Handles ${handlesLabel}: ${prefs.agent_handles.consequence}`,
       "Credenciais canónicas: setup → <workspace>/.evolveloop/credentials.env (0600); Provider TUI / FreeLLM → ~/.config/evolveloop/secrets.env (0600); precedência FreeLLM: env > secrets.env (ficheiros não unificados nesta fatia)",
     ],
   };
@@ -325,7 +397,37 @@ export async function runFirstRunSetup(input: FirstRunSetupInput): Promise<Readi
   const limPath = input.limits_path ?? limitsFilePath(workspace);
   writeLimitsConfig(limPath, limits);
 
-  return buildReadinessReport({
+  // M4 — Agent Handles preference (workspace override; skip/absence → OFF).
+  let handlesEnabled = false;
+  if (typeof input.agent_handles_enabled === "boolean") {
+    handlesEnabled = input.agent_handles_enabled;
+  } else if (!input.non_interactive && input.ask_agent_handles) {
+    const answer = await Promise.resolve(input.ask_agent_handles());
+    // true=ON; false|undefined(skip)|other → OFF (never ON by default)
+    handlesEnabled = answer === true;
+  } else {
+    handlesEnabled = false;
+  }
+
+  const mux = input.detect_mux_backend
+    ? input.detect_mux_backend()
+    : detectMuxBackend();
+  const extraLimitations: string[] = [];
+  if (handlesEnabled && !mux.any) {
+    extraLimitations.push(HANDLES_ON_NO_BACKEND_WARNING);
+  }
+
+  // Persist workspace preference (does not mutate global profile).
+  try {
+    writeWorkspaceAgentHandles(workspace, handlesEnabled);
+  } catch (err) {
+    extraLimitations.push(
+      `handles_persist_failed:${err instanceof Error ? err.message : String(err)}`,
+    );
+  }
+
+  const prefs = prefsForHandles(handlesEnabled);
+  const report = buildReadinessReport({
     workspace,
     probes,
     credentials: {
@@ -334,5 +436,10 @@ export async function runFirstRunSetup(input: FirstRunSetupInput): Promise<Readi
       present_names,
     },
     limits,
+    prefs,
   });
+  if (extraLimitations.length) {
+    report.limitations.push(...extraLimitations);
+  }
+  return report;
 }

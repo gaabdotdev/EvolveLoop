@@ -66,20 +66,30 @@ function findAgent(
   return undefined;
 }
 
+/**
+ * Exact agent_id ↔ ProcessSession (REMED-M3).
+ * No session_id / single-live approximation — wrong agent_id never matches.
+ */
 function processSessionsFor(
   paths: V3DataPaths,
   workId: string | undefined,
   agentId: string,
+  opts?: { reconcile?: boolean },
 ) {
   if (!workId) return [];
   if (!existsSync(paths.processSessionsDir)) return [];
   try {
-    return new ProcessSessionStore(paths.processSessionsDir)
-      .load(workId)
-      .filter((s) => s.agent_id === agentId || Boolean(s.session_id));
+    const store = new ProcessSessionStore(paths.processSessionsDir);
+    if (opts?.reconcile) store.reconcile(workId);
+    return store.load(workId).filter((s) => s.agent_id === agentId);
   } catch {
     return [];
   }
+}
+
+function processSessionStoreFor(paths: V3DataPaths): ProcessSessionStore | undefined {
+  if (!existsSync(paths.processSessionsDir)) return undefined;
+  return new ProcessSessionStore(paths.processSessionsDir);
 }
 
 export type AgentsSurfaceResult =
@@ -175,11 +185,16 @@ export function handleAgentsSurface(
       printText([`Agent não encontrado: ${agentId}`]);
       return { handled: true, exitCode: 1 };
     }
-    const sessions = processSessionsFor(paths, agent.work_id, agent.agent_id);
+    // Reconcile first so dead processes surface as exited before attach.
+    const sessions = processSessionsFor(paths, agent.work_id, agent.agent_id, {
+      reconcile: true,
+    });
+    const store = processSessionStoreFor(paths);
     const result = attachAgentHandle(agent, {
       processSessions: sessions,
       work_id: agent.work_id,
       deps: { workspace },
+      persistSession: store ? (rec) => store.upsert(rec) : undefined,
     });
     if (wantJson) {
       printJson({
@@ -187,6 +202,9 @@ export function handleAgentsSurface(
         backend: result.backend,
         killed_agent: result.killed_agent,
         session_cancelled: result.session_cancelled,
+        mux_session: result.mux_session,
+        process_session_id: result.process_session_id,
+        process_status: result.process_status,
         message_pt: result.message_pt,
       });
     } else {

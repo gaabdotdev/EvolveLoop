@@ -67,4 +67,20 @@ Handles permanecem **default OFF** — não forçar ON.
 
 ---
 
+## REMED-M3 revalidação (2026-11-22) — attach real
+
+| Contrato | Resultado | Evidência |
+|---|---|---|
+| agent_id ↔ ProcessSession exacta | **PASS** | `resolveExactProcessSessions`; sem match por `session_id`/`mux` alheio |
+| tmux real bind + probe | **PASS** | `ensureTmuxSession` / `probeTmuxSession` / `bindExactSessionToTmux` |
+| viewer close ≠ kill | **PASS** | processo + mux vivos após `closeViewer` |
+| detach/reconnect mesma mux | **PASS** | dois attaches → mesmo `mux_session` |
+| processo morto → exited | **PASS** | `reconcile` + attach `cli_fallback` “encerrada” |
+| REPLACED ≠ interactivo | **PASS** | fallback histórico explícito |
+| Handles OFF = zero janelas | **PASS** | sem novos `evolve*` mux |
+| Zellij | **LIMITATION** | `L-ZELLIJ` — não comprovado neste host (`which zellij` fail) |
+| Unit | **PASS** | `remed-m3-handles-attach.test.ts` + `v41-p1-handles-approvals.test.ts` (26) |
+
+---
+
 *Fim — agent-handles-matrix.md*

@@ -54,7 +54,7 @@ describe("P0-5 Delivery — never false PASS", () => {
       deriveDeliveryStatus({
         kick_started: true,
         mso_state: "VALIDATING",
-        verification: { command: "npm test", exit_code: 0 },
+        verification: { command: "npm test", exit_code: 0, provenance: "local_execution" },
       }),
     ).toBe("PASS");
   });
@@ -89,7 +89,7 @@ describe("P0-5 Delivery — never false PASS", () => {
     expect(
       deriveDeliveryStatus({
         kick_started: true,
-        verification: { command: "npm test", exit_code: 1 },
+        verification: { command: "npm test", exit_code: 1, provenance: "local_execution" },
       }),
     ).toBe("FAILED");
   });
@@ -112,11 +112,11 @@ describe("P0-5 Delivery — never false PASS", () => {
     const view = buildDeliveryCardView({
       status: "PASS",
       diff_stat: "a.ts | 1 +",
-      verification: { command: "npm test", exit_code: 0 },
+      verification: { command: "npm test", exit_code: 0, provenance: "local_execution" },
       tokens_mso: 10,
       tokens_workers: 20,
     });
-    expect(view.status_label).toBe("Entrega aceita");
+    expect(view.status_label).toMatch(/Entrega aceita/);
     expect(view.objective_validated_line).toBe("Objetivo: validado");
     expect(formatDeliveryTokens(10, 20)).toBe(
       "Tokens: Orchestrator 10 (reported) · Agents 20 (reported)",

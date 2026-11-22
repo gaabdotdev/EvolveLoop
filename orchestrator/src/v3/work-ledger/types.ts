@@ -14,6 +14,7 @@ export type LedgerEntryType =
   | "handoff_recorded"
   | "plan_approved"
   | "execution_recorded"
+  | "attempt_recorded"
   | "note";
 
 export interface WorkLedgerEntry {

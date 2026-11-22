@@ -228,9 +228,43 @@ CREATE TABLE IF NOT EXISTS evidence_records (
 
 CREATE INDEX IF NOT EXISTS idx_evidence_work
   ON evidence_records (work_id, updated_at DESC);
+
+CREATE TABLE IF NOT EXISTS attempts (
+  attempt_id TEXT PRIMARY KEY NOT NULL,
+  work_id TEXT NOT NULL,
+  task_id TEXT NOT NULL,
+  agent_id TEXT,
+  executor_id TEXT,
+  adapter_id TEXT,
+  process_session_id TEXT,
+  run_id TEXT,
+  execution_mode TEXT NOT NULL,
+  status TEXT NOT NULL,
+  idempotency_key TEXT,
+  payload_json TEXT NOT NULL,
+  created_at TEXT NOT NULL,
+  updated_at TEXT NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS idx_attempts_work
+  ON attempts (work_id, created_at ASC);
+
+CREATE UNIQUE INDEX IF NOT EXISTS idx_attempts_idempotency
+  ON attempts (work_id, idempotency_key)
+  WHERE idempotency_key IS NOT NULL;
 `;
 
-export const STATE_DB_SCHEMA_VERSION = "6";
+/**
+ * Schema v8 — V5-M02 Attempt binding: executor_id + adapter_id (additive).
+ * Fresh DBs get columns via CREATE; older v7 DBs via ALTER (see store migrateAttemptsV8).
+ */
+export const STATE_DB_SCHEMA_VERSION = "8";
+
+/** Columns added in schema v8 (V5-M02). Applied via ALTER when upgrading v7 DBs. */
+export const ATTEMPTS_V8_COLUMNS: ReadonlyArray<{ name: string; sqlType: string }> = [
+  { name: "executor_id", sqlType: "TEXT" },
+  { name: "adapter_id", sqlType: "TEXT" },
+];
 
 /** Columns added in schema v5 (V0-TOK-01). Applied via ALTER when upgrading older DBs. */
 export const TOKEN_LEDGER_V5_COLUMNS: ReadonlyArray<{ name: string; sqlType: string }> = [

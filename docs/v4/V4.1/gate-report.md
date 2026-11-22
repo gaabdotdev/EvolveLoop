@@ -1,9 +1,9 @@
 # V4.1 — Relatório de gate (V41-M4)
 
-**Versão:** V4.1 Experience  
-**Data (UTC):** 2026-11-22T17:34Z  
-**Formato:** `V4-Tests-and-Benchmarks.md` §9  
-**Gate obrigatório (§7):** Jornada principal concluível; Agent Handles opcionais e testados; nenhuma dependência de backend auxiliar  
+**Versão:** V4.1 Experience
+**Data (UTC):** 2026-11-22T17:34Z
+**Formato:** `V4-Tests-and-Benchmarks.md` §9
+**Gate obrigatório (§7):** Jornada principal concluível; Agent Handles opcionais e testados; nenhuma dependência de backend auxiliar
 **Regra de conclusão (Experience §10):** ciclo cotidiano pela CLI principal com compreensão/controle; Handles como extensão opcional.
 
 ---
@@ -79,10 +79,10 @@
 
 ## 6. Regressões conhecidas / limitações
 
-1. Usabilidade humana N=0.  
-2. Sem gravação TTY Ink completa / attach a sessão tmux viva.  
-3. P2-2 (unificar status/sessions), P2-4 (copy Orchestrator vs MSO), P2-5 métricas humanas — **fora** do “P2 essencial” desta tarefa (P2-1/3/6 + evidência).  
-4. Wiki pack EvolveLoop ainda ausente no vault.  
+1. Usabilidade humana N=0.
+2. Sem gravação TTY Ink completa / attach a sessão tmux viva.
+3. P2-2 (unificar status/sessions), P2-4 (copy Orchestrator vs MSO), P2-5 métricas humanas — **fora** do “P2 essencial” desta tarefa (P2-1/3/6 + evidência).
+4. Wiki pack EvolveLoop ainda ausente no vault.
 5. `evolve agents --help` comporta-se como list produto (cmd=help), não como texto de usage — smoke exit 0; usage dedicado via `agents` com flag usage no surface.
 
 ---
@@ -91,11 +91,19 @@
 
 Cada **APROVADO** acima aponta path; amostra:
 
-- Help jornada → `orchestrator/src/cli/help-usage.ts` + smoke exit 0  
-- Slash jornada → `slash-commands.ts` / `v41-p2-nav-docs.test.ts`  
-- Handles → `docs/v4/V4.1/tests/agent-handles-matrix.md`  
+- Help jornada → `orchestrator/src/cli/help-usage.ts` + smoke exit 0
+- Slash jornada → `slash-commands.ts` / `v41-p2-nav-docs.test.ts`
+- Handles → `docs/v4/V4.1/tests/agent-handles-matrix.md`
 - Vitest → `docs/v4/V4.1/tests/automated-test-results.md`
 
 ---
 
 *Fim — gate-report.md · decisão: liberar com ressalvas*
+
+
+---
+
+## APPEND — REMED-M6 (2026-11-22T21:04:19Z)
+
+Revalidação pós-remediação M1–M6: Handles/attach contratos V4.1 exercitados em `remed-m3` + suite completa 1408 pass.
+Decisão REMED: **liberar com ressalvas** — ver `docs/v4/V4.3/remediation/gate-report.md`. Humano N=0 inalterado.

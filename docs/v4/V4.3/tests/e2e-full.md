@@ -1,8 +1,8 @@
 # V4.3 — E2E completo (§6)
 
-**Data:** 2026-11-22  
-**Spec:** `V4-Tests-and-Benchmarks.md` §6 — Testes ponta a ponta  
-**Harness:** `orchestrator/tests/unit/v43-p2-e2e-resilience.test.ts` (+ P0 smoke)  
+**Data:** 2026-11-22
+**Spec:** `V4-Tests-and-Benchmarks.md` §6 — Testes ponta a ponta
+**Harness:** `orchestrator/tests/unit/v43-p2-e2e-resilience.test.ts` (+ P0 smoke)
 **Regra:** não inventar passes TTY live; unit ≠ E2E interativo Ink.
 
 ---
@@ -56,3 +56,21 @@ Artefactos: este ficheiro; `resilience.md`; `regression.md`; saída vitest.
 ---
 
 *MSO TASK V43-M4 — P2-1*
+
+---
+
+## APPEND — REMED-M6 (2026-11-22T21:04:19Z)
+
+**Harness adicional:** `orchestrator/tests/unit/remed-m6-full-integration.test.ts`
+**PTY barato:** `script -q -c 'node dist/cli/evolve.js --help'` (util-linux) — exit 0; copy `Task/Session`.
+**Ink TTY live journey:** permanece **LIMITATION** (não fingir).
+**Integração §6.2:** pause persistido = TUI; ProcessSession pause/resume/cancel; Handles OFF; delivery provenance; history; isolamento A≠B — **PASS** (unit+fixtures).
+**Comando:**
+
+```bash
+npx vitest run --pool=forks --poolOptions.forks.singleFork \
+  tests/unit/remed-m6-full-integration.test.ts
+# 15 passed
+```
+
+Ver [`../remediation/gate-report.md`](../remediation/gate-report.md).

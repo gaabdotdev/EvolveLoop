@@ -2,12 +2,16 @@
 # Graphify fica OFF (EVOLVELOOP_GRAPHIFY não é definida).
 # Ollama não é instalado: retrieval lexical usa o fallback BM25 (ADR-0005).
 # Nenhuma API key de vendor — vendor_http_cache_hit permanece NOT_MEASURED.
+#
+# Runtime policy (M1): StateDb uses node:sqlite (available since Node 22.5) and
+# better-sqlite3@13 requires node>=22. Contract: engines.node >=22.5.0.
 name: CI
 
 on:
   pull_request:
   push:
     branches:
+      - main
       - "release/**"
       - "cursor/**"
 
@@ -21,15 +25,31 @@ concurrency:
 jobs:
   suite:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # Minimum supported (node:sqlite) + current LTS line compatible with engines.
+        node-version: ["22", "24"]
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup Node
+      - name: Setup Node ${{ matrix.node-version }}
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: ${{ matrix.node-version }}
           cache: npm
           cache-dependency-path: orchestrator/package-lock.json
+
+      - name: Assert Node meets engines (>=22.5)
+        run: |
+          node -e "
+            const [maj, min] = process.versions.node.split('.').map(Number);
+            if (maj < 22 || (maj === 22 && min < 5)) {
+              console.error('Node', process.version, 'below engines >=22.5.0');
+              process.exit(1);
+            }
+            console.log('node', process.version, 'OK for engines >=22.5.0');
+          "
 
       - name: Setup Python
         uses: actions/setup-python@v5

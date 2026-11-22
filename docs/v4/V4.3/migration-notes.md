@@ -24,15 +24,17 @@
 | Tratar `tui run` como jornada | Ink (`evolve`) = default; `tui` = ops |
 | `evolve status` = “contratos” | Facade **Task/Session** + Plan |
 | Literal `TRUE-FULL-PASS` no copy | “Session concluída (verificada)” no default |
+| Tratar `--exit-code 0` / adapter ok como Delivery PASS | **ATTESTED** ou UNVERIFIED — PASS só com `local_execution` (REMED-M5) |
 
-Scripts que parseiam **JSON** de status/ledger: campos `mso`, `validated_goal_contracts`, `tokens_workers` **preservados**. Novo campo produto opcional: `product: "task_session"` + `task`/`session` em `evolve status`.
+Scripts que parseiam **JSON** de status/ledger: campos `mso`, `validated_goal_contracts`, `tokens_workers` **preservados**. Novo campo produto opcional: `product: "task_session"` + `task`/`session` em `evolve status`. Evidências `delivery_verification` antigas sem provenance continuam legíveis como `external_attestation` (fail-closed; sem apagar).
 
 ---
 
 ## 3. Node
 
-Requisito declarado: **Node ≥ 20** (`orchestrator/package.json` engines).  
-Actualizar hosts em 18/19 **antes** de esperar suporte.
+Requisito declarado: **Node ≥ 22.5.0** (`orchestrator/package.json` engines).
+Motivo: StateDb usa `node:sqlite` (disponível desde 22.5) e `better-sqlite3@13` exige `>=22`.
+Actualizar hosts em &lt;22.5 **antes** de esperar suporte.
 
 ---
 

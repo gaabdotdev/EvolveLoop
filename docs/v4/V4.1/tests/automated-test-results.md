@@ -1,6 +1,6 @@
 # V4.1 — Automated test results
 
-**Data (UTC):** 2026-11-22T17:34Z  
+**Data (UTC):** 2026-11-22T17:34Z
 **Command:**
 
 ```bash
@@ -67,3 +67,15 @@ npx vitest run --pool=forks --poolOptions.forks.singleFork \
 ---
 
 *Fim — automated-test-results.md*
+
+
+---
+
+## APPEND — REMED-M6 (2026-11-22T21:04:19Z)
+
+```bash
+cd orchestrator && npm test  # FULL_TEST_EXIT=0 · 252 files · 1408 passed
+npx vitest run --pool=forks --poolOptions.forks.singleFork tests/unit/remed-m*.ts  # 57 passed
+```
+
+HEAD `53ad059…` · Node `v22.15.0` · ver `docs/v4/V4.3/remediation/gate-report.md`.

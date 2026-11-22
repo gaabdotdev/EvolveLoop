@@ -27,6 +27,8 @@ export interface ApprovalRequest {
   goal_id?: string;
   task_id?: string;
   agent_id?: string;
+  /** V5-M05 — bridge to domain Attempt when known (additive; optional). */
+  attempt_id?: string;
   operation: CapabilityAction | string;
   resource: string;
   justification: string;
@@ -55,6 +57,8 @@ export interface ApprovalCreateInput {
   goal_id?: string;
   task_id?: string;
   agent_id?: string;
+  /** V5-M05 — optional Attempt binding for Work/Attempt governance bridge. */
+  attempt_id?: string;
   operation: CapabilityAction | string;
   resource: string;
   justification: string;
