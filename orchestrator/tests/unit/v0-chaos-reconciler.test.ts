@@ -16,10 +16,13 @@ import {
   decideReconcile,
   mayAutoRetryTask,
   reconcileWorkOnBoot,
+  worktreeHasDiff,
 } from "../../src/v3/mso/index.js";
 import {
+  cancelProcessTree,
   cancelProcessTreeEscalating,
   listOrphans,
+  sameProcess,
   spawnSupervised,
 } from "../../src/v3/sandbox/process-supervisor.js";
 
@@ -134,5 +137,65 @@ describe("V0-TEST-C chaos — SIGKILL + Reconciler", () => {
     expect(node?.state).toBe("FAILED");
     expect(node?.payload.auto_retry_allowed).toBe(true);
     expect(report.unknown_tasks).not.toContain("t-clean");
+  });
+
+  it("M17: kill -9 mid-run + reopen StateDb → integrity ok + clean worktree resume", async () => {
+    const dbPath = path.join(tmp, ".evolveloop", "state.db");
+    const wt = path.join(tmp, "m17-wt");
+    mkdirSync(wt, { recursive: true });
+    git(repo, ["worktree", "add", "--detach", wt, "HEAD"]);
+
+    const { child, identity } = spawnSupervised({
+      argv: ["bash", "-lc", "sleep 120"],
+    });
+    expect(identity).toBeTruthy();
+
+    db.upsertTaskGraphNode({
+      work_id: "w-m17",
+      task_id: "t-mid",
+      state: "IN_PROGRESS",
+      payload: {
+        pgid: identity!.pgid,
+        worktree_path: wt,
+        mso_phase: "RUNNING",
+        crash_probe: "pre-kill",
+      },
+    });
+    expect(db.integrityCheck()).toBe("ok");
+
+    // Real SIGKILL mid-run (sandbox: supervised sleep worker).
+    const killed = cancelProcessTree(identity!, "SIGKILL");
+    expect(killed.signalled).toBe(true);
+    await new Promise((r) => setTimeout(r, 150));
+    expect(sameProcess(identity!)).toBe(false);
+
+    // Simulate evolve crash: close SQLite without graceful reconcile.
+    db.close();
+
+    // Reopen (evolve restart) — durable state must be readable + healthy.
+    db = new StateDb(dbPath);
+    expect(db.integrityCheck()).toBe("ok");
+    expect(db.journalMode()).toBe("wal");
+
+    const report = reconcileWorkOnBoot(db, "w-m17");
+    const node = db.listTaskGraphNodes("w-m17").find((n) => n.task_id === "t-mid");
+    expect(node?.state).toBe("FAILED");
+    expect(node?.payload.auto_retry_allowed).toBe(true);
+    expect(node?.payload.crash_probe).toBe("pre-kill");
+    expect(report.unknown_tasks).not.toContain("t-mid");
+    expect(worktreeHasDiff(wt)).toBe(false);
+
+    const porcelain = spawnSync("git", ["status", "--porcelain"], {
+      cwd: wt,
+      encoding: "utf-8",
+    });
+    expect(porcelain.status).toBe(0);
+    expect(porcelain.stdout.trim()).toBe("");
+
+    await new Promise<void>((resolve) => {
+      if (child.exitCode != null || child.killed) resolve();
+      else child.once("exit", () => resolve());
+      setTimeout(resolve, 2000);
+    });
   });
 });

@@ -255,3 +255,17 @@ export {
   type PatternRunInput,
   type PatternRunOutcome,
 } from "./crystallizer.js";
+
+export {
+  classifyTokenSubsystem,
+  isSubagentSubsystem,
+  entryTokenTotal,
+  aggregateTokenLedger,
+  type TokenRoleBucket,
+  type TokenLedgerAggregate,
+} from "./ledger-aggregate.js";
+
+export {
+  loadHonestTokenTelemetry,
+  type HonestTokenTelemetry,
+} from "./honest-telemetry.js";

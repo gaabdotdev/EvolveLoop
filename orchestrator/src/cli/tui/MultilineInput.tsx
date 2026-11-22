@@ -6,6 +6,11 @@
 
 import React, { useRef, useState } from "react";
 import { Box, Text, useInput } from "ink";
+import {
+  applyMultilineInput,
+  createMultilineInputState,
+  type MultilineInputState,
+} from "./multiline-input-logic.js";
 
 export interface MultilineInputProps {
   prompt?: string;
@@ -27,10 +32,13 @@ export interface MultilineInputProps {
   onSlashPrefix?: (value: string) => void;
 }
 
-const PASTE_START = "\x1b[200~";
-const PASTE_END = "\x1b[201~";
-
 export { pushInputHistory } from "./input-history.js";
+export {
+  applyMultilineInput,
+  createMultilineInputState,
+  PASTE_START,
+  PASTE_END,
+} from "./multiline-input-logic.js";
 
 export function MultilineInput({
   prompt = "→ ",
@@ -45,102 +53,38 @@ export function MultilineInput({
   onSlashPrefix,
 }: MultilineInputProps): React.ReactElement {
   const [internal, setInternal] = useState("");
-  const [pasting, setPasting] = useState(false);
-  const [histIdx, setHistIdx] = useState<number | null>(null);
-  const draftBeforeHist = useRef("");
+  const logicRef = useRef<MultilineInputState>(createMultilineInputState(""));
   const value = controlled ?? internal;
 
-  const setValue = (next: string) => {
-    if (controlled === undefined) setInternal(next);
-    onChange?.(next);
-    onSlashPrefix?.(next);
+  // Keep pure-logic value in sync with controlled/external updates.
+  if (logicRef.current.value !== value && controlled !== undefined) {
+    logicRef.current = { ...logicRef.current, value };
+  }
+
+  const publish = (next: MultilineInputState) => {
+    logicRef.current = next;
+    if (controlled === undefined) setInternal(next.value);
+    onChange?.(next.value);
+    onSlashPrefix?.(next.value);
   };
 
   useInput(
     (input, key) => {
       if (!focus) return;
-
-      // Bracketed paste markers may arrive as raw escape chunks.
-      if (input.includes(PASTE_START) || input.includes(PASTE_END)) {
-        let buf = input;
-        if (buf.includes(PASTE_START)) {
-          setPasting(true);
-          buf = buf.split(PASTE_START).join("");
-        }
-        if (buf.includes(PASTE_END)) {
-          setPasting(false);
-          buf = buf.split(PASTE_END).join("");
-        }
-        if (buf) setValue(value + buf);
-        return;
-      }
-
-      if (key.upArrow) {
-        const lines = value.split("\n");
-        // Only navigate history when on the first visual line (or empty).
-        if (lines.length <= 1 && history.length > 0) {
-          if (histIdx === null) {
-            draftBeforeHist.current = value;
-            const next = history.length - 1;
-            setHistIdx(next);
-            setValue(history[next]!);
-          } else if (histIdx > 0) {
-            const next = histIdx - 1;
-            setHistIdx(next);
-            setValue(history[next]!);
-          }
-        }
-        return;
-      }
-
-      if (key.downArrow) {
-        const lines = value.split("\n");
-        if (lines.length <= 1 && histIdx !== null) {
-          if (histIdx < history.length - 1) {
-            const next = histIdx + 1;
-            setHistIdx(next);
-            setValue(history[next]!);
-          } else {
-            setHistIdx(null);
-            setValue(draftBeforeHist.current);
-          }
-        }
-        return;
-      }
-
-      if (key.return) {
-        // Shift+Enter / Alt+Enter → newline; plain Enter submits (unless pasting).
-        if (pasting || key.shift || key.meta) {
-          setValue(value + "\n");
-          return;
-        }
-        const trimmed = value;
-        setHistIdx(null);
-        setValue("");
-        onSubmit(trimmed);
-        return;
-      }
-
-      if (key.backspace || key.delete) {
-        setHistIdx(null);
-        setValue(value.slice(0, -1));
-        return;
-      }
-
-      if (key.ctrl && input === "u") {
-        setHistIdx(null);
-        setValue("");
-        return;
-      }
-
-      if (input && !key.ctrl && !key.meta) {
-        setHistIdx(null);
-        // Multi-char chunk without paste markers → treat as paste blob.
-        if (input.length > 1 && /[\r\n]/.test(input)) {
-          setValue(value + input.replace(/\r\n/g, "\n").replace(/\r/g, "\n"));
-          return;
-        }
-        setValue(value + input);
+      // Prefer live buffer value (controlled parent may own it).
+      const base: MultilineInputState = {
+        ...logicRef.current,
+        value: controlled !== undefined ? value : logicRef.current.value,
+      };
+      const { state: next, effect } = applyMultilineInput(
+        base,
+        input,
+        key,
+        history,
+      );
+      publish(next);
+      if (effect.type === "submit") {
+        onSubmit(effect.value);
       }
     },
     { isActive: focus },

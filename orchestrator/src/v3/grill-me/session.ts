@@ -6,7 +6,11 @@
 
 import type { SilentScanResult } from "../workspace-scan/silent-scan.js";
 import type { GrillMeResult } from "./types.js";
-import { assessIntentDetail, scrubInternalJargon } from "./adaptive.js";
+import {
+  assessIntentDetail,
+  deriveScopeFromIntent,
+  scrubInternalJargon,
+} from "./adaptive.js";
 
 export const GRILL_ME_MIN_QUESTIONS = 2;
 export const GRILL_ME_MAX_QUESTIONS = 5;
@@ -54,15 +58,27 @@ export function buildGrillMeQuestions(intent: string, scan: SilentScanResult): G
     "Mudanças fora do pedido; push remoto; refactors amplos não solicitados.",
   );
 
+  // Anti-echo: never default scope to a verbatim copy of the objective.
+  const derivedScope = deriveScopeFromIntent(objective);
+  const scopeDefault = scrubInternalJargon(
+    derivedScope.length > 0
+      ? derivedScope.join("; ")
+      : "Só o mínimo viável para fechar o objetivo",
+  );
+  const scopeChoiceEchoSafe = scrubInternalJargon(
+    derivedScope[0] ??
+      `Alinhado ao objetivo (${objective.slice(0, 48)}${objective.length > 48 ? "…" : ""})`,
+  );
+
   const all: GrillMeQuestion[] = [
     {
       id: "q-scope",
       prompt_pt: `Qual é o escopo IN (o que entra nesta entrega)?`,
       internal_en: `scope.in intent="${objective.slice(0, 80)}"`,
-      default_answer: scrubInternalJargon(`Entregar: ${objective}`),
+      default_answer: scopeDefault,
       field: "scope",
       choices: [
-        `Entregar: ${objective.slice(0, 80)}${objective.length > 80 ? "…" : ""}`,
+        scopeChoiceEchoSafe,
         "Só o mínimo viável para fechar o objetivo",
         "Incluir testes + docs curta",
         "Outro...",
@@ -83,9 +99,9 @@ export function buildGrillMeQuestions(intent: string, scan: SilentScanResult): G
     },
     {
       id: "q-accept",
-      prompt_pt: `Qual critério de aceite verificável fecha o Goal Contract?`,
+      prompt_pt: `Qual critério de aceite verificável fecha esta entrega?`,
       internal_en: `acceptance.default build+unit_tests green`,
-      default_answer: "Build e testes relevantes verdes; Goal Contract validado no SQLite.",
+      default_answer: "Build e testes relevantes verdes.",
       field: "acceptance",
       choices: [
         "Build e testes relevantes verdes",
@@ -205,10 +221,15 @@ export function buildGrillMeResultFromAnswers(
   };
 }
 
+/** User-facing interview label — never the internal skill name. */
+export function formatInterviewLabel(index: number, total: number): string {
+  return `Pergunta ${index}/${total}`;
+}
+
 export function formatQuestionForUser(q: GrillMeQuestion, index: number, total: number): string {
-  // UX spec §5.1 — [Grill-Me N/M] + recommended default (Enter to accept).
+  // User UX: numbered clarification prompts + recommended default (Enter to accept).
   return [
-    `[Grill-Me ${index}/${total}] ${q.prompt_pt}`,
+    `[${formatInterviewLabel(index, total)}] ${q.prompt_pt}`,
     `  Padrão recomendado: ${q.default_answer} (pressione Enter para aceitar)`,
   ].join("\n");
 }
@@ -221,12 +242,29 @@ export function summarizeContractLines(input: {
   acceptance: string;
   db_path: string;
 }): string[] {
+  // Defer Objetivo/Escopo formatting to goal-display (no echo).
+  // Lazy import avoided: keep summarize thin; callers that need anti-echo
+  // should prefer buildGoalDisplay. Here we still strip exact scope==objective.
+  const obj = input.objective.trim();
+  const title = obj.split(/(?<=[.!?])\s+/)[0]?.split("\n")[0]?.trim() ?? obj;
+  const shortTitle = title.length <= 72 ? title : `${title.slice(0, 71)}…`;
+  const scopeItems = input.scope
+    .map((s) => s.trim())
+    .filter(Boolean)
+    .filter((s) => {
+      const n = s.toLowerCase();
+      const objN = obj.toLowerCase();
+      const titleN = shortTitle.toLowerCase();
+      if (n === objN || n === titleN) return false;
+      const stripped = n.replace(/^entregar:\s*/i, "").trim();
+      return stripped !== objN && stripped !== titleN;
+    });
   return [
-    `Goal Contract: ${input.goal_contract_id}`,
-    `Objetivo: ${input.objective}`,
-    `Escopo: ${input.scope.join("; ") || "—"}`,
+    `Contrato: ${input.goal_contract_id}`,
+    `Objetivo: ${shortTitle}`,
+    `Escopo: ${scopeItems.length ? scopeItems.join("; ") : "—"}`,
     `Fora: ${input.out_of_scope.join("; ") || "—"}`,
     `Aceite: ${input.acceptance}`,
-    `SQLite: ${input.db_path}`,
+    `Estado: ${input.db_path}`,
   ].slice(0, 6);
 }

@@ -22,20 +22,42 @@ export function shortObjectiveTitle(objective: string): string {
   return `${line.slice(0, MAX_TITLE - 1)}…`;
 }
 
+function normalizeScopeCandidate(s: string): string {
+  return s
+    .trim()
+    .toLowerCase()
+    .replace(/^entregar:\s*/i, "")
+    .replace(/^escopo:\s*/i, "")
+    .replace(/\s+/g, " ");
+}
+
+function isEchoOfObjective(candidate: string, objNorm: string, titleNorm: string): boolean {
+  const n = normalizeScopeCandidate(candidate);
+  if (!n) return true;
+  if (n === objNorm || n === titleNorm) return true;
+  // Near-copy: scope embeds the full objective / title (or vice-versa at high overlap).
+  if (objNorm.length >= 24 && (n.includes(objNorm) || objNorm.includes(n))) {
+    const shorter = Math.min(n.length, objNorm.length);
+    const longer = Math.max(n.length, objNorm.length);
+    if (shorter / longer >= 0.85) return true;
+  }
+  if (titleNorm.length >= 16 && (n === titleNorm || n.includes(titleNorm) && n.length <= titleNorm.length + 12)) {
+    return true;
+  }
+  return false;
+}
+
 /**
- * Scope bullets excluding verbatim copies of the objective (echo fix).
- * Falls back to a single dash when nothing distinct remains.
+ * Scope bullets excluding verbatim / near copies of the objective (echo fix).
+ * Falls back to empty (display as —) when nothing distinct remains.
  */
 export function distinctScopeItems(objective: string, scope: string[]): string[] {
-  const objNorm = objective.trim().toLowerCase();
-  const titleNorm = shortObjectiveTitle(objective).toLowerCase();
+  const objNorm = normalizeScopeCandidate(objective);
+  const titleNorm = normalizeScopeCandidate(shortObjectiveTitle(objective));
   const items = scope
     .map((s) => s.trim())
     .filter(Boolean)
-    .filter((s) => {
-      const n = s.toLowerCase();
-      return n !== objNorm && n !== titleNorm;
-    });
+    .filter((s) => !isEchoOfObjective(s, objNorm, titleNorm));
   return items.length > 0 ? items : [];
 }
 

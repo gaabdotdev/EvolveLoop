@@ -175,7 +175,7 @@ export function runIntentFlow(opts: IntentFlowOptions): IntentFlowResult {
     const scan = silentScan(workspace);
     const questions = buildGrillMeQuestions(intent, scan);
     if (questions.length < 2 || questions.length > 5) {
-      throw new Error(`Grill-Me question count out of bounds: ${questions.length}`);
+      throw new Error(`Número de perguntas fora do intervalo: ${questions.length}`);
     }
 
     const answers = resolveAnswers(questions, opts.answers);
@@ -184,7 +184,7 @@ export function runIntentFlow(opts: IntentFlowOptions): IntentFlowResult {
     if (!validation.allow_goal_contract) {
       throw new GrillMeIntakeError(
         "GRILL_ME_BLOCKED",
-        `Grill-Me blocked Goal Contract: ${validation.reasons.join(", ")}`,
+        `Esclarecimento bloqueou o contrato: ${validation.reasons.join(", ")}`,
       );
     }
 

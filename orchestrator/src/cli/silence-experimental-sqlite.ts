@@ -5,7 +5,8 @@
 
 const SQLITE_EXP_RE = /sqlite/i;
 
-function isSqliteExperimentalWarning(
+/** True only for ExperimentalWarning whose message mentions sqlite. */
+export function isSqliteExperimentalWarning(
   warning: string | Error,
   ...rest: unknown[]
 ): boolean {
@@ -26,8 +27,17 @@ function isSqliteExperimentalWarning(
   return false;
 }
 
-const orig = process.emitWarning.bind(process);
-process.emitWarning = ((warning: string | Error, ...args: unknown[]) => {
-  if (isSqliteExperimentalWarning(warning, ...args)) return;
-  return (orig as (...a: unknown[]) => void)(warning, ...args);
-}) as typeof process.emitWarning;
+let installed = false;
+
+/** Idempotent patch of process.emitWarning (CLI entry + vitest setup). */
+export function installSilenceExperimentalSqlite(): void {
+  if (installed) return;
+  installed = true;
+  const orig = process.emitWarning.bind(process);
+  process.emitWarning = ((warning: string | Error, ...args: unknown[]) => {
+    if (isSqliteExperimentalWarning(warning, ...args)) return;
+    return (orig as (...a: unknown[]) => void)(warning, ...args);
+  }) as typeof process.emitWarning;
+}
+
+installSilenceExperimentalSqlite();

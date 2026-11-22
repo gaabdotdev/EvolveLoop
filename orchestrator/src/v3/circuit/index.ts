@@ -17,8 +17,11 @@ export {
 export {
   runEvidenceValidator,
   isSensitivePathForValidator,
+  classifyTestAdulterations,
   type EvidenceValidatorOptions,
   type EvidenceValidatorResult,
+  type TestAdulteration,
+  type TestAdulterationKind,
 } from "./evidence-validator.js";
 export {
   runV0Circuit,

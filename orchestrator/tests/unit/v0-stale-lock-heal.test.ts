@@ -56,20 +56,32 @@ describe("stale workspace lock auto-heal", () => {
     expect(logs[0]).toMatch(/Lock órfão de PID 999999999 limpo automaticamente/);
   });
 
-  it("live shell PID → LEASE_HELD (no steal)", () => {
+  it("live shell PID → LEASE_HELD (no steal, fencing unchanged)", () => {
     const live = `shell-${process.pid}`;
-    db.acquireWorkspaceLease({
+    const held = db.acquireWorkspaceLease({
       workspace_id: "ws-live",
       holder_id: live,
       lease_ms: 60_000,
     });
-    expect(() =>
+    expect(held.fencing_token).toBe(1);
+
+    let err: unknown;
+    try {
       db.acquireWorkspaceLease({
         workspace_id: "ws-live",
         holder_id: "shell-1",
         lease_ms: 60_000,
-      }),
-    ).toThrow(StateDbError);
+      });
+    } catch (e) {
+      err = e;
+    }
+    expect(err).toBeInstanceOf(StateDbError);
+    expect((err as StateDbError).code).toBe("LEASE_HELD");
+
+    const still = db.getWorkspaceLease("ws-live")!;
+    expect(still.holder_id).toBe(live);
+    expect(still.fencing_token).toBe(1);
+    expect(still.status).toBe("active");
   });
 
   it("non-shell holder without PID pattern still blocks (legacy mso-*)", () => {

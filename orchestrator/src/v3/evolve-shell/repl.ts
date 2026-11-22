@@ -8,7 +8,7 @@ import * as readline from "node:readline";
 import { resolve } from "node:path";
 import { runIntentFlow } from "../intake/intent-flow.js";
 import { formatQuestionForUser, resolveAnswers, type GrillMeQuestion } from "../grill-me/session.js";
-import { isDetailedIntent } from "../grill-me/adaptive.js";
+import { grillInterviewBudget } from "../grill-me/adaptive.js";
 import { StateDb, defaultStateDbPath } from "../state-db/index.js";
 import {
   needsInlineProviderSetup,
@@ -217,7 +217,7 @@ function cardFromGoalOut(
     "—";
   return renderGoalContractCard({
     objective: out.contract.objective,
-    scope: out.contract.scope.join("; ") || "—",
+    scope: out.contract.scope,
     criteria: acceptance,
     risks: out.contract.out_of_scope.length
       ? `Fora de escopo / risco: ${out.contract.out_of_scope.join("; ")}`
@@ -510,25 +510,29 @@ export async function runEvolveShell(opts: EvolveShellOptions = {}): Promise<Evo
         }
         if (preview.kind !== "goal_contract") {
           write(
-            `Intenção não gerou Goal Contract (kind=${"kind" in preview ? String((preview as { kind?: string }).kind) : "unknown"}). Reformule ou use 'continuar' se o MSO já estiver confirmado.`,
+            `Intenção não gerou Goal Contract. Reformule ou use 'continuar' se a execução já estiver confirmada.`,
           );
           writeMiddleAndFooter();
           return "continue";
         }
 
-        const detailed = isDetailedIntent(line);
+        const interviewBudget = grillInterviewBudget(line);
         let collected: string[];
-        if (detailed) {
-          write("Intenção detalhada — a saltar entrevista sequencial. Revise o Goal Contract:");
+        if (interviewBudget === 0) {
+          write("Intenção detalhada — revisão única antes de executar:");
           collected = resolveAnswers(
             preview.questions,
             preview.questions.map(() => "ok"),
           ).map((a) => a.value);
         } else {
-          write("Grill-Me adaptativo (2–3 perguntas). Enter/ok aceita a recomendação.");
+          write("Preciso de 2–3 esclarecimentos. Enter/ok aceita a recomendação.");
+          const qs = preview.questions.slice(
+            0,
+            Math.min(interviewBudget, preview.questions.length),
+          );
           collected = await collectAnswersInteractive(
             rl,
-            preview.questions,
+            qs,
             write,
             eventBus,
             opts.on_awaiting_input,
@@ -604,7 +608,7 @@ export async function runEvolveShell(opts: EvolveShellOptions = {}): Promise<Evo
               }
             }
           } else if (t === "n" || t === "nao" || t === "não" || t === "cancel" || t === "esc") {
-            write("Confirmação cancelada — Goal Contract guardado sem MSO confirmado.");
+            write("Confirmação cancelada — Goal Contract guardado sem execução confirmada.");
             writeGoalOutcome(write, drafted);
           } else if (isGoalContractConfirmAnswer(conf) || t === "") {
             const db = new StateDb(defaultStateDbPath(workspace));
@@ -629,7 +633,7 @@ export async function runEvolveShell(opts: EvolveShellOptions = {}): Promise<Evo
             });
             write(kick.message_pt);
           } else {
-            write("Confirmação cancelada — Goal Contract guardado sem MSO confirmado.");
+            write("Confirmação cancelada — Goal Contract guardado sem execução confirmada.");
             writeGoalOutcome(write, drafted);
           }
         } else if ("message_pt" in drafted) {

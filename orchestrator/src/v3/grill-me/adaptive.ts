@@ -52,11 +52,75 @@ export function isDetailedIntent(intent: string): boolean {
   return assessIntentDetail(intent).mode === "detailed_review";
 }
 
+/**
+ * How many real interview questions the UX may ask (0 = single review card).
+ * Distinct from internal default materialization used to draft the contract.
+ */
+export function grillInterviewBudget(intent: string): number {
+  const a = assessIntentDetail(intent);
+  return a.mode === "detailed_review" ? 0 : Math.min(3, Math.max(2, a.max_questions));
+}
+
+/**
+ * Pull distinct IN-scope hints from a structured intent (bullets / "Escopo:").
+ * Never returns a verbatim copy of the full objective (anti-echo).
+ */
+export function deriveScopeFromIntent(intent: string): string[] {
+  const text = intent.trim();
+  if (!text) return [];
+  const lines = text.split(/\r?\n/).map((l) => l.trim()).filter(Boolean);
+  const title = (lines[0] ?? text).replace(/\s+/g, " ");
+  const titleNorm = title.toLowerCase();
+  const fullNorm = text.replace(/\s+/g, " ").toLowerCase();
+  const items: string[] = [];
+
+  for (const line of lines) {
+    const bullet = line.match(/^(?:[-*•]|\d+[.)])\s+(.+)$/);
+    if (bullet?.[1]) {
+      items.push(bullet[1].trim());
+      continue;
+    }
+    const escopo = line.match(/^escopo\s*:\s*(.+)$/i);
+    if (escopo?.[1]) {
+      items.push(escopo[1].trim());
+      continue;
+    }
+  }
+
+  return items.filter((s) => {
+    const n = s.replace(/\s+/g, " ").toLowerCase();
+    if (!n) return false;
+    if (n === titleNorm || n === fullNorm) return false;
+    if (n.startsWith("entregar:") && n.slice("entregar:".length).trim() === fullNorm) {
+      return false;
+    }
+    return true;
+  });
+}
+
+/**
+ * Patterns that must never appear in user-facing Grill interview / review copy.
+ * Skill names, MSO states, and internal roadmap labels are internal-only.
+ */
+/** Skill names / machine states / roadmap labels — not user vocabulary. */
+export const INTERNAL_JARGON_RE =
+  /\b(?:Grill[- ]?Me|MSO|Bloco\s*[0-9]+|adapters?\s+E2E|V0-ORCH|TaskGraph|SilentScan|StateDb)\b/i;
+
+export function containsLeakedInternalJargon(text: string): boolean {
+  return INTERNAL_JARGON_RE.test(text);
+}
+
 /** Strip leftover internal EvolveLoop jargon from defaults/answers. */
 export function scrubInternalJargon(text: string): string {
   return text
-    .replace(/\bBloco\s*3\b/gi, "")
+    .replace(/\bBloco\s*[0-9]+\b/gi, "")
     .replace(/\badapters?\s+E2E\b/gi, "")
+    .replace(/\bGrill[- ]?Me\b/gi, "")
+    .replace(/\bMSO\b/g, "")
+    .replace(/\bV0-ORCH\b/gi, "")
+    .replace(/\bTaskGraph\b/gi, "")
+    .replace(/\bSilentScan\b/gi, "")
+    .replace(/\bStateDb\b/gi, "")
     .replace(/\s{2,}/g, " ")
     .replace(/\s*;\s*;/g, ";")
     .trim();

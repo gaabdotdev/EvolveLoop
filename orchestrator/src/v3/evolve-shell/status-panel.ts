@@ -42,7 +42,7 @@ export function buildStatusPanel(
     mso_state: resolvePanelMsoState(session, extras?.mso_state),
     metas: extras?.metas ?? (session.latest_contract?.objective.slice(0, 60) || "—"),
     active_task: extras?.active_task ?? session.latest_mso_session?.work_id ?? "—",
-    model_provider: extras?.model_provider ?? "local/determinístico (Grill-Me 0 tokens)",
+    model_provider: extras?.model_provider ?? "local/determinístico (0 tokens)",
     warnings: extras?.warnings ?? warnings,
   };
 }

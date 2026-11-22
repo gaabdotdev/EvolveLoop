@@ -5,7 +5,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Box, Text, Static, useApp, useInput } from "ink";
 import { resolve } from "node:path";
-import { spawnSync } from "node:child_process";
 import { MultilineInput } from "./MultilineInput.js";
 import { pushInputHistory } from "./input-history.js";
 import { FooterBar } from "./FooterBar.js";
@@ -31,6 +30,7 @@ import {
   SLASH_COMMANDS,
   type SlashCommandId,
 } from "./slash-commands.js";
+import { runSlashHandler } from "./slash-handlers.js";
 import { renderBootBanner } from "../../v3/evolve-shell/hud.js";
 import {
   buildFooterTelemetry,
@@ -43,9 +43,10 @@ import {
   probeProviderReadiness,
 } from "../../v3/evolve-shell/provider-readiness.js";
 import { runIntentFlow } from "../../v3/intake/intent-flow.js";
-import { isDetailedIntent } from "../../v3/grill-me/adaptive.js";
+import { grillInterviewBudget } from "../../v3/grill-me/adaptive.js";
 import { resolveAnswers, type GrillMeQuestion } from "../../v3/grill-me/session.js";
 import { StateDb, defaultStateDbPath } from "../../v3/state-db/index.js";
+import { loadHonestTokenTelemetry } from "../../v3/token-economy/honest-telemetry.js";
 import {
   isProceedAfterConfirmIntent,
   startAuthorizedExecution,
@@ -143,9 +144,12 @@ export function EvolveInkApp({ workspace: wsIn, onDone }: InkAppProps): React.Re
   const telemetry: FooterTelemetry = useMemo(() => {
     const session = detectWorkspaceSession(workspace);
     const live = probeHudEnvironment(workspace);
+    const tokens = loadHonestTokenTelemetry(workspace);
     return buildFooterTelemetry(session, {
       shortcuts: "Ctrl+P Pause · Ctrl+C Stop · Ctrl+D Detach",
       ...live.footer,
+      tok_mso: tokens.tok_mso,
+      tok_workers: tokens.tok_workers,
       executing,
       idle: executing ? false : undefined,
       mso_state: executing ? session.latest_mso_session?.state : undefined,
@@ -198,25 +202,18 @@ export function EvolveInkApp({ workspace: wsIn, onDone }: InkAppProps): React.Re
   const runSlash = useCallback(
     (cmd: SlashCommandId) => {
       if (cmd === "clear") {
+        const result = runSlashHandler("clear");
         setHistory([]);
-        appendSystem("Histórico visual limpo.");
+        appendSystem(result.message);
         return;
       }
       if (cmd === "config") {
         setPhase("provider");
+        appendSystem(runSlashHandler("config").message);
         return;
       }
       if (cmd === "diff") {
-        const r = spawnSync("git", ["diff", "--stat"], {
-          cwd: workspace,
-          encoding: "utf-8",
-          timeout: 5000,
-        });
-        const body =
-          r.status === 0
-            ? (r.stdout ?? "").trim() || "(sem alterações)"
-            : "(git diff indisponível)";
-        appendSystem(`Diff\n${body}`);
+        appendSystem(runSlashHandler("diff", { workspace }).message);
         return;
       }
       if (cmd === "status") {
@@ -234,13 +231,16 @@ export function EvolveInkApp({ workspace: wsIn, onDone }: InkAppProps): React.Re
             ? String(telemetry.tok_workers.value)
             : "—";
         appendSystem(
-          [
-            "Status",
-            `MSO: ${mso?.state ?? "—"} (${mso?.session_id ?? "sem sessão"})`,
-            `Contrato: ${contract ? `v${contract.version}` : "—"}`,
-            `Provider: ${providersReady || "—"}`,
-            `Tokens: MSO ${tokMso} · Workers ${tokW}`,
-          ].join("\n"),
+          runSlashHandler("status", {
+            status: {
+              mso_state: mso?.state,
+              session_id: mso?.session_id,
+              contract_version: contract?.version,
+              provider: providersReady || "—",
+              tokens_mso: tokMso,
+              tokens_workers: tokW,
+            },
+          }).message,
         );
       }
     },
@@ -286,14 +286,26 @@ export function EvolveInkApp({ workspace: wsIn, onDone }: InkAppProps): React.Re
       }
       if (kick.message_pt.toLowerCase().includes("bloqueada")) status = "BLOCKED";
 
+      const rollup = loadHonestTokenTelemetry(workspace).aggregate;
       ringTerminalBell();
-      setDelivery({ status });
+      setDelivery({
+        status,
+        tokens_mso: rollup && rollup.honesty !== "UNAVAILABLE" ? rollup.tokens_mso : undefined,
+        tokens_workers:
+          rollup && rollup.honesty !== "UNAVAILABLE" ? rollup.tokens_workers : undefined,
+      });
       setPhase("delivery");
     } catch (err) {
       writeLive(`Erro ao iniciar execução: ${err instanceof Error ? err.message : String(err)}`);
       setExitCode(1);
       ringTerminalBell();
-      setDelivery({ status: "FAILED" });
+      const rollup = loadHonestTokenTelemetry(workspace).aggregate;
+      setDelivery({
+        status: "FAILED",
+        tokens_mso: rollup && rollup.honesty !== "UNAVAILABLE" ? rollup.tokens_mso : undefined,
+        tokens_workers:
+          rollup && rollup.honesty !== "UNAVAILABLE" ? rollup.tokens_workers : undefined,
+      });
       setPhase("delivery");
     } finally {
       setExecuting(false);
@@ -385,7 +397,9 @@ export function EvolveInkApp({ workspace: wsIn, onDone }: InkAppProps): React.Re
       }
 
       setPendingIntent(line);
-      if (isDetailedIntent(line)) {
+      const interviewBudget = grillInterviewBudget(line);
+      if (interviewBudget === 0) {
+        // Detailed intent → single confirmation card (no interrogation).
         const defaults = resolveAnswers(
           preview.questions,
           preview.questions.map(() => "ok"),
@@ -397,7 +411,10 @@ export function EvolveInkApp({ workspace: wsIn, onDone }: InkAppProps): React.Re
         return;
       }
 
-      const qs = preview.questions.slice(0, Math.min(3, preview.questions.length));
+      const qs = preview.questions.slice(
+        0,
+        Math.min(interviewBudget, preview.questions.length),
+      );
       setQuestions(qs);
       setQIndex(0);
       setAnswers([]);

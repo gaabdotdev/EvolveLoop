@@ -5,8 +5,13 @@
 import React, { useState } from "react";
 import { Box, Text, useInput } from "ink";
 import { spawnSync } from "node:child_process";
+import {
+  buildDeliveryCardView,
+  DELIVERY_SHORTCUTS,
+  type DeliveryStatus,
+} from "./delivery-card-view.js";
 
-export type DeliveryStatus = "PASS" | "BLOCKED" | "FAILED";
+export type { DeliveryStatus };
 
 export interface DeliveryCardProps {
   status: DeliveryStatus;
@@ -55,6 +60,13 @@ export function DeliveryCard({
 }: DeliveryCardProps): React.ReactElement {
   const [showDiff, setShowDiff] = useState(false);
   const stat = gitDiffStat(workspace);
+  const view = buildDeliveryCardView({
+    status,
+    diff_stat: stat,
+    verification,
+    tokens_mso,
+    tokens_workers,
+  });
   const statusColor =
     status === "PASS" ? "green" : status === "BLOCKED" ? "yellow" : "red";
 
@@ -89,25 +101,12 @@ export function DeliveryCard({
       </Text>
       <Box flexDirection="column" marginTop={1}>
         <Text dimColor>Arquivos alterados</Text>
-        {stat.split("\n").map((l, i) => (
+        {view.diff_stat.split("\n").map((l, i) => (
           <Text key={`st-${i}`}>{l}</Text>
         ))}
       </Box>
-      {verification ? (
-        <Text>
-          <Text dimColor>Verificação: </Text>
-          {verification.command} (exit {verification.exit_code})
-        </Text>
-      ) : (
-        <Text dimColor>Verificação: —</Text>
-      )}
-      <Text>
-        <Text dimColor>Tokens: </Text>
-        MSO {tokens_mso !== undefined && tokens_mso > 0 ? tokens_mso : "—"}
-        {" · "}
-        Workers{" "}
-        {tokens_workers !== undefined && tokens_workers > 0 ? tokens_workers : "—"}
-      </Text>
+      <Text>{view.verification_line}</Text>
+      <Text>{view.tokens_line}</Text>
       {showDiff ? (
         <Box flexDirection="column" marginTop={1}>
           <Text dimColor>diff completo (trecho)</Text>
@@ -120,9 +119,7 @@ export function DeliveryCard({
         </Box>
       ) : null}
       <Box marginTop={1}>
-        <Text dimColor>
-          [Enter] Nova tarefa · [D] Ver diff completo · [Q] Sair
-        </Text>
+        <Text dimColor>{DELIVERY_SHORTCUTS}</Text>
       </Box>
     </Box>
   );

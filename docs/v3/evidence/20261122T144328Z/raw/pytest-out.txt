@@ -1,0 +1,6 @@
+CMD: pytest -q
+CWD: /home/gaab/Documentos/EvoolveTests/Mini-BullMQ
+UTC: 2026-11-22T14:43:28Z
+....................                                                     [100%]
+20 passed in 2.08s
+EXIT_CODE=0

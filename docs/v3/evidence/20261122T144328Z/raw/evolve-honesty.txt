@@ -1,0 +1,4 @@
+evolve_path=/home/gaab/.local/bin/evolve
+circuit_probe: ollama OK; openrouter MISSING_CREDENTIALS; cursor adapter OK
+evolve_exec: Required --data-dir; help path hung — not used as coding brain for this fire test
+method: disciplina equivalente (refactor multi-file + pytest + adulteration proof)

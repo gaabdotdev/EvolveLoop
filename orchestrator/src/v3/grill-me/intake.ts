@@ -141,7 +141,7 @@ export function applyGrillMeToGoalContract(opts: ApplyGrillMeOptions): ApplyGril
   if (!validation.allow_goal_contract) {
     throw new GrillMeIntakeError(
       "GRILL_ME_BLOCKED",
-      `Grill-Me blocked Goal Contract: ${validation.reasons.join(", ")}`,
+      `Esclarecimento bloqueou o contrato: ${validation.reasons.join(", ")}`,
     );
   }
 

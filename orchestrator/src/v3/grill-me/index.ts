@@ -12,6 +12,7 @@ export {
   buildGrillMeResultFromAnswers,
   resolveAnswers,
   formatQuestionForUser,
+  formatInterviewLabel,
   summarizeContractLines,
   GRILL_ME_MIN_QUESTIONS,
   GRILL_ME_MAX_QUESTIONS,
@@ -21,7 +22,11 @@ export {
 export {
   assessIntentDetail,
   isDetailedIntent,
+  grillInterviewBudget,
+  deriveScopeFromIntent,
   scrubInternalJargon,
+  containsLeakedInternalJargon,
+  INTERNAL_JARGON_RE,
   type GrillMeInterviewMode,
   type IntentDetailAssessment,
 } from "./adaptive.js";

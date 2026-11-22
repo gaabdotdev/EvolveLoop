@@ -1,0 +1,7 @@
+SEARCH_UTC=2026-11-22T14:43:28Z
+QUERY=VOID Map→SQLite / Mini-BullMQ
+FOUND_MINI_BULLMQ=/home/gaab/Documentos/EvoolveTests/Mini-BullMQ
+VOID_UNDER_workspaces=
+VOID_UNDER_Documentos_EvoolveTests=
+VOID_UNDER_Documentos_gitHub=
+DECISION=use Mini-BullMQ Fase 2 (VOID not found on safe mounts)

@@ -1,0 +1,32 @@
+REPO=/home/gaab/Documentos/EvoolveTests/Mini-BullMQ
+BASELINE_COMMIT=69656248cd0ab179b63db0b1769220820aaeefd9
+BASELINE_MSG=baseline: Mini-BullMQ V1 (pre Fase 2)
+UTC=2026-11-22T14:43:28Z
+--- sha256 V1 tests ---
+e5724688dfec76ad4b470b6f7c930e8c9d72a703e235f31cc5e839a76b41fa4c  tests/test_queue.py
+36220d410e420a65e4271f8e1ac130abd7fe2fff7412dcfd218afeed41df73c7  tests/test_worker.py
+ac8cc986b802fd530b624d1c7e6559c1d3a8a5c3eb88e347e0620e0f7f09c67f  tests/test_cli.py
+e3742b256ab4140fffae40dfd0bcff9142926c7c58eeed1b7537be4d502b5591  tests/test_http.py
+86fbc21c0b53427f4d4c15beaa8cc740289f0963dc40c51999d9476f872e862d  tests/conftest.py
+--- git diff V1 tests (must be empty) ---
+V1_TEST_DIFF_EMPTY=yes
+--- git diff --stat (working tree vs baseline; phase2 test untracked) ---
+ README.md                  |  20 ++++--
+ src/minibullmq/cli.py      |  26 +++++++-
+ src/minibullmq/db.py       |  98 +++++++++++++++++++++++++++---
+ src/minibullmq/http_api.py |  48 ++++++++++++---
+ src/minibullmq/models.py   |   6 ++
+ src/minibullmq/queue.py    | 147 ++++++++++++++++++++++++++++++++++++++++-----
+ src/minibullmq/worker.py   |  48 ++++++++++++---
+ 7 files changed, 344 insertions(+), 49 deletions(-)
+--- untracked ---
+## main
+ M README.md
+ M src/minibullmq/cli.py
+ M src/minibullmq/db.py
+ M src/minibullmq/http_api.py
+ M src/minibullmq/models.py
+ M src/minibullmq/queue.py
+ M src/minibullmq/worker.py
+?? .evolveloop/
+?? tests/test_phase2_retry_delay.py

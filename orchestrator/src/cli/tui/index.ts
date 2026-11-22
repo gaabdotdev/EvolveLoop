@@ -12,12 +12,25 @@ import { runEvolveShell } from "../../v3/evolve-shell/repl.js";
 export { EvolveInkApp } from "./App.js";
 export { MultilineInput } from "./MultilineInput.js";
 export { pushInputHistory, INPUT_HISTORY_CAP } from "./input-history.js";
+export {
+  applyMultilineInput,
+  createMultilineInputState,
+  PASTE_START,
+  PASTE_END,
+} from "./multiline-input-logic.js";
 export { FooterBar } from "./FooterBar.js";
 export { GoalContractReview } from "./GoalContractReview.js";
 export { GrillQuestionSelect } from "./GrillQuestionSelect.js";
 export { ProviderSetup } from "./ProviderSetup.js";
 export { ExecutionLive } from "./ExecutionLive.js";
 export { DeliveryCard } from "./DeliveryCard.js";
+export {
+  buildDeliveryCardView,
+  DELIVERY_SHORTCUTS,
+  formatDeliveryTokens,
+  formatDeliveryVerification,
+  type DeliveryStatus,
+} from "./delivery-card-view.js";
 export {
   createActivityWindow,
   pushActivityEvent,
@@ -36,6 +49,11 @@ export {
   SLASH_COMMANDS,
   type SlashCommandId,
 } from "./slash-commands.js";
+export {
+  runSlashHandler,
+  formatSlashStatus,
+  gitDiffStatForSlash,
+} from "./slash-handlers.js";
 export {
   shortObjectiveTitle,
   distinctScopeItems,

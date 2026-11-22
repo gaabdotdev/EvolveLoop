@@ -182,7 +182,7 @@ describe("activity window + silêncio >30s", () => {
   });
 });
 
-describe("Goal Contract sem eco Objetivo/Escopo", () => {
+describe("M12 Goal Contract sem eco Objetivo/Escopo", () => {
   it("título curto em Objetivo; escopo sem repetir o prompt", () => {
     const prompt =
       "Adicionar um endpoint HTTP /health que responda 200 OK com body ok e testes unitários.";
@@ -215,7 +215,46 @@ describe("Goal Contract sem eco Objetivo/Escopo", () => {
     expect(display.scope_items).toEqual([]);
     expect(formatGoalDisplayLines(display)[1]).toBe("Escopo: —");
   });
+
+  it("prefixo Entregar: + eco do prompt também some do Escopo", () => {
+    const prompt = "Adicionar healthcheck HTTP";
+    const display = buildGoalDisplay({
+      objective: prompt,
+      scope: [`Entregar: ${prompt}`],
+      criteria: "tests verdes",
+    });
+    expect(display.scope_items).toEqual([]);
+    const lines = formatGoalDisplayLines(display);
+    expect(lines[0]).toBe(`Objetivo: ${shortObjectiveTitle(prompt)}`);
+    expect(lines[1]).toBe("Escopo: —");
+    expect(lines[0].replace(/^Objetivo:\s*/, "")).not.toBe(
+      lines[1].replace(/^Escopo:\s*/, ""),
+    );
+  });
+
+  it("defaults Grill-Me (ok) não ecoam Objetivo no Escopo do card", () => {
+    const prompt = "Adicionar healthcheck HTTP com testes";
+    // Simulate vague default path: accepted_scope used to be Entregar:<prompt>
+    const display = buildGoalDisplay({
+      objective: prompt,
+      scope: [
+        "Só o mínimo viável para fechar o objetivo",
+        `Entregar: ${prompt}`,
+        prompt,
+      ],
+      criteria: "Build e testes relevantes verdes.",
+    });
+    expect(display.scope_items).not.toContain(prompt);
+    expect(display.scope_items).not.toContain(`Entregar: ${prompt}`);
+    expect(display.scope_items).toEqual([
+      "Só o mínimo viável para fechar o objetivo",
+    ]);
+    const lines = formatGoalDisplayLines(display);
+    expect(lines[0]).not.toBe(lines[1]);
+    expect(lines[1]).not.toContain(prompt);
+  });
 });
+
 
 describe("markdown lite", () => {
   it("remove # / ## crus", () => {

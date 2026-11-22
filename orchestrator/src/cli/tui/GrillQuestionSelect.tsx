@@ -59,7 +59,7 @@ export function GrillQuestionSelect({
       marginBottom={1}
     >
       <Text bold>
-        Grill-Me {index}/{total}
+        Pergunta {index}/{total}
       </Text>
       <Text>{question.prompt_pt}</Text>
       {custom ? (

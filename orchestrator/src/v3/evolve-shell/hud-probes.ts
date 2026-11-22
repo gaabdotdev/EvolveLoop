@@ -10,6 +10,7 @@ import { isBwrapAvailable } from "../sandbox/bwrap-wrapper.js";
 import type { SandboxFooterStatus } from "./footer.js";
 import type { BuildBannerExtras } from "./hud.js";
 import type { BuildFooterExtras } from "./footer.js";
+import { loadHonestTokenTelemetry } from "../token-economy/honest-telemetry.js";
 
 export interface HudProbeResult {
   sandbox: SandboxFooterStatus;
@@ -72,6 +73,7 @@ export function probeHudEnvironment(workspace: string): HudProbeResult {
   const sandbox: SandboxFooterStatus = isBwrapAvailable() ? "ON" : "UNAVAILABLE";
   const git_branch = probeGitBranch(workspace);
   const providers = probeProviders();
+  const tokens = loadHonestTokenTelemetry(workspace);
 
   return {
     sandbox,
@@ -80,11 +82,21 @@ export function probeHudEnvironment(workspace: string): HudProbeResult {
     banner: {
       sandbox,
       providers,
+      tokens_mso:
+        tokens.tok_mso.provenance !== "UNAVAILABLE" && typeof tokens.tok_mso.value === "number"
+          ? String(tokens.tok_mso.value)
+          : undefined,
+      tokens_workers:
+        tokens.tok_workers.provenance !== "UNAVAILABLE" &&
+        typeof tokens.tok_workers.value === "number"
+          ? String(tokens.tok_workers.value)
+          : undefined,
     },
     footer: {
       sandbox,
       git_branch,
-      // Model/ctx/tok stay UNAVAILABLE until a live MSO session reports them.
+      tok_mso: tokens.tok_mso,
+      tok_workers: tokens.tok_workers,
     },
   };
 }

@@ -15,6 +15,7 @@ build/
 coverage/
 agent-setup/.venv/
 agent-setup/.pytest_cache/
+docs/v22/baseline/.venv/
 .tools/
 **/__pycache__/
 *.pyc

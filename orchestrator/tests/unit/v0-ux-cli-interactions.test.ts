@@ -180,13 +180,14 @@ describe("M8.3 — banner compact columns=70 / wide=120; NO_COLOR without ANSI",
     expect(scanAnim.startsWith("⠋ ")).toBe(true);
   });
 
-  it("Grill-Me UX labels + Goal Contract card", () => {
+  it("Pergunta UX labels + Goal Contract card (sem jargão Grill-Me)", () => {
     const q = formatGrillMeQuestionUx(
       { prompt_pt: "Qual estratégia?", default_answer: "JWT local" },
       2,
       4,
     );
-    expect(q).toContain("[Grill-Me 2/4]");
+    expect(q).toContain("[Pergunta 2/4]");
+    expect(q).not.toMatch(/Grill[- ]?Me/i);
     expect(q).toContain("Padrão recomendado: JWT local (pressione Enter para aceitar)");
 
     const card = renderGoalContractCard({
@@ -202,6 +203,7 @@ describe("M8.3 — banner compact columns=70 / wide=120; NO_COLOR without ANSI",
     expect(lines[4]).toBe("Versão: v1");
   });
 });
+
 
 describe("M8.4 — capability gate A/N/C + fallback line", () => {
   it("renderCapabilityGatePrompt + parse A/N/C", () => {

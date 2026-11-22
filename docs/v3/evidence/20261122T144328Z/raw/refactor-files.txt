@@ -1,0 +1,11 @@
+REFACTORED:
+src/minibullmq/models.py  # +DELAYED/DEAD, max_attempts, available_at
+src/minibullmq/db.py      # schema Fase2 + migração V1→Fase2
+src/minibullmq/queue.py   # delay enqueue, claim available_at, schedule_retry, mark_dead
+src/minibullmq/worker.py  # retry/backoff → DELAYED; exhausted → DEAD
+src/minibullmq/cli.py     # --max-attempts --delay
+src/minibullmq/http_api.py # max_attempts/delay_seconds + GET /jobs
+README.md
+ADDED_TESTS_ONLY:
+tests/test_phase2_retry_delay.py
+V1_TESTS_UNTOUCHED: test_queue/test_worker/test_cli/test_http/conftest

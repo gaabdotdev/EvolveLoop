@@ -90,7 +90,16 @@ export class JobStore {
   listPending(options?: { key?: Buffer }): SkillJob[] {
     if (!existsSync(this.jobsDir)) return [];
     return readdirSync(this.jobsDir)
-      .filter((f) => f.endsWith(".json") && !f.endsWith(".result.json") && !f.startsWith("."))
+      // Job artifacts only: `{run_id}.json`. Sibling sidecars
+      // (`*.result.json`, `*.evidence.json`) live in the same directory but are
+      // not JobEnvelopes — reading them as jobs yields SIGNATURE_ABSENT.
+      .filter(
+        (f) =>
+          f.endsWith(".json") &&
+          !f.endsWith(".result.json") &&
+          !f.endsWith(".evidence.json") &&
+          !f.startsWith("."),
+      )
       .map((f) => this.readJob(f.replace(/\.json$/, ""), options))
       .filter((j): j is SkillJob => j !== null && j.status === "pending");
   }

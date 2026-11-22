@@ -10,6 +10,7 @@
   },
   "scripts": {
     "build": "tsc",
+    "pretest": "bash ../scripts/ensure-baseline-tokenizer.sh",
     "test": "vitest run",
     "test:bench": "vitest run --config vitest.bench.config.ts",
     "test:v0-offline": "vitest run --config vitest.v0-offline.config.ts",
@@ -18,7 +19,7 @@
     "test:v1-gate-compat": "bash ../scripts/v1-gate-compat.sh",
     "test:v1-gate-tok": "bash ../scripts/v1-gate-tok.sh",
     "test:watch": "vitest",
-    "test:unit": "vitest run tests/unit",
+    "test:unit": "bash ../scripts/ensure-baseline-tokenizer.sh && vitest run tests/unit",
     "test:integration": "vitest run tests/integration",
     "test:evals": "vitest run tests/evals",
     "run-engine": "node dist/cli/run-engine.js",

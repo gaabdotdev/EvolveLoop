@@ -635,3 +635,100 @@ Fault injection audit: 8/8 detected; evidence under docs/v3/evidence/audit-mso-2
 - Tests: `v0-tui-ergonomics.test.ts` (12); `npm run build` exit 0; `test:v0-offline` 138/138 pass.
 - npm link: `which evolve` → /home/gaab/.local/bin/evolve; `evolve --help` exit 0 em /tmp.
 - Wiki: PACK_NOT_FOUND EvolveLoop (GAP); log em vault EvolveLoop/ + .ai/log.md.
+
+## 2026-11-22T14:02:32Z — MSO M5+M6 (tentativa 1/3 cada)
+- task: M5 binário global + M6 headless/isTTY
+- wiki: GAP pack EvolveLoop (scout no_hits); search genérico; contrato = brief MSO
+- M5: `bash scripts/install-evolve-cli.sh` → ~/.local/bin/evolve → repo/bin/evolve; `cd /tmp && evolve --help` EXIT_CODE=0
+- M6: gate `shouldUseInkTui` preserva `!process.stdout.isTTY` → classic REPL; prova: `tests/unit/headless-ink-gate.test.ts` 6/6 pass EXIT_CODE=0; também v0-ux-cli-hud NO_COLOR/!TTY
+- code: +orchestrator/tests/unit/headless-ink-gate.test.ts (prova mínima; sem enfraquecer testes)
+
+## 2026-11-22T14:07:25Z — MSO M7+M8 (tentativa 1/3 cada) poluição de terminal
+- M7: reforço silence SQLite — export `isSqliteExperimentalWarning`/`installSilenceExperimentalSqlite`; setup vitest importa silence; teste `silence-experimental-sqlite.test.ts` 6/6
+- M7 evidência: raw node:sqlite AVISA; `evolve --help`/`status` ABSENT ExperimentalWarning EXIT 0; seletivo mantém "Custom experimental probe"
+- M8: idle banner/footer sem UNAVAILABLE (código pré-existente revalidado); boot `printf sair | evolve` 0× UNAVAILABLE EXIT 0; execução mantém Workers: UNAVAILABLE
+- Tests: silence + v0-footer-idle + v0-tui-ergonomics + v0-ux-cli-hud → 29/29 EXIT 0; build EXIT 0
+- Wiki: GAP pack EvolveLoop; log vault EvolveLoop/log.md
+
+## 2026-11-22T14:10:42Z — MSO M9+M10 (tentativa 1/3 cada) input TUI
+- task: M9 paste multilinha + M10 histórico ↑/↓
+- wiki: GAP pack EvolveLoop (ground search EMPTY); contrato = brief MSO
+- M9: extraiu `applyMultilineInput` (bracketed paste `\x1b[200~`/`\x1b[201~` + blob multilinha); Enter durante paste = newline; submit só com Enter explícito fora do paste
+- M10: ring buffer `pushInputHistory` cap 20 + ↑/↓ em `applyMultilineInput` (draft restaurado no ↓ além do mais recente)
+- prova: `npx vitest run tests/unit/tui-multiline-paste-history.test.ts` → 7/7 pass EXIT_CODE=0; `v0-tui-ergonomics` 12/12; `npm run build` EXIT 0
+- code: +multiline-input-logic.ts; MultilineInput.tsx usa lógica pura via ref; +tui-multiline-paste-history.test.ts
+
+## 2026-11-22T14:16:43Z — MSO M11+M12 (tentativa 1/3 cada)
+- task: M11 Grill-Me adaptativo + M12 Goal Contract sem eco
+- wiki: GAP pack EvolveLoop (PACK_NOT_FOUND); grounding search genérico; contrato = brief MSO M11/M12
+- M11 causa raiz: labels UX vazavam "Grill-Me"; REPL anunciava skill; defaults citavam SQLite
+  - fix: label usuário `Pergunta N/M`; scrub/containsLeakedInternalJargon; detailed→review card; vague→≤3 com choices
+- M12 causa raiz: card clássico/sumário ecoavam Objetivo no Escopo (incl. prefixo `Entregar:`)
+  - fix: `distinctScopeItems` normaliza prefixos; `renderGoalContractCard` + `summarizeContractLines` via anti-eco
+- prova M11: `npx vitest run tests/unit/v0-grill-adaptive.test.ts` → 3/3 (a)(b)(c) EXIT 0
+- prova M12: `npx vitest run tests/unit/v0-tui-ergonomics.test.ts` → 13/13 (incl. Entregar: eco) EXIT 0
+- related: v0-ux-cli-interactions + v0-intent-grill-sqlite + grill-me-intake → 37/37; `npm run build` EXIT 0
+- code: adaptive/session/grill-ux/goal-display/GrillQuestionSelect/repl/status-panel + testes
+
+## 2026-11-22T14:19:28Z — MSO M11+M12 (tentativa 1/3 cada)
+- task: M11 Grill-Me adaptativo + M12 Goal Contract sem eco
+- wiki: GAP pack EvolveLoop (PACK_NOT_FOUND); contrato = brief MSO
+- M11: grillInterviewBudget 0→card único; vague ≤3 Select/MultiSelect; zero jargão em superfícies grill (sem Grill-Me/MSO/Bloco)
+- M12: anti-eco Objetivo/Escopo (distinctScopeItems + defaults sem Entregar:prompt)
+- prova: v0-grill-adaptive 3/3 EXIT 0; v0-tui-ergonomics -t M12 4/4 EXIT 0; build EXIT 0
+
+## 2026-11-22T14:24:14Z — MSO M13+M14+M15 (tentativa 1/3 cada)
+- task: M13 execução viva · M14 slash · M15 card entrega final
+- wiki: GAP pack EvolveLoop (PACK_NOT_FOUND); contrato = brief MSO + código TUI existente
+- M13: formatElapsed [MM:SS] · sliding ≤5 · silence>30s · bell \x07 on complete/pause (TTY); HUD ExecutionLive já existia
+- M14: handlers /config /diff /status /clear; /config→writeFreellmKeySecure mode 0600 (stat)
+- M15: buildDeliveryCardView — status, git diff --stat, verificação, tokens reais, [Enter]/[D]/[Q]
+- code: +slash-handlers.ts +delivery-card-view.ts; App/DeliveryCard/index wired; +m13-m14-m15-tui.test.ts
+- prova: `npx vitest run tests/unit/m13-m14-m15-tui.test.ts` → 11/11 EXIT 0
+  - M13: 4/4 EXIT 0 · M14: 5/5 EXIT 0 · M15: 2/2 EXIT 0
+- `npm run build` EXIT 0
+- NOTE: probe acidental escreveu no secrets.env real e sobrescreveu FREELLMAPI_API_KEY; ficheiro limpo (header 0600); utilizador precisa reintroduzir chave via /config
+
+## 2026-11-22T14:28:21Z — MSO M16+M17 (tentativa 1/3 cada) confiabilidade motor
+- task: M16 auto-cura lock stale PID · M17 crash mid-run Reconciler
+- wiki: GAP pack EvolveLoop (PACK_NOT_FOUND); scout lock/fencing/reconciler sem contrato MSO; código verificado > wiki
+- M16 causa: já em `acquireWorkspaceLease` + `process-alive` (shell-${pid} morto → steal + fencing++); PID vivo → LEASE_HELD
+  - reforço prova: live PID agora asserta code=LEASE_HELD + fencing_token inalterado
+- M17 causa: Boot Reconciler (`decideReconcile`/`reconcileWorkOnBoot`) — dead pgid + clean wt → FAILED+auto_retry; dirty → UNKNOWN
+  - reforço prova: kill -9 real (SIGKILL supervised sleep) + close/reopen StateDb + integrity_check=ok + worktree porcelain vazio
+- code prod: sem alteração (raiz já correta); testes reforçados
+- prova M16: `npx vitest run tests/unit/v0-stale-lock-heal.test.ts` → 4/4 EXIT 0
+- prova M17: `npx vitest run tests/unit/v0-chaos-reconciler.test.ts` → 4/4 EXIT 0 (incl. caso M17 kill-9)
+- git diff --stat (desta tarefa): v0-chaos-reconciler +63; v0-stale-lock-heal +17/-5
+
+## 2026-11-22T14:35:47Z — MSO M18+M19+M20 (tentativa 1/3 cada)
+- task: M18 Evidence Validator anti-adulteração · M19 Token Ledger honesto · M20 Sandbox bwrap ON
+- wiki: GAP pack EvolveLoop (PACK_NOT_FOUND); scout sem contrato M18-M20 UX; código verificado > wiki
+- M18: evidence-validator classifica mutate/delete/skip via git name-status + diff skip patterns; BLOCKED sem authorize:
+  - prova: m18-evidence-validator-adulteration.test.ts 4/4 EXIT 0
+- M19: ledger-aggregate + loadHonestTokenTelemetry — MSO+Workers(+subagentes)=total; HUD/card consomem ledger real
+  - prova: m19-token-ledger-honest.test.ts 4/4 EXIT 0
+- M20: host /usr/bin/bwrap 0.11.0; HUD sandbox ON; ExecutionRunner/SandboxManager bloqueiam path fora do repo
+  - prova: m20-sandbox-bwrap-active + v1-sec-01 + v35-sandbox → EXIT 0 (19 pass / 2 skip honest se sem bwrap)
+- code: evidence-validator.ts; ledger-aggregate.ts; honest-telemetry.ts; App.tsx; hud-probes.ts; index exports
+
+## 2026-11-22T14:43:39Z — MSO M21 Teste de Fogo (AUD-UX-06) tentativa 1/3
+- Target: /home/gaab/Documentos/EvoolveTests/Mini-BullMQ (VOID não encontrado)
+- Evolução: Fase 2 multi-arquivo — DELAYED/retry/backoff/DEAD + migração schema
+- Files: models/db/queue/worker/cli/http_api + README; +tests/test_phase2_retry_delay.py
+- V1 tests: git diff vazio; SHA256 inalterados (Evidence Validator)
+- pytest: 20 passed EXIT=0
+- Evidence: docs/v3/evidence/20261122T144328Z/
+- Method: disciplina equivalente (evolve headless não coding brain; circuit ollama OK)
+- Honesty: NÃO fecha dogfooding 7–14d do AUD-UX-06 histórico
+- Wiki: GAP pack EvolveLoop (PACK_NOT_FOUND típico); contrato = brief MSO M21
+- Verdict: M21_FIRETEST_PASS
+
+## 2026-11-22T14:47:21Z — MSO M22+M23 (tentativa 1/3 cada)
+- task: M22 dogfooding 14d (colher evidência) · M23 review 60s
+- wiki: WIKI_ROOT ok; search dogfood/M22 → sem diário 14d; AUD-UX-06 já BLOQUEADA/diário AUSENTE
+- M22: inventário — melhor uso externo datado = 1 dia (2026-11-22 AUD-UX-01 KernelBot+OrbitBot); xRayLinkedin 2d esparsos; journals ausentes; freeze formal ausente
+- M22_STATUS: FAIL / INSUFICIENTE (MAX_EXTERNAL_CONTINUOUS_DAYS=1) — sem fabricar diário
+- M23: revertido lixo probe `v35-op-e2e.json` + `p0-baseline-report.json`; status limpo de tmp/secrets; git status/diff --stat EXIT 0
+- M23_STATUS: PASS (higiene review; commit não pedido)
+- Evidence: docs/v3/evidence/20261122T144721Z/ (+ symlink latest-m22-m23)

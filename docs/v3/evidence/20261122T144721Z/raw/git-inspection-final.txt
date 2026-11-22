@@ -1,0 +1,112 @@
+### git status --short
+ M .ai/log.md
+ M .gitignore
+ M orchestrator/package.json
+ M orchestrator/src/cli/silence-experimental-sqlite.ts
+ M orchestrator/src/cli/tui/App.tsx
+ M orchestrator/src/cli/tui/DeliveryCard.tsx
+ M orchestrator/src/cli/tui/GrillQuestionSelect.tsx
+ M orchestrator/src/cli/tui/MultilineInput.tsx
+ M orchestrator/src/cli/tui/goal-display.ts
+ M orchestrator/src/cli/tui/index.ts
+ M orchestrator/src/context/tokenizer.ts
+ M orchestrator/src/jobs/job-store.ts
+ M orchestrator/src/v3/circuit/evidence-validator.ts
+ M orchestrator/src/v3/circuit/index.ts
+ M orchestrator/src/v3/evolve-shell/grill-ux.ts
+ M orchestrator/src/v3/evolve-shell/hud-probes.ts
+ M orchestrator/src/v3/evolve-shell/repl.ts
+ M orchestrator/src/v3/evolve-shell/status-panel.ts
+ M orchestrator/src/v3/grill-me/adaptive.ts
+ M orchestrator/src/v3/grill-me/index.ts
+ M orchestrator/src/v3/grill-me/intake.ts
+ M orchestrator/src/v3/grill-me/session.ts
+ M orchestrator/src/v3/intake/intent-flow.ts
+ M orchestrator/src/v3/token-economy/index.ts
+ M orchestrator/tests/setup-checkpoint-key.ts
+ M orchestrator/tests/unit/v0-chaos-reconciler.test.ts
+ M orchestrator/tests/unit/v0-grill-adaptive.test.ts
+ M orchestrator/tests/unit/v0-stale-lock-heal.test.ts
+ M orchestrator/tests/unit/v0-tui-ergonomics.test.ts
+ M orchestrator/tests/unit/v0-ux-cli-interactions.test.ts
+?? docs/v3/evidence/20261122T144328Z/
+?? docs/v3/evidence/20261122T144721Z/
+?? docs/v3/evidence/latest-m21-firetest
+?? docs/v3/evidence/latest-m22-m23
+?? orchestrator/src/cli/tui/delivery-card-view.ts
+?? orchestrator/src/cli/tui/multiline-input-logic.ts
+?? orchestrator/src/cli/tui/slash-handlers.ts
+?? orchestrator/src/v3/token-economy/honest-telemetry.ts
+?? orchestrator/src/v3/token-economy/ledger-aggregate.ts
+?? orchestrator/tests/unit/headless-ink-gate.test.ts
+?? orchestrator/tests/unit/m13-m14-m15-tui.test.ts
+?? orchestrator/tests/unit/m18-evidence-validator-adulteration.test.ts
+?? orchestrator/tests/unit/m19-token-ledger-honest.test.ts
+?? orchestrator/tests/unit/m20-sandbox-bwrap-active.test.ts
+?? orchestrator/tests/unit/silence-experimental-sqlite.test.ts
+?? orchestrator/tests/unit/tui-multiline-paste-history.test.ts
+?? scripts/ensure-baseline-tokenizer.sh
+
+### untracked
+docs/v3/evidence/20261122T144328Z/SUMMARY.md
+docs/v3/evidence/20261122T144328Z/gates/AUD-UX-06-M21-FIRETEST.md
+docs/v3/evidence/20261122T144328Z/raw/adulteration-proof.txt
+docs/v3/evidence/20261122T144328Z/raw/evolve-honesty.txt
+docs/v3/evidence/20261122T144328Z/raw/pytest-out.txt
+docs/v3/evidence/20261122T144328Z/raw/refactor-files.txt
+docs/v3/evidence/20261122T144328Z/raw/repo-search.txt
+docs/v3/evidence/20261122T144721Z/SUMMARY.md
+docs/v3/evidence/20261122T144721Z/gates/M22-DOGFOOD-14D.md
+docs/v3/evidence/20261122T144721Z/gates/M23-REVIEW-60S.md
+docs/v3/evidence/20261122T144721Z/raw/git-inspection-final.txt
+docs/v3/evidence/20261122T144721Z/raw/git-inspection-pre.txt
+docs/v3/evidence/latest-m21-firetest
+docs/v3/evidence/latest-m22-m23
+orchestrator/src/cli/tui/delivery-card-view.ts
+orchestrator/src/cli/tui/multiline-input-logic.ts
+orchestrator/src/cli/tui/slash-handlers.ts
+orchestrator/src/v3/token-economy/honest-telemetry.ts
+orchestrator/src/v3/token-economy/ledger-aggregate.ts
+orchestrator/tests/unit/headless-ink-gate.test.ts
+orchestrator/tests/unit/m13-m14-m15-tui.test.ts
+orchestrator/tests/unit/m18-evidence-validator-adulteration.test.ts
+orchestrator/tests/unit/m19-token-ledger-honest.test.ts
+orchestrator/tests/unit/m20-sandbox-bwrap-active.test.ts
+orchestrator/tests/unit/silence-experimental-sqlite.test.ts
+orchestrator/tests/unit/tui-multiline-paste-history.test.ts
+scripts/ensure-baseline-tokenizer.sh
+
+### git diff --stat
+ .ai/log.md                                         |  88 ++++++++++++
+ .gitignore                                         |   1 +
+ orchestrator/package.json                          |   3 +-
+ .../src/cli/silence-experimental-sqlite.ts         |  22 ++-
+ orchestrator/src/cli/tui/App.tsx                   |  65 +++++----
+ orchestrator/src/cli/tui/DeliveryCard.tsx          |  37 +++--
+ orchestrator/src/cli/tui/GrillQuestionSelect.tsx   |   2 +-
+ orchestrator/src/cli/tui/MultilineInput.tsx        | 128 +++++------------
+ orchestrator/src/cli/tui/goal-display.ts           |  38 +++--
+ orchestrator/src/cli/tui/index.ts                  |  18 +++
+ orchestrator/src/context/tokenizer.ts              |  68 ++++++++-
+ orchestrator/src/jobs/job-store.ts                 |  11 +-
+ orchestrator/src/v3/circuit/evidence-validator.ts  | 150 +++++++++++++++++--
+ orchestrator/src/v3/circuit/index.ts               |   3 +
+ orchestrator/src/v3/evolve-shell/grill-ux.ts       |  34 +++--
+ orchestrator/src/v3/evolve-shell/hud-probes.ts     |  14 +-
+ orchestrator/src/v3/evolve-shell/repl.ts           |  24 ++--
+ orchestrator/src/v3/evolve-shell/status-panel.ts   |   2 +-
+ orchestrator/src/v3/grill-me/adaptive.ts           |  66 ++++++++-
+ orchestrator/src/v3/grill-me/index.ts              |   5 +
+ orchestrator/src/v3/grill-me/intake.ts             |   2 +-
+ orchestrator/src/v3/grill-me/session.ts            |  60 ++++++--
+ orchestrator/src/v3/intake/intent-flow.ts          |   4 +-
+ orchestrator/src/v3/token-economy/index.ts         |  14 ++
+ orchestrator/tests/setup-checkpoint-key.ts         |   2 +
+ .../tests/unit/v0-chaos-reconciler.test.ts         |  63 ++++++++
+ orchestrator/tests/unit/v0-grill-adaptive.test.ts  | 160 ++++++++++++++++-----
+ orchestrator/tests/unit/v0-stale-lock-heal.test.ts |  22 ++-
+ orchestrator/tests/unit/v0-tui-ergonomics.test.ts  |  41 +++++-
+ .../tests/unit/v0-ux-cli-interactions.test.ts      |   6 +-
+ 30 files changed, 906 insertions(+), 247 deletions(-)
+status_exit=0
+diff_stat_exit=0
