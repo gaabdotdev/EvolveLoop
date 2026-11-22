@@ -49,11 +49,15 @@ export function detectWorkspaceSession(workspaceRoot: string): WorkspaceSessionS
 
     let message_pt: string;
     if (latest_mso_session) {
-      message_pt = `Sessão MSO reconhecida: ${latest_mso_session.session_id} (${latest_mso_session.state}); ${contracts.length} Goal Contract(s).`;
+      const sessionUi =
+        latest_mso_session.state === "TRUE-FULL-PASS"
+          ? "concluída (verificada)"
+          : latest_mso_session.state;
+      message_pt = `Session reconhecida: ${latest_mso_session.session_id} (${sessionUi}); ${contracts.length} Plan(s).`;
     } else if (latest_contract) {
-      message_pt = `Projeto inicializado: ${contracts.length} Goal Contract(s); último=${latest_contract.goal_contract_id} v${latest_contract.version}.`;
+      message_pt = `Workspace inicializado: ${contracts.length} Plan(s); último=${latest_contract.goal_contract_id} v${latest_contract.version}.`;
     } else {
-      message_pt = `Estado SQLite presente (${journal_mode}) mas sem contratos/sessões ainda.`;
+      message_pt = `Estado SQLite presente (${journal_mode}) mas sem Plan/Session ainda.`;
     }
 
     return {

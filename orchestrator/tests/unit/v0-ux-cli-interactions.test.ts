@@ -69,9 +69,9 @@ describe("M8.1 — footer UNAVAILABLE when metric absent (never tok 0 without pr
     expect(tel.idle).toBe(true);
     const text = renderFooter(tel, { color: false });
     expect(text).toContain("tok —");
-    expect(text).toContain("Workers: —");
+    expect(text).toContain("Agents: —");
     expect(text).not.toMatch(/tok 0(?!\d)/);
-    expect(text).not.toContain("Workers: 0");
+    expect(text).not.toContain("Agents: 0");
   });
 
   it("executing: absent worker metric still renders UNAVAILABLE (never silent 0)", () => {
@@ -87,8 +87,8 @@ describe("M8.1 — footer UNAVAILABLE when metric absent (never tok 0 without pr
     });
     expect(tel.idle).toBe(false);
     const text = renderFooter(tel, { color: false });
-    expect(text).toContain("Workers: UNAVAILABLE");
-    expect(text).not.toContain("Workers: 0");
+    expect(text).toContain("Agents: UNAVAILABLE");
+    expect(text).not.toContain("Agents: 0");
   });
 });
 
@@ -198,9 +198,10 @@ describe("M8.3 — banner compact columns=70 / wide=120; NO_COLOR without ANSI",
       version: "v1",
     });
     const lines = card.split("\n");
-    expect(lines).toHaveLength(5);
-    expect(lines[0]).toMatch(/^Objetivo:/);
-    expect(lines[4]).toBe("Versão: v1");
+    expect(lines).toHaveLength(6);
+    expect(lines[0]).toBe("Plan");
+    expect(lines[1]).toMatch(/^Objetivo:/);
+    expect(lines[5]).toBe("Versão: v1");
   });
 });
 

@@ -9,7 +9,11 @@ import type { WorkspaceSessionSnapshot } from "./workspace-session.js";
 export interface StatusPanelModel {
   mso_state: string;
   metas: string;
+  /** Product Task label (objective / contract) — never bare work_id as "Tarefa". */
   active_task: string;
+  /** Internal work id when present (verbose / L5). */
+  work_id?: string;
+  session_id?: string;
   model_provider: string;
   warnings: string[];
 }
@@ -38,10 +42,23 @@ export function buildStatusPanel(
     warnings.push("goal_document_não_validado");
   }
 
+  const contract = session.latest_contract;
+  const taskLabel =
+    extras?.active_task ??
+    (contract
+      ? `${contract.objective.slice(0, 48)}${contract.objective.length > 48 ? "…" : ""}`
+      : "—");
+  const workId =
+    extras?.work_id ?? session.latest_mso_session?.work_id ?? contract?.work_id;
+  const sessionId =
+    extras?.session_id ?? session.latest_mso_session?.session_id;
+
   return {
     mso_state: resolvePanelMsoState(session, extras?.mso_state),
-    metas: extras?.metas ?? (session.latest_contract?.objective.slice(0, 60) || "—"),
-    active_task: extras?.active_task ?? session.latest_mso_session?.work_id ?? "—",
+    metas: extras?.metas ?? (contract?.objective.slice(0, 60) || "—"),
+    active_task: taskLabel,
+    work_id: workId,
+    session_id: sessionId,
     model_provider: extras?.model_provider ?? "local/determinístico (0 tokens)",
     warnings: extras?.warnings ?? warnings,
   };
@@ -49,13 +66,18 @@ export function buildStatusPanel(
 
 export function renderStatusPanelPt(panel: StatusPanelModel): string {
   const warn = panel.warnings.length ? panel.warnings.join("; ") : "nenhum";
-  return [
+  const lines = [
     "┌─ EvolveLoop ─────────────────────────────────────────",
-    `│ MSO: ${panel.mso_state}`,
-    `│ Meta: ${panel.metas}`,
-    `│ Tarefa: ${panel.active_task}`,
+    `│ Session: ${panel.mso_state}${panel.session_id ? ` (${panel.session_id})` : ""}`,
+    `│ Task: ${panel.active_task}`,
+  ];
+  if (panel.work_id) {
+    lines.push(`│ Work (interno): ${panel.work_id}`);
+  }
+  lines.push(
     `│ Modelo/Provider: ${panel.model_provider}`,
     `│ Avisos: ${warn}`,
     "└──────────────────────────────────────────────────────",
-  ].join("\n");
+  );
+  return lines.join("\n");
 }

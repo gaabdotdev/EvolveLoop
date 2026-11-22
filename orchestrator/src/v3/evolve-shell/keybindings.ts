@@ -34,7 +34,7 @@ export const MSG_PAUSE =
   "⏸ Novas delegações pausadas (aguardando tarefas ativas)";
 
 export const MSG_DETACH_OK =
-  "↪ Desconectado do daemon (MSO continua rodando em background).";
+  "↪ Desconectado do daemon (Orchestrator continua em background).";
 
 export const MSG_DETACH_OFF_WARN =
   "Daemon OFF: fechar o terminal encerrará a sessão. Confirme detach/saída (sim/Enter) ou cancele.";

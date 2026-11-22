@@ -93,13 +93,44 @@ import { cancelWorkSlice } from "../v3/cancel/index.js";
 import { scheduleReadyTasks, listReadyTasks } from "../v3/parallel/index.js";
 import { runFailureBattery, runEngineeringFailureBattery } from "../v3/failure-injection/index.js";
 import type { ProviderMode } from "./provider-bootstrap.js";
-import { handleV35Command, V35_USAGE_GROUPS } from "./v35-commands.js";
+import {
+  enrichArgsWithPositional,
+  handleAgentsSurface,
+  normalizeAgentsGroup,
+} from "./agents-surface.js";
+import { handleV35Command } from "./v35-commands.js";
 import { handleV36Command, V36_USAGE_GROUPS } from "./v36-commands.js";
+import { formatAdvancedHelp, formatJourneyHelp } from "./help-usage.js";
+import { handleConfigSurface } from "./config-surface.js";
+import { handleHistorySurface } from "./tui/task-history.js";
+import { handleDeliverySurface } from "./delivery-surface.js";
+import {
+  getJourneyPause,
+  resumeJourneyTask,
+} from "./tui/journey-pause.js";
+import {
+  handleWorkspaceProductSurface,
+  normalizeWorkspaceIntegrationGroup,
+  integrationAliasNote,
+} from "./workspace-product-surface.js";
+import { formatContinuityLimitation } from "../v3/continuity/limitation-ui.js";
+import {
+  formatConfigWarnings,
+  loadEvolveLoopProfileDetailed,
+} from "../config/profile.js";
+import { validateWorkspaceConfigFile } from "../config/profile.js";
+import { workspaceConfigPath } from "../v3/agent-handles/preference.js";
 
 function parseArgs(argv: string[]) {
   const group = argv[2] ?? "help";
-  if (group === "help" || group === "--help" || group === "-h") {
+  // P2-1: `evolve help advanced` keeps command=advanced; bare --help/-h → journey.
+  if (group === "--help" || group === "-h") {
     return { group: "help", command: "help" } as Record<string, string>;
+  }
+  if (group === "help") {
+    const sub =
+      argv[3] && !argv[3].startsWith("--") ? argv[3] : "help";
+    return { group: "help", command: sub } as Record<string, string>;
   }
   const command = argv[3] && !argv[3].startsWith("--") ? argv[3] : "help";
   const args: Record<string, string> = { group, command };
@@ -131,82 +162,13 @@ function print(obj: unknown) {
   console.log(JSON.stringify(obj, null, 2));
 }
 
-function usage() {
-  print({
-    name: "evolve",
-    version: "0.1.0-v0-cli",
-    default: "evolve  → conversational shell (PT); state in <cwd>/.evolveloop/",
-    groups: {
-      shell: ["conversational REPL (default when no args)"],
-      setup: ["first-run guided detection + readiness report (V1-PROD-01)"],
-      daemon: ["start|status|ping via Unix Domain Socket (V1-ORCH-01)"],
-      freellm: ["catalog|health FreeLLMAPI (V1-PROD-02)"],
-      intent: ["<text|--text> → silent scan + Grill-Me ≤5 → Goal Document+Contract SQLite"],
-      status: ["trivial zero-token status from .evolveloop/state.db"],
-      pause: ["trivial zero-token pause"],
-      resume: ["trivial zero-token resume / session detect"],
-      progress: ["trivial zero-token progress from TaskGraph/SQLite"],
-      circuit: [
-        "probe (1+1+1 health)",
-        "run --task-id … --intent …",
-        "fire-5 [--offline-fixture]",
-        "ledger [--work-id]",
-      ],
-      grill: ["apply", "validate"],
-      goal: ["create", "show", "evaluate", "criterion"],
-      work: ["init", "status"],
-      hierarchy: ["spawn", "approve", "aux"],
-      task: ["add", "approve-plan", "show"],
-      agents: ["register", "heartbeat", "list", "reconcile", "adopt", "inspect"],
-      continuity: ["handoff", "apply", "show"],
-      exec: ["run"],
-      coordinator: ["start", "stop", "tick", "status"],
-      ...V36_USAGE_GROUPS,
-      ...V35_USAGE_GROUPS,
-      events: ["list"],
-      ledger: ["show", "rebuild"],
-      adapters: [
-        "list",
-        "show",
-        "drivers",
-        "invoke",
-        "handoff-envelope",
-        "handoff-apply",
-        "probe",
-        "sessions",
-        "session-cancel",
-      ],
-      tui: ["status", "run"],
-      models: ["seed", "list", "show", "enable"],
-      context: ["view", "compact", "reinject", "savings"],
-      route: ["decide", "probe-decision", "probe-openrouter"],
-      budget: ["show", "record", "stuck", "hierarchical"],
-      limits: ["classify", "handoff"],
-      embeddings: ["probe", "embed", "retrieve", "index-build", "index-search"],
-      lock: ["acquire", "renew", "release", "status", "fence-check"],
-      recovery: ["plan", "apply"],
-      worktree: ["create", "list", "remove"],
-      cancel: ["apply"],
-      parallel: ["schedule", "ready"],
-      battery: ["run", "engineering", "eval"],
-      engineering: ["run", "show"],
-      harness: ["matrix", "list", "inspect", "sessions"],
-      eval: ["battery"],
-    },
-    notes: [
-      "V0-CLI: `evolve` (no args) opens PT conversational shell; Ctrl+P pause, Ctrl+C interrupt (see docs/v0/CLI-KEYBINDINGS.md).",
-      "V0-CLI-03: re-running evolve in the same cwd auto-detects .evolveloop/state.db session/contracts.",
-      "V1-PROD-01: `evolve setup` → readiness report; credentials written 0600, never logged.",
-      "V1-ORCH-01: `evolve daemon start` listens on .evolveloop/runtime.sock; client disconnect ≠ kill runs.",
-      "V0-GRILL: medium/large intents require runtime code gate (silent scan + Grill-Me) before planning; LLM boolean ≠ proof.",
-      "V0 Bloco 2: `evolve intent --text \"...\"` → Goal Document + Goal Contract in <workspace>/.evolveloop/state.db.",
-      "Use --answers-json for offline/non-interactive answers (Enter/ok → defaults). --confirm-mso flags MSO ready.",
-      "V0 Bloco 3: `evolve circuit probe|run|fire-5|ledger` — ExecutionRunner + Evidence Validator + Token Ledger + 1+1+1.",
-      "Trivial ops (status|pause|resume|progress|help|tsc|test) bypass Grill-Me with zero tokens via regex+SQLite (V0-TOK-02).",
-      "V0-TOK: Token Ledger breakdown + stdout filter head30/tail20 + fail-fast cascade + node max_tokens_budget.",
-      "Install: bash scripts/install-evolve-cli.sh (symlink bin/evolve onto PATH).",
-    ],
-  });
+/** P2-1: short journey help by default; full map via `evolve help advanced`. */
+function usage(kind: "journey" | "advanced" = "journey") {
+  if (kind === "advanced") {
+    console.log(formatAdvancedHelp());
+    return;
+  }
+  console.log(formatJourneyHelp());
 }
 
 function defaultCriteria(objective: string): GoalContractCreateInput["criteria"] {
@@ -242,6 +204,21 @@ async function main() {
         return process.cwd();
       })(),
     );
+    // V4.2 P0-2: interactive warn on invalid config (não quebra hosts sem flag)
+    const profileDetail = loadEvolveLoopProfileDetailed();
+    const wsIssues = validateWorkspaceConfigFile(workspaceConfigPath(workspace));
+    const warnLines = formatConfigWarnings([
+      ...profileDetail.issues,
+      ...wsIssues,
+    ]);
+    for (const line of warnLines) {
+      console.error(line);
+    }
+    if (profileDetail.used_fallback && profileDetail.path) {
+      console.error(
+        `⚠ config: a usar DEFAULT — valide com: evolve config validate --workspace ${workspace}`,
+      );
+    }
     const shellOpts = { workspace };
     const result = shouldUseInkTui(shellOpts)
       ? await runInkEvolveShell(shellOpts)
@@ -250,13 +227,61 @@ async function main() {
     return;
   }
 
-  const args = parseArgs(process.argv);
+  let args = parseArgs(process.argv);
+  args.group = normalizeAgentsGroup(args.group);
+  const integAlias = normalizeWorkspaceIntegrationGroup(args.group);
+  args.group = integAlias.group;
+  args = enrichArgsWithPositional(process.argv, args);
   if (args.group === "help") {
-    usage();
+    usage(args.command === "advanced" ? "advanced" : "journey");
     return;
   }
 
   try {
+    if (integAlias.aliased_from_integration) {
+      console.error(integrationAliasNote());
+    }
+    // V4.1 P1 — product agents surface (list/inspect/attach/logs) before legacy JSON paths
+    if (args.group === "agents") {
+      const surface = handleAgentsSurface(args, { printJson: print });
+      if (surface.handled) {
+        if (surface.exitCode != null) process.exitCode = surface.exitCode;
+        return;
+      }
+    }
+    // V4.2 P0 — config prefs / validate
+    if (args.group === "config") {
+      const surface = handleConfigSurface(args, {
+        printJson: print,
+        argv: process.argv,
+      });
+      if (surface.handled) {
+        if (surface.exitCode != null) process.exitCode = surface.exitCode;
+        return;
+      }
+    }
+    // V4.2 P0-4 — task/contract history
+    if (args.group === "history") {
+      const surface = handleHistorySurface(args, {
+        printJson: print,
+        argv: process.argv,
+      });
+      if (surface.handled) {
+        if (surface.exitCode != null) process.exitCode = surface.exitCode;
+        return;
+      }
+    }
+    // V4.2 P1-1 — use/switch Workspace produto
+    if (args.group === "use" || args.group === "switch") {
+      const surface = handleWorkspaceProductSurface(args, {
+        printJson: print,
+        argv: process.argv,
+      });
+      if (surface.handled) {
+        if (surface.exitCode != null) process.exitCode = surface.exitCode;
+        return;
+      }
+    }
     // V1-PROD-01 — first-run setup / readiness
     if (args.group === "setup") {
       const workspace = resolve(args.workspace ?? args.cwd ?? process.cwd());
@@ -353,11 +378,44 @@ async function main() {
       return;
     }
 
-    // V0-CLI-03 helper: evolve resume → print detected session JSON
-    if (args.group === "resume" && (args.command === "help" || args.command === "detect" || !argv[3])) {
+    // V4.3 P0-1: evolve resume → same journey pause axis as TUI + session detect
+    if (
+      args.group === "resume" &&
+      (args.command === "help" || args.command === "detect" || !argv[3])
+    ) {
       const workspace = resolve(args.workspace ?? args.cwd ?? process.cwd());
-      print(detectWorkspaceSession(workspace));
+      if (argv[3] === "help") {
+        console.log(
+          [
+            "evolve resume — retoma pausa de jornada (StateDb) + session detect",
+            "  evolve resume          # limpa journey pause (idempotente) + JSON sessão",
+            "  evolve resume detect   # só lê pause + sessão (não altera)",
+            "Mesmo eixo que TUI Ctrl+P / /pause. ≠ workflow resume.",
+          ].join("\n"),
+        );
+        return;
+      }
+      const journey =
+        argv[3] === "detect"
+          ? getJourneyPause(workspace)
+          : resumeJourneyTask(workspace, "cli");
+      print({
+        ...detectWorkspaceSession(workspace),
+        journey_pause: journey,
+      });
       return;
+    }
+
+    // V4.3 P0-2 — delivery show|validate from evidence
+    if (args.group === "delivery") {
+      const surface = handleDeliverySurface(args, {
+        printJson: print,
+        argv: process.argv,
+      });
+      if (surface.handled) {
+        if (surface.exitCode != null) process.exitCode = surface.exitCode;
+        return;
+      }
     }
 
     // V3.6 Global Operations Center (ops-dir; does not require --data-dir)
@@ -378,7 +436,10 @@ async function main() {
     if (
       v35Groups.has(args.group) ||
       (args.group === "harness" && args.command !== "matrix") ||
-      (args.group === "agents" && args.command === "inspect")
+      (args.group === "agents" &&
+        args.command === "inspect" &&
+        args.format === "json" &&
+        Boolean(args["data-dir"]))
     ) {
       const paths = requireDataDir(args);
       const handled = await handleV35Command(args, paths);
@@ -539,9 +600,13 @@ async function main() {
           `Runtime gate: scale=${result.scale} planning=${result.planning.planning_authorized}`,
         );
         if (result.mso_ready) {
-          console.error("MSO: confirmado (pronto para Bloco 3 — não executado neste comando).");
+          console.error(
+            "Orchestrator: confirmado (pronto para execução — não executado neste comando).",
+          );
         } else {
-          console.error("MSO: pendente — passe --confirm-mso para marcar disparo.");
+          console.error(
+            "Orchestrator: pendente — passe --confirm-mso para marcar disparo.",
+          );
         }
       } else if ("message_pt" in result) {
         console.error(result.message_pt);
@@ -978,12 +1043,16 @@ async function main() {
           console.error("Required: --handoff-id");
           process.exit(1);
         }
-        print(
-          engine.applyHandoff(args["handoff-id"], {
-            substitute_agent_id: args["substitute-agent-id"],
-            create_substitute: args["create-substitute"] !== "false",
-          }),
-        );
+        const applied = engine.applyHandoff(args["handoff-id"], {
+          substitute_agent_id: args["substitute-agent-id"],
+          create_substitute: args["create-substitute"] !== "false",
+        });
+        const lim = formatContinuityLimitation({
+          kind: "handoff",
+          handoff: applied,
+        });
+        console.log(lim.lines.join("\n"));
+        print(applied);
         return;
       }
       if (args.command === "show") {
@@ -991,7 +1060,17 @@ async function main() {
           console.error("Required: --handoff-id");
           process.exit(1);
         }
-        print(engine.load(args["handoff-id"]));
+        const pkg = engine.load(args["handoff-id"]);
+        // V4.2 P1-4 — 3 linhas humanas (preservado / perdido / próximo)
+        const lim = formatContinuityLimitation({ kind: "handoff", handoff: pkg });
+        if (args.format === "json") {
+          print({ ...pkg, continuity_limitation: lim });
+        } else {
+          console.log(lim.lines.join("\n"));
+          if (args.format !== "human") {
+            print(pkg);
+          }
+        }
         return;
       }
     }

@@ -63,7 +63,7 @@ describe("TUI banner + footer idle — zero UNAVAILABLE", () => {
     expect(out).toContain("EvolveLoop v");
     expect(out).toContain("Providers: Ollama");
     expect(out).toContain("Sandbox: bwrap ON");
-    expect(out).toContain("Estado: Pronto");
+    expect(out).toContain("Estado: Aguardando entrada");
     expect(out).not.toContain("UNAVAILABLE");
     expect(out).not.toContain("Daemon:");
     expect(out).not.toContain("Tokens:");
@@ -96,11 +96,12 @@ describe("TUI banner + footer idle — zero UNAVAILABLE", () => {
     });
     const compact = renderCompactFooter(tel);
     expect(compact.mode).toBe("executing");
-    expect(compact.lines).toHaveLength(2);
-    expect(compact.lines[0]).toContain("[DELEGATING]");
-    expect(compact.lines[0]).toContain("tok MSO 1.2k");
-    expect(compact.lines[0]).not.toContain("UNAVAILABLE");
-    expect(compact.lines[1]).toContain("Ctrl+P");
+    expect(compact.lines.length).toBeGreaterThanOrEqual(2);
+    expect(compact.lines.join("\n")).toContain("Session: delegando");
+    expect(compact.lines.join("\n")).toContain("tok Orchestrator 1.2k");
+    expect(compact.lines.join("\n")).not.toContain("UNAVAILABLE");
+    expect(compact.lines.join("\n")).not.toContain("Workers");
+    expect(compact.lines[compact.lines.length - 1]).toContain("Ctrl+P");
   });
 });
 
@@ -120,7 +121,7 @@ describe("input history ↑/↓ helpers", () => {
 });
 
 describe("slash commands", () => {
-  it("parseia /config /diff /status /clear", () => {
+  it("parseia /config /diff /status /clear + jornada", () => {
     expect(parseSlashCommand("/config")).toEqual({
       kind: "slash",
       command: "config",
@@ -141,19 +142,25 @@ describe("slash commands", () => {
       command: "clear",
       args: "",
     });
-    expect(SLASH_COMMANDS.map((c) => c.id)).toEqual([
-      "config",
-      "diff",
-      "status",
-      "clear",
-    ]);
+    expect(parseSlashCommand("/plan").kind).toBe("slash");
+    expect(parseSlashCommand("/approvals").kind).toBe("slash");
+    expect(parseSlashCommand("/agents").kind).toBe("slash");
+    expect(parseSlashCommand("/pause").kind).toBe("slash");
+    expect(parseSlashCommand("/cancel").kind).toBe("slash");
+    expect(parseSlashCommand("/delivery").kind).toBe("slash");
+    expect(SLASH_COMMANDS.map((c) => c.id)).toContain("plan");
+    expect(SLASH_COMMANDS.map((c) => c.id)).toContain("delivery");
   });
 
-  it("partial /c sugere config e clear", () => {
+  it("partial /c sugere cancel, clear e config", () => {
     const p = parseSlashCommand("/c");
     expect(p.kind).toBe("partial");
     if (p.kind === "partial") {
-      expect(p.matches.map((m) => m.id).sort()).toEqual(["clear", "config"]);
+      expect(p.matches.map((m) => m.id).sort()).toEqual([
+        "cancel",
+        "clear",
+        "config",
+      ]);
     }
   });
 

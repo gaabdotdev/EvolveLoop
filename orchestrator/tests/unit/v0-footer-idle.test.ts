@@ -30,7 +30,7 @@ describe("footer IDLE render", () => {
     expect(text).toContain("Modelo: —");
     expect(text).toContain("ctx —");
     expect(text).toContain("tok —");
-    expect(text).toContain("Workers: —");
+    expect(text).toContain("Agents: —");
     expect(text).not.toContain("UNAVAILABLE");
   });
 
@@ -51,7 +51,7 @@ describe("footer IDLE render", () => {
     expect(isFooterIdle(tel)).toBe(false);
     const text = renderFooter(tel, { color: false });
     expect(text).toContain("[DELEGATING]");
-    expect(text).toContain("Workers: UNAVAILABLE");
-    expect(text).not.toContain("Workers: —");
+    expect(text).toContain("Agents: UNAVAILABLE");
+    expect(text).not.toContain("Agents: —");
   });
 });

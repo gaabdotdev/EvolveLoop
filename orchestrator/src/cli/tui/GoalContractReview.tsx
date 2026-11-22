@@ -1,37 +1,61 @@
 /**
- * Single-card Goal Contract review (detailed Grill-Me path).
+ * Plan review card (Goal Contract view-model) — V4.1 P0-3.
  * Enter = confirm+execute · E = edit · Esc = cancel.
- * Renders titles with bold/dim — no crude # markdown.
  */
 
 import React, { useState } from "react";
 import { Box, Text, useInput } from "ink";
 import type { GoalDisplayFields } from "./goal-display.js";
+import {
+  buildPlanCardView,
+  buildPlanDisplay,
+  type PlanDisplayFields,
+} from "./plan-display.js";
+import { narrowCardPadding } from "./layout-narrow.js";
 
 export type GoalReviewAction = "confirm_execute" | "edit" | "cancel";
 
 export interface GoalContractReviewProps {
   /** Preferred structured fields (no objective/scope echo). */
-  display?: GoalDisplayFields;
+  display?: GoalDisplayFields | PlanDisplayFields;
   /** Legacy plain lines fallback. */
   cardLines?: string[];
   onAction: (action: GoalReviewAction) => void;
   focus?: boolean;
+  narrow?: boolean;
 }
 
 const OPTIONS: Array<{ key: GoalReviewAction; label: string }> = [
-  { key: "confirm_execute", label: "[Enter] Confirmar e executar agora" },
+  { key: "confirm_execute", label: "[Enter] Confirmar Plan e executar" },
   { key: "edit", label: "[E] Ajustar escopo / restrições" },
   { key: "cancel", label: "[Esc] Cancelar" },
 ];
+
+function toPlanFields(
+  display: GoalDisplayFields | PlanDisplayFields,
+): PlanDisplayFields {
+  if ("steps" in display && "agents" in display && "autonomy" in display) {
+    return display as PlanDisplayFields;
+  }
+  return buildPlanDisplay({
+    objective: display.objective_title,
+    scope: display.scope_items,
+    criteria: display.criteria,
+    risks: display.risks,
+    version: display.version,
+    approval_needed: true,
+  });
+}
 
 export function GoalContractReview({
   display,
   cardLines,
   onAction,
   focus = true,
+  narrow = false,
 }: GoalContractReviewProps): React.ReactElement {
   const [idx, setIdx] = useState(0);
+  const pad = narrowCardPadding(narrow);
 
   useInput(
     (input, key) => {
@@ -59,45 +83,37 @@ export function GoalContractReview({
     { isActive: focus },
   );
 
+  const plan = display ? toPlanFields(display) : null;
+  const view = plan ? buildPlanCardView(plan) : null;
+
   return (
     <Box
       flexDirection="column"
       borderStyle="round"
-      paddingX={2}
-      paddingY={1}
+      paddingX={pad.paddingX}
+      paddingY={pad.paddingY}
       marginBottom={1}
     >
-      <Text bold>Goal Contract</Text>
+      <Text bold>Plan</Text>
       <Text dimColor>revisão antes da execução</Text>
-      {display ? (
+      {view ? (
         <Box flexDirection="column" marginTop={1}>
-          <Text>
-            <Text bold>Objetivo: </Text>
-            {display.objective_title}
-          </Text>
-          <Text>
-            <Text bold>Escopo: </Text>
-            {display.scope_items.length > 0
-              ? display.scope_items.map((s) => `· ${s}`).join(" ")
-              : "—"}
-          </Text>
-          <Text>
-            <Text dimColor>Critérios: </Text>
-            {display.criteria}
-          </Text>
-          <Text>
-            <Text dimColor>Riscos: </Text>
-            {display.risks}
-          </Text>
-          <Text>
-            <Text dimColor>Versão: </Text>
-            {display.version}
-          </Text>
+          {view.sections.map((sec) => (
+            <Text key={sec.label}>
+              <Text bold>{sec.label}: </Text>
+              {sec.label === "Critérios" ||
+              sec.label === "Riscos / permissões" ||
+              sec.label === "Versão" ||
+              sec.label === "Escopo" ? (
+                <Text dimColor>{sec.body}</Text>
+              ) : (
+                sec.body
+              )}
+            </Text>
+          ))}
         </Box>
       ) : (
-        (cardLines ?? []).map((l, i) => (
-          <Text key={`gc-${i}`}>{l}</Text>
-        ))
+        (cardLines ?? []).map((l, i) => <Text key={`gc-${i}`}>{l}</Text>)
       )}
       <Box flexDirection="column" marginTop={1}>
         {OPTIONS.map((opt, i) => (

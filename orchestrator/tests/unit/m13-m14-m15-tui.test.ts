@@ -114,14 +114,33 @@ describe("M14 — slash commands operacionais", () => {
     rmSync(repo, { recursive: true, force: true });
   });
 
-  it("parseia os 4 commands: /config /diff /status /clear", () => {
+  it("parseia slash session + jornada", () => {
     expect(SLASH_COMMANDS.map((c) => c.id)).toEqual([
+      "plan",
+      "approvals",
+      "agents",
+      "pause",
+      "cancel",
+      "delivery",
+      "history",
+      "status",
+      "diff",
+      "config",
+      "clear",
+    ]);
+    for (const id of [
       "config",
       "diff",
       "status",
       "clear",
-    ]);
-    for (const id of ["config", "diff", "status", "clear"] as const) {
+      "plan",
+      "approvals",
+      "agents",
+      "pause",
+      "cancel",
+      "delivery",
+      "history",
+    ] as const) {
       expect(parseSlashCommand(`/${id}`)).toEqual({
         kind: "slash",
         command: id,
@@ -164,10 +183,10 @@ describe("M14 — slash commands operacionais", () => {
       tokens_workers: "340",
     });
     expect(body).toContain("Status");
-    expect(body).toContain("MSO: WAITING_AGENTS (sess-1)");
-    expect(body).toContain("Contrato: v2");
+    expect(body).toContain("Session: WAITING_AGENTS (sess-1)");
+    expect(body).toContain("Plan: v2");
     expect(body).toContain("Provider: Ollama");
-    expect(body).toContain("Tokens: MSO 1200 · Workers 340");
+    expect(body).toContain("Tokens: Orchestrator 1200 · Agents 340");
     expect(runSlashHandler("status", { status: { mso_state: "INIT" } }).command).toBe(
       "status",
     );
@@ -197,14 +216,16 @@ describe("M15 — card de entrega final", () => {
       tokens_workers: 420,
     });
 
-    expect(view.title).toBe("Entrega Final · PASS");
+    expect(view.title).toBe("Delivery · Entrega aceita");
     expect(view.status).toBe("PASS");
     expect(view.diff_stat).toContain("file.ts");
     expect(view.diff_stat).toContain("1 file changed");
     expect(view.verification_line).toBe(
       "Verificação: npx vitest run tests/unit/m13-m14-m15-tui.test.ts (exit 0)",
     );
-    expect(view.tokens_line).toBe("Tokens: MSO 1500 · Workers 420");
+    expect(view.tokens_line).toBe(
+      "Tokens: Orchestrator 1500 (reported) · Agents 420 (reported)",
+    );
     expect(view.shortcuts).toBe(DELIVERY_SHORTCUTS);
     expect(view.shortcuts).toContain("[Enter]");
     expect(view.shortcuts).toContain("[D]");
@@ -218,8 +239,10 @@ describe("M15 — card de entrega final", () => {
       diff_stat: "(sem alterações)",
       tokens_mso: 0,
     });
-    expect(view.tokens_line).toBe("Tokens: MSO — · Workers —");
-    expect(view.verification_line).toBe("Verificação: —");
+    expect(view.tokens_line).toBe(
+      "Tokens: Orchestrator — (indisponível) · Agents — (indisponível)",
+    );
+    expect(view.verification_line).toContain("Verificação: —");
     expect(view.status).toBe("BLOCKED");
   });
 });

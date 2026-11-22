@@ -1,6 +1,8 @@
 /**
  * Inline provider readiness — FreeLLMAPI key / Ollama / other key.
- * Secrets written to ~/.config/evolveloop/ with 0600; values never logged.
+ * Secrets written to ~/.config/evolveloop/secrets.env (0600); values never logged.
+ * Canonical paths (V4.2 P2-4): setup uses <ws>/.evolveloop/credentials.env;
+ * this surface uses user secrets.env — precedence FreeLLM: env > secrets.env.
  */
 
 import React, { useState } from "react";
@@ -110,7 +112,7 @@ export function ProviderSetup({
     <Box flexDirection="column" borderStyle="round" paddingX={2} paddingY={1} marginBottom={1}>
       <Text bold>Provider readiness</Text>
       <Text dimColor>
-        FreeLLMAPI precisa de chave e não há outro provider pronto para a MSO.
+        FreeLLMAPI precisa de chave e não há outro provider pronto para o Orchestrator.
       </Text>
       <Text>{status}</Text>
       {mode === "menu" ? (

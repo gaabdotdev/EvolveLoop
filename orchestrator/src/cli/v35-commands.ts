@@ -368,7 +368,7 @@ WantedBy=default.target
     }
   }
 
-  // agents inspect extension
+  // agents inspect extension (legacy JSON when --format json --data-dir)
   if (group === "agents" && command === "inspect") {
     const id = args.agent_id ?? args.id;
     const workId = args.run ?? args["work-id"];
@@ -377,10 +377,36 @@ WantedBy=default.target
       process.exit(1);
     }
     const { AgentRegistryStore } = await import("../v3/agent-registry/store.js");
+    const { ProcessSessionStore } = await import(
+      "../v3/adapters/drivers/process-sessions.js"
+    );
+    const { formatAgentInspectHuman } = await import("../v3/agent-handles/index.js");
     const reg = new AgentRegistryStore(paths.agentsDir);
     const file = reg.load(workId);
     const agent = file.agents.find((a) => a.agent_id === id);
-    print(agent ?? { error: "not_found" });
+    if (!agent) {
+      print({ error: "not_found" });
+      return true;
+    }
+    let sessions: import("../v3/adapters/drivers/process-sessions.js").ProcessSessionRecord[] =
+      [];
+    try {
+      sessions = new ProcessSessionStore(paths.processSessionsDir).load(workId);
+    } catch {
+      sessions = [];
+    }
+    if (args.format === "json" || args.raw === "true") {
+      print({
+        agent,
+        view: formatAgentInspectHuman(agent, { processSessions: sessions }).view,
+      });
+    } else {
+      const human = formatAgentInspectHuman(agent, {
+        processSessions: sessions,
+        work_id: workId,
+      });
+      console.log(human.lines.join("\n"));
+    }
     return true;
   }
 
@@ -393,6 +419,11 @@ export const V35_USAGE_GROUPS = {
   runtime: ["status", "doctor", "recover"],
   sandbox: ["status", "profiles"],
   harness: ["list", "inspect", "sessions", "matrix"],
-  workspace: ["list", "inspect", "diff", "integrate", "rollback"],
+  /** Integration/worktree — ≠ product Workspace (cwd/.evolveloop/). */
+  workspace: [
+    "list|inspect|diff|integrate|rollback (integration/worktree)",
+    "NOT the journey Workspace — that is cwd; see evolve use / evolve help",
+    "alias preferido: evolve integration … (mesmo grupo; workspace mantido por compat)",
+  ],
   approvals: ["list", "inspect", "approve", "reject"],
 };

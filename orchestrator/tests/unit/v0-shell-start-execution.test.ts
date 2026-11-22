@@ -40,7 +40,7 @@ describe("shell post-grill kickoff", () => {
       write: (l) => lines.push(l),
     });
     expect(r.started).toBe(false);
-    expect(r.message_pt).toMatch(/Nenhum Goal Contract/i);
+    expect(r.message_pt).toMatch(/Nenhum Plan/i);
   });
 
   it("with confirmed contract, kickoff advances MSO without re-grilling", async () => {
@@ -65,7 +65,9 @@ describe("shell post-grill kickoff", () => {
     });
     expect(kick.started).toBe(true);
     expect(kick.mso_state).toBe("DELEGATING");
-    expect(lines.join("\n")).toMatch(/LOADING_GOALS/);
+    expect(lines.join("\n")).toMatch(/Session → carregando/);
+    expect(lines.join("\n")).toMatch(/Session → delegando/);
+    expect(lines.join("\n")).not.toMatch(/^MSO →/m);
     expect(lines.join("\n")).not.toMatch(/Entrevista Grill-Me/);
 
     const db = new StateDb(defaultStateDbPath(tmp));

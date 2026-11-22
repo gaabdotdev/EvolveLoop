@@ -510,7 +510,7 @@ export async function runEvolveShell(opts: EvolveShellOptions = {}): Promise<Evo
         }
         if (preview.kind !== "goal_contract") {
           write(
-            `Intenção não gerou Goal Contract. Reformule ou use 'continuar' se a execução já estiver confirmada.`,
+            `Intenção não gerou Plan. Reformule ou use 'continuar' se a execução já estiver confirmada.`,
           );
           writeMiddleAndFooter();
           return "continue";
@@ -608,7 +608,7 @@ export async function runEvolveShell(opts: EvolveShellOptions = {}): Promise<Evo
               }
             }
           } else if (t === "n" || t === "nao" || t === "não" || t === "cancel" || t === "esc") {
-            write("Confirmação cancelada — Goal Contract guardado sem execução confirmada.");
+            write("Confirmação cancelada — Plan guardado sem execução confirmada.");
             writeGoalOutcome(write, drafted);
           } else if (isGoalContractConfirmAnswer(conf) || t === "") {
             const db = new StateDb(defaultStateDbPath(workspace));
@@ -633,7 +633,7 @@ export async function runEvolveShell(opts: EvolveShellOptions = {}): Promise<Evo
             });
             write(kick.message_pt);
           } else {
-            write("Confirmação cancelada — Goal Contract guardado sem execução confirmada.");
+            write("Confirmação cancelada — Plan guardado sem execução confirmada.");
             writeGoalOutcome(write, drafted);
           }
         } else if ("message_pt" in drafted) {
@@ -653,7 +653,7 @@ export async function runEvolveShell(opts: EvolveShellOptions = {}): Promise<Evo
           write(out.grill_prompts_pt.join("\n---\n"));
           writeGoalOutcome(write, out);
         } else {
-          write("Sem ação para esta linha (não foi Goal Contract nem bypass trivial).");
+          write("Sem ação para esta linha (não foi Plan nem bypass trivial).");
         }
       }
 

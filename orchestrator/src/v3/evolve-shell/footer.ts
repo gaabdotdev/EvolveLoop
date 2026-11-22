@@ -177,19 +177,20 @@ function formatSandbox(status: SandboxFooterStatus, color: boolean, idle: boolea
   return `Sandbox: ${green("bwrap ON", color)}`;
 }
 
-function formatWorkers(metric: HonestMetric, color: boolean, idle: boolean): string {
+/** V4.3 P1-2 — product label Agents (field tok_workers unchanged). */
+function formatAgents(metric: HonestMetric, color: boolean, idle: boolean): string {
   if (metricAbsent(metric)) {
-    return idle ? `Workers: ${IDLE_DASH}` : `Workers: ${red(UNAVAILABLE, color)}`;
+    return idle ? `Agents: ${IDLE_DASH}` : `Agents: ${red(UNAVAILABLE, color)}`;
   }
   const body =
     typeof metric.value === "number" ? formatTokDisplay(metric.value) : String(metric.value);
   if (metric.provenance === "estimated") {
-    return `Workers: ${yellow(body, color)} (${yellow("estimated", color)})`;
+    return `Agents: ${yellow(body, color)} (${yellow("estimated", color)})`;
   }
   if (metric.provenance === "reported") {
-    return `Workers: ${body} (${green("reported", color)})`;
+    return `Agents: ${body} (${green("reported", color)})`;
   }
-  return `Workers: ${body}`;
+  return `Agents: ${body}`;
 }
 
 /**
@@ -246,7 +247,7 @@ export function renderFooter(
         ? IDLE_DASH
         : red(UNAVAILABLE, color)
       : telemetry.mso_model;
-  const line2 = `Modelo: ${model} · ctx ${formatCtx(telemetry.ctx, color, idle)} · tok ${formatTokField(telemetry.tok_mso, color, idle)} │ ${formatWorkers(telemetry.tok_workers, color, idle)}`;
+  const line2 = `Modelo: ${model} · ctx ${formatCtx(telemetry.ctx, color, idle)} · tok ${formatTokField(telemetry.tok_mso, color, idle)} │ ${formatAgents(telemetry.tok_workers, color, idle)}`;
 
   const branch =
     telemetry.git_branch === UNAVAILABLE || !telemetry.git_branch

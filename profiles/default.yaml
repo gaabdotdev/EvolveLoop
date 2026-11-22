@@ -20,4 +20,7 @@ environment:
     Set AGENTS_ROOT to this repository root when installing globally.
     Optional: KNOWLEDGE_BACKEND=wiki|fake (tests).
 
-preferences: {}
+# Product preferences (V4.1). Agent Handles default OFF — jornada sem sessões extras.
+preferences:
+  agent_handles:
+    enabled: false

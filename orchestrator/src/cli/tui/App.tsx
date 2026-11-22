@@ -1,5 +1,5 @@
 /**
- * EvolveLoop Ink TUI — progressive banner · spaced history · live execution · compact footer.
+ * EvolveLoop Ink TUI — V4.1 P0 journey (home → Task → Plan → state → Delivery).
  */
 
 import React, { useCallback, useEffect, useMemo, useState } from "react";
@@ -12,12 +12,40 @@ import { GoalContractReview, type GoalReviewAction } from "./GoalContractReview.
 import { GrillQuestionSelect } from "./GrillQuestionSelect.js";
 import { ProviderSetup } from "./ProviderSetup.js";
 import { ExecutionLive } from "./ExecutionLive.js";
-import { DeliveryCard, type DeliveryStatus } from "./DeliveryCard.js";
-import { HistoryLine, type HistoryEntry } from "./HistoryLine.js";
+import { DeliveryCard } from "./DeliveryCard.js";
+import { deriveDeliveryStatus, type DeliveryStatus } from "./delivery-status.js";
 import {
-  buildGoalDisplay,
-  type GoalDisplayFields,
-} from "./goal-display.js";
+  deriveDeliveryFromWorkspace,
+  validateDelivery,
+} from "./delivery-verify.js";
+import { HistoryLine, type HistoryEntry } from "./HistoryLine.js";
+import { HomeResume } from "./HomeResume.js";
+import { buildHomeResumeView, type HomeResumeView } from "./home-resume.js";
+import { buildPlanDisplay, type PlanDisplayFields } from "./plan-display.js";
+import { resolveLayoutMode } from "./layout-narrow.js";
+import { ApprovalPanel, type ApprovalPanelAction } from "./ApprovalPanel.js";
+import {
+  TASK_CONTROL_SHORTCUTS,
+  parseTaskControlLine,
+  taskControlMessage,
+} from "./task-controls.js";
+import {
+  clearJourneyPauseOnCancel,
+  getJourneyPause,
+  pauseJourneyTask,
+  resumeJourneyTask,
+} from "./journey-pause.js";
+import { ApprovalFacade } from "../../v3/approvals/facade.js";
+import { ApprovalStore } from "../../v3/approvals/store.js";
+import type { ApprovalCardView } from "../../v3/approvals/facade.js";
+import { resolveV3DataPaths } from "../../v3/paths.js";
+import {
+  defaultWorkspaceV3DataDir,
+  formatAgentsListHuman,
+  isAgentHandlesEnabled,
+} from "../../v3/agent-handles/index.js";
+import { join } from "node:path";
+import { existsSync } from "node:fs";
 import {
   createActivityWindow,
   phaseFromWriteLine,
@@ -54,14 +82,26 @@ import {
 import { colorEnabled } from "../../v3/evolve-shell/colors.js";
 import { hydrateHarnessConsentFromConfig } from "../../v3/security/harness-consent.js";
 import type { EvolveShellResult } from "../../v3/evolve-shell/repl.js";
+import { shortObjectiveTitle } from "./goal-display.js";
 
 type Phase =
   | "provider"
   | "ready"
   | "grill_q"
   | "review"
+  | "approval"
   | "busy"
   | "delivery";
+
+function resolveApprovalsDir(workspace: string): string {
+  const envDir = process.env.EVOLVELOOP_DATA_DIR?.trim();
+  if (envDir) return resolveV3DataPaths(envDir).approvalsDir;
+  const v3 = defaultWorkspaceV3DataDir(workspace);
+  if (existsSync(join(v3, "approvals"))) {
+    return resolveV3DataPaths(v3).approvalsDir;
+  }
+  return resolveV3DataPaths(v3).approvalsDir;
+}
 
 export interface InkAppProps {
   workspace: string;
@@ -87,13 +127,17 @@ export function EvolveInkApp({ workspace: wsIn, onDone }: InkAppProps): React.Re
   const [inputHistory, setInputHistory] = useState<string[]>([]);
   const [slashHint, setSlashHint] = useState<string | null>(null);
   const [providersReady, setProvidersReady] = useState("");
+  const [homeView, setHomeView] = useState<HomeResumeView | null>(null);
+  const [columns, setColumns] = useState(process.stdout.columns ?? 80);
+  const [rows, setRows] = useState(process.stdout.rows ?? 24);
 
   const [pendingIntent, setPendingIntent] = useState("");
   const [questions, setQuestions] = useState<GrillMeQuestion[]>([]);
   const [qIndex, setQIndex] = useState(0);
   const [answers, setAnswers] = useState<string[]>([]);
-  const [reviewDisplay, setReviewDisplay] = useState<GoalDisplayFields | null>(null);
+  const [reviewDisplay, setReviewDisplay] = useState<PlanDisplayFields | null>(null);
   const [draftContractId, setDraftContractId] = useState<string | undefined>();
+  const [activeTaskLabel, setActiveTaskLabel] = useState<string | undefined>();
 
   const [activity, setActivity] = useState<ActivityWindowState>(() =>
     createActivityWindow(Date.now(), "INIT"),
@@ -104,9 +148,21 @@ export function EvolveInkApp({ workspace: wsIn, onDone }: InkAppProps): React.Re
     tokens_workers?: number;
     verification?: { command: string; exit_code: number };
   } | null>(null);
+  const [pendingApproval, setPendingApproval] = useState<ApprovalCardView | null>(
+    null,
+  );
+  const [phaseBeforeApproval, setPhaseBeforeApproval] = useState<Phase>("ready");
+  const [taskCancelArmed, setTaskCancelArmed] = useState(false);
+  const [deferredApprovalIds, setDeferredApprovalIds] = useState<string[]>([]);
 
   const providerSnap = useMemo(() => probeProviderReadiness(), []);
   const needProvider = needsInlineProviderSetup(providerSnap);
+  const layout = useMemo(() => resolveLayoutMode(columns, rows), [columns, rows]);
+
+  const refreshHome = useCallback(() => {
+    const session = detectWorkspaceSession(workspace);
+    setHomeView(buildHomeResumeView(session));
+  }, [workspace]);
 
   const appendSystem = useCallback((text: string) => {
     setHistory((prev) => [
@@ -135,18 +191,48 @@ export function EvolveInkApp({ workspace: wsIn, onDone }: InkAppProps): React.Re
       { columns: process.stdout.columns ?? 80, color: hudColor, isTTY: true },
     );
     setBannerText(banner);
-    if (session.message_pt) {
-      setHistory([{ id: nextId("sys"), kind: "system", text: session.message_pt }]);
+    setHomeView(buildHomeResumeView(session));
+    // V4.3 P0-1 — hydrate pause from StateDb (same axis as evolve pause|resume).
+    const jp = getJourneyPause(workspace);
+    if (jp.paused) {
+      setPaused(true);
+      appendSystem(
+        `Task em pausa (StateDb) — retomada via Ctrl+P / continuar / evolve resume. desde ${jp.paused_at ?? "?"}`,
+      );
+    }
+    // V4.3 P0-2 — re-derive Delivery card only when evidence exists (no inventar PASS).
+    try {
+      const derived = deriveDeliveryFromWorkspace(workspace);
+      if (derived.from_evidence) {
+        setDelivery({
+          status: derived.status,
+          verification: derived.verification,
+        });
+      }
+    } catch {
+      /* no state.db yet */
     }
     if (!needProvider) setPhase("ready");
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- mount hydrate once per workspace
   }, [workspace, hudColor, needProvider, providerSnap.summary]);
+
+  useEffect(() => {
+    const onResize = () => {
+      setColumns(process.stdout.columns ?? 80);
+      setRows(process.stdout.rows ?? 24);
+    };
+    process.stdout.on?.("resize", onResize);
+    return () => {
+      process.stdout.off?.("resize", onResize);
+    };
+  }, []);
 
   const telemetry: FooterTelemetry = useMemo(() => {
     const session = detectWorkspaceSession(workspace);
     const live = probeHudEnvironment(workspace);
     const tokens = loadHonestTokenTelemetry(workspace);
     return buildFooterTelemetry(session, {
-      shortcuts: "Ctrl+P Pause · Ctrl+C Stop · Ctrl+D Detach",
+      shortcuts: TASK_CONTROL_SHORTCUTS,
       ...live.footer,
       tok_mso: tokens.tok_mso,
       tok_workers: tokens.tok_workers,
@@ -181,26 +267,100 @@ export function EvolveInkApp({ workspace: wsIn, onDone }: InkAppProps): React.Re
     [history, exitCode, paused, workspace, onDone, exit],
   );
 
+  useEffect(() => {
+    if (phase !== "approval") setPhaseBeforeApproval(phase);
+  }, [phase]);
+
+  const refreshPendingApproval = useCallback(() => {
+    try {
+      const facade = new ApprovalFacade(
+        new ApprovalStore(resolveApprovalsDir(workspace)),
+      );
+      const pending = facade
+        .listPending()
+        .find((p) => !deferredApprovalIds.includes(p.approval_id));
+      if (!pending) return;
+      setPendingApproval(pending);
+      setPhase((prev) => (prev === "approval" ? prev : "approval"));
+    } catch {
+      /* approvals dir may be empty / unreadable */
+    }
+  }, [workspace, deferredApprovalIds]);
+
+  useEffect(() => {
+    refreshPendingApproval();
+    const t = setInterval(refreshPendingApproval, 3000);
+    return () => clearInterval(t);
+  }, [refreshPendingApproval]);
+
   useInput((input, key) => {
     if (key.ctrl && input === "c") {
-      appendSystem("Interrompido (Ctrl+C).");
+      appendSystem(taskControlMessage("interrupt").message_pt);
       finish({ interrupted: true, exit_code: 130 });
       return;
     }
     if (key.ctrl && input === "d") {
-      appendSystem("Detach.");
+      // Navigation / detach — NEVER kill Agent or session-cancel (ADR Q3/Q4).
+      appendSystem(taskControlMessage("detach").message_pt);
       finish({ detached: true, exit_code: 0 });
       return;
     }
     if (key.ctrl && input === "p") {
-      setPaused((p) => !p);
-      appendSystem(paused ? "Retomado." : "Em pausa (Ctrl+P).");
-      if (!paused) ringTerminalBell();
+      // V4.3 P0-1 — persist journey pause (same axis as evolve pause|resume).
+      if (paused) {
+        resumeJourneyTask(workspace, "tui");
+        setPaused(false);
+        appendSystem(taskControlMessage("resume", { wasPaused: true }).message_pt);
+      } else {
+        pauseJourneyTask(workspace, "tui");
+        setPaused(true);
+        appendSystem(taskControlMessage("pause").message_pt);
+        ringTerminalBell();
+      }
     }
   });
 
+  const onApprovalAction = useCallback(
+    (action: ApprovalPanelAction) => {
+      if (!pendingApproval) return;
+      const facade = new ApprovalFacade(
+        new ApprovalStore(resolveApprovalsDir(workspace)),
+      );
+      try {
+        if (action === "approve") {
+          const card = facade.approve(pendingApproval.approval_id, "tui");
+          appendSystem(`Approval aprovado: ${card.what}`);
+        } else if (action === "reject") {
+          const card = facade.reject(pendingApproval.approval_id, "tui");
+          appendSystem(`Approval rejeitado: ${card.what}`);
+        } else {
+          setDeferredApprovalIds((ids) =>
+            ids.includes(pendingApproval.approval_id)
+              ? ids
+              : [...ids, pendingApproval.approval_id],
+          );
+          appendSystem("Approval adiado — permanece na fila (não reabre já).");
+        }
+      } catch (err) {
+        appendSystem(
+          `Approval falhou: ${err instanceof Error ? err.message : String(err)}`,
+        );
+      }
+      setPendingApproval(null);
+      setPhase(phaseBeforeApproval === "approval" ? "ready" : phaseBeforeApproval);
+      refreshPendingApproval();
+    },
+    [
+      pendingApproval,
+      workspace,
+      appendSystem,
+      phaseBeforeApproval,
+      refreshPendingApproval,
+    ],
+  );
+
   const runSlash = useCallback(
-    (cmd: SlashCommandId) => {
+    (cmd: SlashCommandId, slashArgs = "") => {
       if (cmd === "clear") {
         const result = runSlashHandler("clear");
         setHistory([]);
@@ -208,12 +368,141 @@ export function EvolveInkApp({ workspace: wsIn, onDone }: InkAppProps): React.Re
         return;
       }
       if (cmd === "config") {
-        setPhase("provider");
-        appendSystem(runSlashHandler("config").message);
+        const result = runSlashHandler("config", {
+          workspace,
+          args: slashArgs,
+        });
+        appendSystem(result.message);
+        if (result.command === "config" && result.open_provider) {
+          setPhase("provider");
+        }
+        return;
+      }
+      if (cmd === "history") {
+        appendSystem(
+          runSlashHandler("history", { workspace, args: slashArgs }).message,
+        );
         return;
       }
       if (cmd === "diff") {
         appendSystem(runSlashHandler("diff", { workspace }).message);
+        return;
+      }
+      if (cmd === "plan") {
+        appendSystem(runSlashHandler("plan", { plan: reviewDisplay }).message);
+        return;
+      }
+      if (cmd === "approvals") {
+        try {
+          const facade = new ApprovalFacade(
+            new ApprovalStore(resolveApprovalsDir(workspace)),
+          );
+          const pending = facade.listPending();
+          appendSystem(
+            runSlashHandler("approvals", { approvals: pending }).message,
+          );
+          if (pending[0]) {
+            setPendingApproval(pending[0]);
+            setPhase("approval");
+          }
+        } catch {
+          appendSystem(
+            runSlashHandler("approvals", { approvals: [] }).message,
+          );
+        }
+        return;
+      }
+      if (cmd === "agents") {
+        const handlesOn = isAgentHandlesEnabled({ workspace });
+        let agentsLines: string[] | null = null;
+        try {
+          const paths = resolveV3DataPaths(defaultWorkspaceV3DataDir(workspace));
+          const human = formatAgentsListHuman(paths, { workspace });
+          if (human.agents.length > 0) {
+            agentsLines = human.lines;
+          }
+        } catch {
+          agentsLines = null;
+        }
+        appendSystem(
+          runSlashHandler("agents", {
+            agentsLines,
+            handlesEnabled: handlesOn,
+          }).message,
+        );
+        return;
+      }
+      if (cmd === "pause") {
+        pauseJourneyTask(workspace, "slash");
+        setPaused(true);
+        appendSystem(runSlashHandler("pause").message);
+        ringTerminalBell();
+        return;
+      }
+      if (cmd === "cancel") {
+        if (!taskCancelArmed) {
+          setTaskCancelArmed(true);
+          appendSystem(runSlashHandler("cancel").message);
+          return;
+        }
+        appendSystem("Task cancelada (confirmação via /cancel). Voltando ao ready.");
+        setTaskCancelArmed(false);
+        clearJourneyPauseOnCancel(workspace, "slash");
+        setPaused(false);
+        setExecuting(false);
+        setPendingIntent("");
+        setReviewDisplay(null);
+        setPhase("ready");
+        refreshHome();
+        return;
+      }
+      if (cmd === "delivery") {
+        const argsLower = (slashArgs ?? "").trim().toLowerCase();
+        if (argsLower === "validate" || argsLower.startsWith("validate ")) {
+          const runMatch = slashArgs?.match(/--run\s+(.+)$/i);
+          if (!runMatch?.[1]?.trim()) {
+            appendSystem(
+              [
+                "Uso: /delivery validate --run \"<comando>\"",
+                "Ou:  evolve delivery validate --command \"npm test\" --exit-code 0",
+                "Sem --run não executa (não inventar PASS).",
+              ].join("\n"),
+            );
+            return;
+          }
+          const view = validateDelivery(workspace, {
+            run: runMatch[1].trim(),
+          });
+          setDelivery({
+            status: view.status,
+            verification: view.verification,
+          });
+          appendSystem(view.lines.join("\n"));
+          setPhase("delivery");
+          return;
+        }
+        // Re-derive from evidence (not session-only memory).
+        const derived = deriveDeliveryFromWorkspace(workspace);
+        const status = derived.from_evidence
+          ? derived.status
+          : delivery?.status ?? derived.status;
+        const verification = derived.verification ?? delivery?.verification;
+        if (derived.from_evidence) {
+          setDelivery({
+            status: derived.status,
+            verification: derived.verification,
+          });
+        }
+        appendSystem(
+          runSlashHandler("delivery", {
+            delivery: {
+              status,
+              detail: verification
+                ? `verification: ${verification.command} (exit ${verification.exit_code})`
+                : derived.message_pt,
+            },
+          }).message,
+        );
         return;
       }
       if (cmd === "status") {
@@ -230,6 +519,9 @@ export function EvolveInkApp({ workspace: wsIn, onDone }: InkAppProps): React.Re
           typeof telemetry.tok_workers.value === "number"
             ? String(telemetry.tok_workers.value)
             : "—";
+        const taskLabel = contract
+          ? shortObjectiveTitle(contract.objective)
+          : activeTaskLabel ?? "—";
         appendSystem(
           runSlashHandler("status", {
             status: {
@@ -239,12 +531,23 @@ export function EvolveInkApp({ workspace: wsIn, onDone }: InkAppProps): React.Re
               provider: providersReady || "—",
               tokens_mso: tokMso,
               tokens_workers: tokW,
+              task_label: taskLabel,
             },
           }).message,
         );
       }
     },
-    [appendSystem, workspace, telemetry, providersReady],
+    [
+      appendSystem,
+      workspace,
+      telemetry,
+      providersReady,
+      activeTaskLabel,
+      reviewDisplay,
+      delivery,
+      taskCancelArmed,
+      refreshHome,
+    ],
   );
 
   const confirmAndExecute = async (goalContractId?: string) => {
@@ -279,12 +582,15 @@ export function EvolveInkApp({ workspace: wsIn, onDone }: InkAppProps): React.Re
       writeLive(kick.message_pt);
       setFooterTick((n) => n + 1);
 
-      let status: DeliveryStatus = "PASS";
-      if (!kick.started || kick.mso_state === "BLOCKED") status = "BLOCKED";
-      if (kick.adapter_status && /fail|error/i.test(kick.adapter_status)) {
-        status = "FAILED";
-      }
-      if (kick.message_pt.toLowerCase().includes("bloqueada")) status = "BLOCKED";
+      // P0-5: never default PASS without verification (ADR Q1).
+      const status = deriveDeliveryStatus({
+        kick_started: kick.started,
+        mso_state: kick.mso_state,
+        adapter_status: kick.adapter_status,
+        message_pt: kick.message_pt,
+        // Kick path does not attach Evidence Validator result — leave undefined.
+        verification: undefined,
+      });
 
       const rollup = loadHonestTokenTelemetry(workspace).aggregate;
       ringTerminalBell();
@@ -313,6 +619,7 @@ export function EvolveInkApp({ workspace: wsIn, onDone }: InkAppProps): React.Re
       setQuestions([]);
       setAnswers([]);
       setReviewDisplay(null);
+      refreshHome();
     }
   };
 
@@ -333,7 +640,7 @@ export function EvolveInkApp({ workspace: wsIn, onDone }: InkAppProps): React.Re
       drafted.contract.criteria.find((c) => c.id === "c-accept")?.description ??
       drafted.contract.criteria[0]?.description ??
       "—";
-    const display = buildGoalDisplay({
+    const plan = buildPlanDisplay({
       objective: drafted.contract.objective,
       scope: drafted.contract.scope,
       criteria: acceptance,
@@ -341,9 +648,13 @@ export function EvolveInkApp({ workspace: wsIn, onDone }: InkAppProps): React.Re
         ? `Fora de escopo: ${drafted.contract.out_of_scope.join("; ")}`
         : "—",
       version: `v${drafted.contract.version ?? 1}`,
+      steps: drafted.contract.scope,
+      agents: [],
+      approval_needed: true,
     });
     setDraftContractId(drafted.contract.goal_contract_id);
-    setReviewDisplay(display);
+    setActiveTaskLabel(plan.objective_title);
+    setReviewDisplay(plan);
     setPhase("review");
   };
 
@@ -357,19 +668,48 @@ export function EvolveInkApp({ workspace: wsIn, onDone }: InkAppProps): React.Re
 
     const slash = parseSlashCommand(line);
     if (slash.kind === "slash") {
-      runSlash(slash.command);
+      runSlash(slash.command, slash.args);
       return;
     }
 
-    if (paused) {
-      if (/^(continuar|resume|retomar)$/i.test(line)) {
-        setPaused(false);
-        appendSystem("Retomado.");
-      } else {
-        appendSystem("Em pausa — digite 'continuar' ou Ctrl+P.");
-      }
+    const control = parseTaskControlLine(line);
+    if (control === "pause") {
+      pauseJourneyTask(workspace, "tui");
+      setPaused(true);
+      appendSystem(taskControlMessage("pause").message_pt);
+      ringTerminalBell();
       return;
     }
+    if (control === "resume" || (paused && control === null && /^(continuar|resume|retomar)$/i.test(line))) {
+      resumeJourneyTask(workspace, "tui");
+      setPaused(false);
+      setTaskCancelArmed(false);
+      appendSystem(taskControlMessage("resume", { wasPaused: true }).message_pt);
+      return;
+    }
+    if (control === "cancel") {
+      if (!taskCancelArmed) {
+        setTaskCancelArmed(true);
+        appendSystem(taskControlMessage("cancel").message_pt);
+        return;
+      }
+      appendSystem("Task cancelada (confirmação). Voltando ao ready.");
+      setTaskCancelArmed(false);
+      clearJourneyPauseOnCancel(workspace, "tui");
+      setPaused(false);
+      setExecuting(false);
+      setPendingIntent("");
+      setReviewDisplay(null);
+      setDelivery(null);
+      setPhase("ready");
+      refreshHome();
+      return;
+    }
+    if (paused) {
+      appendSystem("Task em pausa — digite 'continuar' / Ctrl+P, ou 'cancelar' (destrutivo).");
+      return;
+    }
+    setTaskCancelArmed(false);
     if (/^(sair|exit|quit)$/i.test(line)) {
       appendSystem("Até breve. Estado permanece em .evolveloop/");
       finish();
@@ -392,14 +732,15 @@ export function EvolveInkApp({ workspace: wsIn, onDone }: InkAppProps): React.Re
         return;
       }
       if (preview.kind !== "goal_contract") {
-        appendSystem("Intenção não gerou Goal Contract. Reformule.");
+        appendSystem("A intenção não gerou uma Task. Reformule o objetivo.");
         return;
       }
 
       setPendingIntent(line);
+      setActiveTaskLabel(shortObjectiveTitle(line));
+      // Grill-Me only when interview budget says questions are needed (P0-2).
       const interviewBudget = grillInterviewBudget(line);
       if (interviewBudget === 0) {
-        // Detailed intent → single confirmation card (no interrogation).
         const defaults = resolveAnswers(
           preview.questions,
           preview.questions.map(() => "ok"),
@@ -437,8 +778,9 @@ export function EvolveInkApp({ workspace: wsIn, onDone }: InkAppProps): React.Re
 
   const onReview = (action: GoalReviewAction) => {
     if (action === "cancel") {
-      appendSystem("Confirmação cancelada.");
+      appendSystem("Confirmação do Plan cancelada.");
       setPhase("ready");
+      refreshHome();
       return;
     }
     if (action === "edit") {
@@ -453,7 +795,9 @@ export function EvolveInkApp({ workspace: wsIn, onDone }: InkAppProps): React.Re
           persist: false,
         });
         if (preview.kind === "goal_contract") {
-          setQuestions(preview.questions.slice(0, 3));
+          const budget = grillInterviewBudget(pendingIntent);
+          const n = budget === 0 ? Math.min(3, preview.questions.length) : budget;
+          setQuestions(preview.questions.slice(0, Math.min(n, preview.questions.length)));
         }
       } catch {
         setPhase("ready");
@@ -464,10 +808,26 @@ export function EvolveInkApp({ workspace: wsIn, onDone }: InkAppProps): React.Re
   };
 
   const bodyHistory = history.slice(-40);
+  const sessionSnap = detectWorkspaceSession(workspace);
+  const blockReason =
+    activity.phase === "BLOCKED"
+      ? "Session bloqueada — intervenção necessária"
+      : undefined;
+  const footerTask =
+    activeTaskLabel ??
+    (sessionSnap.latest_contract
+      ? shortObjectiveTitle(sessionSnap.latest_contract.objective)
+      : undefined);
 
   return (
     <Box flexDirection="column" width="100%">
-      {bannerText ? (
+      {layout.degradation_notice ? (
+        <Box marginBottom={0}>
+          <Text color="yellow">AVISO: {layout.degradation_notice}</Text>
+        </Box>
+      ) : null}
+
+      {bannerText && !layout.narrow && !layout.short_height ? (
         <Box flexDirection="column" marginBottom={1}>
           <Static items={[bannerText]}>
             {(line, i) => (
@@ -493,6 +853,7 @@ export function EvolveInkApp({ workspace: wsIn, onDone }: InkAppProps): React.Re
               onReady={(summary) => {
                 appendSystem(summary);
                 setProvidersReady((prev) => prev || summary);
+                refreshHome();
                 setPhase("ready");
               }}
               onAbort={() => finish({ exit_code: 1 })}
@@ -510,10 +871,29 @@ export function EvolveInkApp({ workspace: wsIn, onDone }: InkAppProps): React.Re
         ) : null}
 
         {phase === "review" && reviewDisplay ? (
-          <GoalContractReview display={reviewDisplay} onAction={onReview} />
+          <GoalContractReview
+            display={reviewDisplay}
+            onAction={onReview}
+            narrow={layout.narrow}
+          />
         ) : null}
 
-        {phase === "busy" ? <ExecutionLive activity={activity} /> : null}
+        {phase === "approval" && pendingApproval ? (
+          <ApprovalPanel
+            card={pendingApproval}
+            onAction={onApprovalAction}
+            narrow={layout.narrow}
+          />
+        ) : null}
+
+        {phase === "busy" ? (
+          <ExecutionLive
+            activity={activity}
+            task_label={footerTask}
+            show_technical={false}
+            narrow={layout.narrow}
+          />
+        ) : null}
 
         {phase === "delivery" && delivery ? (
           <DeliveryCard
@@ -522,8 +902,10 @@ export function EvolveInkApp({ workspace: wsIn, onDone }: InkAppProps): React.Re
             verification={delivery.verification}
             tokens_mso={delivery.tokens_mso}
             tokens_workers={delivery.tokens_workers}
+            narrow={layout.narrow}
             onNewTask={() => {
               setDelivery(null);
+              refreshHome();
               setPhase("ready");
             }}
             onQuit={() => finish()}
@@ -532,6 +914,7 @@ export function EvolveInkApp({ workspace: wsIn, onDone }: InkAppProps): React.Re
 
         {phase === "ready" ? (
           <Box flexDirection="column">
+            {homeView ? <HomeResume view={homeView} narrow={layout.narrow} /> : null}
             {slashHint ? (
               <Box flexDirection="column" marginBottom={0}>
                 {SLASH_COMMANDS.filter(
@@ -549,7 +932,7 @@ export function EvolveInkApp({ workspace: wsIn, onDone }: InkAppProps): React.Re
             <MultilineInput
               block
               prompt="→ "
-              placeholder="Descreva a tarefa ou digite / para comandos (Enter envia · Shift+Enter quebra linha)"
+              placeholder="Descreva a Task ou digite / para comandos (Enter envia · Shift+Enter quebra linha)"
               history={inputHistory}
               onSlashPrefix={(v) => {
                 const t = v.trim();
@@ -570,6 +953,9 @@ export function EvolveInkApp({ workspace: wsIn, onDone }: InkAppProps): React.Re
           telemetry={telemetry}
           color={hudColor}
           providers_ready={providersReady}
+          task_label={executing && footerTask ? `Task: ${footerTask}` : undefined}
+          block_reason={blockReason}
+          narrow={layout.narrow}
         />
       </Box>
     </Box>

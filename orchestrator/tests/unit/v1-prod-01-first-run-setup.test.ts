@@ -68,6 +68,9 @@ describe("V1-PROD-01 first-run setup", () => {
     expect(report.limits.max_parallel_tasks).toBe(2);
     expect(report.limits.max_agent_sessions).toBe(DEFAULT_LIMITS.max_agent_sessions);
     expect(report.probes).toHaveLength(3);
+    expect(report.prefs.agent_handles.enabled).toBe(false);
+    expect(report.prefs.agent_handles.consequence).toMatch(/OFF/);
+    expect(report.message_pt).toMatch(/Handles OFF/i);
   });
 
   it("marks not ready when node probe fails", async () => {

@@ -74,7 +74,8 @@ export function renderGoalContractCard(input: GoalContractCardInput): string {
     risks: input.risks,
     version: input.version,
   });
-  return formatGoalDisplayLines(display).join("\n");
+  // V4.3 P1-2 — product label Plan (runtime Goal Contract IDs unchanged).
+  return ["Plan", ...formatGoalDisplayLines(display)].join("\n");
 }
 
 export function isGoalContractConfirmAnswer(raw: string): boolean {

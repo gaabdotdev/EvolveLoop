@@ -1,17 +1,41 @@
 /**
  * Slash command parsing for the Ink TUI input.
+ * P2-3: journey shortcuts + existing session helpers.
+ * V4.2: /config prefs · /history
  */
 
-export type SlashCommandId = "config" | "diff" | "status" | "clear";
+export type SlashCommandId =
+  | "config"
+  | "diff"
+  | "status"
+  | "clear"
+  | "plan"
+  | "approvals"
+  | "agents"
+  | "pause"
+  | "cancel"
+  | "delivery"
+  | "history";
 
 export const SLASH_COMMANDS: ReadonlyArray<{
   id: SlashCommandId;
   label: string;
   hint: string;
 }> = [
-  { id: "config", label: "/config", hint: "Provider / API key" },
+  { id: "plan", label: "/plan", hint: "Mostrar Plan da Task" },
+  { id: "approvals", label: "/approvals", hint: "Fila Approval pendente" },
+  { id: "agents", label: "/agents", hint: "Agents no contexto (ou CLI)" },
+  { id: "pause", label: "/pause", hint: "Pausar Task (≠ workflow)" },
+  { id: "cancel", label: "/cancel", hint: "Cancelar Task (destrutivo)" },
+  { id: "delivery", label: "/delivery", hint: "Delivery / validate --run" },
+  { id: "history", label: "/history", hint: "Tasks/contratos recentes" },
+  { id: "status", label: "/status", hint: "Task · Session · Plan · tokens" },
   { id: "diff", label: "/diff", hint: "git diff --stat" },
-  { id: "status", label: "/status", hint: "Sessão · contrato · tokens" },
+  {
+    id: "config",
+    label: "/config",
+    hint: "Prefs / Handles / Provider",
+  },
   { id: "clear", label: "/clear", hint: "Limpar histórico visual" },
 ];
 

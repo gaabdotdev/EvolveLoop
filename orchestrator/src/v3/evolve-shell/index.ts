@@ -57,9 +57,11 @@ export {
   redactSecrets,
   writeCredentialsSecure,
   buildReadinessReport,
+  defaultReadinessPrefs,
   DEFAULT_LIMITS,
   type FirstRunSetupInput,
   type ReadinessReport,
+  type ReadinessPrefs,
   type ProbeResult,
   type ConcurrencyLimits,
 } from "./first-run-setup.js";

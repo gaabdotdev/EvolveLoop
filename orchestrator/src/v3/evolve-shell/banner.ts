@@ -73,7 +73,10 @@ function sandboxLabel(sandbox: string): string | undefined {
 }
 
 function stateLabel(mso_state: string): string {
-  if (!mso_state || mso_state === "INIT" || mso_state === "IDLE") return "Pronto";
+  // D9: INIT/IDLE ≠ "Pronto" — awaiting input is a UI phase, not MSO success.
+  if (!mso_state || mso_state === "INIT" || mso_state === "IDLE") {
+    return "Aguardando entrada";
+  }
   return mso_state;
 }
 
@@ -108,11 +111,11 @@ export function buildBannerProgressiveLines(meta: BannerMeta): string[] {
     lines.push(`Contract: ${meta.contract}${metaPart}`);
   }
   const hasMso = !isAbsent(meta.tokens_mso);
-  const hasWorkers = !isAbsent(meta.tokens_workers);
-  if (hasMso || hasWorkers) {
+  const hasAgents = !isAbsent(meta.tokens_workers);
+  if (hasMso || hasAgents) {
     const mso = hasMso ? meta.tokens_mso : "—";
-    const workers = hasWorkers ? meta.tokens_workers : "—";
-    lines.push(`Tokens: MSO ${mso} │ Workers ${workers}`);
+    const agents = hasAgents ? meta.tokens_workers : "—";
+    lines.push(`Tokens: Orchestrator ${mso} │ Agents ${agents}`);
   }
 
   return lines;

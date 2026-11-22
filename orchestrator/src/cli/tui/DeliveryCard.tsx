@@ -1,5 +1,6 @@
 /**
  * Final delivery card after an authorized execution finishes.
+ * V4.1: no false PASS; Agents label; process ≠ validated.
  */
 
 import React, { useState } from "react";
@@ -10,6 +11,8 @@ import {
   DELIVERY_SHORTCUTS,
   type DeliveryStatus,
 } from "./delivery-card-view.js";
+import { deliveryStatusColor } from "./delivery-status.js";
+import { narrowCardPadding } from "./layout-narrow.js";
 
 export type { DeliveryStatus };
 
@@ -22,6 +25,7 @@ export interface DeliveryCardProps {
   onNewTask: () => void;
   onQuit: () => void;
   focus?: boolean;
+  narrow?: boolean;
 }
 
 export function gitDiffStat(workspace: string): string {
@@ -57,6 +61,7 @@ export function DeliveryCard({
   onNewTask,
   onQuit,
   focus = true,
+  narrow = false,
 }: DeliveryCardProps): React.ReactElement {
   const [showDiff, setShowDiff] = useState(false);
   const stat = gitDiffStat(workspace);
@@ -67,8 +72,8 @@ export function DeliveryCard({
     tokens_mso,
     tokens_workers,
   });
-  const statusColor =
-    status === "PASS" ? "green" : status === "BLOCKED" ? "yellow" : "red";
+  const statusColor = deliveryStatusColor(status);
+  const pad = narrowCardPadding(narrow);
 
   useInput(
     (input, key) => {
@@ -92,13 +97,15 @@ export function DeliveryCard({
     <Box
       flexDirection="column"
       borderStyle="round"
-      paddingX={2}
-      paddingY={1}
+      paddingX={pad.paddingX}
+      paddingY={pad.paddingY}
       marginBottom={1}
     >
       <Text bold>
-        Entrega Final · <Text color={statusColor}>{status}</Text>
+        Delivery · <Text color={statusColor}>{view.status_label}</Text>
       </Text>
+      <Text dimColor>{view.process_outcome_line}</Text>
+      <Text dimColor>{view.objective_validated_line}</Text>
       <Box flexDirection="column" marginTop={1}>
         <Text dimColor>Arquivos alterados</Text>
         {view.diff_stat.split("\n").map((l, i) => (
@@ -112,7 +119,7 @@ export function DeliveryCard({
           <Text dimColor>diff completo (trecho)</Text>
           {gitDiffFull(workspace)
             .split("\n")
-            .slice(0, 40)
+            .slice(0, narrow ? 20 : 40)
             .map((l, i) => (
               <Text key={`df-${i}`}>{l}</Text>
             ))}

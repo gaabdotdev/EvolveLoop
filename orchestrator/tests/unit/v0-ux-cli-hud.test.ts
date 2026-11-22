@@ -52,11 +52,11 @@ describe("M1 — Banner Núcleo+Órbita", () => {
     const lines = out.split("\n");
     expect(lines).toHaveLength(8);
     expect(lines[0]).toContain("EvolveLoop v" + EVOLVELOOP_UX_VERSION);
-    expect(out).toContain("Estado: Pronto");
+    expect(out).toContain("Estado: Aguardando entrada");
     expect(out).toContain("Sandbox: bwrap ON");
     expect(out).not.toContain("UNAVAILABLE");
     expect(out).not.toContain("Daemon: UNAVAILABLE");
-    expect(out).not.toContain("Tokens: MSO UNAVAILABLE");
+    expect(out).not.toContain("Tokens: Orchestrator UNAVAILABLE");
     for (const line of lines) {
       const left = line.slice(0, 18);
       expect(left.length).toBe(18);
@@ -78,7 +78,7 @@ describe("M1 — Banner Núcleo+Órbita", () => {
     );
     expect(out).toContain("Providers: Ollama");
     expect(out).toContain("Contract: v2 · Meta: 1/3");
-    expect(out).toContain("Tokens: MSO 4.2k │ Workers 1.1k");
+    expect(out).toContain("Tokens: Orchestrator 4.2k │ Agents 1.1k");
     expect(out).toContain("Daemon: ON (attached)");
     expect(out).not.toContain("UNAVAILABLE");
   });
@@ -88,7 +88,7 @@ describe("M1 — Banner Núcleo+Órbita", () => {
     const lines = out.split("\n");
     expect(lines).toHaveLength(2);
     expect(lines[0]).toMatch(/^◉ EvolveLoop v/);
-    expect(lines[0]).toContain("Estado: Pronto");
+    expect(lines[0]).toContain("Estado: Aguardando entrada");
     expect(lines[0]).toContain("bwrap ON");
     expect(lines[1]).toBe("~/projetos/evolveloop");
     expect(out).not.toContain("████");
@@ -131,10 +131,10 @@ describe("M3 — Footer telemetria honesta", () => {
     expect(lines[0]).toMatch(/^\[IDLE\] · 0 tasks · Sandbox: —$/);
     expect(lines[1]).toContain("ctx —");
     expect(lines[1]).toContain("tok —");
-    expect(lines[1]).toContain("Workers: —");
+    expect(lines[1]).toContain("Agents: —");
     expect(text).not.toContain("UNAVAILABLE");
     expect(lines[1]).not.toMatch(/tok 0(?!\d)/);
-    expect(lines[1]).not.toContain("Workers: 0");
+    expect(lines[1]).not.toContain("Agents: 0");
     expect(lines[2]).toContain("Ctrl+P Pause");
   });
 
@@ -152,8 +152,8 @@ describe("M3 — Footer telemetria honesta", () => {
     expect(tel.idle).toBe(false);
     const text = renderFooter(tel, { color: false });
     expect(text).toContain("[DELEGATING]");
-    expect(text).toContain("Workers: UNAVAILABLE");
-    expect(text).not.toContain("Workers: 0");
+    expect(text).toContain("Agents: UNAVAILABLE");
+    expect(text).not.toContain("Agents: 0");
   });
 
   it("reported metrics show value + provenance; UNAVAILABLE stays red when colored", () => {
@@ -176,7 +176,7 @@ describe("M3 — Footer telemetria honesta", () => {
     expect(plain).toContain("Modelo: auto:smart");
     expect(plain).toContain("ctx 26.9%");
     expect(plain).toContain("tok 4.2k (reported)");
-    expect(plain).toContain("Workers: 18.4k (reported)");
+    expect(plain).toContain("Agents: 18.4k (reported)");
     expect(formatTokDisplay(6100)).toBe("6.1k");
 
     const colored = renderFooter(
@@ -184,7 +184,7 @@ describe("M3 — Footer telemetria honesta", () => {
       { color: true },
     );
     expect(colored).toMatch(/\u001b\[31mUNAVAILABLE\u001b\[0m/);
-    expect(colored).toContain("Workers:");
+    expect(colored).toContain("Agents:");
   });
 });
 

@@ -15,6 +15,7 @@ import {
 } from "../security/harness-consent.js";
 import { defaultStateDbPath, StateDb } from "../state-db/store.js";
 import type { PersistedGoalContract } from "../state-db/types.js";
+import { formatSessionTransitionUi } from "../../cli/product-copy.js";
 
 export function isProceedAfterConfirmIntent(line: string): boolean {
   const t = line.trim();
@@ -45,7 +46,7 @@ function transitionChain(
       reason: "shell_authorized_kickoff",
       event: "evolve_shell_continue",
     });
-    write(`MSO → ${s.state}`);
+    write(formatSessionTransitionUi(s.state));
   }
 }
 
@@ -82,7 +83,7 @@ export async function startAuthorizedExecution(opts: {
       return {
         started: false,
         message_pt:
-          "Nenhum Goal Contract com MSO confirmado. Envie uma intenção nova ou confirme o contrato primeiro.",
+          "Nenhum Plan com Orchestrator confirmado. Envie uma intenção nova ou confirme o Plan primeiro.",
       };
     }
 
@@ -95,7 +96,7 @@ export async function startAuthorizedExecution(opts: {
     ) {
       return {
         started: false,
-        message_pt: `Já existe sessão MSO ativa (${existing.session_id} · ${existing.state}). Use 'status' ou aguarde.`,
+        message_pt: `Já existe Session ativa (${existing.session_id} · ${existing.state}). Use 'status' ou aguarde.`,
         mso_state: existing.state,
         goal_contract_id: existing.goal_contract_id,
       };
@@ -131,7 +132,7 @@ export async function startAuthorizedExecution(opts: {
       goal_contract_id: contract.goal_contract_id,
       work_id,
     });
-    write(`MSO sessão ${session.session_id} criada (INIT).`);
+    write(`Session ${session.session_id} criada (início).`);
 
     transitionChain(
       db,
@@ -146,7 +147,7 @@ export async function startAuthorizedExecution(opts: {
       write("dry_run: parando em DELEGATING (sem adapter live).");
       return {
         started: true,
-        message_pt: "dry_run: MSO em DELEGATING — execução live não invocada.",
+        message_pt: "dry_run: Session em delegando — execução live não invocada.",
         mso_state: "DELEGATING",
         goal_contract_id: contract.goal_contract_id,
         adapter_status: "dry_run",
@@ -252,7 +253,7 @@ export async function startAuthorizedExecution(opts: {
       });
       return {
         started: false,
-        message_pt: `Adapter indisponível (${health.code}): ${health.message}. MSO → BLOCKED.`,
+        message_pt: `Adapter indisponível (${health.code}): ${health.message}. Session → bloqueada.`,
         mso_state: "BLOCKED",
         goal_contract_id: contract.goal_contract_id,
         adapter_status: health.code,
@@ -266,7 +267,7 @@ export async function startAuthorizedExecution(opts: {
       holder_id,
       reason: "delegated_to_adapter",
     });
-    write("MSO → WAITING_AGENTS (a delegar ao agente)…");
+    write(`${formatSessionTransitionUi("WAITING_AGENTS")} (a delegar ao agente)…`);
 
     const prompt = [
       `You are the EvolveLoop executor for an MSO-authorized Goal Contract.`,
@@ -329,17 +330,20 @@ export async function startAuthorizedExecution(opts: {
       holder_id,
       reason: "adapter_returned",
     });
-    write(`MSO → VALIDATING (adapter status=${adapter_result.status})`);
+    write(
+      `${formatSessionTransitionUi("VALIDATING")} (adapter status=${adapter_result.status})`,
+    );
 
     if (adapter_result.status === "ok") {
-      // Shell kickoff does not claim TRUE-FULL-PASS without Evidence Validator.
+      // Shell kickoff does not claim Session concluída without Evidence Validator.
       write(
-        "Delegação concluída com status ok. TRUE-FULL-PASS exige Evidence Validator (não declarado só por prosa do agente).",
+        "Delegação concluída com status ok. Session concluída (verificada) exige Evidence Validator (não declarado só por prosa do agente).",
       );
       write(`Adapter: ${adapter_result.adapter_id} · ${adapter_result.message}`);
       return {
         started: true,
-        message_pt: "Execução autorizada devolvida (VALIDATING). Revise o diff e rode testes se necessário.",
+        message_pt:
+          "Execução autorizada devolvida (Session: validando). Revise o diff e rode testes se necessário.",
         mso_state: "VALIDATING",
         goal_contract_id: contract.goal_contract_id,
         adapter_status: adapter_result.status,
@@ -353,7 +357,9 @@ export async function startAuthorizedExecution(opts: {
       holder_id,
       reason: `adapter:${adapter_result.code}`,
     });
-    write(`MSO → BLOCKED (${adapter_result.code}: ${adapter_result.message})`);
+    write(
+      `${formatSessionTransitionUi("BLOCKED")} (${adapter_result.code}: ${adapter_result.message})`,
+    );
     const hint =
       adapter_result.code === "CONSENT_REQUIRED"
         ? " Autorize o harness (sim no prompt) ou config.yaml e diga 'continuar' de novo."

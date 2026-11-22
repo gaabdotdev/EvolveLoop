@@ -168,7 +168,7 @@ export function runIntentFlow(opts: IntentFlowOptions): IntentFlowResult {
   const db = new StateDb(dbPath);
 
   try {
-    const trivial = applyTrivialBypass(intent, db);
+    const trivial = applyTrivialBypass(intent, db, { workspace });
     if (trivial) return trivial;
 
     const scale = classifyRequestScale(intent);

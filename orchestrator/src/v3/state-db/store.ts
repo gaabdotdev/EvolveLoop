@@ -191,6 +191,23 @@ export class StateDb {
     return rows.map((r) => r.name);
   }
 
+  /** schema_meta key/value — used for journey flags (V4.3 pause) without new tables. */
+  getMeta(key: string): string | undefined {
+    const row = this.db
+      .prepare(`SELECT value FROM schema_meta WHERE key = ?`)
+      .get(key) as { value?: string } | undefined;
+    return row?.value;
+  }
+
+  setMeta(key: string, value: string): void {
+    this.db
+      .prepare(
+        `INSERT INTO schema_meta(key, value) VALUES (?, ?)
+         ON CONFLICT(key) DO UPDATE SET value = excluded.value`,
+      )
+      .run(key, value);
+  }
+
   saveGoalContract(
     contract: GoalContract,
     opts?: { validated?: boolean; mso_confirmed?: boolean; skip_structural?: boolean },
@@ -878,40 +895,50 @@ export class StateDb {
 
   /** Latest MSO session for a workspace (auto-resume when re-running evolve). */
   getLatestMsoSessionForWorkspace(workspaceId: string): MsoSession | undefined {
-    const row = this.db
+    return this.listMsoSessionsForWorkspace(workspaceId, 1)[0];
+  }
+
+  /** Recent MSO sessions for a workspace (V4.2 history browse). */
+  listMsoSessionsForWorkspace(
+    workspaceId: string,
+    limit = 10,
+  ): MsoSession[] {
+    const rows = this.db
       .prepare(
         `SELECT session_id, workspace_id, state, fencing_token, goal_contract_id, work_id,
                 reason, created_at, updated_at
          FROM mso_sessions
          WHERE workspace_id = ?
          ORDER BY updated_at DESC
-         LIMIT 1`,
+         LIMIT ?`,
       )
-      .get(workspaceId) as
-      | {
-          session_id: string;
-          workspace_id: string;
-          state: string;
-          fencing_token: number;
-          goal_contract_id: string | null;
-          work_id: string | null;
-          reason: string | null;
-          created_at: string;
-          updated_at: string;
-        }
-      | undefined;
-    if (!row || !isMsoState(row.state)) return undefined;
-    return {
-      session_id: row.session_id,
-      workspace_id: row.workspace_id,
-      state: row.state,
-      fencing_token: row.fencing_token,
-      goal_contract_id: row.goal_contract_id ?? undefined,
-      work_id: row.work_id ?? undefined,
-      reason: row.reason ?? undefined,
-      created_at: row.created_at,
-      updated_at: row.updated_at,
-    };
+      .all(workspaceId, Math.max(1, Math.min(limit, 100))) as Array<{
+      session_id: string;
+      workspace_id: string;
+      state: string;
+      fencing_token: number;
+      goal_contract_id: string | null;
+      work_id: string | null;
+      reason: string | null;
+      created_at: string;
+      updated_at: string;
+    }>;
+    const out: MsoSession[] = [];
+    for (const row of rows) {
+      if (!isMsoState(row.state)) continue;
+      out.push({
+        session_id: row.session_id,
+        workspace_id: row.workspace_id,
+        state: row.state,
+        fencing_token: row.fencing_token,
+        goal_contract_id: row.goal_contract_id ?? undefined,
+        work_id: row.work_id ?? undefined,
+        reason: row.reason ?? undefined,
+        created_at: row.created_at,
+        updated_at: row.updated_at,
+      });
+    }
+    return out;
   }
 
   getMsoSession(sessionId: string): MsoSession | undefined {

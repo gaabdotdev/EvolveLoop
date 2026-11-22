@@ -116,6 +116,6 @@ describe("V0 Bloco 2 — silent scan + Grill-Me + SQLite", () => {
     const status = runIntentFlow({ workspace: tmp, intent: "status" });
     expect(status).toMatchObject({ bypassed: true, grill_me: false, tokens_used: 0 });
     if (!("bypassed" in status)) return;
-    expect(status.message_pt).toMatch(/Goal Contract/i);
+    expect(status.message_pt).toMatch(/Task\/Session|Plan/i);
   });
 });

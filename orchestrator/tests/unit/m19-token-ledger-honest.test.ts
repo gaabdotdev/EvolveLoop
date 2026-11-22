@@ -92,7 +92,9 @@ describe("M19 Token Ledger honest rollup", () => {
       expect(rollup.honesty).toBe("reported");
 
       const line = formatDeliveryTokens(rollup.tokens_mso, rollup.tokens_workers);
-      expect(line).toBe("Tokens: MSO 150 · Workers 355");
+      expect(line).toBe(
+        "Tokens: Orchestrator 150 (reported) · Agents 355 (reported)",
+      );
       const card = buildDeliveryCardView({
         status: "PASS",
         diff_stat: "1 file changed",

@@ -45,6 +45,14 @@ export interface FirstRunSetupInput {
   limits_path?: string;
 }
 
+export interface ReadinessPrefs {
+  agent_handles: {
+    enabled: boolean;
+    consequence: string;
+  };
+  hint: string;
+}
+
 export interface ReadinessReport {
   kind: "EvolveReadinessReport";
   workspace: string;
@@ -58,6 +66,8 @@ export interface ReadinessReport {
     present_names: string[];
   };
   limits: ConcurrencyLimits;
+  /** V4.2 P0-3 — prefs snapshot (Handles default OFF). */
+  prefs: ReadinessPrefs;
   message_pt: string;
   limitations: string[];
 }
@@ -239,15 +249,30 @@ export function writeLimitsConfig(path: string, limits: ConcurrencyLimits): Conc
   return limits;
 }
 
+const HANDLES_OFF_CONSEQUENCE =
+  "OFF (default): sem janelas/sessões auxiliares; jornada TUI completa; attach soft-fail.";
+
+export function defaultReadinessPrefs(): ReadinessPrefs {
+  return {
+    agent_handles: {
+      enabled: false,
+      consequence: HANDLES_OFF_CONSEQUENCE,
+    },
+    hint: "Alterar sem editar YAML: evolve config set agent-handles on|off · /config handles",
+  };
+}
+
 export function buildReadinessReport(input: {
   workspace: string;
   probes: ProbeResult[];
   credentials: ReadinessReport["credentials"];
   limits: ConcurrencyLimits;
+  prefs?: ReadinessPrefs;
 }): ReadinessReport {
   const hardFail = input.probes.some((p) => p.id === "node" && p.status !== "ok");
   const ready = !hardFail && input.probes.some((p) => p.id === "workspace" && p.status === "ok");
   const warnCount = input.probes.filter((p) => p.status === "warn" || p.status === "missing").length;
+  const prefs = input.prefs ?? defaultReadinessPrefs();
   return {
     kind: "EvolveReadinessReport",
     workspace: resolve(input.workspace),
@@ -259,10 +284,11 @@ export function buildReadinessReport(input: {
     })),
     credentials: input.credentials,
     limits: input.limits,
+    prefs,
     message_pt: ready
       ? warnCount > 0
-        ? `Pronto com avisos (${warnCount}). Credenciais nunca aparecem em logs.`
-        : "Pronto. Setup concluído."
+        ? `Pronto com avisos (${warnCount}). Credenciais nunca aparecem em logs. Agent Handles OFF.`
+        : "Pronto. Setup concluído. Agent Handles OFF (default)."
       : "Não pronto — Node/workspace em falta.",
     limitations: [
       "Optional backends (Ollama/FreeLLMAPI) may be down without blocking setup",
@@ -270,6 +296,8 @@ export function buildReadinessReport(input: {
       SECRET_NAME_RE.source.includes("key")
         ? "Secrets matched by name heuristics are redacted in probe text"
         : "redaction active",
+      `Agent Handles ${prefs.agent_handles.enabled ? "ON" : "OFF"}: ${prefs.agent_handles.consequence}`,
+      "Credenciais canónicas: setup → <workspace>/.evolveloop/credentials.env (0600); Provider TUI / FreeLLM → ~/.config/evolveloop/secrets.env (0600); precedência FreeLLM: env > secrets.env (ficheiros não unificados nesta fatia)",
     ],
   };
 }
