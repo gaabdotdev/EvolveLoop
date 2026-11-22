@@ -1,0 +1,21 @@
+{
+  "gate": "BM-03-ollama-constrained-loop",
+  "ts": "2026-11-22T02:25:28Z",
+  "model_requested": "bonsai-64k:latest",
+  "model_served_sample": "bonsai-64k:latest",
+  "n": 100,
+  "format": "json",
+  "success_valid_json": 100,
+  "parse_failure": 0,
+  "http_fail": 0,
+  "parse_failure_rate": 0.0,
+  "elapsed_s": 147.02,
+  "gbnf_probe": {
+    "http": 200,
+    "response_preview": "\n\n<think>\nHere's a thinking process",
+    "enforced_yes_or_no": false,
+    "note": "Ollama accepted grammar field with HTTP 200 but response not constrained to yes|no \u2014 not a live GBNF decoder"
+  },
+  "honesty": "format=json constrained path exercised live on Ollama; true GBNF grammar field NOT enforced by this Ollama build (request accepted, output unconstrained). Therefore BM-03 GBNF 0%-error live decoder = PARTIAL / plumbing+format_json only, not full GBNF PASS.",
+  "errors_sample": []
+}

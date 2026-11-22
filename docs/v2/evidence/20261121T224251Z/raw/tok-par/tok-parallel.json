@@ -1,0 +1,84 @@
+{
+  "kind": "V2TokParallelReport",
+  "status": "PASS",
+  "parallel_workers": 4,
+  "elapsed_ms": 11,
+  "target_min_pct": 75,
+  "all_meet_target": true,
+  "min_reduction_pct": 87.85582434664335,
+  "max_reduction_pct": 87.85582434664335,
+  "workers": [
+    {
+      "worker_id": 1,
+      "crystallizer_zero_token": true,
+      "baseline_total": 10293,
+      "phase_total": 1250,
+      "reduction_pct": 87.85582434664335,
+      "meets_target": true,
+      "target_min_pct": 75,
+      "honesty": "estimated",
+      "notes": [
+        "worker=1",
+        "parallel_load",
+        "V1_APIs: compressRuntimeSkill+nl+telegraphic+pin+stdout+slice+prune+crystallizer",
+        "prefix_hash=2bfac73abc9b",
+        "crystallizer_status=zero_token_script"
+      ]
+    },
+    {
+      "worker_id": 2,
+      "crystallizer_zero_token": true,
+      "baseline_total": 10293,
+      "phase_total": 1250,
+      "reduction_pct": 87.85582434664335,
+      "meets_target": true,
+      "target_min_pct": 75,
+      "honesty": "estimated",
+      "notes": [
+        "worker=2",
+        "parallel_load",
+        "V1_APIs: compressRuntimeSkill+nl+telegraphic+pin+stdout+slice+prune+crystallizer",
+        "prefix_hash=2bfac73abc9b",
+        "crystallizer_status=zero_token_script"
+      ]
+    },
+    {
+      "worker_id": 3,
+      "crystallizer_zero_token": true,
+      "baseline_total": 10293,
+      "phase_total": 1250,
+      "reduction_pct": 87.85582434664335,
+      "meets_target": true,
+      "target_min_pct": 75,
+      "honesty": "estimated",
+      "notes": [
+        "worker=3",
+        "parallel_load",
+        "V1_APIs: compressRuntimeSkill+nl+telegraphic+pin+stdout+slice+prune+crystallizer",
+        "prefix_hash=2bfac73abc9b",
+        "crystallizer_status=zero_token_script"
+      ]
+    },
+    {
+      "worker_id": 4,
+      "crystallizer_zero_token": true,
+      "baseline_total": 10293,
+      "phase_total": 1250,
+      "reduction_pct": 87.85582434664335,
+      "meets_target": true,
+      "target_min_pct": 75,
+      "honesty": "estimated",
+      "notes": [
+        "worker=4",
+        "parallel_load",
+        "V1_APIs: compressRuntimeSkill+nl+telegraphic+pin+stdout+slice+prune+crystallizer",
+        "prefix_hash=2bfac73abc9b",
+        "crystallizer_status=zero_token_script"
+      ]
+    }
+  ],
+  "v1_latest_metrics_path": "/home/gaab/orca/workspaces/EvolveLoop/seagrass/docs/v1/evidence/latest/metrics.json",
+  "v1_label": "V1-GATE-TOK_PASS_75.54pct",
+  "honesty": "estimated",
+  "pass": true
+}

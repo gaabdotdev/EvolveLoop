@@ -1,0 +1,1 @@
+{"gate":"V3-MEM-03","token_budget":800,"baseline_n":4,"scale":100,"history_n":400,"baseline_tokens":656,"final_tokens":795,"growth_ratio":1.2119,"resident":1,"tombstoned":45,"pages_total":46,"naive_full_history_tokens":62245,"TOKEN_BUDGET_100X":"BOUNDED"}

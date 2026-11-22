@@ -1,0 +1,74 @@
+{
+  "gate": "AUD-UX-03-matrix-probe",
+  "ts": "2026-11-22T02:28:30Z",
+  "attempt": "2/3",
+  "freellmapi": {
+    "endpoint": "http://127.0.0.1:3001/v1/models",
+    "http": 401,
+    "curl_exit": 0,
+    "body_preview": "{\"error\":{\"message\":\"Invalid API key\",\"type\":\"authentication_error\"}}",
+    "classification": "INFRA/UNAVAILABLE",
+    "needsKey": true,
+    "honesty": "401 Invalid API key — not claimed live; not invented ready"
+  },
+  "ollama": {
+    "tags": { "http": 200, "classification": "READY" },
+    "embeddings": {
+      "endpoint": "http://127.0.0.1:11434/api/embeddings",
+      "model_requested": "nomic-embed-text:latest",
+      "model_served": "nomic-embed-text:latest",
+      "http": 200,
+      "curl_exit": 0,
+      "embedding_dims": 768,
+      "artifact": "AUD-UX-03-ollama-embed.json"
+    },
+    "inference": {
+      "endpoint": "http://127.0.0.1:11434/api/generate",
+      "model_requested": "bonsai-64k:latest",
+      "model_served": "bonsai-64k:latest",
+      "http": 200,
+      "curl_exit": 0,
+      "done": true,
+      "artifact": "AUD-UX-03-ollama-generate.json"
+    },
+    "classification": "READY"
+  },
+  "adapters_live": {
+    "cursor-agent": {
+      "cli": "/home/gaab/.local/bin/cursor-agent",
+      "model_requested": "composer-2.5",
+      "model_served": "composer-2.5",
+      "model_served_note": "result payload has no model field; request used --model composer-2.5 from --list-models; exit 0 success treated as served=requested",
+      "mode": "ask",
+      "print": true,
+      "exit_code": 0,
+      "result_preview": "PONG",
+      "is_error": false,
+      "duration_ms": 2503,
+      "artifact": "AUD-UX-03-cursor-agent.json",
+      "classification": "LIVE_OK"
+    },
+    "agy": {
+      "cli": "/home/gaab/.local/bin/agy",
+      "model_requested": "gemini-3.8-flash-low",
+      "model_served": "gemini-3.8-flash-low",
+      "model_served_note": "agy models list includes gemini-3.8-flash-low (NOT auto:fast); result payload has no model field; status=SUCCESS exit 0 treated as served=requested",
+      "mode": "plan",
+      "print": true,
+      "exit_code": 0,
+      "status": "SUCCESS",
+      "response_preview": "PONG",
+      "duration_seconds": 362.388,
+      "artifact": "AUD-UX-03-agy.json",
+      "classification": "LIVE_OK",
+      "invalid_model_avoided": "auto:fast (not in agy models list)"
+    }
+  },
+  "pass_criteria": {
+    "ollama_live": true,
+    "adapters_live_ge_2": true,
+    "freellmapi_honest_unavailable_or_live": true,
+    "verdict": "PASS"
+  },
+  "honesty": "FreeLLMAPI 401 INFRA/UNAVAILABLE documented; Ollama embed+infer exit 0 / HTTP 200; cursor-agent + agy live print probes exit 0 with valid models"
+}

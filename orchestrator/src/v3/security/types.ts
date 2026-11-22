@@ -99,15 +99,12 @@ export const DEFAULT_DENIED_PATHS: string[] = [
   "/run/docker.sock",
 ];
 
-export const DEFAULT_ENV_ALLOWLIST: string[] = [
-  "PATH",
-  "HOME",
-  "LANG",
-  "LC_ALL",
-  "TERM",
-  "TMPDIR",
-  "USER",
-  "LOGNAME",
-  "NODE_ENV",
-  "CI",
-];
+/**
+ * V0-SEC-03 strict allowlist for ExecutionRunner scrubbing.
+ * HOME is NOT inherited — runner injects an ephemeral HOME directory.
+ * Callers may extend via env_extra_allowlist (still never full process.env).
+ */
+export const STRICT_ENV_ALLOWLIST: string[] = ["PATH", "LANG", "TERM"];
+
+/** @deprecated Use STRICT_ENV_ALLOWLIST — kept as alias for V0-SEC-03. */
+export const DEFAULT_ENV_ALLOWLIST: string[] = [...STRICT_ENV_ALLOWLIST];

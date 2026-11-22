@@ -388,7 +388,7 @@ export class EngineeringLoopService {
       });
       agents.activate(input.work_id, reviewerId);
     }
-    const solutionSrc = ws.readFile(solutionRel);
+    const solutionSrc = ws.readFileHost(solutionRel);
     reviewPassed =
       testResult.status === 0 &&
       solutionSrc.includes("return a + b") &&

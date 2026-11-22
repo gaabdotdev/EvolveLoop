@@ -1,0 +1,17 @@
+# AUD-STUB-02 diffstat (audit-scoped)
+
+## Tracked files (git diff --stat vs HEAD)
+ orchestrator/src/v3/state-db/store.ts | 1211 ++++++++++++++++++++++++++++++++-
+ 1 file changed, 1187 insertions(+), 24 deletions(-)
+
+## AUD-STUB-02 hunks in this attempt (manual)
+orchestrator/src/v3/state-db/store.ts          | +9  DISK_REQUIRED refuse :memory:
+orchestrator/src/v3/memory/pyramid-index.ts    | +12 PYRAMID_DISK_PERSISTENCE=NÃO_HABILITADO
+orchestrator/src/v3/memory/index.ts            | +1  re-export PYRAMID_DISK_PERSISTENCE
+orchestrator/tests/unit/v0-orch-persistence.test.ts | +4 refuse :memory: test
+orchestrator/tests/unit/v3-mem-02-pyramid.test.ts   | +3 assert NÃO_HABILITADO
+
+## Note
+Branch chore/v0-consolidation already had large state-db/memory additions;
+git diff --stat vs HEAD for store.ts reflects the whole branch delta, not only AUD-STUB-02.
+Untracked memory/* files are new on this branch (?? in git status).

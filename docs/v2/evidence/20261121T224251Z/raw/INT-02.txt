@@ -1,0 +1,18 @@
+
+ RUN  v2.1.9 /home/gaab/orca/workspaces/EvolveLoop/seagrass/orchestrator
+
+stdout | tests/unit/v2-int-02-live-laya.test.ts > V2-INT-02 live Laya via Ollama > probe Ollama generate; if ready run ≥5 EvolveLoop tasks with invention_count=0 else UNAVAILABLE
+INT02_PROBE_JSON={"tags_ok":true,"code":"OK","message":"Ollama ok; model=bonsai-64k:latest","model":"bonsai-64k:latest","base_url":"http://127.0.0.1:11434","generate":{"ok":true,"detail":"chars=108 preview=\n\n<think>\nHere's a thinking process:\n\n1.  **Analyze User Input:**\n   - The user "}}
+
+stdout | tests/unit/v2-int-02-live-laya.test.ts > V2-INT-02 live Laya via Ollama > probe Ollama generate; if ready run ≥5 EvolveLoop tasks with invention_count=0 else UNAVAILABLE
+INT02_BENCH_JSON={"invention_baseline":0,"invention_candidate":0,"calibration_baseline":true,"calibration_candidate":true,"abstention_rate_candidate":1,"verdict":"PLUGGABLE_KEEP_BASELINE","case_count":6,"latency_mean_ms":6892.092310166667}
+INT02_STATUS=PASS_LIVE
+
+ ✓ tests/unit/v2-int-02-live-laya.test.ts (1 test) 44280ms
+   ✓ V2-INT-02 live Laya via Ollama > probe Ollama generate; if ready run ≥5 EvolveLoop tasks with invention_count=0 else UNAVAILABLE 44279ms
+
+ Test Files  1 passed (1)
+      Tests  1 passed (1)
+   Start at  19:43:17
+   Duration  45.67s (transform 1.03s, setup 15ms, collect 1.07s, tests 44.28s, environment 0ms, prepare 67ms)
+

@@ -1,0 +1,141 @@
+{
+  "kind": "CircuitRunResult",
+  "run_id": "cr-2281c119-68a0-4979-901d-10b0637b342b",
+  "work_id": "work-fire5-1795287404960",
+  "task_id": "fire-1",
+  "status": "TRUE_FULL_PASS",
+  "reason": "TRUE_FULL_PASS",
+  "goal_contract_id": "gc-fire-1",
+  "workspace_path": "/home/gaab/orca/workspaces/EvolveLoop/seagrass/.evolveloop/live-wt/20261121T185643Z/fire-1",
+  "model_health": {
+    "local": {
+      "kind": "ModelHealth",
+      "provider_id": "ollama",
+      "ok": true,
+      "code": "OK",
+      "message": "Ollama ok; model=bonsai-64k:latest",
+      "model": "bonsai-64k:latest",
+      "base_url": "http://127.0.0.1:11434",
+      "checked_at": "2026-11-21T18:56:44.960Z",
+      "limitations": [
+        "Local Ollama only — no FreeLLMAPI gateway",
+        "Availability is probed via GET /api/tags"
+      ]
+    },
+    "remote": {
+      "kind": "ModelHealth",
+      "provider_id": "openrouter",
+      "ok": false,
+      "code": "MISSING_CREDENTIALS",
+      "message": "OpenRouter API key absent — healthCheck failed honestly",
+      "base_url": "https://openrouter.ai/api/v1",
+      "model": "openai/gpt-4o-mini",
+      "checked_at": "2026-11-21T18:56:44.976Z",
+      "limitations": [
+        "Remote OpenRouter never used as silent default",
+        "Requires OPENROUTER_API_KEY or EVOLVELOOP_OPENROUTER_API_KEY",
+        "Does not invent cost when usage fields absent"
+      ]
+    }
+  },
+  "adapter_health_ok": true,
+  "adapter_result": {
+    "kind": "NormalizedAdapterResult",
+    "adapter_id": "cursor",
+    "status": "ok",
+    "code": "EXIT_ZERO",
+    "message": "Marcador criado: `.evolveloop/circuit-markers/fire-1.txt` com conteúdo exato `fire-1`.\n",
+    "exit_code": 0,
+    "stdout": "Marcador criado: `.evolveloop/circuit-markers/fire-1.txt` com conteúdo exato `fire-1`.\n",
+    "stderr": "",
+    "duration_ms": 85130,
+    "pid": 1302850,
+    "pgid": 1302850,
+    "tokens_in": null,
+    "tokens_out": null,
+    "cost_usd": null,
+    "cost_provenance": "UNAVAILABLE",
+    "limitations": [
+      "Not an OS sandbox — confinement is realpath + cwd + env scrub only",
+      "Cancel uses kill(-pgid) SIGTERM→SIGKILL with /proc starttime reuse guard",
+      "Env allowlist strict: PATH, LANG, TERM + ephemeral HOME",
+      "Stdout/stderr pass deterministic secret redaction",
+      "env_scrubbed_strict_allowlist",
+      "token_usage_not_reported_by_cli"
+    ],
+    "raw_runner": {
+      "kind": "ExecutionRunnerResult",
+      "status": "ok",
+      "code": "EXIT_ZERO",
+      "exit_code": 0,
+      "signal": null,
+      "stdout": "Marcador criado: `.evolveloop/circuit-markers/fire-1.txt` com conteúdo exato `fire-1`.\n",
+      "stderr": "",
+      "duration_ms": 85130,
+      "pid": 1302850,
+      "pgid": 1302850,
+      "argv": [
+        "/home/gaab/.local/bin/agent",
+        "-p",
+        "--output-format",
+        "text",
+        "--trust",
+        "--workspace",
+        "/home/gaab/orca/workspaces/EvolveLoop/seagrass/.evolveloop/live-wt/20261121T185643Z/fire-1",
+        "--force",
+        "Read the prompt file at /home/gaab/orca/workspaces/EvolveLoop/seagrass/.evolveloop/live-wt/20261121T185643Z/fire-1/.evolveloop/harness-prompts/sess-a5e34f70-d3d8-4835-b399-d8ff974548df.md and complete the assigned task. Stay strictly inside the workspace."
+      ],
+      "cwd": "/home/gaab/orca/workspaces/EvolveLoop/seagrass/.evolveloop/live-wt/20261121T185643Z/fire-1",
+      "ephemeral_home": "/tmp/evolveloop-ephemeral-home/home-3d891y",
+      "limitations": [
+        "Not an OS sandbox — confinement is realpath + cwd + env scrub only",
+        "Cancel uses kill(-pgid) SIGTERM→SIGKILL with /proc starttime reuse guard",
+        "Env allowlist strict: PATH, LANG, TERM + ephemeral HOME",
+        "Stdout/stderr pass deterministic secret redaction",
+        "env_scrubbed_strict_allowlist"
+      ]
+    },
+    "session_id": "sess-a5e34f70-d3d8-4835-b399-d8ff974548df"
+  },
+  "validator": {
+    "kind": "EvidenceValidatorResult",
+    "status": "TRUE_FULL_PASS",
+    "code": "TRUE_FULL_PASS",
+    "reasons": [],
+    "sensitive_diff_blocked": [],
+    "command_results": [
+      {
+        "id": "marker-exists",
+        "argv": [
+          "bash",
+          "-lc",
+          "test -f '/home/gaab/orca/workspaces/EvolveLoop/seagrass/.evolveloop/live-wt/20261121T185643Z/fire-1/.evolveloop/circuit-markers/fire-1.txt'"
+        ],
+        "exit_code": 0,
+        "status": "ok",
+        "duration_ms": 19
+      },
+      {
+        "id": "marker-content",
+        "argv": [
+          "bash",
+          "-lc",
+          "test \"$(cat '/home/gaab/orca/workspaces/EvolveLoop/seagrass/.evolveloop/live-wt/20261121T185643Z/fire-1/.evolveloop/circuit-markers/fire-1.txt')\" = 'fire-1'"
+        ],
+        "exit_code": 0,
+        "status": "ok",
+        "duration_ms": 21
+      }
+    ],
+    "evaluated_at": "2026-11-21T18:58:17.130Z",
+    "limitations": [
+      "Validator runs outside agent session via ExecutionRunner",
+      "TRUE_FULL_PASS requires mandatory criteria PASS + commands exit 0 + no unauthorized sensitive diffs"
+    ]
+  },
+  "token_ledger_entry_id": "tl-4274c8b6-7915-41a1-98fc-2362aea289d4",
+  "limitations": [
+    "V0 Bloco 3 circuit — no FreeLLMAPI/bwrap/daemon/Laya",
+    "TRUE_FULL_PASS only via Evidence Validator (not agent prose)"
+  ]
+}

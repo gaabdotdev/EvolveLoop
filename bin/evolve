@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+# EvolveLoop CLI entrypoint (V0-CLI-01).
+# Operates on cwd as workspace; durable state under .evolveloop/
+set -euo pipefail
+
+# Resolve through symlinks so ~/.local/bin/evolve → repo/bin/evolve finds the repo.
+SOURCE="${BASH_SOURCE[0]}"
+while [[ -L "${SOURCE}" ]]; do
+  DIR="$(cd -P "$(dirname "${SOURCE}")" && pwd)"
+  SOURCE="$(readlink "${SOURCE}")"
+  [[ "${SOURCE}" != /* ]] && SOURCE="${DIR}/${SOURCE}"
+done
+ROOT="$(cd -P "$(dirname "${SOURCE}")/.." && pwd)"
+
+EVOLVE_JS="${ROOT}/orchestrator/dist/cli/evolve.js"
+if [[ ! -f "${EVOLVE_JS}" ]]; then
+  echo "evolve: missing ${EVOLVE_JS} — run: (cd orchestrator && npm run build)" >&2
+  exit 1
+fi
+exec node "${EVOLVE_JS}" "$@"

@@ -1,0 +1,624 @@
+--- diffstat (F1 broken) ---
+FAULT_ID=F1
+DESC=canTransitionMso always returns true (illegal MSO edges allowed)
+--- after restore (F1) ---
+FAULT_DETECTED=1 RESTORE_GREEN=1
+
+--- diffstat (F2 broken) ---
+FAULT_ID=F2
+DESC=transitionMso skips canTransitionMso guard
+ orchestrator/src/v3/state-db/store.ts | 1211 ++++++++++++++++++++++++++++++++-
+ 1 file changed, 1187 insertions(+), 24 deletions(-)
+diff --git a/orchestrator/src/v3/state-db/store.ts b/orchestrator/src/v3/state-db/store.ts
+index 9a69c4f..09eff48 100644
+--- a/orchestrator/src/v3/state-db/store.ts
++++ b/orchestrator/src/v3/state-db/store.ts
+@@ -1,5 +1,6 @@
+ /**
+  * SQLite WAL store for V0 durable state (.evolveloop/state.db).
++ * Single transactional persistence: MSO, contracts, TaskGraph, Inbox, Work Ledger, Token Ledger.
+  */
+ 
+ import { mkdirSync } from "node:fs";
+@@ -7,13 +8,39 @@ import { createRequire } from "node:module";
+ import { dirname, join, resolve } from "node:path";
+ import { randomUUID } from "node:crypto";
+ import type { GoalContract } from "../goal-contract/types.js";
+-import { STATE_DB_SCHEMA_SQL, STATE_DB_SCHEMA_VERSION } from "./schema.js";
++import type { GoalDocument } from "../goal-document/types.js";
++import {
++  validateGoalContractStructural,
++  validateGoalDocumentStructural,
++} from "../goal-document/validate.js";
++import { canTransitionMso, isMsoState, type MsoState } from "../mso/states.js";
++import { MsoError } from "../mso/errors.js";
++import {
++  SQLITE_BUSY_TIMEOUT_MS,
++  SQLITE_SYNC_FULL,
++  STATE_DB_SCHEMA_SQL,
++  STATE_DB_SCHEMA_VERSION,
++  TOKEN_LEDGER_V5_COLUMNS,
++} from "./schema.js";
+ import type {
+   CircuitRunRow,
++  InboxMessageRow,
++  MsoSession,
++  MsoTransitionRow,
++  OutboxRow,
++  OutboxStatus,
+   PersistedGoalContract,
++  PersistedGoalDocument,
++  TaskGraphNodeRow,
++  TaskSubstateRow,
+   TokenLedgerEntry,
+   TokenLedgerInsert,
+   TrivialOpRow,
++  WorkLedgerDbEntry,
++  WorkspaceLease,
++  EventRow,
++  EvidenceRecordRow,
++  EvidenceStatus,
+ } from "./types.js";
+ 
+ /** Avoid static `import "node:sqlite"` — Vite/Vitest cannot resolve the stripped `sqlite` id. */
+@@ -53,11 +80,20 @@ export class StateDb {
+   private readonly db: DatabaseSyncInstance;
+ 
+   constructor(dbPath: string) {
++    // Fail-honest: never treat ":memory:" as SQLite RAM — resolve(":memory:") would
++    // create a durable file literally named ":memory:" and pretend ephemeral storage.
++    if (!dbPath?.trim() || dbPath.trim() === ":memory:") {
++      throw new StateDbError(
++        "DISK_REQUIRED",
++        "StateDb requires a filesystem path (SQLite WAL on disk); :memory: is refused",
++      );
++    }
+     this.path = resolve(dbPath);
+     mkdirSync(dirname(this.path), { recursive: true });
+     const DatabaseSync = loadDatabaseSync();
+     this.db = new DatabaseSync(this.path);
+     this.db.exec(STATE_DB_SCHEMA_SQL);
++    this.migrateTokenLedgerV5();
+     this.db
+       .prepare(
+         `INSERT INTO schema_meta(key, value) VALUES ('schema_version', ?)
+@@ -66,6 +102,18 @@ export class StateDb {
+       .run(STATE_DB_SCHEMA_VERSION);
+   }
+ 
++  /** Idempotent ALTER for DBs created before schema v5 (V0-TOK-01). */
++  private migrateTokenLedgerV5(): void {
++    const cols = this.db
+--- after restore (F2) ---
+ orchestrator/src/v3/state-db/store.ts | 1211 ++++++++++++++++++++++++++++++++-
+ 1 file changed, 1187 insertions(+), 24 deletions(-)
+FAULT_DETECTED=1 RESTORE_GREEN=1
+
+--- diffstat (F3 broken) ---
+FAULT_ID=F3
+DESC=evaluateTrueFullPass always eligible (contract validation bypass)
+ orchestrator/src/v3/goal-contract/types.ts | 24 +++++++++++++++++++++---
+ 1 file changed, 21 insertions(+), 3 deletions(-)
+diff --git a/orchestrator/src/v3/goal-contract/types.ts b/orchestrator/src/v3/goal-contract/types.ts
+index 4e23e08..ffcbf24 100644
+--- a/orchestrator/src/v3/goal-contract/types.ts
++++ b/orchestrator/src/v3/goal-contract/types.ts
+@@ -66,6 +66,18 @@ export interface GoalContract {
+   /** Immutable parent version when this is a revision. */
+   supersedes_version?: number;
+   work_id?: string;
++  /**
++   * V2-QUAL-01 — When true, TRUE_FULL_PASS / VERIFIED_PASS require a valid
++   * IndependentReviewGate submission (distinct agent_id and session_id).
++   */
++  require_independent_review?: boolean;
++  /**
++   * V2-QUAL-02 — When true, TRUE_FULL_PASS requires mutation battery score
++   * >= mutation_score_threshold (default 1.0). Weak tests → block.
++   */
++  require_mutation_gate?: boolean;
++  /** Kill ratio required when require_mutation_gate is set (0..1). Default 1.0. */
++  mutation_score_threshold?: number;
+ }
+ 
+ export interface GoalContractCreateInput {
+@@ -82,6 +94,12 @@ export interface GoalContractCreateInput {
+     state?: CriterionState;
+   }>;
+   work_id?: string;
++  /** V2-QUAL-01 — require IndependentReviewGate before verified pass. */
++  require_independent_review?: boolean;
++  /** V2-QUAL-02 — require selective mutation battery before TRUE_FULL_PASS. */
++  require_mutation_gate?: boolean;
++  /** V2-QUAL-02 — minimum mutation kill ratio (0..1). */
++  mutation_score_threshold?: number;
+ }
+ 
+ export function evaluateTrueFullPass(contract: GoalContract): {
+@@ -106,10 +124,10 @@ export function evaluateTrueFullPass(contract: GoalContract): {
+     }
+   }
+ 
+-  const eligible = reasons.length === 0 && mandatory.length > 0;
++  const eligible = true; // AUD-STUB-04 FAULT F3
+   return {
+     eligible,
+-    work_state: eligible ? "TRUE_FULL_PASS" : "NOT_PASS",
+-    reasons,
++    work_state: "TRUE_FULL_PASS",
++    reasons: [],
+   };
+ }
+--- after restore (F3) ---
+ orchestrator/src/v3/goal-contract/types.ts | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
+FAULT_DETECTED=1 RESTORE_GREEN=1
+
+--- diffstat (F4 broken) ---
+FAULT_ID=F4
+DESC=assertWorkspacePath returns target without symlink/escape checks
+ orchestrator/src/v3/execution-runner/runner.ts | 395 +++++++++++++++++++++----
+ 1 file changed, 338 insertions(+), 57 deletions(-)
+diff --git a/orchestrator/src/v3/execution-runner/runner.ts b/orchestrator/src/v3/execution-runner/runner.ts
+index aec9869..a81db47 100644
+--- a/orchestrator/src/v3/execution-runner/runner.ts
++++ b/orchestrator/src/v3/execution-runner/runner.ts
+@@ -1,30 +1,119 @@
+ /**
+- * Unique ExecutionRunner — realpath, symlink escape block, env allowlist,
+- * detached pgid, timeout, stdout filter, cancel via kill(-pgid).
++ * Unique ExecutionRunner — V0-SEC-01..05:
++ * realpath + symlink escape block, strict env scrub + ephemeral HOME,
++ * secret redaction, detached pgid, SIGTERM→SIGKILL, Capability Gate.
+  */
+ 
+-import { existsSync, realpathSync } from "node:fs";
+-import { dirname, resolve, sep } from "node:path";
+-import { spawn } from "node:child_process";
++import {
++  existsSync,
++  mkdirSync,
++  mkdtempSync,
++  realpathSync,
++  rmSync,
++} from "node:fs";
++import { tmpdir } from "node:os";
++import { dirname, join, resolve, sep } from "node:path";
++import { spawn, spawnSync } from "node:child_process";
+ import {
+   cancelProcessTree,
++  cancelProcessTreeEscalating,
+   identifyProcess,
+   type SupervisedProcessIdentity,
+ } from "../sandbox/process-supervisor.js";
+-import { DEFAULT_ENV_ALLOWLIST } from "../security/types.js";
++import { planBwrapWrapper } from "../sandbox/bwrap-wrapper.js";
++import { STRICT_ENV_ALLOWLIST } from "../security/types.js";
++import { capabilityGate } from "../security/capability-gate.js";
+ import { pathEscapesWorkspace } from "../../authority/capability-authority.js";
++import { redactSecrets } from "../../evidence/secret-redaction.js";
++import { filterProcessOutput } from "../token-economy/stdout-filter.js";
+ import type {
+   ExecutionHandle,
++  ExecutionRunnerPort,
+   ExecutionRunnerRequest,
+   ExecutionRunnerResult,
+ } from "./types.js";
+ 
+ const LIMITATIONS = [
+-  "Not an OS sandbox — confinement is realpath + cwd + env scrub only",
+-  "Cancel uses kill(-pgid) with /proc starttime reuse guard when available",
++  "Base confinement: realpath + cwd + env scrub; OS sandbox optional via os_sandbox",
++  "Cancel uses kill(-pgid) SIGTERM→SIGKILL with /proc starttime reuse guard",
++  "Env allowlist strict: PATH, LANG, TERM + ephemeral HOME",
++  "Stdout/stderr pass deterministic secret redaction",
+ ];
+ 
+-function safeRealpath(p: string): string {
++function resolveOsSandboxSpawn(
++  req: ExecutionRunnerRequest,
++  cwd: string,
++  workspace: string,
++  env: NodeJS.ProcessEnv,
++): {
++  argv: string[];
++  meta: NonNullable<ExecutionRunnerResult["os_sandbox"]>;
++  blocked?: ExecutionRunnerResult;
++} {
++  if (!req.os_sandbox) {
++    return {
++      argv: req.argv,
++      meta: { used: false, backend: "none" },
++    };
++  }
++
++  const plan = planBwrapWrapper({
++    workspace_rw: workspace,
++    argv: req.argv,
++    cwd,
++    env: Object.fromEntries(
++      Object.entries(env).filter((e): e is [string, string] => e[1] != null),
++    ),
+--- after restore (F4) ---
+ orchestrator/src/v3/execution-runner/runner.ts | 394 +++++++++++++++++++++----
+ 1 file changed, 337 insertions(+), 57 deletions(-)
+FAULT_DETECTED=1 RESTORE_GREEN=1
+
+--- diffstat (F5 broken) ---
+FAULT_ID=F5
+DESC=checkWorkspaceFencing always ok (stale fencing accepted)
+ orchestrator/src/v3/state-db/store.ts | 1197 ++++++++++++++++++++++++++++++++-
+ 1 file changed, 1173 insertions(+), 24 deletions(-)
+diff --git a/orchestrator/src/v3/state-db/store.ts b/orchestrator/src/v3/state-db/store.ts
+index 9a69c4f..2ba09b5 100644
+--- a/orchestrator/src/v3/state-db/store.ts
++++ b/orchestrator/src/v3/state-db/store.ts
+@@ -1,5 +1,6 @@
+ /**
+  * SQLite WAL store for V0 durable state (.evolveloop/state.db).
++ * Single transactional persistence: MSO, contracts, TaskGraph, Inbox, Work Ledger, Token Ledger.
+  */
+ 
+ import { mkdirSync } from "node:fs";
+@@ -7,13 +8,39 @@ import { createRequire } from "node:module";
+ import { dirname, join, resolve } from "node:path";
+ import { randomUUID } from "node:crypto";
+ import type { GoalContract } from "../goal-contract/types.js";
+-import { STATE_DB_SCHEMA_SQL, STATE_DB_SCHEMA_VERSION } from "./schema.js";
++import type { GoalDocument } from "../goal-document/types.js";
++import {
++  validateGoalContractStructural,
++  validateGoalDocumentStructural,
++} from "../goal-document/validate.js";
++import { canTransitionMso, isMsoState, type MsoState } from "../mso/states.js";
++import { MsoError } from "../mso/errors.js";
++import {
++  SQLITE_BUSY_TIMEOUT_MS,
++  SQLITE_SYNC_FULL,
++  STATE_DB_SCHEMA_SQL,
++  STATE_DB_SCHEMA_VERSION,
++  TOKEN_LEDGER_V5_COLUMNS,
++} from "./schema.js";
+ import type {
+   CircuitRunRow,
++  InboxMessageRow,
++  MsoSession,
++  MsoTransitionRow,
++  OutboxRow,
++  OutboxStatus,
+   PersistedGoalContract,
++  PersistedGoalDocument,
++  TaskGraphNodeRow,
++  TaskSubstateRow,
+   TokenLedgerEntry,
+   TokenLedgerInsert,
+   TrivialOpRow,
++  WorkLedgerDbEntry,
++  WorkspaceLease,
++  EventRow,
++  EvidenceRecordRow,
++  EvidenceStatus,
+ } from "./types.js";
+ 
+ /** Avoid static `import "node:sqlite"` — Vite/Vitest cannot resolve the stripped `sqlite` id. */
+@@ -53,11 +80,20 @@ export class StateDb {
+   private readonly db: DatabaseSyncInstance;
+ 
+   constructor(dbPath: string) {
++    // Fail-honest: never treat ":memory:" as SQLite RAM — resolve(":memory:") would
++    // create a durable file literally named ":memory:" and pretend ephemeral storage.
++    if (!dbPath?.trim() || dbPath.trim() === ":memory:") {
++      throw new StateDbError(
++        "DISK_REQUIRED",
++        "StateDb requires a filesystem path (SQLite WAL on disk); :memory: is refused",
++      );
++    }
+     this.path = resolve(dbPath);
+     mkdirSync(dirname(this.path), { recursive: true });
+     const DatabaseSync = loadDatabaseSync();
+     this.db = new DatabaseSync(this.path);
+     this.db.exec(STATE_DB_SCHEMA_SQL);
++    this.migrateTokenLedgerV5();
+     this.db
+       .prepare(
+         `INSERT INTO schema_meta(key, value) VALUES ('schema_version', ?)
+@@ -66,6 +102,18 @@ export class StateDb {
+       .run(STATE_DB_SCHEMA_VERSION);
+   }
+ 
++  /** Idempotent ALTER for DBs created before schema v5 (V0-TOK-01). */
++  private migrateTokenLedgerV5(): void {
++    const cols = this.db
+--- after restore (F5) ---
+ orchestrator/src/v3/state-db/store.ts | 1211 ++++++++++++++++++++++++++++++++-
+ 1 file changed, 1187 insertions(+), 24 deletions(-)
+FAULT_DETECTED=1 RESTORE_GREEN=1
+
+--- diffstat (F6 broken) ---
+FAULT_ID=F6
+DESC=isSensitive always false (Evidence Validator sensitive-diff gate disabled)
+ orchestrator/src/v3/circuit/evidence-validator.ts | 96 ++++++++++++++++++++---
+ 1 file changed, 87 insertions(+), 9 deletions(-)
+diff --git a/orchestrator/src/v3/circuit/evidence-validator.ts b/orchestrator/src/v3/circuit/evidence-validator.ts
+index b7b25ca..dc4ca0c 100644
+--- a/orchestrator/src/v3/circuit/evidence-validator.ts
++++ b/orchestrator/src/v3/circuit/evidence-validator.ts
+@@ -3,7 +3,6 @@
+  * Blocks if git diff touches tests/build scripts without Goal Contract authorization.
+  */
+ 
+-import { spawnSync } from "node:child_process";
+ import { existsSync, readFileSync } from "node:fs";
+ import { join, resolve } from "node:path";
+ import {
+@@ -13,6 +12,16 @@ import {
+ } from "../execution-runner/index.js";
+ import type { GoalContract } from "../goal-contract/types.js";
+ import { evaluateTrueFullPass } from "../goal-contract/types.js";
++import {
++  contractRequiresIndependentReview,
++  type IndependentReviewGate,
++} from "../evaluation/independent-review-gate.js";
++import {
++  contractMutationThreshold,
++  contractRequiresMutationGate,
++  evaluateMutationGate,
++  type MutationBatteryResult,
++} from "../evaluation/selective-mutation.js";
+ 
+ const TEST_OR_BUILD_PATTERNS = [
+   /(^|\/)tests?\//i,
+@@ -37,6 +46,18 @@ export interface EvidenceValidatorOptions {
+   timeout_ms?: number;
+   /** Skip git-diff gate (tests only). */
+   skip_diff_gate?: boolean;
++  /**
++   * V2-QUAL-01 — When goal_contract.require_independent_review, a valid PASS
++   * review on this gate is required before TRUE_FULL_PASS / VERIFIED_PASS.
++   */
++  independent_review_gate?: IndependentReviewGate;
++  /**
++   * V2-QUAL-02 — Precomputed selective mutation battery. Required when
++   * goal_contract.require_mutation_gate; score must meet threshold.
++   */
++  mutation_battery?: MutationBatteryResult;
++  /** Override threshold (else contract.mutation_score_threshold or 1.0). */
++  mutation_score_threshold?: number;
+ }
+ 
+ export interface EvidenceValidatorResult {
+@@ -56,16 +77,29 @@ export interface EvidenceValidatorResult {
+   limitations: string[];
+ }
+ 
+-function listChangedFiles(workspace: string, _runner: ExecutionRunner): string[] {
+-  const r = spawnSync("git", ["diff", "--name-only", "HEAD"], {
++/** All git inspection goes through ExecutionRunner (V0-SEC-01 / V0-SEC-06). */
++function listChangedFiles(workspace: string, runner: ExecutionRunner): string[] {
++  const unstaged = runner.runSync({
++    argv: ["git", "diff", "--name-only", "HEAD"],
++    cwd: workspace,
++    workspace_root: workspace,
++    timeout_ms: 30_000,
++  });
++  const staged = runner.runSync({
++    argv: ["git", "diff", "--name-only", "--cached"],
+     cwd: workspace,
+-    encoding: "utf-8",
++    workspace_root: workspace,
++    timeout_ms: 30_000,
+   });
+-  if (r.status !== 0) return [];
+-  return (r.stdout ?? "")
+-    .split("\n")
+-    .map((s) => s.trim())
+-    .filter(Boolean);
++  const files = new Set<string>();
++  for (const block of [unstaged, staged]) {
++    if (block.status !== "ok" && block.exit_code !== 0) continue;
++    for (const line of block.stdout.split("\n")) {
++      const rel = line.trim();
++      if (rel) files.add(rel);
+--- after restore (F6) ---
+ orchestrator/src/v3/circuit/evidence-validator.ts | 96 ++++++++++++++++++++---
+ 1 file changed, 87 insertions(+), 9 deletions(-)
+FAULT_DETECTED=0 RESTORE_GREEN=1
+
+--- diffstat (F7 broken) ---
+FAULT_ID=F7
+DESC=runEvidenceValidator short-circuits to TRUE_FULL_PASS
+ orchestrator/src/v3/circuit/evidence-validator.ts | 107 ++++++++++++++++++++--
+ 1 file changed, 98 insertions(+), 9 deletions(-)
+diff --git a/orchestrator/src/v3/circuit/evidence-validator.ts b/orchestrator/src/v3/circuit/evidence-validator.ts
+index b7b25ca..acd10c8 100644
+--- a/orchestrator/src/v3/circuit/evidence-validator.ts
++++ b/orchestrator/src/v3/circuit/evidence-validator.ts
+@@ -3,7 +3,6 @@
+  * Blocks if git diff touches tests/build scripts without Goal Contract authorization.
+  */
+ 
+-import { spawnSync } from "node:child_process";
+ import { existsSync, readFileSync } from "node:fs";
+ import { join, resolve } from "node:path";
+ import {
+@@ -13,6 +12,16 @@ import {
+ } from "../execution-runner/index.js";
+ import type { GoalContract } from "../goal-contract/types.js";
+ import { evaluateTrueFullPass } from "../goal-contract/types.js";
++import {
++  contractRequiresIndependentReview,
++  type IndependentReviewGate,
++} from "../evaluation/independent-review-gate.js";
++import {
++  contractMutationThreshold,
++  contractRequiresMutationGate,
++  evaluateMutationGate,
++  type MutationBatteryResult,
++} from "../evaluation/selective-mutation.js";
+ 
+ const TEST_OR_BUILD_PATTERNS = [
+   /(^|\/)tests?\//i,
+@@ -37,6 +46,18 @@ export interface EvidenceValidatorOptions {
+   timeout_ms?: number;
+   /** Skip git-diff gate (tests only). */
+   skip_diff_gate?: boolean;
++  /**
++   * V2-QUAL-01 — When goal_contract.require_independent_review, a valid PASS
++   * review on this gate is required before TRUE_FULL_PASS / VERIFIED_PASS.
++   */
++  independent_review_gate?: IndependentReviewGate;
++  /**
++   * V2-QUAL-02 — Precomputed selective mutation battery. Required when
++   * goal_contract.require_mutation_gate; score must meet threshold.
++   */
++  mutation_battery?: MutationBatteryResult;
++  /** Override threshold (else contract.mutation_score_threshold or 1.0). */
++  mutation_score_threshold?: number;
+ }
+ 
+ export interface EvidenceValidatorResult {
+@@ -56,16 +77,29 @@ export interface EvidenceValidatorResult {
+   limitations: string[];
+ }
+ 
+-function listChangedFiles(workspace: string, _runner: ExecutionRunner): string[] {
+-  const r = spawnSync("git", ["diff", "--name-only", "HEAD"], {
++/** All git inspection goes through ExecutionRunner (V0-SEC-01 / V0-SEC-06). */
++function listChangedFiles(workspace: string, runner: ExecutionRunner): string[] {
++  const unstaged = runner.runSync({
++    argv: ["git", "diff", "--name-only", "HEAD"],
+     cwd: workspace,
+-    encoding: "utf-8",
++    workspace_root: workspace,
++    timeout_ms: 30_000,
+   });
+-  if (r.status !== 0) return [];
+-  return (r.stdout ?? "")
+-    .split("\n")
+-    .map((s) => s.trim())
+-    .filter(Boolean);
++  const staged = runner.runSync({
++    argv: ["git", "diff", "--name-only", "--cached"],
++    cwd: workspace,
++    workspace_root: workspace,
++    timeout_ms: 30_000,
++  });
++  const files = new Set<string>();
++  for (const block of [unstaged, staged]) {
++    if (block.status !== "ok" && block.exit_code !== 0) continue;
++    for (const line of block.stdout.split("\n")) {
++      const rel = line.trim();
++      if (rel) files.add(rel);
+--- after restore (F7) ---
+ orchestrator/src/v3/circuit/evidence-validator.ts | 96 ++++++++++++++++++++---
+ 1 file changed, 87 insertions(+), 9 deletions(-)
+FAULT_DETECTED=1 RESTORE_GREEN=1
+
+===== FINAL vs backup (should be empty) =====
+OK identical: states.ts
+OK identical: store.ts
+OK identical: types.ts
+OK identical: runner.ts
+OK identical: evidence-validator.ts
+--- diffstat (F6 broken) ---
+FAULT_ID=F6
+ orchestrator/src/v3/circuit/evidence-validator.ts | 98 ++++++++++++++++++++---
+ 1 file changed, 88 insertions(+), 10 deletions(-)
+diff --git a/orchestrator/src/v3/circuit/evidence-validator.ts b/orchestrator/src/v3/circuit/evidence-validator.ts
+index b7b25ca..2110814 100644
+--- a/orchestrator/src/v3/circuit/evidence-validator.ts
++++ b/orchestrator/src/v3/circuit/evidence-validator.ts
+@@ -3,7 +3,6 @@
+  * Blocks if git diff touches tests/build scripts without Goal Contract authorization.
+  */
+ 
+-import { spawnSync } from "node:child_process";
+ import { existsSync, readFileSync } from "node:fs";
+ import { join, resolve } from "node:path";
+ import {
+@@ -13,6 +12,16 @@ import {
+ } from "../execution-runner/index.js";
+ import type { GoalContract } from "../goal-contract/types.js";
+ import { evaluateTrueFullPass } from "../goal-contract/types.js";
++import {
++  contractRequiresIndependentReview,
++  type IndependentReviewGate,
++} from "../evaluation/independent-review-gate.js";
++import {
++  contractMutationThreshold,
++  contractRequiresMutationGate,
++  evaluateMutationGate,
++  type MutationBatteryResult,
++} from "../evaluation/selective-mutation.js";
+ 
+ const TEST_OR_BUILD_PATTERNS = [
+   /(^|\/)tests?\//i,
+@@ -37,6 +46,18 @@ export interface EvidenceValidatorOptions {
+   timeout_ms?: number;
+   /** Skip git-diff gate (tests only). */
+   skip_diff_gate?: boolean;
++  /**
++   * V2-QUAL-01 — When goal_contract.require_independent_review, a valid PASS
++   * review on this gate is required before TRUE_FULL_PASS / VERIFIED_PASS.
++   */
++  independent_review_gate?: IndependentReviewGate;
++  /**
++   * V2-QUAL-02 — Precomputed selective mutation battery. Required when
+--- diffstat (F8 broken) ---
+FAULT_ID=F8
+ orchestrator/src/v3/circuit/evidence-validator.ts | 102 +++++++++++++++++++---
+ 1 file changed, 88 insertions(+), 14 deletions(-)
+diff --git a/orchestrator/src/v3/circuit/evidence-validator.ts b/orchestrator/src/v3/circuit/evidence-validator.ts
+index b7b25ca..afd2407 100644
+--- a/orchestrator/src/v3/circuit/evidence-validator.ts
++++ b/orchestrator/src/v3/circuit/evidence-validator.ts
+@@ -3,7 +3,6 @@
+  * Blocks if git diff touches tests/build scripts without Goal Contract authorization.
+  */
+ 
+-import { spawnSync } from "node:child_process";
+ import { existsSync, readFileSync } from "node:fs";
+ import { join, resolve } from "node:path";
+ import {
+@@ -13,6 +12,16 @@ import {
+ } from "../execution-runner/index.js";
+ import type { GoalContract } from "../goal-contract/types.js";
+ import { evaluateTrueFullPass } from "../goal-contract/types.js";
++import {
++  contractRequiresIndependentReview,
++  type IndependentReviewGate,
++} from "../evaluation/independent-review-gate.js";
++import {
++  contractMutationThreshold,
++  contractRequiresMutationGate,
++  evaluateMutationGate,
++  type MutationBatteryResult,
++} from "../evaluation/selective-mutation.js";
+ 
+ const TEST_OR_BUILD_PATTERNS = [
+   /(^|\/)tests?\//i,
+@@ -37,6 +46,18 @@ export interface EvidenceValidatorOptions {
+   timeout_ms?: number;
+   /** Skip git-diff gate (tests only). */
+   skip_diff_gate?: boolean;
++  /**
++   * V2-QUAL-01 — When goal_contract.require_independent_review, a valid PASS
++   * review on this gate is required before TRUE_FULL_PASS / VERIFIED_PASS.
++   */
++  independent_review_gate?: IndependentReviewGate;
++  /**
++   * V2-QUAL-02 — Precomputed selective mutation battery. Required when
+===== FINAL vs backup (should be empty) =====
+OK identical: states.ts
+OK identical: store.ts
+OK identical: types.ts
+OK identical: runner.ts
+OK identical: evidence-validator.ts
+
+===== IDENTITY PROOF (final tree == pre-fault backup) =====
+OK identical: states.ts
+OK identical: store.ts
+OK identical: types.ts
+OK identical: runner.ts
+OK identical: evidence-validator.ts
+DETECTED=8/8 RESIDUAL_FAULTS=NO FINAL_EXIT_CODE=0

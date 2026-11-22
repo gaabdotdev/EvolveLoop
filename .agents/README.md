@@ -1,6 +1,7 @@
 # `.agents/` — mirrors (não SSOT)
 
-**Fonte de verdade:** `.cursor/` (`skills/`, `commands/`, `rules/`, `hooks/`).
+**Fonte de verdade:** `.cursor/` (`skills/`, `commands/`, `rules/`, `hooks/`).  
+**Decisão canónica (V0-REPO-03):** `docs/v0/AGENTS-SSOT.md`.
 
 | Path | Papel |
 |------|--------|

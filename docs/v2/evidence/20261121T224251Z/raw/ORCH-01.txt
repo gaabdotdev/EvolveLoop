@@ -1,0 +1,10 @@
+
+ RUN  v2.1.9 /home/gaab/orca/workspaces/EvolveLoop/seagrass/orchestrator
+
+ ✓ tests/unit/v2-orch-01-live-worktrees.test.ts (1 test) 156ms
+
+ Test Files  1 passed (1)
+      Tests  1 passed (1)
+   Start at  19:42:57
+   Duration  580ms (transform 124ms, setup 12ms, collect 163ms, tests 156ms, environment 0ms, prepare 63ms)
+

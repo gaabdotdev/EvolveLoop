@@ -1,0 +1,12 @@
+
+ RUN  v2.1.9 /home/gaab/orca/workspaces/EvolveLoop/seagrass/orchestrator
+
+ ✓ tests/unit/v3-test-01-metamorphic.test.ts (11 tests) 18ms
+ ✓ tests/unit/v2-qual-01-independent-review.test.ts (10 tests) 32ms
+ ✓ tests/unit/v2-qual-02-mutation.test.ts (12 tests) 37ms
+
+ Test Files  3 passed (3)
+      Tests  33 passed (33)
+   Start at  21:25:52
+   Duration  1.04s (transform 576ms, setup 51ms, collect 1.71s, tests 87ms, environment 1ms, prepare 174ms)
+

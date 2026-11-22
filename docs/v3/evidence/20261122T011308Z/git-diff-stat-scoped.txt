@@ -1,0 +1,20 @@
+# git-diff-stat-scoped — M22-B 20261122T011308Z
+
+## Tracked diffs (if any)
+
+## Untracked / new artefacts (this close)
+?? docs/v3/evidence/20261122T011308Z/
+?? docs/v3/evidence/LATEST_PATH.txt
+?? docs/v3/evidence/latest
+?? orchestrator/scripts/v3-adapters-runtime-probe.mts
+?? orchestrator/scripts/v3-integral-harness.mjs
+?? orchestrator/scripts/v3-product-goals-meta-status.mjs
+?? orchestrator/src/v3/memory/federated-sanitize.ts
+?? orchestrator/src/v3/task-graph/dynamic-dag.ts
+
+## Evidence pack size
+160K	docs/v3/evidence/20261122T011308Z
+
+## latest →
+20261122T011308Z
+20261122T011308Z

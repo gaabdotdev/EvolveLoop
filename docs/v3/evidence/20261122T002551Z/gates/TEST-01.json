@@ -1,0 +1,13 @@
+{
+  "gate": "V3-TEST-01",
+  "task": "M18-V3-TEST-01-METAMORPHIC",
+  "status": "PASS_UNIT",
+  "vitest_exit": 0,
+  "regression_exit": 0,
+  "paraphrase_count": 3,
+  "decomposition_stable": true,
+  "route_stable": true,
+  "true_full_pass_stable": true,
+  "bias_oracle_detects_surface_router": true,
+  "honesty": "stub_router_deterministic"
+}

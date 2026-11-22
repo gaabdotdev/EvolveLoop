@@ -1,0 +1,165 @@
+
+ RUN  v2.1.9 /home/gaab/orca/workspaces/EvolveLoop/seagrass/orchestrator
+
+ ✓ tests/unit/v3-evol-01-shadow-replay.test.ts (7 tests) 7ms
+(node:4017552) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+stdout | tests/unit/v0-ux-cli-interactions.test.ts > M8.2 — tag [local · 0 tok] on local routing > shell status path tags local zero tok
+     ╭──────────╮  EvolveLoop v0.3.0
+    ╱            ╲ MSO: INIT · Daemon: OFF
+   │    ┌────┐   │ /tmp/v0-ux-local-TFBXIY
+   │    │████│   │ Contract: — · Meta: UNAVAILABLE
+   │    └────┘   │ Tokens: MSO UNAVAILABLE │ Workers UNAVAILABLE
+   │           ╭─╯ Sandbox: bwrap UNAVAILABLE
+    ╲         ╰──► Providers: UNAVAILABLE
+     ╰──────────╯  Ctrl+P Pause · Ctrl+C Stop · Ctrl+D Detach
+Workspace novo: estado será criado em /tmp/v0-ux-local-TFBXIY/.evolveloop/state.db
+┌─ EvolveLoop ─────────────────────────────────────────
+│ MSO: INIT
+│ Meta: —
+│ Tarefa: —
+│ Modelo/Provider: local/determinístico (Grill-Me 0 tokens)
+│ Avisos: workspace_não_inicializado
+└────────────────────────────────────────────────────── [local · 0 tok]
+Workspace novo: estado será criado em /tmp/v0-ux-local-TFBXIY/.evolveloop/state.db [local · 0 tok]
+[INIT] · 0 tasks · Sandbox: bwrap UNAVAILABLE
+MSO: UNAVAILABLE · ctx UNAVAILABLE · tok UNAVAILABLE │ Workers: UNAVAILABLE
+/tmp/v0-ux-local-TFBXIY · UNAVAILABLE · Ctrl+P Pause · Ctrl+C Stop
+Até breve. Estado permanece em .evolveloop/
+
+stdout | tests/unit/v0-ux-cli-interactions.test.ts > M8.4 — capability gate A/N/C + fallback line > EventBus stub surfaces BLOCKED and PROVIDER_FAULT in shell
+     ╭──────────╮  EvolveLoop v0.3.0
+    ╱            ╲ MSO: INIT · Daemon: OFF
+   │    ┌────┐   │ /tmp/v0-ux-bus-X2SZ7D
+   │    │████│   │ Contract: — · Meta: UNAVAILABLE
+   │    └────┘   │ Tokens: MSO UNAVAILABLE │ Workers UNAVAILABLE
+   │           ╭─╯ Sandbox: bwrap UNAVAILABLE
+    ╲         ╰──► Providers: UNAVAILABLE
+     ╰──────────╯  Ctrl+P Pause · Ctrl+C Stop · Ctrl+D Detach
+Workspace novo: estado será criado em /tmp/v0-ux-bus-X2SZ7D/.evolveloop/state.db
+========================================================
+BLOCKED · Capability Gate
+Agente: worker-1
+Ação: secrets.read
+Motivo: taint
+
+[A]provar uma vez · [N]egar e instruir alternativa · [C]ancelar tarefa
+========================================================
+⚠ Infra: FreeLLMAPI 429 (cooldown 60s) → fallback para cursor-agent (checkpoint preservado · 1/3 tentativas consumidas)
+Até breve. Estado permanece em .evolveloop/
+
+(node:4017560) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+stdout | tests/unit/v0-ux-cli-interactions.test.ts > M8.4 — capability gate A/N/C + fallback line > §8.2 — 3 eventos rápidos durante input: buffer + flush sem contaminar a linha
+     ╭──────────╮  EvolveLoop v0.3.0
+    ╱            ╲ MSO: INIT · Daemon: OFF
+   │    ┌────┐   │ /tmp/v0-ux-bus-lock-K79mz5
+   │    │████│   │ Contract: — · Meta: UNAVAILABLE
+   │    └────┘   │ Tokens: MSO UNAVAILABLE │ Workers UNAVAILABLE
+   │           ╭─╯ Sandbox: bwrap UNAVAILABLE
+    ╲         ╰──► Providers: UNAVAILABLE
+     ╰──────────╯  Ctrl+P Pause · Ctrl+C Stop · Ctrl+D Detach
+Workspace novo: estado será criado em /tmp/v0-ux-bus-lock-K79mz5/.evolveloop/state.db
+⚠ Infra: FreeLLMAPI 429 (cooldown 30s) → fallback para cursor-agent (checkpoint preservado · 0/3 tentativas consumidas)
+⚠ Infra: OpenRouter 503 (cooldown 10s) → fallback para local-ollama (checkpoint preservado · 1/3 tentativas consumidas)
+========================================================
+BLOCKED · Capability Gate
+Agente: worker-parallel
+Ação: net.egress
+Motivo: dlp hold
+
+[A]provar uma vez · [N]egar e instruir alternativa · [C]ancelar tarefa
+========================================================
+┌─ EvolveLoop ─────────────────────────────────────────
+│ MSO: INIT
+│ Meta: —
+│ Tarefa: —
+│ Modelo/Provider: local/determinístico (Grill-Me 0 tokens)
+│ Avisos: workspace_não_inicializado
+└────────────────────────────────────────────────────── [local · 0 tok]
+Workspace novo: estado será criado em /tmp/v0-ux-bus-lock-K79mz5/.evolveloop/state.db [local · 0 tok]
+[INIT] · 0 tasks · Sandbox: bwrap UNAVAILABLE
+MSO: UNAVAILABLE · ctx UNAVAILABLE · tok UNAVAILABLE │ Workers: UNAVAILABLE
+/tmp/v0-ux-bus-lock-K79mz5 · UNAVAILABLE · Ctrl+P Pause · Ctrl+C Stop
+Até breve. Estado permanece em .evolveloop/
+
+stdout | tests/unit/v0-ux-cli-interactions.test.ts > M8.5 — keybindings pause + double Ctrl+C + detach > shell wires messages for pause, graceful, forced, detach ON
+     ╭──────────╮  EvolveLoop v0.3.0
+    ╱            ╲ MSO: INIT · Daemon: ON (attached · 2 clientes)
+   │    ┌────┐   │ /tmp/v0-ux-keys-k5fnb8
+   │    │████│   │ Contract: — · Meta: UNAVAILABLE
+   │    └────┘   │ Tokens: MSO UNAVAILABLE │ Workers UNAVAILABLE
+   │           ╭─╯ Sandbox: bwrap UNAVAILABLE
+    ╲         ╰──► Providers: UNAVAILABLE
+     ╰──────────╯  Ctrl+P Pause · Ctrl+C Stop · Ctrl+D Detach
+Workspace novo: estado será criado em /tmp/v0-ux-keys-k5fnb8/.evolveloop/state.db
+⏸ Novas delegações pausadas (aguardando tarefas ativas)
+⏹ Interrompendo… (Ctrl+C novamente para forçar)
+✖ Encerramento forçado; execute evolve novamente para reconciliar.
+     ╭──────────╮  EvolveLoop v0.3.0
+    ╱            ╲ MSO: INIT · Daemon: ON (attached · 2 clientes)
+   │    ┌────┐   │ /tmp/v0-ux-keys-k5fnb8
+   │    │████│   │ Contract: — · Meta: UNAVAILABLE
+   │    └────┘   │ Tokens: MSO UNAVAILABLE │ Workers UNAVAILABLE
+   │           ╭─╯ Sandbox: bwrap UNAVAILABLE
+    ╲         ╰──► Providers: UNAVAILABLE
+     ╰──────────╯  Ctrl+P Pause · Ctrl+C Stop · Ctrl+D Detach
+Workspace novo: estado será criado em /tmp/v0-ux-keys-k5fnb8/.evolveloop/state.db
+↪ Desconectado do daemon (MSO continua rodando em background).
+     ╭──────────╮  EvolveLoop v0.3.0
+    ╱            ╲ MSO: INIT · Daemon: OFF
+   │    ┌────┐   │ /tmp/v0-ux-keys-k5fnb8
+   │    │████│   │ Contract: — · Meta: UNAVAILABLE
+   │    └────┘   │ Tokens: MSO UNAVAILABLE │ Workers UNAVAILABLE
+   │           ╭─╯ Sandbox: bwrap UNAVAILABLE
+    ╲         ╰──► Providers: UNAVAILABLE
+     ╰──────────╯  Ctrl+P Pause · Ctrl+C Stop · Ctrl+D Detach
+Workspace novo: estado será criado em /tmp/v0-ux-keys-k5fnb8/.evolveloop/state.db
+Daemon OFF: fechar o terminal encerrará a sessão. Confirme detach/saída (sim/Enter) ou cancele.
+
+ ✓ tests/unit/v1-prod-02-freellmapi.test.ts (5 tests) 11ms
+ ✓ tests/unit/v0-ux-cli-interactions.test.ts (12 tests) 28ms
+ ✓ tests/unit/v2-int-02-laya-benchmark.test.ts (8 tests) 12ms
+stdout | tests/unit/v0-cli-grill.test.ts > V0-GRILL + V0-CLI > V0-CLI-02: shell resume + keybinding hooks without raw mode
+     ╭──────────╮  EvolveLoop v0.3.0
+    ╱            ╲ MSO: INIT · Daemon: OFF
+   │    ┌────┐   │ /tmp/v0-cli-grill-l648VW
+   │    │████│   │ Contract: v1 · Meta: UNAVAILABLE
+   │    └────┘   │ Tokens: MSO UNAVAILABLE │ Workers UNAVAILABLE
+   │           ╭─╯ Sandbox: bwrap UNAVAILABLE
+    ╲         ╰──► Providers: UNAVAILABLE
+     ╰──────────╯  Ctrl+P Pause · Ctrl+C Stop · Ctrl+D Detach
+Projeto inicializado: 1 Goal Contract(s); último=gc-shell v1.
+┌─ EvolveLoop ─────────────────────────────────────────
+│ MSO: INIT
+│ Meta: Ship logging middleware endpoint
+│ Tarefa: —
+│ Modelo/Provider: local/determinístico (Grill-Me 0 tokens)
+│ Avisos: mso_não_confirmado
+└────────────────────────────────────────────────────── [local · 0 tok]
+Projeto inicializado: 1 Goal Contract(s); último=gc-shell v1. [local · 0 tok]
+[INIT] · 0 tasks · Sandbox: bwrap UNAVAILABLE
+MSO: UNAVAILABLE · ctx UNAVAILABLE · tok UNAVAILABLE │ Workers: UNAVAILABLE
+/tmp/v0-cli-grill-l648VW · UNAVAILABLE · Ctrl+P Pause · Ctrl+C Stop
+Até breve. Estado permanece em .evolveloop/
+
+ ✓ tests/unit/v1-prod-03-protocols-failover.test.ts (3 tests) 7ms
+ ✓ tests/unit/v1-gate-compat-fault.test.ts (6 tests) 40ms
+ ✓ tests/unit/v0-cli-grill.test.ts (8 tests) 292ms
+stdout | tests/unit/v2-int-02-live-laya.test.ts > V2-INT-02 live Laya via Ollama > probe Ollama generate; if ready run ≥5 EvolveLoop tasks with invention_count=0 else UNAVAILABLE
+INT02_PROBE_JSON={"tags_ok":true,"code":"OK","message":"Ollama ok; model=bonsai-64k:latest","model":"bonsai-64k:latest","base_url":"http://127.0.0.1:11434","generate":{"ok":true,"detail":"chars=108 preview=\n\n<think>\nHere's a thinking process:\n\n1.  **Analyze User Input:**\n   - The user "}}
+
+stdout | tests/unit/v2-int-02-live-laya.test.ts > V2-INT-02 live Laya via Ollama > probe Ollama generate; if ready run ≥5 EvolveLoop tasks with invention_count=0 else UNAVAILABLE
+INT02_BENCH_JSON={"invention_baseline":0,"invention_candidate":0,"calibration_baseline":true,"calibration_candidate":true,"abstention_rate_candidate":1,"verdict":"PLUGGABLE_KEEP_BASELINE","case_count":6,"latency_mean_ms":6980.322015166667}
+INT02_STATUS=PASS_LIVE
+
+ ✓ tests/unit/v2-int-02-live-laya.test.ts (1 test) 51024ms
+   ✓ V2-INT-02 live Laya via Ollama > probe Ollama generate; if ready run ≥5 EvolveLoop tasks with invention_count=0 else UNAVAILABLE 51023ms
+
+ Test Files  8 passed (8)
+      Tests  50 passed (50)
+   Start at  23:08:05
+   Duration  51.78s (transform 1.14s, setup 177ms, collect 3.11s, tests 51.42s, environment 2ms, prepare 854ms)
+
+EXIT_CODE=
+EXIT_CODE=0

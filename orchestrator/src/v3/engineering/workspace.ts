@@ -1,6 +1,9 @@
 /**
  * Confined workspace mutations for Engineering Loop workers.
  * Uses realpath confinement — not a claim of full OS sandbox.
+ *
+ * V1-TOK-01: agent-facing reads are outlineFile + readLines only.
+ * Unrestricted readFile is denied for workers; host/orchestrator uses readFileHost.
  */
 
 import {
@@ -15,6 +18,26 @@ import {
 } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { spawnSync } from "node:child_process";
+import {
+  createAgentFileTools,
+  denyUnrestrictedReadFile,
+  outlineFile as sliceOutlineFile,
+  readLines as sliceReadLines,
+  type AgentFileTools,
+  type OutlineFileResult,
+  type ReadLinesResult,
+  type ContextSlicingOptions,
+} from "../token-economy/context-slicing.js";
+import {
+  selectToolsForMsoState,
+  type LazyToolSchema,
+} from "../token-economy/lazy-tools.js";
+import {
+  applySurgicalEdit,
+  type SurgicalEditResult,
+  type SurgicalEditSpec,
+} from "../token-economy/surgical-edit.js";
+import type { MsoState } from "../mso/states.js";
 
 export class WorkspaceError extends Error {
   constructor(
@@ -55,8 +78,56 @@ export class EngineeringWorkspace {
     return full;
   }
 
-  readFile(relPath: string): string {
+  /**
+   * @deprecated V1-TOK-01 — unrestricted full-file read is denied for agents/workers.
+   * Use outlineFile + readLines, or readFileHost for orchestrator-internal loads.
+   */
+  readFile(relPath: string): never {
+    return denyUnrestrictedReadFile(relPath);
+  }
+
+  /**
+   * Orchestrator/host-only full read (evaluation, review heuristics).
+   * Not part of the agent tool surface.
+   */
+  readFileHost(relPath: string): string {
     return readFileSync(this.resolveSafe(relPath), "utf-8");
+  }
+
+  /** Agent-facing: signatures + line map (no full body). */
+  outlineFile(relPath: string): OutlineFileResult {
+    return sliceOutlineFile(this.root, relPath);
+  }
+
+  /**
+   * Agent-facing: inclusive line window, hard-capped at READ_LINES_HARD_CAP.
+   * Default policy rejects ranges larger than the cap.
+   */
+  readLines(
+    relPath: string,
+    start: number,
+    end: number,
+    opts?: ContextSlicingOptions,
+  ): ReadLinesResult {
+    return sliceReadLines(this.root, relPath, start, end, opts);
+  }
+
+  /** Bound agent tools for this workspace (no readFile). */
+  agentFileTools(): AgentFileTools {
+    return createAgentFileTools(this.root);
+  }
+
+  /**
+   * V1-TOK-07 — Lazy tool schemas for the current MSO state (≤4 tools).
+   * Prefer this over injecting the full tool catalog into agent prompts.
+   */
+  agentToolsForMsoState(state: MsoState | string): LazyToolSchema[] {
+    return selectToolsForMsoState(state);
+  }
+
+  /** V1-TOK-11 — Surgical REPLACE/DELETE with hash/offset validation. */
+  applySurgicalEdit(relPath: string, spec: SurgicalEditSpec): SurgicalEditResult {
+    return applySurgicalEdit(relPath, spec, this.root);
   }
 
   appendFile(relPath: string, content: string): string {

@@ -1,0 +1,13 @@
+ M orchestrator/src/v3/parallel/index.ts
+ M orchestrator/src/v3/parallel/scheduler.ts
+?? orchestrator/src/v3/parallel/ast-aware-merge.ts
+?? orchestrator/src/v3/parallel/backpressure.ts
+?? orchestrator/src/v3/parallel/best-of-n.ts
+?? orchestrator/src/v3/parallel/critical-path.ts
+?? orchestrator/src/v3/parallel/file-ownership-lock.ts
+?? orchestrator/src/v3/parallel/merge-queue.ts
+?? orchestrator/src/v3/parallel/mergiraf-adapter.ts
+?? orchestrator/tests/unit/v3-orch-04-best-of-n.test.ts
+ orchestrator/src/v3/parallel/index.ts     | 111 ++++++++++++++++++++++++++++++
+ orchestrator/src/v3/parallel/scheduler.ts |  35 +++++++++-
+ 2 files changed, 144 insertions(+), 2 deletions(-)

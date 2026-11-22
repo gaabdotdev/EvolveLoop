@@ -168,11 +168,10 @@ export function buildGrillMeResultFromAnswers(
 }
 
 export function formatQuestionForUser(q: GrillMeQuestion, index: number, total: number): string {
+  // UX spec §5.1 — [Grill-Me N/M] + recommended default (Enter to accept).
   return [
-    `Pergunta ${index}/${total} [${q.id}]`,
-    q.prompt_pt,
-    `Recomendação (Enter/ok): ${q.default_answer}`,
-    `(interno: ${q.internal_en})`,
+    `[Grill-Me ${index}/${total}] ${q.prompt_pt}`,
+    `  Padrão recomendado: ${q.default_answer} (pressione Enter para aceitar)`,
   ].join("\n");
 }
 

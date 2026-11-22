@@ -1,0 +1,27 @@
+# AUD-STUB-03 git diff --stat
+# generated: 2026-11-22T01:45:41Z
+
+## Modified (vs HEAD)
+ orchestrator/src/v3/model-providers/index.ts | 153 +++++++++++++++++++++++++++
+ 1 file changed, 153 insertions(+)
+
+## Untracked (AUD-STUB-03 honesty edits / evidence)
+?? docs/v3/evidence/audit-mso-20261122T012324Z/gates/AUD-STUB-03-diffstat.txt
+?? docs/v3/evidence/audit-mso-20261122T012324Z/gates/AUD-STUB-03-tests.txt
+?? docs/v3/evidence/audit-mso-20261122T012324Z/gates/AUD-STUB-03.md
+?? orchestrator/src/v3/model-providers/constrained-decoding.ts
+?? orchestrator/src/v3/model-providers/decision-engine.ts
+?? orchestrator/tests/unit/v1-constrained-decoding.test.ts
+
+## Honesty markers (this attempt)
+- constrained-decoding.ts: ConstrainedEnforcement = "request_plumbing_only"
+- decision-engine.ts: LayaDecisionEngineStub reason → ENGINE_STUB + pointer to LayaDecisionEngine
+- v1-constrained-decoding.test.ts: assert enforcement + dedicated honesty test
+
+## wc -l of key files
+  137 orchestrator/src/v3/model-providers/constrained-decoding.ts
+  347 orchestrator/src/v3/model-providers/decision-engine.ts
+  186 orchestrator/src/v3/model-providers/index.ts
+   68 orchestrator/tests/unit/v1-constrained-decoding.test.ts
+   71 docs/v3/evidence/audit-mso-20261122T012324Z/gates/AUD-STUB-03.md
+  809 total

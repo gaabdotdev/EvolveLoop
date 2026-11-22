@@ -33,9 +33,10 @@ describe("V0 Bloco 2 — silent scan + Grill-Me + SQLite", () => {
     expect(scan.symbols.some((s) => s.name === "hello")).toBe(true);
   });
 
-  it("trivial status/pause match zero-token bypass", () => {
+  it("trivial status/pause/progress match zero-token bypass", () => {
     expect(matchTrivialIntent("status")?.kind).toBe("status");
     expect(matchTrivialIntent("pause")?.kind).toBe("pause");
+    expect(matchTrivialIntent("progress")?.kind).toBe("progress");
     expect(matchTrivialIntent("implement auth flow")).toBeUndefined();
   });
 

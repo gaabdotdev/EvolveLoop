@@ -1,0 +1,1559 @@
+=== knip 2026-11-22T01:52:53Z ===
+cwd=/home/gaab/orca/workspaces/EvolveLoop/seagrass/orchestrator
+Unused files (42)
+scripts/v3-adapters-runtime-probe.mts: scripts/v3-adapters-runtime-probe.mts
+scripts/v3-dist-01-probe.mts: scripts/v3-dist-01-probe.mts
+scripts/v3-exit-03-scale-probe.mts: scripts/v3-exit-03-scale-probe.mts
+scripts/v3-integral-harness.mjs: scripts/v3-integral-harness.mjs
+scripts/v3-product-goals-meta-status.mjs: scripts/v3-product-goals-meta-status.mjs
+scripts/v35-live-e2e-resume.mjs: scripts/v35-live-e2e-resume.mjs
+scripts/v35-live-e2e.mjs: scripts/v35-live-e2e.mjs
+scripts/v36-live-multi-workflow.mjs: scripts/v36-live-multi-workflow.mjs
+src/cli/apply-context-budget.ts: src/cli/apply-context-budget.ts
+src/knowledge/truth-source/index.ts: src/knowledge/truth-source/index.ts
+src/v3/adapters/drivers/index.ts: src/v3/adapters/drivers/index.ts
+src/v3/adapters/index.ts: src/v3/adapters/index.ts
+src/v3/approvals/index.ts: src/v3/approvals/index.ts
+src/v3/budget/index.ts: src/v3/budget/index.ts
+src/v3/context/index.ts: src/v3/context/index.ts
+src/v3/continuity/index.ts: src/v3/continuity/index.ts
+src/v3/coordinator/index.ts: src/v3/coordinator/index.ts
+src/v3/event-log/index.ts: src/v3/event-log/index.ts
+src/v3/execution/index.ts: src/v3/execution/index.ts
+src/v3/harness/index.ts: src/v3/harness/index.ts
+src/v3/hierarchy/index.ts: src/v3/hierarchy/index.ts
+src/v3/intake/index.ts: src/v3/intake/index.ts
+src/v3/locks/index.ts: src/v3/locks/index.ts
+src/v3/model-catalog/index.ts: src/v3/model-catalog/index.ts
+src/v3/recovery/index.ts: src/v3/recovery/index.ts
+src/v3/routing/index.ts: src/v3/routing/index.ts
+src/v3/tui/index.ts: src/v3/tui/index.ts
+src/v3/work-ledger/index.ts: src/v3/work-ledger/index.ts
+src/v3/workspace/index.ts: src/v3/workspace/index.ts
+tests/fixtures/v3-eval/alpha-lib/src/index.js: tests/fixtures/v3-eval/alpha-lib/src/index.js
+tests/fixtures/v3-eval/alpha-lib/src/math.js: tests/fixtures/v3-eval/alpha-lib/src/math.js
+tests/fixtures/v3-eval/alpha-lib/test/math.test.js: tests/fixtures/v3-eval/alpha-lib/test/math.test.js
+tests/fixtures/v3-eval/beta-app/lib/store.js: tests/fixtures/v3-eval/beta-app/lib/store.js
+tests/fixtures/v3-eval/beta-app/src/cart.js: tests/fixtures/v3-eval/beta-app/src/cart.js
+tests/fixtures/v3-eval/beta-app/src/checkout.js: tests/fixtures/v3-eval/beta-app/src/checkout.js
+tests/fixtures/v3-eval/beta-app/test/cart.test.js: tests/fixtures/v3-eval/beta-app/test/cart.test.js
+tests/fixtures/v3-eval/beta-app/test/checkout.test.js: tests/fixtures/v3-eval/beta-app/test/checkout.test.js
+tests/fixtures/v3-eval/gamma-service/src/auth.js: tests/fixtures/v3-eval/gamma-service/src/auth.js
+tests/fixtures/v3-eval/gamma-service/src/config.js: tests/fixtures/v3-eval/gamma-service/src/config.js
+tests/fixtures/v3-eval/gamma-service/src/router.js: tests/fixtures/v3-eval/gamma-service/src/router.js
+tests/fixtures/v3-eval/gamma-service/test/router.test.js: tests/fixtures/v3-eval/gamma-service/test/router.test.js
+vitest.v1-gate-compat.config.ts: vitest.v1-gate-compat.config.ts
+Unused dependencies (1)
+package.json: tree-sitter-javascript, tree-sitter-typescript
+Unlisted binaries (4)
+src/v22/p0-baseline-harness.ts: rg
+src/v3/runtime/doctor.ts: agent
+tests/integration/v22-graphify-b3.integration.test.ts: graphify
+tests/integration/v35-op-harness-consent.test.ts: agent
+Unused exports (142)
+src/authority/capability-authority.ts: READ_ONLY_CAPABILITY_ALLOWLIST
+src/config/profile.ts: resolveProfilePath
+src/context/compaction-contract.ts: COMPACTION_ADR
+src/context/extractive-condenser.ts: EXTRACTIVE_CONDENSER_ID, lineKeptByCondenser
+src/context/pda-spawn.ts: slicesFromPathContents
+src/context/tokenizer.ts: resetTokenizerCache
+src/discovery/provider-discovery.ts: inferManifestFromSkill, manifestEntries
+src/evidence/evidence-bus.ts: gateEvidenceFilename, readSanitizedEvidence, evidencePathForResult, relativeJobsEvidencePath
+src/evidence/secret-redaction.ts: countCanaryOccurrences
+src/evolveloop/adapters/jsonl-events.ts: adaptJsonlEventsDir, observationToRaw
+src/evolveloop/diagnosis/live-inventory.ts: inventorySourceRevision
+src/evolveloop/handoff/evolution-request.ts: evolutionRequestExists
+src/evolveloop/index.ts: WINDOW_HOURS, hoursForWindow, lifecycleFromOutcome, adaptJsonlEventsDir, observationToRaw, inventorySourceRevision, resolveLiveCadence, scopeKey
+src/evolveloop/live/observation-window.ts: scopeKey
+src/evolveloop/longitudinal-types.ts: WINDOW_HOURS
+src/knowledge/truth-source/isolation.ts: normalizeProjectRoot
+src/providers/deterministic/inputs.ts: inputMap
+src/providers/deterministic/knowledge.ts: resolveWikiRoot, resolveWikiCliModule
+src/providers/deterministic/shell-env.ts: SHELL_ENV_ALLOWLIST
+src/providers/mock-provider.ts: newRunId
+src/registry/registry-builder.ts: schemaVersionFromContract
+src/telemetry/measurement-plane/adapters/provider-usage.ts: toUsageAdapterInput
+src/telemetry/measurement-plane/metrics/cost.ts: usageMeasurement
+src/telemetry/measurement-plane/migrations.ts: STORE_META_VERSION
+src/v22/bench-pickup-fixture.ts: buildBenchPickupBriefing
+src/v22/brevity-caveman.ts: extractProtectedPickupSuffix
+src/v22/graphify-adapter.ts: graphifyOutDir, graphifyGraphPath, ensureGraphifyGraph
+src/v22/measure-prompt-cache-prefix.ts: normalizePickupPrefixForStability
+src/v22/p0-baseline-harness.ts: CANONICAL_SCORER
+src/v22/p0-compaction-measure.ts: COMPACTION_TASK_ID
+src/v22/p0-handoff-measure.ts: HANDOFF_FEATURE_ID, HANDOFF_RUN_ID, HANDOFF_NODE_ID, HANDOFF_DECISION, HANDOFF_RESUME_MARKER
+src/v3/adapters/catalog.ts: AGENT_ADAPTER_CATALOG
+src/v3/adapters/drivers/cli-process.ts: assertPromptWritten
+src/v3/adapters/handoff-bridge.ts: AdapterHandoffError
+src/v3/agent-profiles/index.ts: observed, AgentProfileStoreError
+src/v3/agent-profiles/store.ts: AgentProfileStoreError
+src/v3/circuit/evidence-validator.ts: isSensitivePathForValidator
+src/v3/circuit/index.ts: runEvidenceValidator, isSensitivePathForValidator, defaultFireTasks
+src/v3/circuit/run-circuit.ts: defaultFireTasks, CursorCircuitAdapter
+src/v3/context/compaction.ts: DEFAULT_LOSS_CRITERIA, slimSections
+src/v3/context/types.ts: roleFromAgentRole
+src/v3/continuity/engine.ts: ContinuityError
+src/v3/coordinator/service.ts: CoordinatorError
+src/v3/embeddings/index.ts: resolveOllamaBaseUrl, resolveNomicModelId, VectorIndexError
+src/v3/embeddings/nomic-client.ts: resolveOllamaBaseUrl, resolveNomicModelId
+src/v3/embeddings/vector-index.ts: VectorIndexError
+src/v3/engineering/harness-matrix.ts: classifyHarness, listDriverSummaries
+src/v3/engineering/index.ts: walkRelFiles, WorkspaceError, classifyHarness, listDriverSummaries
+src/v3/engineering/workspace.ts: WorkspaceError
+src/v3/evaluation/index.ts: exploreRepository, applyTaskSolution, fingerprintWorkspace, contractMutationThreshold, DEFAULT_MUTATION_SCORE_THRESHOLD, ProgressTracker, probeLiveLlmReadiness, runLiveEngineeringCase, runLiveValidationSuite
+src/v3/evaluation/live/harness.ts: resolveCursorAgentBin
+src/v3/evaluation/live/index.ts: assessLiveReadiness, LIVE_TASK_BRIEFS, buildWorkerPrompt, buildReviewerPrompt, invokeLiveHarness, cursorAgentLoggedIn
+src/v3/evaluation/live/readiness.ts: assessLiveReadiness
+src/v3/evaluation/selective-mutation.ts: DEFAULT_MUTATION_SCORE_THRESHOLD
+src/v3/evolve-shell/colors.ts: paint
+src/v3/evolve-shell/first-run-setup.ts: credentialsFilePath, limitsFilePath, defaultFirstRunProbes, listCredentialNames, writeLimitsConfig
+src/v3/evolve-shell/footer.ts: formatHonestMetric, renderFooterBlock
+src/v3/evolve-shell/hud.ts: buildBannerMeta
+src/v3/evolve-shell/index.ts: buildStatusPanel, renderStatusPanelPt, resolvePanelMsoState, attachSigint, INTERRUPT_FORCE_WINDOW_MS, isGoalContractConfirmAnswer, paintProviderFallbackLine, defaultFirstRunProbes, redactSecrets, writeCredentialsSecure, buildReadinessReport, DEFAULT_LIMITS, paint, cyan, green, yellow, red, dim, shortenHomePath, renderFooterBlock, formatHonestMetric, buildBannerMeta, renderBootBanner, renderSessionFooter
+src/v3/evolve-shell/keybindings.ts: INTERRUPT_FORCE_WINDOW_MS
+src/v3/execution-runner/index.ts: assertWorkspacePath, safeRealpath, ExecutionRunnerImpl, filterProcessOutput, STDOUT_FILTER_HEAD_LINES, STDOUT_FILTER_TAIL_LINES, buildStatelessWorkerPrompt
+src/v3/execution-runner/runner.ts: safeRealpath, assertWorkspacePath
+src/v3/execution/bridge.ts: ExecutionBridgeError
+src/v3/grill-me/index.ts: goalContractInputFromGrillMe, formatQuestionForUser, summarizeContractLines, GRILL_ME_MIN_QUESTIONS, GRILL_ME_MAX_QUESTIONS, applyTrivialBypass, assertPlanningAuthorized, applyDeltaGrillMe, listStaleEvidence
+src/v3/grill-me/runtime-gate.ts: assertPlanningAuthorized
+src/v3/grill-me/session.ts: GRILL_ME_MIN_QUESTIONS, GRILL_ME_MAX_QUESTIONS
+src/v3/hierarchy/spawn.ts: HierarchyError
+src/v3/locks/store.ts: WorkLockError
+src/v3/memory/bitemporal-graph.ts: BITEMPORAL_FACT_STATUSES, BITEMPORAL_SCHEMA_SQL, defaultBitemporalDbPath
+src/v3/memory/broker.ts: buildFtsQuery
+src/v3/memory/cold-storage.ts: CAS_HASH_PREFIX, COLD_STORAGE_BLOB_EXT, defaultColdStorageRoot
+src/v3/memory/consolidation.ts: lessonSimilarity, newConsolidationId
+src/v3/memory/federated-sanitize.ts: fingerprintMatched, toSafeRemovals
+src/v3/memory/hybrid-graph.ts: HYBRID_GRAPH_SCHEMA_VERSION, HYBRID_GRAPH_NODE_KINDS, HYBRID_GRAPH_EDGE_TYPES, HYBRID_GRAPH_SCHEMA_SQL, symbolNodeId, resolveRelativeImport, defaultHybridGraphDbPath, hashHybridGraphSnapshot
+src/v3/memory/hybrid-search.ts: DEFAULT_MEMORY_VEC_DIMS, lightRerank
+src/v3/memory/index.ts: MEMORY_DB_SCHEMA_SQL, buildFtsQuery, defaultColdStorageRoot, CAS_HASH_PREFIX, COLD_STORAGE_BLOB_EXT, lightRerank, DEFAULT_MEMORY_VEC_DIMS, dispositionForContradiction, lessonSimilarity, newConsolidationId, HYBRID_GRAPH_SCHEMA_SQL, HYBRID_GRAPH_SCHEMA_VERSION, HYBRID_GRAPH_NODE_KINDS, HYBRID_GRAPH_EDGE_TYPES, symbolNodeId, resolveRelativeImport, defaultHybridGraphDbPath, hashHybridGraphSnapshot, MEMORY_TYPES, EDGE_NODE_KINDS, countNonCurrentHits, NON_CURRENT_MEMORY_STATUSES, tokenizePyramidText, PYRAMID_SCHEMA_SQL, PYRAMID_LEVEL_LABELS, MEMORY_TOMBSTONE_MARKER_PREFIX, MULTI_HOP_SYNTHESIS_SCHEMA_VERSION, SYNTHESIS_STATUSES, BITEMPORAL_SCHEMA_SQL, BITEMPORAL_FACT_STATUSES, defaultBitemporalDbPath, UTILITY_DECAY_SCHEMA_VERSION, fingerprintMatched, toSafeRemovals
+src/v3/memory/memory-eval.ts: NON_CURRENT_MEMORY_STATUSES, countNonCurrentHits
+src/v3/memory/multi-hop-synthesis.ts: MULTI_HOP_SYNTHESIS_SCHEMA_VERSION, SYNTHESIS_STATUSES
+src/v3/memory/pyramid-index.ts: PYRAMID_LEVEL_LABELS, PYRAMID_SCHEMA_SQL, tokenizePyramidText
+src/v3/memory/types.ts: MEMORY_TYPES, EDGE_NODE_KINDS
+src/v3/memory/utility-decay.ts: UTILITY_DECAY_SCHEMA_VERSION
+src/v3/memory/virtual-memory.ts: MEMORY_TOMBSTONE_MARKER_PREFIX
+src/v3/model-catalog/store.ts: ModelCatalogError, defaultModelSeed
+src/v3/model-providers/index.ts: layaHeuristicScore, detectProviderFaultKind, OpenAICompatibleProtocol, AnthropicProtocol, ResponsesProtocol, GeminiProtocol
+src/v3/model-providers/laya-decision-engine.ts: layaHeuristicScore
+src/v3/model-providers/protocols/index.ts: OpenAICompatibleProtocol, AnthropicProtocol, ResponsesProtocol, GeminiProtocol
+src/v3/model-providers/provider-fault.ts: detectProviderFaultKind
+src/v3/mso/analyzing-context.ts: isMsoSymbolMapState, assertNoFullFileInMsoContext
+src/v3/mso/boot-reconciler.ts: isPgidAlive, worktreeHasDiff
+src/v3/mso/failure.ts: FAILURE_BUCKETS
+src/v3/mso/inbox-runtime.ts: listInbox
+src/v3/mso/index.ts: isMsoState, pickIndex, pickOne, MSO_TASK_STATES, NO_AUTO_RETRY_STATES, isMsoTaskState, FAILURE_BUCKETS, INFRA_COOLDOWN_MS_DEFAULT, applyCircuitFailure, defaultBudgetPolicy, defaultPermissionPolicy, DYNAMIC_DAG_SCHEMA_VERSION, DynamicDagError, isPgidAlive, worktreeHasDiff, reconcileWorkOnBootWithSaga, applyUnknownSagaCompensations, Saga, SagaRegistry, ensureTaskWorktree, listInbox, isMsoSymbolMapState, assertNoFullFileInMsoContext
+src/v3/mso/pbt-fuzz.ts: pickOne
+src/v3/mso/task-states.ts: MSO_TASK_STATES, isMsoTaskState, NO_AUTO_RETRY_STATES
+src/v3/mso/worktree-executor.ts: ensureTaskWorktree
+src/v3/ops/atomic.ts: atomicWrite
+src/v3/ops/dist-ops.ts: DIST_OPS_KIND, STATE_MIGRATIONS
+src/v3/ops/global-ops-service.ts: writeOpsPointer
+src/v3/ops/project-registry.ts: defaultProjectPolicy, newEphemeralProjectId
+src/v3/ops/quality-gates.ts: hashArtifact, writeGateConfirmation
+src/v3/ops/recovery.ts: workflowNeedsIntervention
+src/v3/ops/resource-manager.ts: DEFAULT_HOST_CAPACITY
+src/v3/ops/workflow-state.ts: TERMINAL_STATES
+src/v3/parallel/ast-aware-merge.ts: isAstMergeablePath, mergeDeclarationUnits
+src/v3/parallel/backpressure.ts: BACKPRESSURE_RATE_LOW, BACKPRESSURE_RATE_HIGH, BACKPRESSURE_CPU_CRITICAL, BACKPRESSURE_STEP, rateLimitRatio, telemetryCritical
+src/v3/parallel/file-ownership-lock.ts: ownershipLedgerDir
+src/v3/parallel/index.ts: rateLimitRatio, telemetryCritical, BACKPRESSURE_RATE_LOW, BACKPRESSURE_RATE_HIGH, BACKPRESSURE_CPU_CRITICAL, BACKPRESSURE_STEP, tryReserveTaskScope, reconcileInProgressLocks, createOwnershipLedger, ownershipLedgerDir, runMergirafMerge, isAstMergeablePath, mergeDeclarationUnits
+src/v3/recovery/subtree.ts: RecoveryError
+src/v3/sandbox/cgroup-v2.ts: resolveWritableCgroupBase
+src/v3/sandbox/index.ts: UnavailableSandboxBackend
+src/v3/sandbox/microvm-profile.ts: DEFAULT_ALLOWED_SYSCALLS
+src/v3/sandbox/process-supervisor.ts: readProcStarttime, readProcCmdline
+src/v3/security/capability-gate.ts: checkDelegatedAuthority, isBlockedByCapabilityGate, assertCapabilityAllowed, CapabilityGateError
+src/v3/security/delegation.ts: DELEGATION_CATEGORIES, normalizeScopePath, pathUnderScope, categoriesAreSubset, scopesAreSubset, validityIsSubset, isGrantActive, assertSubsetOfParent
+src/v3/security/holdout.ts: defaultHoldoutPath
+src/v3/security/profiles.ts: harnessProviderProfile
+src/v3/security/quarantine.ts: QUARANTINE_BLOCKED_PROMOTION_STATUSES
+src/v3/security/taint.ts: PRIVILEGED_TAINT_ACTIONS
+src/v3/state-db/index.ts: STATE_DB_SCHEMA_SQL, STATE_DB_SCHEMA_VERSION
+src/v3/task-graph/dynamic-dag.ts: ALL_DAG_MUTATION_OPS, canonicalJson, nodesFromSnapshot, orchestrationTaskToNode, projectMutationNodes
+src/v3/task-graph/index.ts: TaskGraphError, ALL_DAG_MUTATION_OPS, projectMutationNodes, nodesFromSnapshot, orchestrationTaskToNode, canonicalJson
+src/v3/task-graph/store.ts: TaskGraphError
+src/v3/token-economy/brain-hand.ts: parseCompactEditPlan, planWithinSoftBudget, hashLineRange
+src/v3/token-economy/fail-fast.ts: defaultFailFastCommands
+src/v3/token-economy/index.ts: stripAnsi, dedupeStackTraces, headTailTruncate, resolveConfinedPath, compressTelegraphicProse, defaultFailFastCommands, TOKEN_BUDGET_ALERT_RATIO, TOKEN_BUDGET_ABORT_RATIO, resolveSymbolMapEngine, looksLikeFullFileDump, collectIdentifierOccurrences, extractDeclarationUnitsFromSource, tokenizeForPrune, bm25ScoreSentence, flattenTurns, lazyToolCoveredStates, normalizePinnedBlock, TSV_FIELD_SEP, escapeTsvField, unescapeTsvField, resolveMechanicalBinary, parseCompactEditPlan, planWithinSoftBudget
+src/v3/token-economy/lazy-tools.ts: lazyToolCoveredStates
+src/v3/token-economy/mechanical-fix.ts: resolveMechanicalBinary
+src/v3/token-economy/node-budget.ts: TOKEN_BUDGET_ALERT_RATIO, TOKEN_BUDGET_ABORT_RATIO
+src/v3/token-economy/prefix-pinning.ts: normalizePinnedBlock
+src/v3/token-economy/prune-retrieved.ts: tokenizeForPrune, bm25ScoreSentence
+src/v3/token-economy/stdout-filter.ts: stripAnsi, dedupeStackTraces, headTailTruncate
+src/v3/token-economy/telegraphic.ts: compressTelegraphicProse
+src/v3/token-economy/tombstone.ts: flattenTurns
+src/v3/token-economy/tsv.ts: TSV_FIELD_SEP, escapeTsvField, unescapeTsvField
+src/v3/tui/status-board.ts: listLedgerWorkIds, listHandoffIds, handoffPath
+src/v3/work-ledger/store.ts: WorkLedgerError
+src/v3/workspace/integration.ts: writeConflictFixture, cleanupDir
+src/v3/workspace/post-merge.ts: discoverPostMergeChecks
+src/v3/worktrees/index.ts: WorktreeError
+src/v3/worktrees/manager.ts: WorktreeError
+tests/fixtures/v0-token-baseline-comparator.ts: V0_TOKEN_REDUCTION_TARGET_MAX_PCT
+tests/fixtures/v1-gate-tok-comparator.ts: V1_GATE_TOK_TARGET_MAX_PCT
+Unused exported types (143)
+src/config/profile.ts: EvolveLoopProfileKnowledge, EvolveLoopProfileMemory, MegaBrainProfileKnowledge, MegaBrainProfileMemory
+src/context/bench-retrieval.ts: BenchAnchor
+src/context/types.ts: ContextRetrievalEntry, CompactionReinjectContractRef
+src/evolveloop/diagnosis/live-inventory.ts: InventorySnapshotStatus
+src/evolveloop/index.ts: Confidence, EvolutionScopeKind, LoopState, PatternKind, RootCauseType, SignalSeverity, SignalType, EvolveLoopOptions, EvolveLoopStoreSnapshot, Observation, WindowPreset, LongitudinalPattern, SignalQuery, AdapterConnectionStatus, AnalysisScopeType, AnalyzeStatus, LifecycleHistoryEntry, LongitudinalOptions, AnalyzeOpts, InventorySnapshotStatus, SnapshotInventoryOptions, AnalysisCadenceOptions, NotifyMeta, ObservationWindowStatus, IngestGateResultInput, IngestGateResultOutput
+src/evolveloop/longitudinal-types.ts: AnalysisScopeType, AnalyzeStatus, Confidence, CandidateType, RootCauseType, NeedLifecycleAlias
+src/plugins/plugin-loader.ts: PluginType
+src/policy/megabrain-skill-gates.ts: SkillGateId
+src/providers/llm/vendor-cache-live-probe.ts: VendorLiveProbeStatus
+src/registry/registry-builder.ts: ProviderTelemetryStats
+src/telemetry/measurement-plane/adapters/event-bus-adapter.ts: EventBusAdapterOptions
+src/telemetry/measurement-plane/metrics/cost.ts: PriceEntry
+src/v22/graphify-adapter.ts: GraphEdgeKind
+src/v22/measure-pickup-prompts.ts: PickupPromptMeasureRow
+src/v22/measure-prompt-cache-prefix.ts: PromptCachePrefixRow
+src/v22/p0-baseline-harness.ts: AnchorSpec, ConflictSpec, MetricStatus, Dispersion, ArmRun, ArmReport, CompactionContractEvidence
+src/v22/p0-compaction-measure.ts: CompactionRun
+src/v22/p0-handoff-measure.ts: HandoffRun
+src/v3/adapters/drivers/types.ts: DriverInvokeStatus
+src/v3/adapters/types.ts: AdapterCapabilityKey, AdapterCapability
+src/v3/agent-profiles/index.ts: MetricHonesty, ObservedMetric, EvidenceHonesty, AgentRunEvidence, AgentIntelligenceProfile, ProfileStoreSnapshot, IntelligenceRouteMode, IntelligenceRouteRequest, ScoredAgentCandidate, IntelligenceRouteDecision, StaticRouteDelta, ScoreComponents
+src/v3/agent-profiles/types.ts: IntelligenceRouteMode
+src/v3/agent-registry/index.ts: RegisterAgentInput
+src/v3/approvals/types.ts: ApprovalDecisionRecord
+src/v3/budget/hierarchical.ts: HierarchicalBudgetNode
+src/v3/budget/types.ts: BudgetDimension, BudgetLimit, BudgetConsumed
+src/v3/cancel/index.ts: CancelRequest, CancelResult
+src/v3/circuit/agent-failover.ts: AgentCheckpoint
+src/v3/circuit/index.ts: AdapterInvokeRequest, AgentCheckpoint, FailoverInvokeRequest, FailoverInvokeResult, EvidenceValidatorOptions, EvidenceValidatorResult, CircuitTaskSpec, CircuitRunOptions, CircuitRunResult
+src/v3/circuit/run-circuit.ts: CircuitTaskSpec
+src/v3/context/compaction.ts: FidelityStatus
+src/v3/coordinator/types.ts: CoordinatorProcessState
+src/v3/daemon/index.ts: DaemonMessageHandler, ActiveRun, EvolveDaemon, EvolveDaemonOptions
+src/v3/daemon/uds.ts: ActiveRun, DaemonMessageHandler
+src/v3/embeddings/hybrid-retrieve.ts: RetrievalChunk
+src/v3/embeddings/index.ts: EmbeddingProbeResult, EmbedResult, HybridRetrieveResult, RetrievalChunk, VectorIndexSnapshot, VectorSearchResult
+src/v3/embeddings/vector-index.ts: VectorIndexChunk, VectorSearchHit
+src/v3/engineering/harness-matrix.ts: HarnessCapabilityClass
+src/v3/engineering/index.ts: EngineeringStageId, StageStatus, StageRecord, EngineeringRun, EngineeringLoopResult, EngineeringLoopInput, HarnessCapabilityClass, HarnessMatrixEntry
+src/v3/engineering/types.ts: StageStatus
+src/v3/evaluation/deterministic-sim.ts: ProcState, VirtualNetMessage, ScenarioResult
+src/v3/evaluation/evidence.ts: EvidenceKind
+src/v3/evaluation/independent-review-gate.ts: IndependentReviewVerdict
+src/v3/evaluation/index.ts: RepoExploration, SolverResult, EvidenceRecord, EvidenceKind, VerifiedPassContext, VerifiedPassResult, SubmitReviewInput, IndependentReviewRecord, IndependentReviewVerdict, IndependentReviewPassTarget, MutationOperator, SelectiveMutatorOptions, MutationTestRunner, MutationBatteryOptions, MutationBatteryStatus, MutationGateEvaluation, ProgressVerdict, ProgressSignal, BatteryReport, TaskRunResult, RunBatteryOptions, LiveReadinessReport, LiveRunResult, ParaphraseVariant, DecompositionNode, DecompositionFingerprint, StubRouteDecision, MetamorphicPassVerdict, MetamorphicVariantResult, MetamorphicGateStatus, DifferentialModelRun, DifferentialModelReport, MetamorphicHarnessReport, DecomposerStub, ModelRouterStub, MetamorphicHarnessOptions, StubRouterOptions, SimEvent, SimEventKind, ScenarioResult, SimStats, RunScenariosOptions, VirtualProc, VirtualNetMessage, FencingLease
+src/v3/evaluation/live/index.ts: LiveReadinessReport, LiveReadinessState, LiveReadinessOptions, LiveTaskBrief, LiveHarnessId, HarnessInvokeResult, LiveRunOptions, LiveRunResult
+src/v3/evaluation/live/readiness.ts: LiveReadinessState
+src/v3/evaluation/metamorphic.ts: DecompositionNode, DecompositionFingerprint, StubRouteDecision, MetamorphicPassVerdict, MetamorphicVariantResult, DifferentialModelRun, DifferentialModelReport
+src/v3/evaluation/runner.ts: TaskSpec, BatteryCatalog, TaskRunResult
+src/v3/evaluation/selective-mutation.ts: MutationTestRunner, MutationBatteryStatus
+src/v3/evolution/index.ts: ReworkSignal, PassEvent, CandidateProposalStatus, ValidateDecision, ValidateCandidateResult, BatteryResult, RunBattery, ReplayMetrics, ShadowReplayDecision, ShadowReplayCandidateResult, ShadowRollbackResult, PromoteToProductionResult, ShadowReplayReport, EvolutionPipelineOptions
+src/v3/evolution/pipeline.ts: ReworkSignal, PassEvent, CandidateProposalStatus, ValidateDecision, ReplayMetrics, ShadowReplayDecision, ShadowReplayCandidateResult
+src/v3/evolve-shell/colors.ts: SemanticColor
+src/v3/evolve-shell/daemon-probe.ts: InboxSyncStatus
+src/v3/evolve-shell/first-run-setup.ts: ProbeStatus
+src/v3/evolve-shell/footer.ts: SandboxFooterStatus, HonestMetric, FooterTaskRef
+src/v3/evolve-shell/hud.ts: FooterTelemetry, BannerMeta
+src/v3/evolve-shell/index.ts: StatusPanelModel, KeybindingAction, KeybindingHooks, KeybindingController, EvolveShellOptions, EvolveShellResult, CapabilityGatePromptInput, CapabilityGateChoice, ProviderFallbackLineInput, ShellUxEvent, ShellEventBus, InboxSyncStatus, FirstRunSetupInput, ReadinessReport, ProbeResult, ConcurrencyLimits, SemanticColor, ColorOptions, BannerRenderOptions, MetricProvenance, SandboxFooterStatus, HonestMetric, FooterTaskRef, FooterRenderOptions, BuildFooterExtras, AgentTokenHonesty, AgentsTreeOptions, HudZonesInput, BuildBannerExtras
+src/v3/evolve-shell/keybindings.ts: KeybindingAction
+src/v3/evolve-shell/layout.ts: AgentTokenHonesty
+src/v3/execution-runner/index.ts: ExecutionHandle, ExecutionRunnerRequest, ExecutionRunnerPort, StatelessWorkerSnapshot, StatelessWorkerSnapshotInput
+src/v3/failure-injection/battery.ts: ScenarioResult
+src/v3/failure-injection/engineering-battery.ts: EngScenarioResult
+src/v3/failure-injection/index.ts: FailureBatteryReport, ScenarioResult, EngFailureBatteryReport, EngScenarioResult
+src/v3/goal-contract/types.ts: VerificationMethod
+src/v3/goal-document/index.ts: GoalDocument, GoalDocumentAcceptance, GoalDocumentStructuralChecks, GoalDocumentValidation
+src/v3/goal-document/types.ts: GoalDocumentStructuralChecks, GoalDocumentAcceptance
+src/v3/grill-me/delta.ts: RunningTaskProcess, KillFn
+src/v3/grill-me/index.ts: ApplyGrillMeOptions, ApplyGrillMeOutcome, GrillMeQuestion, GrillMeAnswer, TrivialBypassResult, TrivialKind, TrivialMatch, RequestScale, PlanningAuthorization, AuthorizePlanningInput, DeltaGrillMeInput, DeltaGrillMeResult, RunningTaskProcess, KillFn, AttachGrantInput, AttachGrantResult
+src/v3/grill-me/trivial-bypass.ts: TrivialKind
+src/v3/grill-me/types.ts: GrillMeIntakeStatus
+src/v3/harness/runtime.ts: HarnessCapabilityRow
+src/v3/idempotency/index.ts: IdempotencyRecord, IdempotencyOutcome, BeginOrReplayOptions, IdempotencyKeyParts, WithIdempotencyOpts, WithIdempotencyResult, SagaStep, SagaCompensationReport, UnknownSagaApplyReport, BootReconcileWithSagaReport
+src/v3/intake/intent-flow.ts: IntentFlowGrillOutcome
+src/v3/limits/classifier.ts: LimitCause
+src/v3/limits/index.ts: LimitCause, LimitClassification, LimitHandoffResult
+src/v3/memory/bitemporal-graph.ts: BitemporalFactStatus
+src/v3/memory/consolidation.ts: ConsolidationAction, ConsolidationProposalStatus
+src/v3/memory/context-engineering.ts: ContractRequirement, ContextMemorySlice
+src/v3/memory/federated-sanitize.ts: FederationRedactionKind, FederationRemoval, GlobalFederatedMemory
+src/v3/memory/hybrid-graph.ts: TwoHopHit
+src/v3/memory/index.ts: ColdStorageOptions, ColdPutResult, ColdMigrateSqliteRecord, ColdMigrateResult, PromotionGateOptions, HybridSearchHit, VectorSearchPort, RrfChannelHit, SqliteVecDb, ContractRequirement, ContextEngineeringInput, EngineeredContext, ContextMemorySlice, ContradictionSignal, ContradictionDisposition, ConsolidationAction, ConsolidationProposalStatus, ConsolidationEngineOptions, ConsolidationRunnerOptions, OllamaLessonAdapterOptions, HybridGraphNodeKind, HybridGraphEdgeType, HybridGraphNode, HybridGraphEdge, TwoHopHit, TwoHopExpansion, IngestCodeDepsResult, LinkDecisionResult, MemoryStatus, MemoryType, EdgeNodeKind, MemoryRecord, ProposeMemoryInput, MemorySearchFilters, MemorySearchHit, MemoryEdge, LinkEdgeInput, PromotionGateDecision, MemoryEvalHonesty, HonestMetric, MemoryEvalGates, MemoryEvalQueryResult, MemoryEvalSuiteReport, RunMemoryEvalSuiteInput, FixtureMemoryDoc, NonCurrentMemoryStatus, PyramidLevel, PyramidNode, PyramidIndex, PyramidBuildStats, PyramidIndexSnapshot, BuildPyramidOptions, CoarseToFineOptions, CoarseToFinePathStep, CoarseToFineHit, CoarseToFineResult, RamPageState, MemorySearchRef, RamPage, VirtualMemoryOptions, RamBudgetSnapshot, PageOutResult, ExpandResult, SynthesisStatus, GraphEvidence, GraphExpansion, DossierCitation, OllamaSynthesisOptions, SynthesizeLocalInput, MultiHopSynthesisInput, OllamaProbeResult, BitemporalFactStatus, BitemporalFact, AssertFactInput, SupersedeInput, PointInTimeQuery, BitemporalGraphOptions, UtilitySignals, UtilityWeights, UtilityMemoryRef, UtilityScoreBreakdown, DecayCandidate, DecayPassOptions, DecayPassResult, FederationRedactionKind, FederationRemoval, FederationResidual, SanitizeForFederationResult, FederatedMemoryInput, GlobalFederatedMemory, PromoteToGlobalResult
+src/v3/memory/memory-eval.ts: MemoryEvalHonesty, HonestMetric, NonCurrentMemoryStatus, MemoryEvalQueryResult
+src/v3/memory/multi-hop-synthesis.ts: SynthesisStatus, DossierCitation, OllamaGenerateAttempt
+src/v3/memory/pyramid-index.ts: CoarseToFinePathStep, CoarseToFineHit
+src/v3/memory/utility-decay.ts: DecayCandidate
+src/v3/memory/virtual-memory.ts: RamPageState
+src/v3/model-catalog/types.ts: ModelBackend
+src/v3/model-providers/constrained-decoding.ts: GrammarDialect, LocalConstrainedOptions, ConstrainedEnforcement
+src/v3/model-providers/decision-engine-benchmark.ts: DecisionBenchmarkLocale, DecisionBenchmarkGolden, DecisionCaseRun, DecisionEngineBenchmarkMetrics, PluggableSwapVerdict
+src/v3/model-providers/decision-engine.ts: DecisionAbstainReason, DecisionConsumerKind, ConsumerDecisionRequest
+src/v3/model-providers/freellmapi.ts: FreeLLMAPICatalogEntry
+src/v3/model-providers/index.ts: CostProvenance, ModelInvokeRequest, DecisionAbstainReason, DecisionCandidate, StrictRuntimeAbstainPolicy, ScoredCandidateId, StrictRuntimeDecisionEngineOptions, DecisionConsumerKind, ConsumerDecisionRequest, LayaOfflineMode, LayaDecisionEngineOptions, PluggableDecisionEngineHostOptions, DecisionBenchmarkLocale, DecisionBenchmarkGolden, DecisionCaseRun, DecisionEngineBenchmarkMetrics, DecisionEngineBenchmarkReport, PluggableSwapVerdict, RunDecisionEngineBenchmarkOptions, FreeLLMAPIState, FreeLLMAPICatalog, FreeLLMAPICatalogEntry, FreeLLMAPIInvokeMeta, FallbackChainResult, ProviderFaultKind, ProviderFaultReport, HandleProviderFaultResult, ProtocolId, ProtocolAdapter, ProtocolChatRequest, ProtocolChatResponse, ModelLayerId, ModelLayerKind, ModelLayerDescriptor, ModelTaskKind, ModelTask, ModelLayerSelection, SpeculativeStage, SpeculativeDraftResult, SpeculativeTestResult, SpeculativeEscalateResult, SpeculativePipelineHooks, SpeculativePipelineReport, GrammarDialect, ConstrainedGrammar, LocalConstrainedOptions, ConstrainedInvokeRequest, BuiltLocalGenerateBody, ConstrainedEnforcement
+src/v3/model-providers/model-layers.ts: ModelLayerKind, ModelTaskKind
+src/v3/model-providers/protocols/index.ts: ProtocolMessage, ProtocolChatRequest, ProtocolChatResponse
+src/v3/model-providers/protocols/types.ts: ProtocolMessage
+src/v3/model-providers/provider-fault.ts: ProviderFaultKind
+src/v3/model-providers/speculative-pipeline.ts: SpeculativeStage, SpeculativeDraftResult, SpeculativeTestResult, SpeculativeEscalateResult
+src/v3/mso/inbox-runtime.ts: InboxKind
+src/v3/mso/index.ts: SeededRng, MsoEdge, TransitionSample, FencingScenario, MsoTaskState, FailureBucket, ClassifiableFailure, CircuitBreakerState, TopoTask, DagMutationProposal, DagMutationOp, DagMutationValidationResult, DagMutationBudgetPolicy, DagMutationPermissionPolicy, MutableDagNode, MutationRejectCode, SubMsoBudget, SpawnSubMsoOptions, SubMsoRejectCode, SubMsoEnforceResult, ReconcileTaskInput, ReconcileDecision, SagaStep, SagaCompensationReport, UnknownSagaApplyReport, BootReconcileWithSagaReport, ExecutionMode, ExecutableTask, TaskRunContext, TaskRunResult, TaskExecutionRecord, TaskGraphExecutionReport, InboxKind, InboxReceiveInput, MsoSymbolMapState, MsoSymbolContext, BuildMsoSymbolContextInput, FullFileGuardMode, FullFileGuardResult
+src/v3/mso/sub-mso.ts: SubMsoEnforceOk, SubMsoEnforceReject
+src/v3/mso/worktree-executor.ts: TaskExecutionRecord
+src/v3/ops/dist-ops.ts: DiagnoseSeverity, DiagnoseCheck, ProjectStateSlice, GlobalConfigSlice, BackupFileEntry, BackupManifest, StateMigrator
+src/v3/ops/types.ts: GateRequirement, WorkflowTransition
+src/v3/parallel/ast-aware-merge.ts: AstMergeEngine, AstMergeStatus
+src/v3/parallel/backpressure.ts: LocalTelemetry, BackpressureAction
+src/v3/parallel/best-of-n.ts: BestOfNStatus, BlockedTaskCriticality, BestOfNExecutorContext, BestOfNValidateResult, BestOfNValidator, BestOfNExecutorTrace
+src/v3/parallel/critical-path.ts: CriticalPathPhase, CriticalPathNode, PrefetchArtifact, SimulatedNodeTrace
+src/v3/parallel/index.ts: ParallelPolicy, ParallelScheduleResult, BackpressureBounds, BackpressureSignal, BackpressureDecision, BackpressureAction, BackpressureControllerState, BackpressureControllerOptions, LocalTelemetry, MergirafDetection, MergirafMergeInput, MergirafMergeResult, AstMergeEngine, AstMergeStatus, AstMergeInput, AstMergeResult, MergeQueueItemStatus, MergeFileTriple, MergeQueueEnqueueInput, MergeQueueItem, MergeMetrics, IntegratedTestResult, IntegratedTestRunner, ProcessNextOptions, ProcessNextResult, CriticalPathPhase, PrefetchArtifactKind, CriticalPathNode, CriticalPathResult, PrefetchHookInput, PrefetchArtifact, PrefetchResult, SchedulePolicy, SimulateWallClockOptions, SimulatedNodeTrace, SimulateWallClockResult, BlockedTaskCriticality, BestOfNExecutorContext, BestOfNValidator, BestOfNValidateResult, BestOfNExecutorTrace, BestOfNReport, BestOfNRejectCode, BestOfNStatus, BestOfNAdmission
+src/v3/parallel/merge-queue.ts: MergeQueueItemStatus, MergeFileTriple, IntegratedTestRunner
+src/v3/runtime/doctor.ts: DoctorStatus
+src/v3/sandbox/landlock.ts: LandlockPathRule
+src/v3/sandbox/microvm-profile.ts: MicroVmBackendId, MicroVmGateStatus, MicroVmHonesty, HonestValue, SeccompApplyMode, EscapeDenyCaseResult
+src/v3/sandbox/types.ts: SandboxBackendId
+src/v3/security/capability-gate.ts: CapabilityGateVerdict
+src/v3/security/credential-proxy.ts: AdapterSandboxCapabilities
+src/v3/security/delegation.ts: DelegationAuditEventType
+src/v3/security/dlp-egress.ts: DlpEgressVerdict, DlpEgressFindingKind, DlpEgressLocation, DlpEgressFinding
+src/v3/security/ebpf-audit.ts: EbpfBackendStatus, EbpfGateStatus, EbpfHonesty, EbpfEventCategory, HonestValue, CorrelationDiscrepancy, BypassBatteryCaseResult
+src/v3/security/quarantine.ts: QuarantineStatus
+src/v3/security/redteam-continuous.ts: RedTeamCategory, RedTeamCaseOutcome, RedTeamCaseResult, RedTeamScheduleTick
+src/v3/security/types.ts: NetworkMode, NetworkPolicy, FilesystemPolicy, ProcessLimits, SecretsPolicy
+src/v3/state-db/index.ts: GoalContractRow, PersistedGoalContract, PersistedGoalDocument, TrivialOpRow, TokenCostProvenance, TokenBreakdown, TokenLedgerInsert, TokenLedgerEntry, CircuitRunRow, WorkspaceLeaseStatus, WorkspaceLease, MsoSession, MsoTransitionRow, OutboxStatus, OutboxRow, TaskGraphNodeRow, InboxMessageRow, WorkLedgerDbEntry, EventRow, TaskSubstateRow, EvidenceStatus, EvidenceRecordRow
+src/v3/state-db/types.ts: GoalContractRow, TokenCostProvenance, TokenBreakdown, WorkspaceLeaseStatus
+src/v3/task-graph/dynamic-dag.ts: DagMutationOpKind, DagTaskDraft, MutationRejectCode
+src/v3/task-graph/index.ts: DagMutationOpKind, DagTaskDraft, DagMutationProposal, DagMutationBudgetPolicy, DagMutationPermissionPolicy, MutationRejectCode, DagMutationValidationResult, ProposeDagMutationInput, ValidateMutationInput, ApplyOpsResult
+src/v3/token-economy/context-slicing.ts: OversizedRangePolicy
+src/v3/token-economy/fail-fast.ts: FailFastStageResult
+src/v3/token-economy/index.ts: StdoutFilterOptions, StdoutFilterResult, StdoutFilterStats, OutlineEntry, OutlineFileResult, OutlineKind, ReadLinesResult, ContextSlicingOptions, ContextSlicingErrorCode, OversizedRangePolicy, AgentFileTools, SkillCompressResult, FailFastStageId, FailFastStageResult, FailFastCascadeReport, FailFastRunner, NodeBudgetVerdict, FailedAttemptRecord, NodeTokenBudgetState, NodeBudgetEvaluation, LocalValidationKind, LocalValidationMatch, SymbolMapEngine, SymbolKind, SymbolEntry, FileSymbolMap, RepoSymbolMap, IdentifierOccurrence, DeclarationUnit, DeclarationExtractResult, SymbolResolveEngine, SymbolLocation, LanguageServerClient, ResolveOptions, Turn1SymbolResolve, PreResolveTurn1Input, PrunedSentence, PruneRetrievedStats, PruneRetrievedResult, ConversationRole, TombstoneOptions, TombstoneStats, TombstoneResult, StatelessWorkerSnapshotInput, StatelessWorkerSnapshot, LazyToolSchema, PinnedPrefixInput, PinnedPromptResult, FreeProsePropName, JsonSchemaObject, OperationalCallSpec, BuildOperationalCallSpecInput, SurgicalOp, SurgicalEditSpec, SurgicalEditErrorCode, SurgicalEditResult, MechanicalFixHookResult, MechanicalFixReport, MechanicalBinaryResolver, MechanicalHookRunner, MechanicalFixOptions, Microtask, MicrotaskBatch, PatchCacheEntry, PatchCacheLookup, SplitPlanAndApplyInput, SplitPlanAndApplyResult, CompressNaturalLanguageResult, CrystallizedScript, PatternRunInput, PatternRunOutcome
+src/v3/token-economy/local-validation.ts: LocalValidationKind
+src/v3/token-economy/mechanical-fix.ts: MechanicalFixHookResult, MechanicalBinaryResolver, MechanicalHookRunner
+src/v3/token-economy/node-budget.ts: NodeBudgetVerdict
+src/v3/token-economy/operational-call.ts: FreeProsePropName
+src/v3/token-economy/prune-retrieved.ts: PruneRetrievedStats
+src/v3/token-economy/stdout-filter.ts: StdoutFilterStats
+src/v3/token-economy/surgical-edit.ts: SurgicalEditErrorCode
+src/v3/token-economy/symbol-map.ts: SymbolKind
+src/v3/token-economy/symbol-resolve.ts: SymbolResolveEngine, LanguageServerClient
+src/v3/token-economy/tombstone.ts: ConversationRole, TombstoneStats
+src/v3/work-ledger/store.ts: LedgerEntryType
+src/v3/workspace-scan/index.ts: SilentScanResult
+src/v3/workspace/integration.ts: IntegrationState
+src/v3/workspace/post-merge.ts: PostMergeCheck
+src/v3/worktrees/index.ts: WorktreeRecord, WorktreeManagerSnapshot
+Duplicate exports (1)
+src/config/profile.ts: loadEvolveLoopProfile, loadMegaBrainProfile
+---
+Unused files (42)
+scripts/v3-adapters-runtime-probe.mts                   
+scripts/v3-dist-01-probe.mts                            
+scripts/v3-exit-03-scale-probe.mts                      
+scripts/v3-integral-harness.mjs                         
+scripts/v3-product-goals-meta-status.mjs                
+scripts/v35-live-e2e-resume.mjs                         
+scripts/v35-live-e2e.mjs                                
+scripts/v36-live-multi-workflow.mjs                     
+src/cli/apply-context-budget.ts                         
+src/knowledge/truth-source/index.ts                     
+src/v3/adapters/drivers/index.ts                        
+src/v3/adapters/index.ts                                
+src/v3/approvals/index.ts                               
+src/v3/budget/index.ts                                  
+src/v3/context/index.ts                                 
+src/v3/continuity/index.ts                              
+src/v3/coordinator/index.ts                             
+src/v3/event-log/index.ts                               
+src/v3/execution/index.ts                               
+src/v3/harness/index.ts                                 
+src/v3/hierarchy/index.ts                               
+src/v3/intake/index.ts                                  
+src/v3/locks/index.ts                                   
+src/v3/model-catalog/index.ts                           
+src/v3/recovery/index.ts                                
+src/v3/routing/index.ts                                 
+src/v3/tui/index.ts                                     
+src/v3/work-ledger/index.ts                             
+src/v3/workspace/index.ts                               
+tests/fixtures/v3-eval/alpha-lib/src/index.js           
+tests/fixtures/v3-eval/alpha-lib/src/math.js            
+tests/fixtures/v3-eval/alpha-lib/test/math.test.js      
+tests/fixtures/v3-eval/beta-app/lib/store.js            
+tests/fixtures/v3-eval/beta-app/src/cart.js             
+tests/fixtures/v3-eval/beta-app/src/checkout.js         
+tests/fixtures/v3-eval/beta-app/test/cart.test.js       
+tests/fixtures/v3-eval/beta-app/test/checkout.test.js   
+tests/fixtures/v3-eval/gamma-service/src/auth.js        
+tests/fixtures/v3-eval/gamma-service/src/config.js      
+tests/fixtures/v3-eval/gamma-service/src/router.js      
+tests/fixtures/v3-eval/gamma-service/test/router.test.js
+vitest.v1-gate-compat.config.ts                         
+Unused dependencies (2)
+tree-sitter-javascript  package.json:50:6
+tree-sitter-typescript  package.json:51:6
+Unlisted binaries (4)
+rg        src/v22/p0-baseline-harness.ts                       
+agent     src/v3/runtime/doctor.ts                             
+graphify  tests/integration/v22-graphify-b3.integration.test.ts
+agent     tests/integration/v35-op-harness-consent.test.ts     
+Unused exports (393)
+READ_ONLY_CAPABILITY_ALLOWLIST                   src/authority/capability-authority.ts:76:14                     
+resolveProfilePath                     function  src/config/profile.ts:59:17                                     
+COMPACTION_ADR                                   src/context/compaction-contract.ts:5:14                         
+EXTRACTIVE_CONDENSER_ID                          src/context/extractive-condenser.ts:13:14                       
+lineKeptByCondenser                    function  src/context/extractive-condenser.ts:44:17                       
+slicesFromPathContents                 function  src/context/pda-spawn.ts:54:17                                  
+resetTokenizerCache                    function  src/context/tokenizer.ts:74:17                                  
+inferManifestFromSkill                 function  src/discovery/provider-discovery.ts:62:17                       
+manifestEntries                        function  src/discovery/provider-discovery.ts:89:17                       
+gateEvidenceFilename                   function  src/evidence/evidence-bus.ts:23:17                              
+readSanitizedEvidence                  function  src/evidence/evidence-bus.ts:91:17                              
+evidencePathForResult                  function  src/evidence/evidence-bus.ts:98:17                              
+relativeJobsEvidencePath               function  src/evidence/evidence-bus.ts:102:17                             
+countCanaryOccurrences                 function  src/evidence/secret-redaction.ts:42:17                          
+adaptJsonlEventsDir                    function  src/evolveloop/adapters/jsonl-events.ts:78:17                   
+observationToRaw                       function  src/evolveloop/adapters/jsonl-events.ts:87:17                   
+inventorySourceRevision                function  src/evolveloop/diagnosis/live-inventory.ts:29:17                
+evolutionRequestExists                 function  src/evolveloop/handoff/evolution-request.ts:22:17               
+WINDOW_HOURS                                     src/evolveloop/index.ts:34:3                                    
+hoursForWindow                                   src/evolveloop/index.ts:35:3                                    
+lifecycleFromOutcome                             src/evolveloop/index.ts:56:36                                   
+adaptJsonlEventsDir                              src/evolveloop/index.ts:66:3                                    
+observationToRaw                                 src/evolveloop/index.ts:67:3                                    
+inventorySourceRevision                          src/evolveloop/index.ts:78:3                                    
+resolveLiveCadence                               src/evolveloop/index.ts:93:3                                    
+scopeKey                                         src/evolveloop/index.ts:94:3                                    
+scopeKey                                         src/evolveloop/live/observation-window.ts:227:10                
+WINDOW_HOURS                                     src/evolveloop/longitudinal-types.ts:52:14                      
+normalizeProjectRoot                   function  src/knowledge/truth-source/isolation.ts:6:17                    
+inputMap                               function  src/providers/deterministic/inputs.ts:5:17                      
+resolveWikiRoot                                  src/providers/deterministic/knowledge.ts:13:3                   
+resolveWikiCliModule                             src/providers/deterministic/knowledge.ts:14:3                   
+SHELL_ENV_ALLOWLIST                              src/providers/deterministic/shell-env.ts:6:14                   
+newRunId                                         src/providers/mock-provider.ts:120:10                           
+schemaVersionFromContract              function  src/registry/registry-builder.ts:150:17                         
+toUsageAdapterInput                    function  src/telemetry/measurement-plane/adapters/provider-usage.ts:55:17
+usageMeasurement                                 src/telemetry/measurement-plane/metrics/cost.ts:168:10          
+STORE_META_VERSION                               src/telemetry/measurement-plane/migrations.ts:19:14             
+buildBenchPickupBriefing               function  src/v22/bench-pickup-fixture.ts:8:17                            
+extractProtectedPickupSuffix           function  src/v22/brevity-caveman.ts:132:17                               
+graphifyOutDir                         function  src/v22/graphify-adapter.ts:27:17                               
+graphifyGraphPath                      function  src/v22/graphify-adapter.ts:31:17                               
+ensureGraphifyGraph                    function  src/v22/graphify-adapter.ts:77:17                               
+normalizePickupPrefixForStability      function  src/v22/measure-prompt-cache-prefix.ts:59:17                    
+CANONICAL_SCORER                                 src/v22/p0-baseline-harness.ts:47:14                            
+COMPACTION_TASK_ID                               src/v22/p0-compaction-measure.ts:18:14                          
+HANDOFF_FEATURE_ID                               src/v22/p0-handoff-measure.ts:38:14                             
+HANDOFF_RUN_ID                                   src/v22/p0-handoff-measure.ts:39:14                             
+HANDOFF_NODE_ID                                  src/v22/p0-handoff-measure.ts:40:14                             
+HANDOFF_DECISION                                 src/v22/p0-handoff-measure.ts:41:14                             
+HANDOFF_RESUME_MARKER                            src/v22/p0-handoff-measure.ts:42:14                             
+AGENT_ADAPTER_CATALOG                            src/v3/adapters/catalog.ts:7:14                                 
+assertPromptWritten                    function  src/v3/adapters/drivers/cli-process.ts:259:17                   
+AdapterHandoffError                    class     src/v3/adapters/handoff-bridge.ts:17:14                         
+observed                                         src/v3/agent-profiles/index.ts:22:3                             
+AgentProfileStoreError                           src/v3/agent-profiles/index.ts:28:3                             
+AgentProfileStoreError                 class     src/v3/agent-profiles/store.ts:18:14                            
+isSensitivePathForValidator                      src/v3/circuit/evidence-validator.ts:295:25                     
+runEvidenceValidator                             src/v3/circuit/index.ts:18:3                                    
+isSensitivePathForValidator                      src/v3/circuit/index.ts:19:3                                    
+defaultFireTasks                                 src/v3/circuit/index.ts:26:3                                    
+defaultFireTasks                       function  src/v3/circuit/run-circuit.ts:470:17                            
+CursorCircuitAdapter                             src/v3/circuit/run-circuit.ts:520:10                            
+DEFAULT_LOSS_CRITERIA                            src/v3/context/compaction.ts:21:14                              
+slimSections                           function  src/v3/context/compaction.ts:192:17                             
+roleFromAgentRole                      function  src/v3/context/types.ts:39:17                                   
+ContinuityError                        class     src/v3/continuity/engine.ts:17:14                               
+CoordinatorError                       class     src/v3/coordinator/service.ts:25:14                             
+resolveOllamaBaseUrl                             src/v3/embeddings/index.ts:4:3                                  
+resolveNomicModelId                              src/v3/embeddings/index.ts:5:3                                  
+VectorIndexError                                 src/v3/embeddings/index.ts:16:3                                 
+resolveOllamaBaseUrl                   function  src/v3/embeddings/nomic-client.ts:40:17                         
+resolveNomicModelId                    function  src/v3/embeddings/nomic-client.ts:44:17                         
+VectorIndexError                       class     src/v3/embeddings/vector-index.ts:209:14                        
+classifyHarness                        function  src/v3/engineering/harness-matrix.ts:27:17                      
+listDriverSummaries                    function  src/v3/engineering/harness-matrix.ts:104:17                     
+walkRelFiles                                     src/v3/engineering/index.ts:8:32                                
+WorkspaceError                                   src/v3/engineering/index.ts:8:46                                
+classifyHarness                                  src/v3/engineering/index.ts:14:3                                
+listDriverSummaries                              src/v3/engineering/index.ts:16:3                                
+WorkspaceError                         class     src/v3/engineering/workspace.ts:42:14                           
+exploreRepository                                src/v3/evaluation/index.ts:1:10                                 
+applyTaskSolution                                src/v3/evaluation/index.ts:2:10                                 
+fingerprintWorkspace                             src/v3/evaluation/index.ts:5:3                                  
+contractMutationThreshold                        src/v3/evaluation/index.ts:28:3                                 
+DEFAULT_MUTATION_SCORE_THRESHOLD                 src/v3/evaluation/index.ts:30:3                                 
+ProgressTracker                                  src/v3/evaluation/index.ts:40:10                                
+probeLiveLlmReadiness                            src/v3/evaluation/index.ts:48:3                                 
+runLiveEngineeringCase                           src/v3/evaluation/index.ts:49:3                                 
+runLiveValidationSuite                           src/v3/evaluation/index.ts:50:3                                 
+resolveCursorAgentBin                  function  src/v3/evaluation/live/harness.ts:23:17                         
+assessLiveReadiness                              src/v3/evaluation/live/index.ts:3:3                             
+LIVE_TASK_BRIEFS                                 src/v3/evaluation/live/index.ts:8:10                            
+buildWorkerPrompt                                src/v3/evaluation/live/index.ts:8:28                            
+buildReviewerPrompt                              src/v3/evaluation/live/index.ts:8:47                            
+invokeLiveHarness                                src/v3/evaluation/live/index.ts:10:3                            
+cursorAgentLoggedIn                              src/v3/evaluation/live/index.ts:11:3                            
+assessLiveReadiness                    function  src/v3/evaluation/live/readiness.ts:208:17                      
+DEFAULT_MUTATION_SCORE_THRESHOLD                 src/v3/evaluation/selective-mutation.ts:426:14                  
+paint                                  function  src/v3/evolve-shell/colors.ts:33:17                             
+credentialsFilePath                    function  src/v3/evolve-shell/first-run-setup.ts:81:17                    
+limitsFilePath                         function  src/v3/evolve-shell/first-run-setup.ts:85:17                    
+defaultFirstRunProbes                  function  src/v3/evolve-shell/first-run-setup.ts:112:23                   
+listCredentialNames                    function  src/v3/evolve-shell/first-run-setup.ts:185:17                   
+writeLimitsConfig                      function  src/v3/evolve-shell/first-run-setup.ts:236:17                   
+formatHonestMetric                     function  src/v3/evolve-shell/footer.ts:80:17                             
+renderFooterBlock                      function  src/v3/evolve-shell/footer.ts:235:17                            
+buildBannerMeta                        function  src/v3/evolve-shell/hud.ts:37:17                                
+buildStatusPanel                                 src/v3/evolve-shell/index.ts:3:3                                
+renderStatusPanelPt                              src/v3/evolve-shell/index.ts:4:3                                
+resolvePanelMsoState                             src/v3/evolve-shell/index.ts:5:3                                
+attachSigint                                     src/v3/evolve-shell/index.ts:10:3                               
+INTERRUPT_FORCE_WINDOW_MS                        src/v3/evolve-shell/index.ts:11:3                               
+isGoalContractConfirmAnswer                      src/v3/evolve-shell/index.ts:27:3                               
+paintProviderFallbackLine                        src/v3/evolve-shell/index.ts:33:3                               
+defaultFirstRunProbes                            src/v3/evolve-shell/index.ts:56:3                               
+redactSecrets                                    src/v3/evolve-shell/index.ts:57:3                               
+writeCredentialsSecure                           src/v3/evolve-shell/index.ts:58:3                               
+buildReadinessReport                             src/v3/evolve-shell/index.ts:59:3                               
+DEFAULT_LIMITS                                   src/v3/evolve-shell/index.ts:60:3                               
+paint                                            src/v3/evolve-shell/index.ts:69:3                               
+cyan                                             src/v3/evolve-shell/index.ts:70:3                               
+green                                            src/v3/evolve-shell/index.ts:71:3                               
+yellow                                           src/v3/evolve-shell/index.ts:72:3                               
+red                                              src/v3/evolve-shell/index.ts:73:3                               
+dim                                              src/v3/evolve-shell/index.ts:74:3                               
+shortenHomePath                                  src/v3/evolve-shell/index.ts:84:3                               
+renderFooterBlock                                src/v3/evolve-shell/index.ts:92:3                               
+formatHonestMetric                               src/v3/evolve-shell/index.ts:94:3                               
+buildBannerMeta                                  src/v3/evolve-shell/index.ts:114:3                              
+renderBootBanner                                 src/v3/evolve-shell/index.ts:115:3                              
+renderSessionFooter                              src/v3/evolve-shell/index.ts:116:3                              
+INTERRUPT_FORCE_WINDOW_MS                        src/v3/evolve-shell/keybindings.ts:25:14                        
+assertWorkspacePath                              src/v3/execution-runner/index.ts:12:3                           
+safeRealpath                                     src/v3/execution-runner/index.ts:14:3                           
+ExecutionRunnerImpl                              src/v3/execution-runner/index.ts:17:29                          
+filterProcessOutput                              src/v3/execution-runner/index.ts:19:3                           
+STDOUT_FILTER_HEAD_LINES                         src/v3/execution-runner/index.ts:20:3                           
+STDOUT_FILTER_TAIL_LINES                         src/v3/execution-runner/index.ts:21:3                           
+buildStatelessWorkerPrompt                       src/v3/execution-runner/index.ts:27:3                           
+safeRealpath                           function  src/v3/execution-runner/runner.ts:116:17                        
+assertWorkspacePath                    function  src/v3/execution-runner/runner.ts:127:17                        
+ExecutionBridgeError                   class     src/v3/execution/bridge.ts:23:14                                
+goalContractInputFromGrillMe                     src/v3/grill-me/index.ts:4:3                                    
+formatQuestionForUser                            src/v3/grill-me/index.ts:14:3                                   
+summarizeContractLines                           src/v3/grill-me/index.ts:15:3                                   
+GRILL_ME_MIN_QUESTIONS                           src/v3/grill-me/index.ts:16:3                                   
+GRILL_ME_MAX_QUESTIONS                           src/v3/grill-me/index.ts:17:3                                   
+applyTrivialBypass                               src/v3/grill-me/index.ts:23:3                                   
+assertPlanningAuthorized                         src/v3/grill-me/index.ts:31:3                                   
+applyDeltaGrillMe                                src/v3/grill-me/index.ts:37:3                                   
+listStaleEvidence                                src/v3/grill-me/index.ts:38:3                                   
+assertPlanningAuthorized               function  src/v3/grill-me/runtime-gate.ts:122:17                          
+GRILL_ME_MIN_QUESTIONS                           src/v3/grill-me/session.ts:10:14                                
+GRILL_ME_MAX_QUESTIONS                           src/v3/grill-me/session.ts:11:14                                
+HierarchyError                         class     src/v3/hierarchy/spawn.ts:15:14                                 
+WorkLockError                          class     src/v3/locks/store.ts:277:14                                    
+BITEMPORAL_FACT_STATUSES                         src/v3/memory/bitemporal-graph.ts:24:14                         
+BITEMPORAL_SCHEMA_SQL                            src/v3/memory/bitemporal-graph.ts:27:14                         
+defaultBitemporalDbPath                function  src/v3/memory/bitemporal-graph.ts:188:17                        
+buildFtsQuery                          function  src/v3/memory/broker.ts:108:17                                  
+CAS_HASH_PREFIX                                  src/v3/memory/cold-storage.ts:20:14                             
+COLD_STORAGE_BLOB_EXT                            src/v3/memory/cold-storage.ts:21:14                             
+defaultColdStorageRoot                 function  src/v3/memory/cold-storage.ts:257:17                            
+lessonSimilarity                       function  src/v3/memory/consolidation.ts:76:17                            
+newConsolidationId                     function  src/v3/memory/consolidation.ts:384:17                           
+fingerprintMatched                     function  src/v3/memory/federated-sanitize.ts:226:17                      
+toSafeRemovals                         function  src/v3/memory/federated-sanitize.ts:232:17                      
+HYBRID_GRAPH_SCHEMA_VERSION                      src/v3/memory/hybrid-graph.ts:18:14                             
+HYBRID_GRAPH_NODE_KINDS                          src/v3/memory/hybrid-graph.ts:20:14                             
+HYBRID_GRAPH_EDGE_TYPES                          src/v3/memory/hybrid-graph.ts:23:14                             
+HYBRID_GRAPH_SCHEMA_SQL                          src/v3/memory/hybrid-graph.ts:31:14                             
+symbolNodeId                           function  src/v3/memory/hybrid-graph.ts:165:17                            
+resolveRelativeImport                  function  src/v3/memory/hybrid-graph.ts:212:17                            
+defaultHybridGraphDbPath               function  src/v3/memory/hybrid-graph.ts:222:17                            
+hashHybridGraphSnapshot                function  src/v3/memory/hybrid-graph.ts:613:17                            
+DEFAULT_MEMORY_VEC_DIMS                          src/v3/memory/hybrid-search.ts:15:14                            
+lightRerank                            function  src/v3/memory/hybrid-search.ts:210:17                           
+MEMORY_DB_SCHEMA_SQL                             src/v3/memory/index.ts:2:3                                      
+buildFtsQuery                                    src/v3/memory/index.ts:10:3                                     
+defaultColdStorageRoot                           src/v3/memory/index.ts:15:3                                     
+CAS_HASH_PREFIX                                  src/v3/memory/index.ts:19:3                                     
+COLD_STORAGE_BLOB_EXT                            src/v3/memory/index.ts:20:3                                     
+lightRerank                                      src/v3/memory/index.ts:37:3                                     
+DEFAULT_MEMORY_VEC_DIMS                          src/v3/memory/index.ts:44:3                                     
+dispositionForContradiction                      src/v3/memory/index.ts:61:3                                     
+lessonSimilarity                                 src/v3/memory/index.ts:70:3                                     
+newConsolidationId                               src/v3/memory/index.ts:72:3                                     
+HYBRID_GRAPH_SCHEMA_SQL                          src/v3/memory/index.ts:88:3                                     
+HYBRID_GRAPH_SCHEMA_VERSION                      src/v3/memory/index.ts:89:3                                     
+HYBRID_GRAPH_NODE_KINDS                          src/v3/memory/index.ts:90:3                                     
+HYBRID_GRAPH_EDGE_TYPES                          src/v3/memory/index.ts:91:3                                     
+symbolNodeId                                     src/v3/memory/index.ts:96:3                                     
+resolveRelativeImport                            src/v3/memory/index.ts:98:3                                     
+defaultHybridGraphDbPath                         src/v3/memory/index.ts:99:3                                     
+hashHybridGraphSnapshot                          src/v3/memory/index.ts:100:3                                    
+MEMORY_TYPES                                     src/v3/memory/index.ts:124:27                                   
+EDGE_NODE_KINDS                                  src/v3/memory/index.ts:124:41                                   
+countNonCurrentHits                              src/v3/memory/index.ts:129:3                                    
+NON_CURRENT_MEMORY_STATUSES                      src/v3/memory/index.ts:134:3                                    
+tokenizePyramidText                              src/v3/memory/index.ts:154:3                                    
+PYRAMID_SCHEMA_SQL                               src/v3/memory/index.ts:158:3                                    
+PYRAMID_LEVEL_LABELS                             src/v3/memory/index.ts:160:3                                    
+MEMORY_TOMBSTONE_MARKER_PREFIX                   src/v3/memory/index.ts:180:3                                    
+MULTI_HOP_SYNTHESIS_SCHEMA_VERSION               src/v3/memory/index.ts:192:3                                    
+SYNTHESIS_STATUSES                               src/v3/memory/index.ts:193:3                                    
+BITEMPORAL_SCHEMA_SQL                            src/v3/memory/index.ts:217:3                                    
+BITEMPORAL_FACT_STATUSES                         src/v3/memory/index.ts:218:3                                    
+defaultBitemporalDbPath                          src/v3/memory/index.ts:221:3                                    
+UTILITY_DECAY_SCHEMA_VERSION                     src/v3/memory/index.ts:232:3                                    
+fingerprintMatched                               src/v3/memory/index.ts:259:3                                    
+toSafeRemovals                                   src/v3/memory/index.ts:260:3                                    
+NON_CURRENT_MEMORY_STATUSES                      src/v3/memory/memory-eval.ts:23:14                              
+countNonCurrentHits                    function  src/v3/memory/memory-eval.ts:143:17                             
+MULTI_HOP_SYNTHESIS_SCHEMA_VERSION               src/v3/memory/multi-hop-synthesis.ts:23:14                      
+SYNTHESIS_STATUSES                               src/v3/memory/multi-hop-synthesis.ts:25:14                      
+PYRAMID_LEVEL_LABELS                             src/v3/memory/pyramid-index.ts:27:14                            
+PYRAMID_SCHEMA_SQL                               src/v3/memory/pyramid-index.ts:38:14                            
+tokenizePyramidText                    function  src/v3/memory/pyramid-index.ts:189:17                           
+MEMORY_TYPES                                     src/v3/memory/types.ts:8:14                                     
+EDGE_NODE_KINDS                                  src/v3/memory/types.ts:19:14                                    
+UTILITY_DECAY_SCHEMA_VERSION                     src/v3/memory/utility-decay.ts:17:14                            
+MEMORY_TOMBSTONE_MARKER_PREFIX                   src/v3/memory/virtual-memory.ts:19:14                           
+ModelCatalogError                      class     src/v3/model-catalog/store.ts:5:14                              
+defaultModelSeed                       function  src/v3/model-catalog/store.ts:26:17                             
+layaHeuristicScore                               src/v3/model-providers/index.ts:31:3                            
+detectProviderFaultKind                          src/v3/model-providers/index.ts:63:3                            
+OpenAICompatibleProtocol                         src/v3/model-providers/index.ts:74:3                            
+AnthropicProtocol                                src/v3/model-providers/index.ts:75:3                            
+ResponsesProtocol                                src/v3/model-providers/index.ts:76:3                            
+GeminiProtocol                                   src/v3/model-providers/index.ts:77:3                            
+layaHeuristicScore                     function  src/v3/model-providers/laya-decision-engine.ts:66:17            
+OpenAICompatibleProtocol                         src/v3/model-providers/protocols/index.ts:8:10                  
+AnthropicProtocol                                src/v3/model-providers/protocols/index.ts:9:10                  
+ResponsesProtocol                                src/v3/model-providers/protocols/index.ts:10:10                 
+GeminiProtocol                                   src/v3/model-providers/protocols/index.ts:11:10                 
+detectProviderFaultKind                function  src/v3/model-providers/provider-fault.ts:55:17                  
+isMsoSymbolMapState                    function  src/v3/mso/analyzing-context.ts:70:17                           
+assertNoFullFileInMsoContext           function  src/v3/mso/analyzing-context.ts:321:17                          
+isPgidAlive                            function  src/v3/mso/boot-reconciler.ts:38:17                             
+worktreeHasDiff                        function  src/v3/mso/boot-reconciler.ts:51:17                             
+FAILURE_BUCKETS                                  src/v3/mso/failure.ts:6:14                                      
+listInbox                              function  src/v3/mso/inbox-runtime.ts:40:17                               
+isMsoState                                       src/v3/mso/index.ts:1:57                                        
+pickIndex                                        src/v3/mso/index.ts:10:3                                        
+pickOne                                          src/v3/mso/index.ts:11:3                                        
+MSO_TASK_STATES                                  src/v3/mso/index.ts:29:3                                        
+NO_AUTO_RETRY_STATES                             src/v3/mso/index.ts:30:3                                        
+isMsoTaskState                                   src/v3/mso/index.ts:31:3                                        
+FAILURE_BUCKETS                                  src/v3/mso/index.ts:37:3                                        
+INFRA_COOLDOWN_MS_DEFAULT                        src/v3/mso/index.ts:39:3                                        
+applyCircuitFailure                              src/v3/mso/index.ts:44:3                                        
+defaultBudgetPolicy                              src/v3/mso/index.ts:57:3                                        
+defaultPermissionPolicy                          src/v3/mso/index.ts:58:3                                        
+DYNAMIC_DAG_SCHEMA_VERSION                       src/v3/mso/index.ts:59:3                                        
+DynamicDagError                                  src/v3/mso/index.ts:60:3                                        
+isPgidAlive                                      src/v3/mso/index.ts:97:3                                        
+worktreeHasDiff                                  src/v3/mso/index.ts:98:3                                        
+reconcileWorkOnBootWithSaga                      src/v3/mso/index.ts:111:3                                       
+applyUnknownSagaCompensations                    src/v3/mso/index.ts:112:3                                       
+Saga                                             src/v3/mso/index.ts:113:3                                       
+SagaRegistry                                     src/v3/mso/index.ts:114:3                                       
+ensureTaskWorktree                               src/v3/mso/index.ts:123:10                                      
+listInbox                                        src/v3/mso/index.ts:133:31                                      
+isMsoSymbolMapState                              src/v3/mso/index.ts:138:3                                       
+assertNoFullFileInMsoContext                     src/v3/mso/index.ts:143:3                                       
+pickOne                                function  src/v3/mso/pbt-fuzz.ts:34:17                                    
+MSO_TASK_STATES                                  src/v3/mso/task-states.ts:6:14                                  
+isMsoTaskState                         function  src/v3/mso/task-states.ts:19:17                                 
+NO_AUTO_RETRY_STATES                             src/v3/mso/task-states.ts:24:14                                 
+ensureTaskWorktree                     function  src/v3/mso/worktree-executor.ts:83:17                           
+atomicWrite                            function  src/v3/ops/atomic.ts:11:17                                      
+DIST_OPS_KIND                                    src/v3/ops/dist-ops.ts:31:14                                    
+STATE_MIGRATIONS                                 src/v3/ops/dist-ops.ts:583:14                                   
+writeOpsPointer                        function  src/v3/ops/global-ops-service.ts:629:17                         
+defaultProjectPolicy                   function  src/v3/ops/project-registry.ts:20:17                            
+newEphemeralProjectId                  function  src/v3/ops/project-registry.ts:264:17                           
+hashArtifact                           function  src/v3/ops/quality-gates.ts:294:17                              
+writeGateConfirmation                  function  src/v3/ops/quality-gates.ts:299:17                              
+workflowNeedsIntervention              function  src/v3/ops/recovery.ts:110:17                                   
+DEFAULT_HOST_CAPACITY                            src/v3/ops/resource-manager.ts:20:14                            
+TERMINAL_STATES                                  src/v3/ops/workflow-state.ts:91:14                              
+isAstMergeablePath                     function  src/v3/parallel/ast-aware-merge.ts:50:17                        
+mergeDeclarationUnits                  function  src/v3/parallel/ast-aware-merge.ts:74:17                        
+BACKPRESSURE_RATE_LOW                            src/v3/parallel/backpressure.ts:32:14                           
+BACKPRESSURE_RATE_HIGH                           src/v3/parallel/backpressure.ts:34:14                           
+BACKPRESSURE_CPU_CRITICAL                        src/v3/parallel/backpressure.ts:38:14                           
+BACKPRESSURE_STEP                                src/v3/parallel/backpressure.ts:42:14                           
+rateLimitRatio                         function  src/v3/parallel/backpressure.ts:92:17                           
+telemetryCritical                      function  src/v3/parallel/backpressure.ts:107:17                          
+ownershipLedgerDir                     function  src/v3/parallel/file-ownership-lock.ts:15:17                    
+rateLimitRatio                                   src/v3/parallel/index.ts:12:3                                   
+telemetryCritical                                src/v3/parallel/index.ts:13:3                                   
+BACKPRESSURE_RATE_LOW                            src/v3/parallel/index.ts:14:3                                   
+BACKPRESSURE_RATE_HIGH                           src/v3/parallel/index.ts:15:3                                   
+BACKPRESSURE_CPU_CRITICAL                        src/v3/parallel/index.ts:17:3                                   
+BACKPRESSURE_STEP                                src/v3/parallel/index.ts:19:3                                   
+tryReserveTaskScope                              src/v3/parallel/index.ts:30:3                                   
+reconcileInProgressLocks                         src/v3/parallel/index.ts:32:3                                   
+createOwnershipLedger                            src/v3/parallel/index.ts:33:3                                   
+ownershipLedgerDir                               src/v3/parallel/index.ts:34:3                                   
+runMergirafMerge                                 src/v3/parallel/index.ts:41:3                                   
+isAstMergeablePath                               src/v3/parallel/index.ts:48:3                                   
+mergeDeclarationUnits                            src/v3/parallel/index.ts:49:3                                   
+RecoveryError                          class     src/v3/recovery/subtree.ts:214:14                               
+resolveWritableCgroupBase              function  src/v3/sandbox/cgroup-v2.ts:50:17                               
+UnavailableSandboxBackend                        src/v3/sandbox/index.ts:6:10                                    
+DEFAULT_ALLOWED_SYSCALLS                         src/v3/sandbox/microvm-profile.ts:166:14                        
+readProcStarttime                      function  src/v3/sandbox/process-supervisor.ts:15:17                      
+readProcCmdline                        function  src/v3/sandbox/process-supervisor.ts:31:17                      
+checkDelegatedAuthority                function  src/v3/security/capability-gate.ts:91:17                        
+isBlockedByCapabilityGate              function  src/v3/security/capability-gate.ts:175:17                       
+assertCapabilityAllowed                function  src/v3/security/capability-gate.ts:182:17                       
+CapabilityGateError                    class     src/v3/security/capability-gate.ts:190:14                       
+DELEGATION_CATEGORIES                            src/v3/security/delegation.ts:13:14                             
+normalizeScopePath                     function  src/v3/security/delegation.ts:103:17                            
+pathUnderScope                         function  src/v3/security/delegation.ts:111:17                            
+categoriesAreSubset                    function  src/v3/security/delegation.ts:118:17                            
+scopesAreSubset                        function  src/v3/security/delegation.ts:126:17                            
+validityIsSubset                       function  src/v3/security/delegation.ts:137:17                            
+isGrantActive                          function  src/v3/security/delegation.ts:150:17                            
+assertSubsetOfParent                   function  src/v3/security/delegation.ts:159:17                            
+defaultHoldoutPath                     function  src/v3/security/holdout.ts:229:17                               
+harnessProviderProfile                 function  src/v3/security/profiles.ts:62:17                               
+QUARANTINE_BLOCKED_PROMOTION_STATUSES            src/v3/security/quarantine.ts:16:14                             
+PRIVILEGED_TAINT_ACTIONS                         src/v3/security/taint.ts:71:14                                  
+STATE_DB_SCHEMA_SQL                              src/v3/state-db/index.ts:2:3                                    
+STATE_DB_SCHEMA_VERSION                          src/v3/state-db/index.ts:3:3                                    
+ALL_DAG_MUTATION_OPS                             src/v3/task-graph/dynamic-dag.ts:23:14                          
+canonicalJson                          function  src/v3/task-graph/dynamic-dag.ts:160:17                         
+nodesFromSnapshot                      function  src/v3/task-graph/dynamic-dag.ts:179:17                         
+orchestrationTaskToNode                function  src/v3/task-graph/dynamic-dag.ts:183:17                         
+projectMutationNodes                   function  src/v3/task-graph/dynamic-dag.ts:675:17                         
+TaskGraphError                                   src/v3/task-graph/index.ts:2:26                                 
+ALL_DAG_MUTATION_OPS                             src/v3/task-graph/index.ts:5:3                                  
+projectMutationNodes                             src/v3/task-graph/index.ts:9:3                                  
+nodesFromSnapshot                                src/v3/task-graph/index.ts:10:3                                 
+orchestrationTaskToNode                          src/v3/task-graph/index.ts:11:3                                 
+canonicalJson                                    src/v3/task-graph/index.ts:14:3                                 
+TaskGraphError                         class     src/v3/task-graph/store.ts:6:14                                 
+parseCompactEditPlan                   function  src/v3/token-economy/brain-hand.ts:72:17                        
+planWithinSoftBudget                   function  src/v3/token-economy/brain-hand.ts:160:17                       
+hashLineRange                                    src/v3/token-economy/brain-hand.ts:175:10                       
+defaultFailFastCommands                function  src/v3/token-economy/fail-fast.ts:76:17                         
+stripAnsi                                        src/v3/token-economy/index.ts:23:3                              
+dedupeStackTraces                                src/v3/token-economy/index.ts:24:3                              
+headTailTruncate                                 src/v3/token-economy/index.ts:25:3                              
+resolveConfinedPath                              src/v3/token-economy/index.ts:37:3                              
+compressTelegraphicProse                         src/v3/token-economy/index.ts:54:3                              
+defaultFailFastCommands                          src/v3/token-economy/index.ts:63:3                              
+TOKEN_BUDGET_ALERT_RATIO                         src/v3/token-economy/index.ts:75:3                              
+TOKEN_BUDGET_ABORT_RATIO                         src/v3/token-economy/index.ts:76:3                              
+resolveSymbolMapEngine                           src/v3/token-economy/index.ts:93:3                              
+looksLikeFullFileDump                            src/v3/token-economy/index.ts:98:3                              
+collectIdentifierOccurrences                     src/v3/token-economy/index.ts:99:3                              
+extractDeclarationUnitsFromSource                src/v3/token-economy/index.ts:100:3                             
+tokenizeForPrune                                 src/v3/token-economy/index.ts:132:3                             
+bm25ScoreSentence                                src/v3/token-economy/index.ts:133:3                             
+flattenTurns                                     src/v3/token-economy/index.ts:147:3                             
+lazyToolCoveredStates                            src/v3/token-economy/index.ts:170:3                             
+normalizePinnedBlock                             src/v3/token-economy/index.ts:176:3                             
+TSV_FIELD_SEP                                    src/v3/token-economy/index.ts:185:3                             
+escapeTsvField                                   src/v3/token-economy/index.ts:186:3                             
+unescapeTsvField                                 src/v3/token-economy/index.ts:187:3                             
+resolveMechanicalBinary                          src/v3/token-economy/index.ts:216:3                             
+parseCompactEditPlan                             src/v3/token-economy/index.ts:238:3                             
+planWithinSoftBudget                             src/v3/token-economy/index.ts:240:3                             
+lazyToolCoveredStates                  function  src/v3/token-economy/lazy-tools.ts:364:17                       
+resolveMechanicalBinary                function  src/v3/token-economy/mechanical-fix.ts:83:17                    
+TOKEN_BUDGET_ALERT_RATIO                         src/v3/token-economy/node-budget.ts:6:14                        
+TOKEN_BUDGET_ABORT_RATIO                         src/v3/token-economy/node-budget.ts:7:14                        
+normalizePinnedBlock                   function  src/v3/token-economy/prefix-pinning.ts:35:17                    
+tokenizeForPrune                       function  src/v3/token-economy/prune-retrieved.ts:52:17                   
+bm25ScoreSentence                      function  src/v3/token-economy/prune-retrieved.ts:88:17                   
+stripAnsi                              function  src/v3/token-economy/stdout-filter.ts:43:17                     
+dedupeStackTraces                      function  src/v3/token-economy/stdout-filter.ts:55:17                     
+headTailTruncate                       function  src/v3/token-economy/stdout-filter.ts:77:17                     
+compressTelegraphicProse               function  src/v3/token-economy/telegraphic.ts:31:17                       
+flattenTurns                           function  src/v3/token-economy/tombstone.ts:76:17                         
+TSV_FIELD_SEP                                    src/v3/token-economy/tsv.ts:9:14                                
+escapeTsvField                         function  src/v3/token-economy/tsv.ts:12:17                               
+unescapeTsvField                       function  src/v3/token-economy/tsv.ts:21:17                               
+listLedgerWorkIds                      function  src/v3/tui/status-board.ts:172:17                               
+listHandoffIds                         function  src/v3/tui/status-board.ts:179:17                               
+handoffPath                            function  src/v3/tui/status-board.ts:186:17                               
+WorkLedgerError                        class     src/v3/work-ledger/store.ts:6:14                                
+writeConflictFixture                   function  src/v3/workspace/integration.ts:273:17                          
+cleanupDir                             function  src/v3/workspace/integration.ts:283:17                          
+discoverPostMergeChecks                function  src/v3/workspace/post-merge.ts:41:17                            
+WorktreeError                                    src/v3/worktrees/index.ts:3:3                                   
+WorktreeError                          class     src/v3/worktrees/manager.ts:174:14                              
+V0_TOKEN_REDUCTION_TARGET_MAX_PCT                tests/fixtures/v0-token-baseline-comparator.ts:46:14            
+V1_GATE_TOK_TARGET_MAX_PCT                       tests/fixtures/v1-gate-tok-comparator.ts:9:14                   
+Unused exported types (768)
+EvolveLoopProfileKnowledge          interface  src/config/profile.ts:13:18                                        
+EvolveLoopProfileMemory             interface  src/config/profile.ts:18:18                                        
+MegaBrainProfileKnowledge           type       src/config/profile.ts:32:13                                        
+MegaBrainProfileMemory              type       src/config/profile.ts:34:13                                        
+BenchAnchor                         interface  src/context/bench-retrieval.ts:15:18                               
+ContextRetrievalEntry               interface  src/context/types.ts:45:18                                         
+CompactionReinjectContractRef       interface  src/context/types.ts:84:18                                         
+InventorySnapshotStatus             type       src/evolveloop/diagnosis/live-inventory.ts:12:13                   
+Confidence                          type       src/evolveloop/index.ts:4:3                                        
+EvolutionScopeKind                  type       src/evolveloop/index.ts:9:3                                        
+LoopState                           type       src/evolveloop/index.ts:11:3                                       
+PatternKind                         type       src/evolveloop/index.ts:14:3                                       
+RootCauseType                       type       src/evolveloop/index.ts:17:3                                       
+SignalSeverity                      type       src/evolveloop/index.ts:18:3                                       
+SignalType                          type       src/evolveloop/index.ts:19:3                                       
+EvolveLoopOptions                   type       src/evolveloop/index.ts:28:37                                      
+EvolveLoopStoreSnapshot             type       src/evolveloop/index.ts:29:32                                      
+Observation                         type       src/evolveloop/index.ts:39:3                                       
+WindowPreset                        type       src/evolveloop/index.ts:43:3                                       
+LongitudinalPattern                 type       src/evolveloop/index.ts:44:3                                       
+SignalQuery                         type       src/evolveloop/index.ts:47:3                                       
+AdapterConnectionStatus             type       src/evolveloop/index.ts:48:3                                       
+AnalysisScopeType                   type       src/evolveloop/index.ts:50:3                                       
+AnalyzeStatus                       type       src/evolveloop/index.ts:51:3                                       
+LifecycleHistoryEntry               type       src/evolveloop/index.ts:52:3                                       
+LongitudinalOptions                 type       src/evolveloop/index.ts:60:8                                       
+AnalyzeOpts                         type       src/evolveloop/index.ts:61:8                                       
+InventorySnapshotStatus             type       src/evolveloop/index.ts:80:8                                       
+SnapshotInventoryOptions            type       src/evolveloop/index.ts:81:8                                       
+AnalysisCadenceOptions              type       src/evolveloop/index.ts:90:32                                      
+NotifyMeta                          type       src/evolveloop/index.ts:102:8                                      
+ObservationWindowStatus             type       src/evolveloop/index.ts:108:8                                      
+IngestGateResultInput               type       src/evolveloop/index.ts:116:8                                      
+IngestGateResultOutput              type       src/evolveloop/index.ts:117:8                                      
+AnalysisScopeType                   type       src/evolveloop/longitudinal-types.ts:21:13                         
+AnalyzeStatus                       type       src/evolveloop/longitudinal-types.ts:29:13                         
+Confidence                          type       src/evolveloop/longitudinal-types.ts:185:15                        
+CandidateType                       type       src/evolveloop/longitudinal-types.ts:185:27                        
+RootCauseType                       type       src/evolveloop/longitudinal-types.ts:185:42                        
+NeedLifecycleAlias                  type       src/evolveloop/longitudinal-types.ts:185:74                        
+PluginType                          type       src/plugins/plugin-loader.ts:8:13                                  
+SkillGateId                         type       src/policy/megabrain-skill-gates.ts:11:13                          
+VendorLiveProbeStatus               type       src/providers/llm/vendor-cache-live-probe.ts:7:13                  
+ProviderTelemetryStats              interface  src/registry/registry-builder.ts:9:18                              
+EventBusAdapterOptions              interface  src/telemetry/measurement-plane/adapters/event-bus-adapter.ts:36:18
+PriceEntry                          interface  src/telemetry/measurement-plane/metrics/cost.ts:5:18               
+GraphEdgeKind                       type       src/v22/graphify-adapter.ts:10:13                                  
+PickupPromptMeasureRow              interface  src/v22/measure-pickup-prompts.ts:11:18                            
+PromptCachePrefixRow                interface  src/v22/measure-prompt-cache-prefix.ts:11:18                       
+AnchorSpec                          interface  src/v22/p0-baseline-harness.ts:64:18                               
+ConflictSpec                        interface  src/v22/p0-baseline-harness.ts:70:18                               
+MetricStatus                        type       src/v22/p0-baseline-harness.ts:101:13                              
+Dispersion                          interface  src/v22/p0-baseline-harness.ts:103:18                              
+ArmRun                              interface  src/v22/p0-baseline-harness.ts:117:18                              
+ArmReport                           interface  src/v22/p0-baseline-harness.ts:130:18                              
+CompactionContractEvidence          interface  src/v22/p0-baseline-harness.ts:175:18                              
+CompactionRun                       interface  src/v22/p0-compaction-measure.ts:20:18                             
+HandoffRun                          interface  src/v22/p0-handoff-measure.ts:50:18                                
+DriverInvokeStatus                  type       src/v3/adapters/drivers/types.ts:9:13                              
+AdapterCapabilityKey                type       src/v3/adapters/types.ts:45:13                                     
+AdapterCapability                   interface  src/v3/adapters/types.ts:61:18                                     
+MetricHonesty                       type       src/v3/agent-profiles/index.ts:7:3                                 
+ObservedMetric                      type       src/v3/agent-profiles/index.ts:8:3                                 
+EvidenceHonesty                     type       src/v3/agent-profiles/index.ts:9:3                                 
+AgentRunEvidence                    type       src/v3/agent-profiles/index.ts:10:3                                
+AgentIntelligenceProfile            type       src/v3/agent-profiles/index.ts:11:3                                
+ProfileStoreSnapshot                type       src/v3/agent-profiles/index.ts:12:3                                
+IntelligenceRouteMode               type       src/v3/agent-profiles/index.ts:13:3                                
+IntelligenceRouteRequest            type       src/v3/agent-profiles/index.ts:14:3                                
+ScoredAgentCandidate                type       src/v3/agent-profiles/index.ts:15:3                                
+IntelligenceRouteDecision           type       src/v3/agent-profiles/index.ts:16:3                                
+StaticRouteDelta                    type       src/v3/agent-profiles/index.ts:17:3                                
+ScoreComponents                     type       src/v3/agent-profiles/index.ts:23:8                                
+IntelligenceRouteMode               type       src/v3/agent-profiles/types.ts:76:13                               
+RegisterAgentInput                  type       src/v3/agent-registry/index.ts:2:55                                
+ApprovalDecisionRecord              interface  src/v3/approvals/types.ts:15:18                                    
+HierarchicalBudgetNode              interface  src/v3/budget/hierarchical.ts:10:18                                
+BudgetDimension                     type       src/v3/budget/types.ts:6:13                                        
+BudgetLimit                         interface  src/v3/budget/types.ts:8:18                                        
+BudgetConsumed                      interface  src/v3/budget/types.ts:15:18                                       
+CancelRequest                       type       src/v3/cancel/index.ts:1:45                                        
+CancelResult                        type       src/v3/cancel/index.ts:1:65                                        
+AgentCheckpoint                     interface  src/v3/circuit/agent-failover.ts:14:18                             
+AdapterInvokeRequest                type       src/v3/circuit/index.ts:3:3                                        
+AgentCheckpoint                     type       src/v3/circuit/index.ts:13:8                                       
+FailoverInvokeRequest               type       src/v3/circuit/index.ts:14:8                                       
+FailoverInvokeResult                type       src/v3/circuit/index.ts:15:8                                       
+EvidenceValidatorOptions            type       src/v3/circuit/index.ts:20:8                                       
+EvidenceValidatorResult             type       src/v3/circuit/index.ts:21:8                                       
+CircuitTaskSpec                     type       src/v3/circuit/index.ts:27:8                                       
+CircuitRunOptions                   type       src/v3/circuit/index.ts:28:8                                       
+CircuitRunResult                    type       src/v3/circuit/index.ts:29:8                                       
+CircuitTaskSpec                     interface  src/v3/circuit/run-circuit.ts:17:18                                
+FidelityStatus                      type       src/v3/context/compaction.ts:10:13                                 
+CoordinatorProcessState             type       src/v3/coordinator/types.ts:3:13                                   
+DaemonMessageHandler                type       src/v3/daemon/index.ts:6:8                                         
+ActiveRun                           type       src/v3/daemon/index.ts:7:8                                         
+EvolveDaemon                        type       src/v3/daemon/index.ts:8:8                                         
+EvolveDaemonOptions                 type       src/v3/daemon/index.ts:9:8                                         
+ActiveRun                           interface  src/v3/daemon/uds.ts:52:18                                         
+DaemonMessageHandler                type       src/v3/daemon/uds.ts:276:13                                        
+RetrievalChunk                      interface  src/v3/embeddings/hybrid-retrieve.ts:12:18                         
+EmbeddingProbeResult                type       src/v3/embeddings/index.ts:6:8                                     
+EmbedResult                         type       src/v3/embeddings/index.ts:7:8                                     
+HybridRetrieveResult                type       src/v3/embeddings/index.ts:11:8                                    
+RetrievalChunk                      type       src/v3/embeddings/index.ts:12:8                                    
+VectorIndexSnapshot                 type       src/v3/embeddings/index.ts:17:8                                    
+VectorSearchResult                  type       src/v3/embeddings/index.ts:18:8                                    
+VectorIndexChunk                    interface  src/v3/embeddings/vector-index.ts:13:18                            
+VectorSearchHit                     interface  src/v3/embeddings/vector-index.ts:31:18                            
+HarnessCapabilityClass              type       src/v3/engineering/harness-matrix.ts:10:13                         
+EngineeringStageId                  type       src/v3/engineering/index.ts:2:3                                    
+StageStatus                         type       src/v3/engineering/index.ts:3:3                                    
+StageRecord                         type       src/v3/engineering/index.ts:4:3                                    
+EngineeringRun                      type       src/v3/engineering/index.ts:5:3                                    
+EngineeringLoopResult               type       src/v3/engineering/index.ts:6:3                                    
+EngineeringLoopInput                type       src/v3/engineering/index.ts:11:8                                   
+HarnessCapabilityClass              type       src/v3/engineering/index.ts:17:8                                   
+HarnessMatrixEntry                  type       src/v3/engineering/index.ts:18:8                                   
+StageStatus                         type       src/v3/engineering/types.ts:22:13                                  
+ProcState                           type       src/v3/evaluation/deterministic-sim.ts:64:13                       
+VirtualNetMessage                   interface  src/v3/evaluation/deterministic-sim.ts:74:18                       
+ScenarioResult                      interface  src/v3/evaluation/deterministic-sim.ts:341:18                      
+EvidenceKind                        type       src/v3/evaluation/evidence.ts:11:13                                
+IndependentReviewVerdict            type       src/v3/evaluation/independent-review-gate.ts:10:13                 
+RepoExploration                     type       src/v3/evaluation/index.ts:1:34                                    
+SolverResult                        type       src/v3/evaluation/index.ts:2:34                                    
+EvidenceRecord                      type       src/v3/evaluation/index.ts:6:8                                     
+EvidenceKind                        type       src/v3/evaluation/index.ts:7:8                                     
+VerifiedPassContext                 type       src/v3/evaluation/index.ts:11:8                                    
+VerifiedPassResult                  type       src/v3/evaluation/index.ts:12:8                                    
+SubmitReviewInput                   type       src/v3/evaluation/index.ts:18:8                                    
+IndependentReviewRecord             type       src/v3/evaluation/index.ts:19:8                                    
+IndependentReviewVerdict            type       src/v3/evaluation/index.ts:20:8                                    
+IndependentReviewPassTarget         type       src/v3/evaluation/index.ts:21:8                                    
+MutationOperator                    type       src/v3/evaluation/index.ts:31:8                                    
+SelectiveMutatorOptions             type       src/v3/evaluation/index.ts:33:8                                    
+MutationTestRunner                  type       src/v3/evaluation/index.ts:34:8                                    
+MutationBatteryOptions              type       src/v3/evaluation/index.ts:35:8                                    
+MutationBatteryStatus               type       src/v3/evaluation/index.ts:37:8                                    
+MutationGateEvaluation              type       src/v3/evaluation/index.ts:38:8                                    
+ProgressVerdict                     type       src/v3/evaluation/index.ts:40:32                                   
+ProgressSignal                      type       src/v3/evaluation/index.ts:40:54                                   
+BatteryReport                       type       src/v3/evaluation/index.ts:43:8                                    
+TaskRunResult                       type       src/v3/evaluation/index.ts:44:8                                    
+RunBatteryOptions                   type       src/v3/evaluation/index.ts:45:8                                    
+LiveReadinessReport                 type       src/v3/evaluation/index.ts:51:8                                    
+LiveRunResult                       type       src/v3/evaluation/index.ts:52:8                                    
+ParaphraseVariant                   type       src/v3/evaluation/index.ts:63:8                                    
+DecompositionNode                   type       src/v3/evaluation/index.ts:64:8                                    
+DecompositionFingerprint            type       src/v3/evaluation/index.ts:65:8                                    
+StubRouteDecision                   type       src/v3/evaluation/index.ts:66:8                                    
+MetamorphicPassVerdict              type       src/v3/evaluation/index.ts:67:8                                    
+MetamorphicVariantResult            type       src/v3/evaluation/index.ts:68:8                                    
+MetamorphicGateStatus               type       src/v3/evaluation/index.ts:69:8                                    
+DifferentialModelRun                type       src/v3/evaluation/index.ts:70:8                                    
+DifferentialModelReport             type       src/v3/evaluation/index.ts:71:8                                    
+MetamorphicHarnessReport            type       src/v3/evaluation/index.ts:72:8                                    
+DecomposerStub                      type       src/v3/evaluation/index.ts:73:8                                    
+ModelRouterStub                     type       src/v3/evaluation/index.ts:74:8                                    
+MetamorphicHarnessOptions           type       src/v3/evaluation/index.ts:75:8                                    
+StubRouterOptions                   type       src/v3/evaluation/index.ts:76:8                                    
+SimEvent                            type       src/v3/evaluation/index.ts:86:8                                    
+SimEventKind                        type       src/v3/evaluation/index.ts:87:8                                    
+ScenarioResult                      type       src/v3/evaluation/index.ts:88:8                                    
+SimStats                            type       src/v3/evaluation/index.ts:89:8                                    
+RunScenariosOptions                 type       src/v3/evaluation/index.ts:90:8                                    
+VirtualProc                         type       src/v3/evaluation/index.ts:91:8                                    
+VirtualNetMessage                   type       src/v3/evaluation/index.ts:92:8                                    
+FencingLease                        type       src/v3/evaluation/index.ts:93:8                                    
+LiveReadinessReport                 type       src/v3/evaluation/live/index.ts:4:8                                
+LiveReadinessState                  type       src/v3/evaluation/live/index.ts:5:8                                
+LiveReadinessOptions                type       src/v3/evaluation/live/index.ts:6:8                                
+LiveTaskBrief                       type       src/v3/evaluation/live/index.ts:8:73                               
+LiveHarnessId                       type       src/v3/evaluation/live/index.ts:12:8                               
+HarnessInvokeResult                 type       src/v3/evaluation/live/index.ts:13:8                               
+LiveRunOptions                      type       src/v3/evaluation/live/index.ts:18:8                               
+LiveRunResult                       type       src/v3/evaluation/live/index.ts:19:8                               
+LiveReadinessState                  type       src/v3/evaluation/live/readiness.ts:14:13                          
+DecompositionNode                   interface  src/v3/evaluation/metamorphic.ts:121:18                            
+DecompositionFingerprint            interface  src/v3/evaluation/metamorphic.ts:129:18                            
+StubRouteDecision                   interface  src/v3/evaluation/metamorphic.ts:135:18                            
+MetamorphicPassVerdict              interface  src/v3/evaluation/metamorphic.ts:142:18                            
+MetamorphicVariantResult            interface  src/v3/evaluation/metamorphic.ts:148:18                            
+DifferentialModelRun                interface  src/v3/evaluation/metamorphic.ts:163:18                            
+DifferentialModelReport             interface  src/v3/evaluation/metamorphic.ts:170:18                            
+TaskSpec                            interface  src/v3/evaluation/runner.ts:29:18                                  
+BatteryCatalog                      interface  src/v3/evaluation/runner.ts:41:18                                  
+TaskRunResult                       interface  src/v3/evaluation/runner.ts:49:18                                  
+MutationTestRunner                  type       src/v3/evaluation/selective-mutation.ts:268:13                     
+MutationBatteryStatus               type       src/v3/evaluation/selective-mutation.ts:275:13                     
+ReworkSignal                        type       src/v3/evolution/index.ts:12:8                                     
+PassEvent                           type       src/v3/evolution/index.ts:13:8                                     
+CandidateProposalStatus             type       src/v3/evolution/index.ts:15:8                                     
+ValidateDecision                    type       src/v3/evolution/index.ts:17:8                                     
+ValidateCandidateResult             type       src/v3/evolution/index.ts:18:8                                     
+BatteryResult                       type       src/v3/evolution/index.ts:19:8                                     
+RunBattery                          type       src/v3/evolution/index.ts:20:8                                     
+ReplayMetrics                       type       src/v3/evolution/index.ts:21:8                                     
+ShadowReplayDecision                type       src/v3/evolution/index.ts:24:8                                     
+ShadowReplayCandidateResult         type       src/v3/evolution/index.ts:25:8                                     
+ShadowRollbackResult                type       src/v3/evolution/index.ts:26:8                                     
+PromoteToProductionResult           type       src/v3/evolution/index.ts:27:8                                     
+ShadowReplayReport                  type       src/v3/evolution/index.ts:28:8                                     
+EvolutionPipelineOptions            type       src/v3/evolution/index.ts:29:8                                     
+ReworkSignal                        interface  src/v3/evolution/pipeline.ts:17:18                                 
+PassEvent                           interface  src/v3/evolution/pipeline.ts:29:18                                 
+CandidateProposalStatus             type       src/v3/evolution/pipeline.ts:40:13                                 
+ValidateDecision                    type       src/v3/evolution/pipeline.ts:60:13                                 
+ReplayMetrics                       interface  src/v3/evolution/pipeline.ts:86:18                                 
+ShadowReplayDecision                type       src/v3/evolution/pipeline.ts:115:13                                
+ShadowReplayCandidateResult         interface  src/v3/evolution/pipeline.ts:117:18                                
+SemanticColor                       type       src/v3/evolve-shell/colors.ts:6:13                                 
+InboxSyncStatus                     type       src/v3/evolve-shell/daemon-probe.ts:17:13                          
+ProbeStatus                         type       src/v3/evolve-shell/first-run-setup.ts:11:13                       
+SandboxFooterStatus                 type       src/v3/evolve-shell/footer.ts:13:13                                
+HonestMetric                        interface  src/v3/evolve-shell/footer.ts:16:18                                
+FooterTaskRef                       interface  src/v3/evolve-shell/footer.ts:22:18                                
+FooterTelemetry                     type       src/v3/evolve-shell/hud.ts:74:15                                   
+BannerMeta                          type       src/v3/evolve-shell/hud.ts:74:32                                   
+StatusPanelModel                    type       src/v3/evolve-shell/index.ts:6:8                                   
+KeybindingAction                    type       src/v3/evolve-shell/index.ts:17:8                                  
+KeybindingHooks                     type       src/v3/evolve-shell/index.ts:18:8                                  
+KeybindingController                type       src/v3/evolve-shell/index.ts:19:8                                  
+EvolveShellOptions                  type       src/v3/evolve-shell/index.ts:21:31                                 
+EvolveShellResult                   type       src/v3/evolve-shell/index.ts:21:56                                 
+CapabilityGatePromptInput           type       src/v3/evolve-shell/index.ts:36:8                                  
+CapabilityGateChoice                type       src/v3/evolve-shell/index.ts:37:8                                  
+ProviderFallbackLineInput           type       src/v3/evolve-shell/index.ts:38:8                                  
+ShellUxEvent                        type       src/v3/evolve-shell/index.ts:39:8                                  
+ShellEventBus                       type       src/v3/evolve-shell/index.ts:40:8                                  
+InboxSyncStatus                     type       src/v3/evolve-shell/index.ts:49:8                                  
+FirstRunSetupInput                  type       src/v3/evolve-shell/index.ts:61:8                                  
+ReadinessReport                     type       src/v3/evolve-shell/index.ts:62:8                                  
+ProbeResult                         type       src/v3/evolve-shell/index.ts:63:8                                  
+ConcurrencyLimits                   type       src/v3/evolve-shell/index.ts:64:8                                  
+SemanticColor                       type       src/v3/evolve-shell/index.ts:75:8                                  
+ColorOptions                        type       src/v3/evolve-shell/index.ts:76:8                                  
+BannerRenderOptions                 type       src/v3/evolve-shell/index.ts:86:8                                  
+MetricProvenance                    type       src/v3/evolve-shell/index.ts:95:8                                  
+SandboxFooterStatus                 type       src/v3/evolve-shell/index.ts:96:8                                  
+HonestMetric                        type       src/v3/evolve-shell/index.ts:97:8                                  
+FooterTaskRef                       type       src/v3/evolve-shell/index.ts:98:8                                  
+FooterRenderOptions                 type       src/v3/evolve-shell/index.ts:100:8                                 
+BuildFooterExtras                   type       src/v3/evolve-shell/index.ts:101:8                                 
+AgentTokenHonesty                   type       src/v3/evolve-shell/index.ts:108:8                                 
+AgentsTreeOptions                   type       src/v3/evolve-shell/index.ts:109:8                                 
+HudZonesInput                       type       src/v3/evolve-shell/index.ts:110:8                                 
+BuildBannerExtras                   type       src/v3/evolve-shell/index.ts:117:8                                 
+KeybindingAction                    type       src/v3/evolve-shell/keybindings.ts:18:13                           
+AgentTokenHonesty                   type       src/v3/evolve-shell/layout.ts:9:13                                 
+ExecutionHandle                     type       src/v3/execution-runner/index.ts:2:3                               
+ExecutionRunnerRequest              type       src/v3/execution-runner/index.ts:3:3                               
+ExecutionRunnerPort                 type       src/v3/execution-runner/index.ts:5:3                               
+StatelessWorkerSnapshot             type       src/v3/execution-runner/index.ts:28:8                              
+StatelessWorkerSnapshotInput        type       src/v3/execution-runner/index.ts:29:8                              
+ScenarioResult                      interface  src/v3/failure-injection/battery.ts:16:18                          
+EngScenarioResult                   interface  src/v3/failure-injection/engineering-battery.ts:19:18              
+FailureBatteryReport                type       src/v3/failure-injection/index.ts:1:34                             
+ScenarioResult                      type       src/v3/failure-injection/index.ts:1:61                             
+EngFailureBatteryReport             type       src/v3/failure-injection/index.ts:4:8                              
+EngScenarioResult                   type       src/v3/failure-injection/index.ts:5:8                              
+VerificationMethod                  interface  src/v3/goal-contract/types.ts:33:18                                
+GoalDocument                        type       src/v3/goal-document/index.ts:2:3                                  
+GoalDocumentAcceptance              type       src/v3/goal-document/index.ts:3:3                                  
+GoalDocumentStructuralChecks        type       src/v3/goal-document/index.ts:4:3                                  
+GoalDocumentValidation              type       src/v3/goal-document/index.ts:5:3                                  
+GoalDocumentStructuralChecks        interface  src/v3/goal-document/types.ts:6:18                                 
+GoalDocumentAcceptance              interface  src/v3/goal-document/types.ts:16:18                                
+RunningTaskProcess                  interface  src/v3/grill-me/delta.ts:11:18                                     
+KillFn                              type       src/v3/grill-me/delta.ts:17:13                                     
+ApplyGrillMeOptions                 type       src/v3/grill-me/index.ts:7:8                                       
+ApplyGrillMeOutcome                 type       src/v3/grill-me/index.ts:8:8                                       
+GrillMeQuestion                     type       src/v3/grill-me/index.ts:18:8                                      
+GrillMeAnswer                       type       src/v3/grill-me/index.ts:19:8                                      
+TrivialBypassResult                 type       src/v3/grill-me/index.ts:24:8                                      
+TrivialKind                         type       src/v3/grill-me/index.ts:25:8                                      
+TrivialMatch                        type       src/v3/grill-me/index.ts:26:8                                      
+RequestScale                        type       src/v3/grill-me/index.ts:32:8                                      
+PlanningAuthorization               type       src/v3/grill-me/index.ts:33:8                                      
+AuthorizePlanningInput              type       src/v3/grill-me/index.ts:34:8                                      
+DeltaGrillMeInput                   type       src/v3/grill-me/index.ts:39:8                                      
+DeltaGrillMeResult                  type       src/v3/grill-me/index.ts:40:8                                      
+RunningTaskProcess                  type       src/v3/grill-me/index.ts:41:8                                      
+KillFn                              type       src/v3/grill-me/index.ts:42:8                                      
+AttachGrantInput                    type       src/v3/grill-me/index.ts:50:8                                      
+AttachGrantResult                   type       src/v3/grill-me/index.ts:51:8                                      
+TrivialKind                         type       src/v3/grill-me/trivial-bypass.ts:19:13                            
+GrillMeIntakeStatus                 type       src/v3/grill-me/types.ts:32:13                                     
+HarnessCapabilityRow                interface  src/v3/harness/runtime.ts:13:18                                    
+IdempotencyRecord                   type       src/v3/idempotency/index.ts:4:8                                    
+IdempotencyOutcome                  type       src/v3/idempotency/index.ts:5:8                                    
+BeginOrReplayOptions                type       src/v3/idempotency/index.ts:6:8                                    
+IdempotencyKeyParts                 type       src/v3/idempotency/index.ts:12:8                                   
+WithIdempotencyOpts                 type       src/v3/idempotency/index.ts:19:8                                   
+WithIdempotencyResult               type       src/v3/idempotency/index.ts:20:8                                   
+SagaStep                            type       src/v3/idempotency/index.ts:28:8                                   
+SagaCompensationReport              type       src/v3/idempotency/index.ts:29:8                                   
+UnknownSagaApplyReport              type       src/v3/idempotency/index.ts:30:8                                   
+BootReconcileWithSagaReport         type       src/v3/idempotency/index.ts:31:8                                   
+IntentFlowGrillOutcome              interface  src/v3/intake/intent-flow.ts:62:18                                 
+LimitCause                          type       src/v3/limits/classifier.ts:5:13                                   
+LimitCause                          type       src/v3/limits/index.ts:1:36                                        
+LimitClassification                 type       src/v3/limits/index.ts:1:53                                        
+LimitHandoffResult                  type       src/v3/limits/index.ts:2:36                                        
+BitemporalFactStatus                type       src/v3/memory/bitemporal-graph.ts:25:13                            
+ConsolidationAction                 type       src/v3/memory/consolidation.ts:23:13                               
+ConsolidationProposalStatus         type       src/v3/memory/consolidation.ts:26:13                               
+ContractRequirement                 interface  src/v3/memory/context-engineering.ts:8:18                          
+ContextMemorySlice                  interface  src/v3/memory/context-engineering.ts:25:18                         
+FederationRedactionKind             type       src/v3/memory/federated-sanitize.ts:24:13                          
+FederationRemoval                   interface  src/v3/memory/federated-sanitize.ts:45:18                          
+GlobalFederatedMemory               interface  src/v3/memory/federated-sanitize.ts:87:18                          
+TwoHopHit                           interface  src/v3/memory/hybrid-graph.ts:103:18                               
+ColdStorageOptions                  type       src/v3/memory/index.ts:23:3                                        
+ColdPutResult                       type       src/v3/memory/index.ts:24:3                                        
+ColdMigrateSqliteRecord             type       src/v3/memory/index.ts:25:3                                        
+ColdMigrateResult                   type       src/v3/memory/index.ts:26:3                                        
+PromotionGateOptions                type       src/v3/memory/index.ts:33:15                                       
+HybridSearchHit                     type       src/v3/memory/index.ts:47:3                                        
+VectorSearchPort                    type       src/v3/memory/index.ts:48:3                                        
+RrfChannelHit                       type       src/v3/memory/index.ts:49:3                                        
+SqliteVecDb                         type       src/v3/memory/index.ts:50:3                                        
+ContractRequirement                 type       src/v3/memory/index.ts:54:3                                        
+ContextEngineeringInput             type       src/v3/memory/index.ts:55:3                                        
+EngineeredContext                   type       src/v3/memory/index.ts:56:3                                        
+ContextMemorySlice                  type       src/v3/memory/index.ts:57:3                                        
+ContradictionSignal                 type       src/v3/memory/index.ts:63:15                                       
+ContradictionDisposition            type       src/v3/memory/index.ts:63:36                                       
+ConsolidationAction                 type       src/v3/memory/index.ts:76:3                                        
+ConsolidationProposalStatus         type       src/v3/memory/index.ts:78:3                                        
+ConsolidationEngineOptions          type       src/v3/memory/index.ts:80:3                                        
+ConsolidationRunnerOptions          type       src/v3/memory/index.ts:81:3                                        
+OllamaLessonAdapterOptions          type       src/v3/memory/index.ts:84:15                                       
+HybridGraphNodeKind                 type       src/v3/memory/index.ts:103:3                                       
+HybridGraphEdgeType                 type       src/v3/memory/index.ts:104:3                                       
+HybridGraphNode                     type       src/v3/memory/index.ts:105:3                                       
+HybridGraphEdge                     type       src/v3/memory/index.ts:106:3                                       
+TwoHopHit                           type       src/v3/memory/index.ts:107:3                                       
+TwoHopExpansion                     type       src/v3/memory/index.ts:108:3                                       
+IngestCodeDepsResult                type       src/v3/memory/index.ts:109:3                                       
+LinkDecisionResult                  type       src/v3/memory/index.ts:110:3                                       
+MemoryStatus                        type       src/v3/memory/index.ts:113:3                                       
+MemoryType                          type       src/v3/memory/index.ts:114:3                                       
+EdgeNodeKind                        type       src/v3/memory/index.ts:115:3                                       
+MemoryRecord                        type       src/v3/memory/index.ts:116:3                                       
+ProposeMemoryInput                  type       src/v3/memory/index.ts:117:3                                       
+MemorySearchFilters                 type       src/v3/memory/index.ts:118:3                                       
+MemorySearchHit                     type       src/v3/memory/index.ts:119:3                                       
+MemoryEdge                          type       src/v3/memory/index.ts:120:3                                       
+LinkEdgeInput                       type       src/v3/memory/index.ts:121:3                                       
+PromotionGateDecision               type       src/v3/memory/index.ts:122:3                                       
+MemoryEvalHonesty                   type       src/v3/memory/index.ts:137:3                                       
+HonestMetric                        type       src/v3/memory/index.ts:138:3                                       
+MemoryEvalGates                     type       src/v3/memory/index.ts:142:3                                       
+MemoryEvalQueryResult               type       src/v3/memory/index.ts:143:3                                       
+MemoryEvalSuiteReport               type       src/v3/memory/index.ts:144:3                                       
+RunMemoryEvalSuiteInput             type       src/v3/memory/index.ts:145:3                                       
+FixtureMemoryDoc                    type       src/v3/memory/index.ts:146:3                                       
+NonCurrentMemoryStatus              type       src/v3/memory/index.ts:147:3                                       
+PyramidLevel                        type       src/v3/memory/index.ts:163:3                                       
+PyramidNode                         type       src/v3/memory/index.ts:165:3                                       
+PyramidIndex                        type       src/v3/memory/index.ts:166:3                                       
+PyramidBuildStats                   type       src/v3/memory/index.ts:167:3                                       
+PyramidIndexSnapshot                type       src/v3/memory/index.ts:168:3                                       
+BuildPyramidOptions                 type       src/v3/memory/index.ts:169:3                                       
+CoarseToFineOptions                 type       src/v3/memory/index.ts:170:3                                       
+CoarseToFinePathStep                type       src/v3/memory/index.ts:171:3                                       
+CoarseToFineHit                     type       src/v3/memory/index.ts:172:3                                       
+CoarseToFineResult                  type       src/v3/memory/index.ts:173:3                                       
+RamPageState                        type       src/v3/memory/index.ts:183:3                                       
+MemorySearchRef                     type       src/v3/memory/index.ts:184:3                                       
+RamPage                             type       src/v3/memory/index.ts:185:3                                       
+VirtualMemoryOptions                type       src/v3/memory/index.ts:186:3                                       
+RamBudgetSnapshot                   type       src/v3/memory/index.ts:187:3                                       
+PageOutResult                       type       src/v3/memory/index.ts:188:3                                       
+ExpandResult                        type       src/v3/memory/index.ts:189:3                                       
+SynthesisStatus                     type       src/v3/memory/index.ts:203:3                                       
+GraphEvidence                       type       src/v3/memory/index.ts:204:3                                       
+GraphExpansion                      type       src/v3/memory/index.ts:205:3                                       
+DossierCitation                     type       src/v3/memory/index.ts:206:3                                       
+OllamaSynthesisOptions              type       src/v3/memory/index.ts:208:3                                       
+SynthesizeLocalInput                type       src/v3/memory/index.ts:209:3                                       
+MultiHopSynthesisInput              type       src/v3/memory/index.ts:210:3                                       
+OllamaProbeResult                   type       src/v3/memory/index.ts:211:3                                       
+BitemporalFactStatus                type       src/v3/memory/index.ts:224:3                                       
+BitemporalFact                      type       src/v3/memory/index.ts:225:3                                       
+AssertFactInput                     type       src/v3/memory/index.ts:226:3                                       
+SupersedeInput                      type       src/v3/memory/index.ts:227:3                                       
+PointInTimeQuery                    type       src/v3/memory/index.ts:228:3                                       
+BitemporalGraphOptions              type       src/v3/memory/index.ts:229:3                                       
+UtilitySignals                      type       src/v3/memory/index.ts:241:3                                       
+UtilityWeights                      type       src/v3/memory/index.ts:242:3                                       
+UtilityMemoryRef                    type       src/v3/memory/index.ts:243:3                                       
+UtilityScoreBreakdown               type       src/v3/memory/index.ts:244:3                                       
+DecayCandidate                      type       src/v3/memory/index.ts:246:3                                       
+DecayPassOptions                    type       src/v3/memory/index.ts:247:3                                       
+DecayPassResult                     type       src/v3/memory/index.ts:248:3                                       
+FederationRedactionKind             type       src/v3/memory/index.ts:264:3                                       
+FederationRemoval                   type       src/v3/memory/index.ts:265:3                                       
+FederationResidual                  type       src/v3/memory/index.ts:266:3                                       
+SanitizeForFederationResult         type       src/v3/memory/index.ts:267:3                                       
+FederatedMemoryInput                type       src/v3/memory/index.ts:268:3                                       
+GlobalFederatedMemory               type       src/v3/memory/index.ts:269:3                                       
+PromoteToGlobalResult               type       src/v3/memory/index.ts:270:3                                       
+MemoryEvalHonesty                   type       src/v3/memory/memory-eval.ts:15:13                                 
+HonestMetric                        interface  src/v3/memory/memory-eval.ts:17:18                                 
+NonCurrentMemoryStatus              type       src/v3/memory/memory-eval.ts:24:13                                 
+MemoryEvalQueryResult               interface  src/v3/memory/memory-eval.ts:64:18                                 
+SynthesisStatus                     type       src/v3/memory/multi-hop-synthesis.ts:30:13                         
+DossierCitation                     interface  src/v3/memory/multi-hop-synthesis.ts:61:18                         
+OllamaGenerateAttempt               interface  src/v3/memory/multi-hop-synthesis.ts:425:18                        
+CoarseToFinePathStep                interface  src/v3/memory/pyramid-index.ts:123:18                              
+CoarseToFineHit                     interface  src/v3/memory/pyramid-index.ts:129:18                              
+DecayCandidate                      interface  src/v3/memory/utility-decay.ts:101:18                              
+RamPageState                        type       src/v3/memory/virtual-memory.ts:42:13                              
+ModelBackend                        type       src/v3/model-catalog/types.ts:6:13                                 
+GrammarDialect                      type       src/v3/model-providers/constrained-decoding.ts:12:13               
+LocalConstrainedOptions             interface  src/v3/model-providers/constrained-decoding.ts:22:18               
+ConstrainedEnforcement              type       src/v3/model-providers/constrained-decoding.ts:43:13               
+DecisionBenchmarkLocale             type       src/v3/model-providers/decision-engine-benchmark.ts:16:13          
+DecisionBenchmarkGolden             type       src/v3/model-providers/decision-engine-benchmark.ts:18:13          
+DecisionCaseRun                     interface  src/v3/model-providers/decision-engine-benchmark.ts:32:18          
+DecisionEngineBenchmarkMetrics      interface  src/v3/model-providers/decision-engine-benchmark.ts:42:18          
+PluggableSwapVerdict                type       src/v3/model-providers/decision-engine-benchmark.ts:61:13          
+DecisionAbstainReason               type       src/v3/model-providers/decision-engine.ts:15:13                    
+DecisionConsumerKind                type       src/v3/model-providers/decision-engine.ts:307:13                   
+ConsumerDecisionRequest             interface  src/v3/model-providers/decision-engine.ts:309:18                   
+FreeLLMAPICatalogEntry              interface  src/v3/model-providers/freellmapi.ts:17:18                         
+CostProvenance                      type       src/v3/model-providers/index.ts:2:3                                
+ModelInvokeRequest                  type       src/v3/model-providers/index.ts:4:3                                
+DecisionAbstainReason               type       src/v3/model-providers/index.ts:9:3                                
+DecisionCandidate                   type       src/v3/model-providers/index.ts:10:3                               
+StrictRuntimeAbstainPolicy          type       src/v3/model-providers/index.ts:14:3                               
+ScoredCandidateId                   type       src/v3/model-providers/index.ts:15:3                               
+StrictRuntimeDecisionEngineOptions  type       src/v3/model-providers/index.ts:17:3                               
+DecisionConsumerKind                type       src/v3/model-providers/index.ts:18:3                               
+ConsumerDecisionRequest             type       src/v3/model-providers/index.ts:19:3                               
+LayaOfflineMode                     type       src/v3/model-providers/index.ts:33:8                               
+LayaDecisionEngineOptions           type       src/v3/model-providers/index.ts:34:8                               
+PluggableDecisionEngineHostOptions  type       src/v3/model-providers/index.ts:38:8                               
+DecisionBenchmarkLocale             type       src/v3/model-providers/index.ts:44:8                               
+DecisionBenchmarkGolden             type       src/v3/model-providers/index.ts:45:8                               
+DecisionCaseRun                     type       src/v3/model-providers/index.ts:46:8                               
+DecisionEngineBenchmarkMetrics      type       src/v3/model-providers/index.ts:47:8                               
+DecisionEngineBenchmarkReport       type       src/v3/model-providers/index.ts:48:8                               
+PluggableSwapVerdict                type       src/v3/model-providers/index.ts:49:8                               
+RunDecisionEngineBenchmarkOptions   type       src/v3/model-providers/index.ts:50:8                               
+FreeLLMAPIState                     type       src/v3/model-providers/index.ts:56:8                               
+FreeLLMAPICatalog                   type       src/v3/model-providers/index.ts:57:8                               
+FreeLLMAPICatalogEntry              type       src/v3/model-providers/index.ts:58:8                               
+FreeLLMAPIInvokeMeta                type       src/v3/model-providers/index.ts:59:8                               
+FallbackChainResult                 type       src/v3/model-providers/index.ts:60:8                               
+ProviderFaultKind                   type       src/v3/model-providers/index.ts:67:8                               
+ProviderFaultReport                 type       src/v3/model-providers/index.ts:68:8                               
+HandleProviderFaultResult           type       src/v3/model-providers/index.ts:69:8                               
+ProtocolId                          type       src/v3/model-providers/index.ts:78:8                               
+ProtocolAdapter                     type       src/v3/model-providers/index.ts:79:8                               
+ProtocolChatRequest                 type       src/v3/model-providers/index.ts:80:8                               
+ProtocolChatResponse                type       src/v3/model-providers/index.ts:81:8                               
+ModelLayerId                        type       src/v3/model-providers/index.ts:89:8                               
+ModelLayerKind                      type       src/v3/model-providers/index.ts:90:8                               
+ModelLayerDescriptor                type       src/v3/model-providers/index.ts:91:8                               
+ModelTaskKind                       type       src/v3/model-providers/index.ts:92:8                               
+ModelTask                           type       src/v3/model-providers/index.ts:93:8                               
+ModelLayerSelection                 type       src/v3/model-providers/index.ts:94:8                               
+SpeculativeStage                    type       src/v3/model-providers/index.ts:98:8                               
+SpeculativeDraftResult              type       src/v3/model-providers/index.ts:99:8                               
+SpeculativeTestResult               type       src/v3/model-providers/index.ts:100:8                              
+SpeculativeEscalateResult           type       src/v3/model-providers/index.ts:101:8                              
+SpeculativePipelineHooks            type       src/v3/model-providers/index.ts:102:8                              
+SpeculativePipelineReport           type       src/v3/model-providers/index.ts:103:8                              
+GrammarDialect                      type       src/v3/model-providers/index.ts:108:8                              
+ConstrainedGrammar                  type       src/v3/model-providers/index.ts:109:8                              
+LocalConstrainedOptions             type       src/v3/model-providers/index.ts:110:8                              
+ConstrainedInvokeRequest            type       src/v3/model-providers/index.ts:111:8                              
+BuiltLocalGenerateBody              type       src/v3/model-providers/index.ts:112:8                              
+ConstrainedEnforcement              type       src/v3/model-providers/index.ts:113:8                              
+ModelLayerKind                      type       src/v3/model-providers/model-layers.ts:11:13                       
+ModelTaskKind                       type       src/v3/model-providers/model-layers.ts:54:13                       
+ProtocolMessage                     type       src/v3/model-providers/protocols/index.ts:3:3                      
+ProtocolChatRequest                 type       src/v3/model-providers/protocols/index.ts:4:3                      
+ProtocolChatResponse                type       src/v3/model-providers/protocols/index.ts:5:3                      
+ProtocolMessage                     interface  src/v3/model-providers/protocols/types.ts:7:18                     
+ProviderFaultKind                   type       src/v3/model-providers/provider-fault.ts:17:13                     
+SpeculativeStage                    type       src/v3/model-providers/speculative-pipeline.ts:10:13               
+SpeculativeDraftResult              interface  src/v3/model-providers/speculative-pipeline.ts:12:18               
+SpeculativeTestResult               interface  src/v3/model-providers/speculative-pipeline.ts:19:18               
+SpeculativeEscalateResult           interface  src/v3/model-providers/speculative-pipeline.ts:27:18               
+InboxKind                           type       src/v3/mso/inbox-runtime.ts:9:13                                   
+SeededRng                           type       src/v3/mso/index.ts:22:3                                           
+MsoEdge                             type       src/v3/mso/index.ts:23:3                                           
+TransitionSample                    type       src/v3/mso/index.ts:24:3                                           
+FencingScenario                     type       src/v3/mso/index.ts:25:3                                           
+MsoTaskState                        type       src/v3/mso/index.ts:34:15                                          
+FailureBucket                       type       src/v3/mso/index.ts:48:15                                          
+ClassifiableFailure                 type       src/v3/mso/index.ts:48:30                                          
+CircuitBreakerState                 type       src/v3/mso/index.ts:48:51                                          
+TopoTask                            type       src/v3/mso/index.ts:51:15                                          
+DagMutationProposal                 type       src/v3/mso/index.ts:63:3                                           
+DagMutationOp                       type       src/v3/mso/index.ts:64:3                                           
+DagMutationValidationResult         type       src/v3/mso/index.ts:65:3                                           
+DagMutationBudgetPolicy             type       src/v3/mso/index.ts:66:3                                           
+DagMutationPermissionPolicy         type       src/v3/mso/index.ts:67:3                                           
+MutableDagNode                      type       src/v3/mso/index.ts:68:3                                           
+MutationRejectCode                  type       src/v3/mso/index.ts:69:3                                           
+SubMsoBudget                        type       src/v3/mso/index.ts:89:3                                           
+SpawnSubMsoOptions                  type       src/v3/mso/index.ts:90:3                                           
+SubMsoRejectCode                    type       src/v3/mso/index.ts:92:3                                           
+SubMsoEnforceResult                 type       src/v3/mso/index.ts:93:3                                           
+ReconcileTaskInput                  type       src/v3/mso/index.ts:104:3                                          
+ReconcileDecision                   type       src/v3/mso/index.ts:105:3                                          
+SagaStep                            type       src/v3/mso/index.ts:117:3                                          
+SagaCompensationReport              type       src/v3/mso/index.ts:118:3                                          
+UnknownSagaApplyReport              type       src/v3/mso/index.ts:119:3                                          
+BootReconcileWithSagaReport         type       src/v3/mso/index.ts:120:3                                          
+ExecutionMode                       type       src/v3/mso/index.ts:125:3                                          
+ExecutableTask                      type       src/v3/mso/index.ts:126:3                                          
+TaskRunContext                      type       src/v3/mso/index.ts:127:3                                          
+TaskRunResult                       type       src/v3/mso/index.ts:128:3                                          
+TaskExecutionRecord                 type       src/v3/mso/index.ts:129:3                                          
+TaskGraphExecutionReport            type       src/v3/mso/index.ts:130:3                                          
+InboxKind                           type       src/v3/mso/index.ts:134:15                                         
+InboxReceiveInput                   type       src/v3/mso/index.ts:134:26                                         
+MsoSymbolMapState                   type       src/v3/mso/index.ts:147:3                                          
+MsoSymbolContext                    type       src/v3/mso/index.ts:148:3                                          
+BuildMsoSymbolContextInput          type       src/v3/mso/index.ts:149:3                                          
+FullFileGuardMode                   type       src/v3/mso/index.ts:150:3                                          
+FullFileGuardResult                 type       src/v3/mso/index.ts:151:3                                          
+SubMsoEnforceOk                     interface  src/v3/mso/sub-mso.ts:76:18                                        
+SubMsoEnforceReject                 interface  src/v3/mso/sub-mso.ts:80:18                                        
+TaskExecutionRecord                 interface  src/v3/mso/worktree-executor.ts:46:18                              
+DiagnoseSeverity                    type       src/v3/ops/dist-ops.ts:37:13                                       
+DiagnoseCheck                       interface  src/v3/ops/dist-ops.ts:39:18                                       
+ProjectStateSlice                   interface  src/v3/ops/dist-ops.ts:81:18                                       
+GlobalConfigSlice                   interface  src/v3/ops/dist-ops.ts:90:18                                       
+BackupFileEntry                     interface  src/v3/ops/dist-ops.ts:150:18                                      
+BackupManifest                      interface  src/v3/ops/dist-ops.ts:158:18                                      
+StateMigrator                       type       src/v3/ops/dist-ops.ts:580:13                                      
+GateRequirement                     type       src/v3/ops/types.ts:49:13                                          
+WorkflowTransition                  interface  src/v3/ops/types.ts:133:18                                         
+AstMergeEngine                      type       src/v3/parallel/ast-aware-merge.ts:14:13                           
+AstMergeStatus                      type       src/v3/parallel/ast-aware-merge.ts:16:13                           
+LocalTelemetry                      interface  src/v3/parallel/backpressure.ts:49:18                              
+BackpressureAction                  type       src/v3/parallel/backpressure.ts:64:13                              
+BestOfNStatus                       type       src/v3/parallel/best-of-n.ts:28:13                                 
+BlockedTaskCriticality              type       src/v3/parallel/best-of-n.ts:34:13                                 
+BestOfNExecutorContext              interface  src/v3/parallel/best-of-n.ts:75:18                                 
+BestOfNValidateResult               type       src/v3/parallel/best-of-n.ts:93:13                                 
+BestOfNValidator                    type       src/v3/parallel/best-of-n.ts:97:13                                 
+BestOfNExecutorTrace                interface  src/v3/parallel/best-of-n.ts:121:18                                
+CriticalPathPhase                   type       src/v3/parallel/critical-path.ts:16:13                             
+CriticalPathNode                    interface  src/v3/parallel/critical-path.ts:25:18                             
+PrefetchArtifact                    interface  src/v3/parallel/critical-path.ts:77:18                             
+SimulatedNodeTrace                  interface  src/v3/parallel/critical-path.ts:114:18                            
+ParallelPolicy                      type       src/v3/parallel/index.ts:4:8                                       
+ParallelScheduleResult              type       src/v3/parallel/index.ts:5:8                                       
+BackpressureBounds                  type       src/v3/parallel/index.ts:20:8                                      
+BackpressureSignal                  type       src/v3/parallel/index.ts:21:8                                      
+BackpressureDecision                type       src/v3/parallel/index.ts:22:8                                      
+BackpressureAction                  type       src/v3/parallel/index.ts:23:8                                      
+BackpressureControllerState         type       src/v3/parallel/index.ts:24:8                                      
+BackpressureControllerOptions       type       src/v3/parallel/index.ts:25:8                                      
+LocalTelemetry                      type       src/v3/parallel/index.ts:26:8                                      
+MergirafDetection                   type       src/v3/parallel/index.ts:42:8                                      
+MergirafMergeInput                  type       src/v3/parallel/index.ts:43:8                                      
+MergirafMergeResult                 type       src/v3/parallel/index.ts:44:8                                      
+AstMergeEngine                      type       src/v3/parallel/index.ts:51:8                                      
+AstMergeStatus                      type       src/v3/parallel/index.ts:52:8                                      
+AstMergeInput                       type       src/v3/parallel/index.ts:53:8                                      
+AstMergeResult                      type       src/v3/parallel/index.ts:54:8                                      
+MergeQueueItemStatus                type       src/v3/parallel/index.ts:60:8                                      
+MergeFileTriple                     type       src/v3/parallel/index.ts:61:8                                      
+MergeQueueEnqueueInput              type       src/v3/parallel/index.ts:62:8                                      
+MergeQueueItem                      type       src/v3/parallel/index.ts:63:8                                      
+MergeMetrics                        type       src/v3/parallel/index.ts:64:8                                      
+IntegratedTestResult                type       src/v3/parallel/index.ts:65:8                                      
+IntegratedTestRunner                type       src/v3/parallel/index.ts:66:8                                      
+ProcessNextOptions                  type       src/v3/parallel/index.ts:67:8                                      
+ProcessNextResult                   type       src/v3/parallel/index.ts:68:8                                      
+CriticalPathPhase                   type       src/v3/parallel/index.ts:81:8                                      
+PrefetchArtifactKind                type       src/v3/parallel/index.ts:82:8                                      
+CriticalPathNode                    type       src/v3/parallel/index.ts:83:8                                      
+CriticalPathResult                  type       src/v3/parallel/index.ts:85:8                                      
+PrefetchHookInput                   type       src/v3/parallel/index.ts:86:8                                      
+PrefetchArtifact                    type       src/v3/parallel/index.ts:87:8                                      
+PrefetchResult                      type       src/v3/parallel/index.ts:88:8                                      
+SchedulePolicy                      type       src/v3/parallel/index.ts:89:8                                      
+SimulateWallClockOptions            type       src/v3/parallel/index.ts:90:8                                      
+SimulatedNodeTrace                  type       src/v3/parallel/index.ts:91:8                                      
+SimulateWallClockResult             type       src/v3/parallel/index.ts:92:8                                      
+BlockedTaskCriticality              type       src/v3/parallel/index.ts:105:8                                     
+BestOfNExecutorContext              type       src/v3/parallel/index.ts:108:8                                     
+BestOfNValidator                    type       src/v3/parallel/index.ts:110:8                                     
+BestOfNValidateResult               type       src/v3/parallel/index.ts:111:8                                     
+BestOfNExecutorTrace                type       src/v3/parallel/index.ts:112:8                                     
+BestOfNReport                       type       src/v3/parallel/index.ts:113:8                                     
+BestOfNRejectCode                   type       src/v3/parallel/index.ts:114:8                                     
+BestOfNStatus                       type       src/v3/parallel/index.ts:115:8                                     
+BestOfNAdmission                    type       src/v3/parallel/index.ts:116:8                                     
+MergeQueueItemStatus                type       src/v3/parallel/merge-queue.ts:14:13                               
+MergeFileTriple                     interface  src/v3/parallel/merge-queue.ts:22:18                               
+IntegratedTestRunner                type       src/v3/parallel/merge-queue.ts:60:13                               
+DoctorStatus                        type       src/v3/runtime/doctor.ts:17:13                                     
+LandlockPathRule                    interface  src/v3/sandbox/landlock.ts:14:18                                   
+MicroVmBackendId                    type       src/v3/sandbox/microvm-profile.ts:21:13                            
+MicroVmGateStatus                   type       src/v3/sandbox/microvm-profile.ts:24:13                            
+MicroVmHonesty                      type       src/v3/sandbox/microvm-profile.ts:26:13                            
+HonestValue                         interface  src/v3/sandbox/microvm-profile.ts:28:18                            
+SeccompApplyMode                    type       src/v3/sandbox/microvm-profile.ts:59:13                            
+EscapeDenyCaseResult                interface  src/v3/sandbox/microvm-profile.ts:79:18                            
+SandboxBackendId                    type       src/v3/sandbox/types.ts:7:13                                       
+CapabilityGateVerdict               type       src/v3/security/capability-gate.ts:23:13                           
+AdapterSandboxCapabilities          interface  src/v3/security/credential-proxy.ts:250:18                         
+DelegationAuditEventType            type       src/v3/security/delegation.ts:46:13                                
+DlpEgressVerdict                    type       src/v3/security/dlp-egress.ts:10:13                                
+DlpEgressFindingKind                type       src/v3/security/dlp-egress.ts:12:13                                
+DlpEgressLocation                   type       src/v3/security/dlp-egress.ts:14:13                                
+DlpEgressFinding                    interface  src/v3/security/dlp-egress.ts:16:18                                
+EbpfBackendStatus                   type       src/v3/security/ebpf-audit.ts:32:13                                
+EbpfGateStatus                      type       src/v3/security/ebpf-audit.ts:33:13                                
+EbpfHonesty                         type       src/v3/security/ebpf-audit.ts:34:13                                
+EbpfEventCategory                   type       src/v3/security/ebpf-audit.ts:36:13                                
+HonestValue                         interface  src/v3/security/ebpf-audit.ts:38:18                                
+CorrelationDiscrepancy              type       src/v3/security/ebpf-audit.ts:84:13                                
+BypassBatteryCaseResult             interface  src/v3/security/ebpf-audit.ts:122:18                               
+QuarantineStatus                    type       src/v3/security/quarantine.ts:11:13                                
+RedTeamCategory                     type       src/v3/security/redteam-continuous.ts:36:13                        
+RedTeamCaseOutcome                  type       src/v3/security/redteam-continuous.ts:43:13                        
+RedTeamCaseResult                   interface  src/v3/security/redteam-continuous.ts:56:18                        
+RedTeamScheduleTick                 interface  src/v3/security/redteam-continuous.ts:81:18                        
+NetworkMode                         type       src/v3/security/types.ts:34:13                                     
+NetworkPolicy                       interface  src/v3/security/types.ts:36:18                                     
+FilesystemPolicy                    interface  src/v3/security/types.ts:42:18                                     
+ProcessLimits                       interface  src/v3/security/types.ts:51:18                                     
+SecretsPolicy                       interface  src/v3/security/types.ts:59:18                                     
+GoalContractRow                     type       src/v3/state-db/index.ts:9:3                                       
+PersistedGoalContract               type       src/v3/state-db/index.ts:10:3                                      
+PersistedGoalDocument               type       src/v3/state-db/index.ts:11:3                                      
+TrivialOpRow                        type       src/v3/state-db/index.ts:12:3                                      
+TokenCostProvenance                 type       src/v3/state-db/index.ts:13:3                                      
+TokenBreakdown                      type       src/v3/state-db/index.ts:14:3                                      
+TokenLedgerInsert                   type       src/v3/state-db/index.ts:15:3                                      
+TokenLedgerEntry                    type       src/v3/state-db/index.ts:16:3                                      
+CircuitRunRow                       type       src/v3/state-db/index.ts:17:3                                      
+WorkspaceLeaseStatus                type       src/v3/state-db/index.ts:18:3                                      
+WorkspaceLease                      type       src/v3/state-db/index.ts:19:3                                      
+MsoSession                          type       src/v3/state-db/index.ts:20:3                                      
+MsoTransitionRow                    type       src/v3/state-db/index.ts:21:3                                      
+OutboxStatus                        type       src/v3/state-db/index.ts:22:3                                      
+OutboxRow                           type       src/v3/state-db/index.ts:23:3                                      
+TaskGraphNodeRow                    type       src/v3/state-db/index.ts:24:3                                      
+InboxMessageRow                     type       src/v3/state-db/index.ts:25:3                                      
+WorkLedgerDbEntry                   type       src/v3/state-db/index.ts:26:3                                      
+EventRow                            type       src/v3/state-db/index.ts:27:3                                      
+TaskSubstateRow                     type       src/v3/state-db/index.ts:28:3                                      
+EvidenceStatus                      type       src/v3/state-db/index.ts:29:3                                      
+EvidenceRecordRow                   type       src/v3/state-db/index.ts:30:3                                      
+GoalContractRow                     interface  src/v3/state-db/types.ts:8:18                                      
+TokenCostProvenance                 type       src/v3/state-db/types.ts:50:13                                     
+TokenBreakdown                      interface  src/v3/state-db/types.ts:53:18                                     
+WorkspaceLeaseStatus                type       src/v3/state-db/types.ts:126:13                                    
+DagMutationOpKind                   type       src/v3/task-graph/dynamic-dag.ts:16:13                             
+DagTaskDraft                        interface  src/v3/task-graph/dynamic-dag.ts:32:18                             
+MutationRejectCode                  type       src/v3/task-graph/dynamic-dag.ts:101:13                            
+DagMutationOpKind                   type       src/v3/task-graph/index.ts:18:8                                    
+DagTaskDraft                        type       src/v3/task-graph/index.ts:19:8                                    
+DagMutationProposal                 type       src/v3/task-graph/index.ts:22:8                                    
+DagMutationBudgetPolicy             type       src/v3/task-graph/index.ts:23:8                                    
+DagMutationPermissionPolicy         type       src/v3/task-graph/index.ts:24:8                                    
+MutationRejectCode                  type       src/v3/task-graph/index.ts:25:8                                    
+DagMutationValidationResult         type       src/v3/task-graph/index.ts:26:8                                    
+ProposeDagMutationInput             type       src/v3/task-graph/index.ts:27:8                                    
+ValidateMutationInput               type       src/v3/task-graph/index.ts:28:8                                    
+ApplyOpsResult                      type       src/v3/task-graph/index.ts:29:8                                    
+OversizedRangePolicy                type       src/v3/token-economy/context-slicing.ts:15:13                      
+FailFastStageResult                 interface  src/v3/token-economy/fail-fast.ts:13:18                            
+StdoutFilterOptions                 type       src/v3/token-economy/index.ts:28:8                                 
+StdoutFilterResult                  type       src/v3/token-economy/index.ts:29:8                                 
+StdoutFilterStats                   type       src/v3/token-economy/index.ts:30:8                                 
+OutlineEntry                        type       src/v3/token-economy/index.ts:42:8                                 
+OutlineFileResult                   type       src/v3/token-economy/index.ts:43:8                                 
+OutlineKind                         type       src/v3/token-economy/index.ts:44:8                                 
+ReadLinesResult                     type       src/v3/token-economy/index.ts:45:8                                 
+ContextSlicingOptions               type       src/v3/token-economy/index.ts:46:8                                 
+ContextSlicingErrorCode             type       src/v3/token-economy/index.ts:47:8                                 
+OversizedRangePolicy                type       src/v3/token-economy/index.ts:48:8                                 
+AgentFileTools                      type       src/v3/token-economy/index.ts:49:8                                 
+SkillCompressResult                 type       src/v3/token-economy/index.ts:58:8                                 
+FailFastStageId                     type       src/v3/token-economy/index.ts:65:8                                 
+FailFastStageResult                 type       src/v3/token-economy/index.ts:66:8                                 
+FailFastCascadeReport               type       src/v3/token-economy/index.ts:67:8                                 
+FailFastRunner                      type       src/v3/token-economy/index.ts:68:8                                 
+NodeBudgetVerdict                   type       src/v3/token-economy/index.ts:78:8                                 
+FailedAttemptRecord                 type       src/v3/token-economy/index.ts:79:8                                 
+NodeTokenBudgetState                type       src/v3/token-economy/index.ts:80:8                                 
+NodeBudgetEvaluation                type       src/v3/token-economy/index.ts:81:8                                 
+LocalValidationKind                 type       src/v3/token-economy/index.ts:87:8                                 
+LocalValidationMatch                type       src/v3/token-economy/index.ts:88:8                                 
+SymbolMapEngine                     type       src/v3/token-economy/index.ts:101:8                                
+SymbolKind                          type       src/v3/token-economy/index.ts:102:8                                
+SymbolEntry                         type       src/v3/token-economy/index.ts:103:8                                
+FileSymbolMap                       type       src/v3/token-economy/index.ts:104:8                                
+RepoSymbolMap                       type       src/v3/token-economy/index.ts:105:8                                
+IdentifierOccurrence                type       src/v3/token-economy/index.ts:106:8                                
+DeclarationUnit                     type       src/v3/token-economy/index.ts:107:8                                
+DeclarationExtractResult            type       src/v3/token-economy/index.ts:108:8                                
+SymbolResolveEngine                 type       src/v3/token-economy/index.ts:120:8                                
+SymbolLocation                      type       src/v3/token-economy/index.ts:121:8                                
+LanguageServerClient                type       src/v3/token-economy/index.ts:122:8                                
+ResolveOptions                      type       src/v3/token-economy/index.ts:123:8                                
+Turn1SymbolResolve                  type       src/v3/token-economy/index.ts:124:8                                
+PreResolveTurn1Input                type       src/v3/token-economy/index.ts:125:8                                
+PrunedSentence                      type       src/v3/token-economy/index.ts:137:8                                
+PruneRetrievedStats                 type       src/v3/token-economy/index.ts:138:8                                
+PruneRetrievedResult                type       src/v3/token-economy/index.ts:139:8                                
+ConversationRole                    type       src/v3/token-economy/index.ts:149:8                                
+TombstoneOptions                    type       src/v3/token-economy/index.ts:152:8                                
+TombstoneStats                      type       src/v3/token-economy/index.ts:153:8                                
+TombstoneResult                     type       src/v3/token-economy/index.ts:154:8                                
+StatelessWorkerSnapshotInput        type       src/v3/token-economy/index.ts:160:8                                
+StatelessWorkerSnapshot             type       src/v3/token-economy/index.ts:161:8                                
+LazyToolSchema                      type       src/v3/token-economy/index.ts:171:8                                
+PinnedPrefixInput                   type       src/v3/token-economy/index.ts:180:8                                
+PinnedPromptResult                  type       src/v3/token-economy/index.ts:181:8                                
+FreeProsePropName                   type       src/v3/token-economy/index.ts:200:8                                
+JsonSchemaObject                    type       src/v3/token-economy/index.ts:201:8                                
+OperationalCallSpec                 type       src/v3/token-economy/index.ts:202:8                                
+BuildOperationalCallSpecInput       type       src/v3/token-economy/index.ts:203:8                                
+SurgicalOp                          type       src/v3/token-economy/index.ts:209:8                                
+SurgicalEditSpec                    type       src/v3/token-economy/index.ts:210:8                                
+SurgicalEditErrorCode               type       src/v3/token-economy/index.ts:211:8                                
+SurgicalEditResult                  type       src/v3/token-economy/index.ts:212:8                                
+MechanicalFixHookResult             type       src/v3/token-economy/index.ts:219:8                                
+MechanicalFixReport                 type       src/v3/token-economy/index.ts:220:8                                
+MechanicalBinaryResolver            type       src/v3/token-economy/index.ts:221:8                                
+MechanicalHookRunner                type       src/v3/token-economy/index.ts:222:8                                
+MechanicalFixOptions                type       src/v3/token-economy/index.ts:223:8                                
+Microtask                           type       src/v3/token-economy/index.ts:230:8                                
+MicrotaskBatch                      type       src/v3/token-economy/index.ts:231:8                                
+PatchCacheEntry                     type       src/v3/token-economy/index.ts:232:8                                
+PatchCacheLookup                    type       src/v3/token-economy/index.ts:233:8                                
+SplitPlanAndApplyInput              type       src/v3/token-economy/index.ts:242:8                                
+SplitPlanAndApplyResult             type       src/v3/token-economy/index.ts:243:8                                
+CompressNaturalLanguageResult       type       src/v3/token-economy/index.ts:248:8                                
+CrystallizedScript                  type       src/v3/token-economy/index.ts:254:8                                
+PatternRunInput                     type       src/v3/token-economy/index.ts:255:8                                
+PatternRunOutcome                   type       src/v3/token-economy/index.ts:256:8                                
+LocalValidationKind                 type       src/v3/token-economy/local-validation.ts:6:13                      
+MechanicalFixHookResult             interface  src/v3/token-economy/mechanical-fix.ts:13:18                       
+MechanicalBinaryResolver            type       src/v3/token-economy/mechanical-fix.ts:36:13                       
+MechanicalHookRunner                type       src/v3/token-economy/mechanical-fix.ts:38:13                       
+NodeBudgetVerdict                   type       src/v3/token-economy/node-budget.ts:10:13                          
+FreeProsePropName                   type       src/v3/token-economy/operational-call.ts:24:13                     
+PruneRetrievedStats                 interface  src/v3/token-economy/prune-retrieved.ts:32:18                      
+StdoutFilterStats                   interface  src/v3/token-economy/stdout-filter.ts:29:18                        
+SurgicalEditErrorCode               type       src/v3/token-economy/surgical-edit.ts:29:13                        
+SymbolKind                          type       src/v3/token-economy/symbol-map.ts:29:13                           
+SymbolResolveEngine                 type       src/v3/token-economy/symbol-resolve.ts:20:13                       
+LanguageServerClient                interface  src/v3/token-economy/symbol-resolve.ts:37:18                       
+ConversationRole                    type       src/v3/token-economy/tombstone.ts:17:13                            
+TombstoneStats                      interface  src/v3/token-economy/tombstone.ts:44:18                            
+LedgerEntryType                     type       src/v3/work-ledger/store.ts:176:15                                 
+SilentScanResult                    type       src/v3/workspace-scan/index.ts:2:15                                
+IntegrationState                    type       src/v3/workspace/integration.ts:12:13                              
+PostMergeCheck                      interface  src/v3/workspace/post-merge.ts:9:18                                
+WorktreeRecord                      type       src/v3/worktrees/index.ts:4:8                                      
+WorktreeManagerSnapshot             type       src/v3/worktrees/index.ts:5:8                                      
+Duplicate exports (1)
+loadEvolveLoopProfile|loadMegaBrainProfile  src/config/profile.ts
+KNIP_EXIT=0

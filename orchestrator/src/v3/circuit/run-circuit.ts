@@ -5,7 +5,6 @@
 import { randomUUID } from "node:crypto";
 import { existsSync, mkdirSync, writeFileSync } from "node:fs";
 import { join, resolve } from "node:path";
-import { spawnSync } from "node:child_process";
 import { runIntentFlow } from "../intake/intent-flow.js";
 import type { GoalContract } from "../goal-contract/types.js";
 import { defaultStateDbPath, StateDb } from "../state-db/store.js";
@@ -69,26 +68,31 @@ function ensureGitWorktreeOrCopy(repoRoot: string, worktreePath: string, branchN
   if (existsSync(worktreePath)) {
     return { ok: true };
   }
-  const probe = spawnSync("git", ["rev-parse", "--is-inside-work-tree"], {
+  const runner = defaultExecutionRunner;
+  const probe = runner.runSync({
+    argv: ["git", "rev-parse", "--is-inside-work-tree"],
     cwd: repoRoot,
-    encoding: "utf-8",
+    workspace_root: repoRoot,
+    timeout_ms: 30_000,
   });
-  if (probe.status !== 0 || probe.stdout.trim() !== "true") {
+  if (probe.status !== "ok" || probe.stdout.trim() !== "true") {
     return { ok: false, reason: "not_a_git_repository" };
   }
-  const add = spawnSync(
-    "git",
-    ["worktree", "add", "--detach", worktreePath, "HEAD"],
-    { cwd: repoRoot, encoding: "utf-8" },
-  );
-  if (add.status !== 0) {
+  const add = runner.runSync({
+    argv: ["git", "worktree", "add", "--detach", worktreePath, "HEAD"],
+    cwd: repoRoot,
+    workspace_root: repoRoot,
+    timeout_ms: 120_000,
+  });
+  if (add.status !== "ok" || add.exit_code !== 0) {
     // Fallback: detached failed — try named branch
-    const add2 = spawnSync(
-      "git",
-      ["worktree", "add", "-b", branchName, worktreePath, "HEAD"],
-      { cwd: repoRoot, encoding: "utf-8" },
-    );
-    if (add2.status !== 0) {
+    const add2 = runner.runSync({
+      argv: ["git", "worktree", "add", "-b", branchName, worktreePath, "HEAD"],
+      cwd: repoRoot,
+      workspace_root: repoRoot,
+      timeout_ms: 120_000,
+    });
+    if (add2.status !== "ok" || add2.exit_code !== 0) {
       return {
         ok: false,
         reason: (add2.stderr || add.stderr || "worktree_add_failed").trim(),
@@ -295,20 +299,32 @@ export async function runV0Circuit(opts: CircuitRunOptions): Promise<CircuitRunR
       }
     }
 
-    // Record adapter/model ledger row
+    // Record adapter/model ledger row (V0-TOK-01: subsystem + requested vs served + breakdown)
+    const modelRequested =
+      model_health.local.model ?? model_health.remote.model ?? undefined;
+    const modelServed =
+      (adapter_result as { model_served?: string } | undefined)?.model_served ??
+      modelRequested;
     const tlAdapter = db.recordTokenLedger({
       work_id,
       task_id: opts.task.task_id,
       goal_contract_id: contract.goal_contract_id,
+      subsystem: "circuit.adapter",
       provider_id: model_health.local.ok
         ? "ollama"
         : model_health.remote.ok
           ? "openrouter"
           : "none",
       adapter_id: adapter_result?.adapter_id ?? adapter.adapter_id,
-      model: model_health.local.model ?? model_health.remote.model,
+      model_requested: modelRequested,
+      model_served: modelServed,
       tokens_in: adapter_result?.tokens_in ?? null,
       tokens_out: adapter_result?.tokens_out ?? null,
+      tokens_output: adapter_result?.tokens_out ?? null,
+      tokens_system: null,
+      tokens_context: null,
+      tokens_tools: null,
+      tokens_cache_hit: null,
       latency_ms: adapter_result?.duration_ms ?? null,
       cost_usd: adapter_result?.cost_usd ?? null,
       cost_provenance: adapter_result?.cost_provenance ?? "UNAVAILABLE",
@@ -408,8 +424,11 @@ export async function runV0Circuit(opts: CircuitRunOptions): Promise<CircuitRunR
       work_id,
       task_id: opts.task.task_id,
       goal_contract_id: contract.goal_contract_id,
+      subsystem: "circuit.evidence_validator",
       provider_id: "evidence-validator",
       adapter_id: adapter.adapter_id,
+      model_requested: undefined,
+      model_served: undefined,
       cost_provenance: "UNAVAILABLE",
       status: validator.status,
       latency_ms: validator.command_results.reduce((a, c) => a + c.duration_ms, 0),

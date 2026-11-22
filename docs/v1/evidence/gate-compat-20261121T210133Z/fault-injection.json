@@ -1,0 +1,42 @@
+[
+  {
+    "label": "http_429",
+    "fault_kind": "http_429",
+    "bucket": "INFRA_QUOTA",
+    "burns_task_attempt": false,
+    "cooldown_ms": 10000,
+    "fallback_recommended": true,
+    "circuit_attempts_after": 0,
+    "ok": true
+  },
+  {
+    "label": "timeout_mid_stream",
+    "fault_kind": "timeout_mid_stream",
+    "bucket": "INFRA_QUOTA",
+    "burns_task_attempt": false,
+    "cooldown_ms": 5000,
+    "fallback_recommended": true,
+    "circuit_attempts_after": 0,
+    "ok": true
+  },
+  {
+    "label": "truncated_json",
+    "fault_kind": "truncated_json",
+    "bucket": "INFRA_QUOTA",
+    "burns_task_attempt": false,
+    "cooldown_ms": 5000,
+    "fallback_recommended": true,
+    "circuit_attempts_after": 0,
+    "ok": true
+  },
+  {
+    "label": "unreachable",
+    "fault_kind": "unreachable",
+    "bucket": "INFRA_QUOTA",
+    "burns_task_attempt": false,
+    "cooldown_ms": 5000,
+    "fallback_recommended": true,
+    "circuit_attempts_after": 0,
+    "ok": true
+  }
+]

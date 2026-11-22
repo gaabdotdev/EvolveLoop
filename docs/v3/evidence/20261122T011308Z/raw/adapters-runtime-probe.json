@@ -1,0 +1,196 @@
+{
+  "kind": "V3AdapterRuntimeProbe",
+  "ts": "2026-11-22T01:13:16.421Z",
+  "criterion": "§22.11",
+  "consent_env": false,
+  "work_dir": "/tmp/v3-adapter-probe-02sCL3",
+  "cli_probes": [
+    {
+      "cli_id": "claude",
+      "available": true,
+      "path": "/home/gaab/.local/bin/claude",
+      "version_hint": "2.1.302 (Claude Code)"
+    },
+    {
+      "cli_id": "codex",
+      "available": false,
+      "error": "not_on_path"
+    },
+    {
+      "cli_id": "antigravity",
+      "available": true,
+      "path": "/home/gaab/.local/bin/agent",
+      "version_hint": "2026.11.22-e9042b2"
+    },
+    {
+      "cli_id": "cursor-agent",
+      "available": true,
+      "path": "/home/gaab/.local/bin/agent",
+      "version_hint": "2026.11.22-e9042b2"
+    }
+  ],
+  "catalog_ids": [
+    "cursor",
+    "claude-code",
+    "codex",
+    "antigravity"
+  ],
+  "driver_ids": [
+    "cursor",
+    "claude-code",
+    "codex",
+    "antigravity"
+  ],
+  "adapters": [
+    {
+      "adapter_id": "cursor",
+      "catalog_execution_bridge": "jobs_pickup",
+      "catalog_certification": "declared",
+      "capability_levels": {
+        "sessions": "partial",
+        "streaming": "unsupported",
+        "tools": "partial",
+        "terminal": "partial",
+        "mcp": "unknown",
+        "subagents": "partial",
+        "cancel": "partial",
+        "resume": "partial",
+        "permissions": "partial",
+        "telemetry": "partial",
+        "core_mediated_fs": "partial",
+        "core_mediated_shell": "partial",
+        "handoff_package_consume": "partial",
+        "cross_provider_swap": "unsupported"
+      },
+      "driver_can_invoke": true,
+      "driver_notes": [
+        "invokes ExecutionBridge (PLAN_APPROVED gated)",
+        "cursor-skill providers use JobStore pickup — not a live IDE agent API",
+        "host-internal tools remain incompletely mediated"
+      ],
+      "invoke_mode": "failed",
+      "invoke_status": "failed",
+      "invoke_code": "IR_PATH_REQUIRED",
+      "invoke_message": "cursor driver requires ir_path to dispatch via ExecutionBridge",
+      "honesty": "jobs_pickup (cursor-skill) — invoke without ir_path fails closed; no live IDE API claimed"
+    },
+    {
+      "adapter_id": "claude-code",
+      "catalog_execution_bridge": "cli_process",
+      "catalog_certification": "declared",
+      "capability_levels": {
+        "sessions": "partial",
+        "streaming": "unsupported",
+        "tools": "partial",
+        "terminal": "partial",
+        "mcp": "unknown",
+        "subagents": "unsupported",
+        "cancel": "partial",
+        "resume": "partial",
+        "permissions": "unsupported",
+        "telemetry": "unsupported",
+        "core_mediated_fs": "unsupported",
+        "core_mediated_shell": "unsupported",
+        "handoff_package_consume": "partial",
+        "cross_provider_swap": "partial"
+      },
+      "driver_can_invoke": true,
+      "driver_notes": [
+        "Claude Code CLI bridge (print mode)",
+        "Does not claim IDE session injection or full permission mediation",
+        "Cancel only for Core-owned spawned PIDs (process-sessions)",
+        "cli=/home/gaab/.local/bin/claude version_hint=2.1.302 (Claude Code)",
+        "real spawn requires provider_mode=real + EVOLVELOOP_HARNESS_CONSENT=true",
+        "dry-run writes prompt package under --data-dir/harness-prompts without calling network"
+      ],
+      "invoke_mode": "dry_run",
+      "invoke_status": "accepted",
+      "invoke_code": "DRY_RUN_PROMPT_WRITTEN",
+      "invoke_message": "prompt=/tmp/v3-adapter-probe-02sCL3/harness-prompts/probe-claude-code/sess-32be3b38-2959-404d-8bad-0c819da73f87.md",
+      "honesty": "cli_process declared; dry-run prompt path exercised when CLI present, else blocked"
+    },
+    {
+      "adapter_id": "codex",
+      "catalog_execution_bridge": "none",
+      "catalog_certification": "declared",
+      "capability_levels": {
+        "sessions": "unknown",
+        "streaming": "unsupported",
+        "tools": "unsupported",
+        "terminal": "unsupported",
+        "mcp": "unknown",
+        "subagents": "unsupported",
+        "cancel": "unsupported",
+        "resume": "partial",
+        "permissions": "unsupported",
+        "telemetry": "unsupported",
+        "core_mediated_fs": "unsupported",
+        "core_mediated_shell": "unsupported",
+        "handoff_package_consume": "partial",
+        "cross_provider_swap": "unsupported"
+      },
+      "driver_can_invoke": false,
+      "driver_notes": [
+        "codex CLI not on PATH",
+        "invoke() always returns blocked — fail-closed",
+        "operator may export Handoff Package for manual resume outside Core"
+      ],
+      "invoke_mode": "blocked",
+      "invoke_status": "blocked",
+      "invoke_code": "ADAPTER_DRIVER_BLOCKED",
+      "invoke_message": "codex: codex CLI not on PATH (work=probe-codex task=t-codex)",
+      "honesty": "catalog bridge=none; driver blocked (CLI absent) — capabilities not over-claimed"
+    },
+    {
+      "adapter_id": "antigravity",
+      "catalog_execution_bridge": "none",
+      "catalog_certification": "declared",
+      "capability_levels": {
+        "sessions": "unknown",
+        "streaming": "unsupported",
+        "tools": "unsupported",
+        "terminal": "unsupported",
+        "mcp": "unknown",
+        "subagents": "unsupported",
+        "cancel": "unsupported",
+        "resume": "partial",
+        "permissions": "unsupported",
+        "telemetry": "unsupported",
+        "core_mediated_fs": "unsupported",
+        "core_mediated_shell": "unsupported",
+        "handoff_package_consume": "partial",
+        "cross_provider_swap": "unsupported"
+      },
+      "driver_can_invoke": true,
+      "driver_notes": [
+        "cursor-agent bridge via antigravity adapter_id (print mode + workspace trust)",
+        "Cancel only for Core-owned spawned PIDs",
+        "--trust scopes workspace trust after session auth; it is not an auth substitute",
+        "cli=/home/gaab/.local/bin/agent version_hint=2026.11.22-e9042b2",
+        "real spawn requires provider_mode=real + EVOLVELOOP_HARNESS_CONSENT=true",
+        "dry-run writes prompt package under --data-dir/harness-prompts without calling network"
+      ],
+      "invoke_mode": "dry_run",
+      "invoke_status": "accepted",
+      "invoke_code": "DRY_RUN_PROMPT_WRITTEN",
+      "invoke_message": "prompt=/tmp/v3-adapter-probe-02sCL3/harness-prompts/probe-antigravity/sess-442fcc91-5f56-49b9-a69d-d2bb97be9f04.md",
+      "honesty": "catalog declares bridge=none (conservative/declared); driver can dry-run when CLI present — live spawn still needs consent"
+    }
+  ],
+  "supported_runtimes_note": "Supported = declared execution_bridge ≠ none OR driver can_invoke with dry-run/fail-closed exercised. Live IDE spawn requires EVOLVELOOP_HARNESS_CONSENT=true (not claimed here).",
+  "catalog_spot_checks": {
+    "cursor": {
+      "bridge": "jobs_pickup",
+      "streaming": "unsupported"
+    },
+    "claude-code": {
+      "bridge": "cli_process"
+    },
+    "codex": {
+      "bridge": "none"
+    },
+    "antigravity": {
+      "bridge": "none"
+    }
+  }
+}

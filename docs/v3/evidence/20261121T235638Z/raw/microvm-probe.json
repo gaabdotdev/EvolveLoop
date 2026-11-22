@@ -1,0 +1,82 @@
+{
+  "ts": "20261121T235638Z",
+  "host_detection": {
+    "kind": "MicroVmBackendDetection",
+    "backend": "unavailable",
+    "backend_status": "unavailable",
+    "firecracker_path": null,
+    "jailer_path": null,
+    "runsc_path": null,
+    "kvm_present": true,
+    "notes": [
+      "firecracker_not_on_path",
+      "runsc_not_on_path",
+      "kvm_device_present_informational_only",
+      "backend_status=UNAVAILABLE"
+    ],
+    "honesty": "reported"
+  },
+  "evaluation_default": {
+    "backend_status": "unavailable",
+    "gate_status": "PASS_SIMULATED",
+    "evidence": {
+      "backend_status": {
+        "value": "unavailable",
+        "honesty": "reported"
+      },
+      "gate_status": {
+        "value": "PASS_SIMULATED",
+        "honesty": "reported"
+      },
+      "kvm_present": {
+        "value": true,
+        "honesty": "reported"
+      },
+      "denied_syscall_count": {
+        "value": 29,
+        "honesty": "reported"
+      },
+      "battery_all_denied": {
+        "value": true,
+        "honesty": "reported"
+      }
+    },
+    "seccomp_mode": "simulated",
+    "battery_mode": "simulated",
+    "battery_all_denied": true,
+    "battery_case_count": 10,
+    "denied_syscalls": 29,
+    "notes": [
+      "firecracker_not_on_path",
+      "runsc_not_on_path",
+      "kvm_device_present_informational_only",
+      "backend_status=UNAVAILABLE",
+      "seccomp_mode=simulated",
+      "battery_mode=simulated",
+      "battery_all_denied=true",
+      "gate=PASS_SIMULATED"
+    ]
+  },
+  "evaluation_require_live": {
+    "backend_status": "unavailable",
+    "gate_status": "UNAVAILABLE"
+  },
+  "escape_cases": [
+    "E01_MOUNT",
+    "E02_PIVOT_ROOT",
+    "E03_PTRACE",
+    "E04_BPF",
+    "E05_KEXEC",
+    "E06_INIT_MODULE",
+    "E07_SETNS",
+    "E08_UNSHARE",
+    "E09_OPEN_BY_HANDLE",
+    "E10_IO_URING"
+  ],
+  "policy_default_action": "SCMP_ACT_ERRNO",
+  "status_semantics": {
+    "UNAVAILABLE": "backend missing OR require_live without backend OR battery/seccomp failed",
+    "PASS_SIMULATED": "backend unavailable; deterministic deny battery + seccomp oracle pass",
+    "PASS_LIVE": "firecracker|gvisor binary detected; live adapter plan + battery pass (honesty estimated for in-guest)"
+  }
+}

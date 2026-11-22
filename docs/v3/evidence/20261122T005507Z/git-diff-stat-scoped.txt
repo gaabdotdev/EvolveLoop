@@ -1,0 +1,22 @@
+GIT_DIFF_STAT scoped — pack 20261122T005507Z (untracked; pointers latest→20261122T005507Z)
+tracked_diff_stat: (none — evidence dirs ainda untracked nesta branch)
+
+pack_files:
+3623	docs/v3/evidence/20261122T005507Z/FINAL-AUDIT.md
+1755	docs/v3/evidence/20261122T005507Z/gates/EXIT-01.md
+7529	docs/v3/evidence/20261122T005507Z/gates/EXIT-02.md
+2133	docs/v3/evidence/20261122T005507Z/gates/EXIT-03.md
+688	docs/v3/evidence/20261122T005507Z/raw/evidence-files.txt
+3148	docs/v3/evidence/20261122T005507Z/raw/inventory-meta-map.tsv
+1162	docs/v3/evidence/20261122T005507Z/raw/scale-100k.json
+1279	docs/v3/evidence/20261122T005507Z/raw/scale-100k.log
+1166	docs/v3/evidence/20261122T005507Z/SUMMARY.md
+1	docs/v3/evidence/20261122T005507Z/vitest-v3-unit.exit
+4029	docs/v3/evidence/20261122T005507Z/vitest-v3-unit.log
+4029	docs/v3/evidence/20261122T005507Z/vitest-v3-unit.txt
+
+pack_total_bytes_excl_stat:
+30542
+
+latest_symlink: 20261122T005507Z
+LATEST_PATH.txt: 20261122T005507Z

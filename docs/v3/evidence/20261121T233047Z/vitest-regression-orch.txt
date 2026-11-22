@@ -1,0 +1,15 @@
+
+ RUN  v2.1.9 /home/gaab/orca/workspaces/EvolveLoop/seagrass/orchestrator
+
+ ✓ tests/unit/v2-orch-04-backpressure.test.ts (7 tests) 18ms
+ ✓ tests/unit/v2-orch-01-file-ownership.test.ts (8 tests) 27ms
+(node:2540977) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ tests/unit/v2-orch-03-idempotency-saga.test.ts (8 tests) 55ms
+ ✓ tests/unit/v2-orch-02-merge-queue.test.ts (7 tests) 70ms
+
+ Test Files  4 passed (4)
+      Tests  30 passed (30)
+   Start at  20:30:48
+   Duration  645ms (transform 438ms, setup 57ms, collect 943ms, tests 170ms, environment 1ms, prepare 317ms)
+

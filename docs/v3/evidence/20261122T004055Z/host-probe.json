@@ -1,0 +1,18 @@
+{
+  "kind": "v3_dist_01_ops_probe",
+  "task": "M20-V3-DIST-01-OPS-BACKUP",
+  "ts": "20261122T004055Z",
+  "schema_version": 2,
+  "diagnose_healthy": true,
+  "diagnose_checks": 5,
+  "separation_ok": true,
+  "export_schema": 2,
+  "export_body_sha256": "861ad6d87411773474e3df33145ade08f49e54d2fc13f924f4e87edd0ae8460f",
+  "import_ok": true,
+  "import_integrity": true,
+  "backup_file_count": 3,
+  "backup_restore_integrity_ok": true,
+  "restore_verified": true,
+  "gate_ok": true,
+  "honesty": "PASS_UNIT"
+}

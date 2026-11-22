@@ -12,6 +12,11 @@
     "build": "tsc",
     "test": "vitest run",
     "test:bench": "vitest run --config vitest.bench.config.ts",
+    "test:v0-offline": "vitest run --config vitest.v0-offline.config.ts",
+    "test:v0-live": "bash ../scripts/v0-live-five-tasks.sh",
+    "test:v1-gate-prod": "vitest run --config vitest.v1-gate-prod.config.ts",
+    "test:v1-gate-compat": "bash ../scripts/v1-gate-compat.sh",
+    "test:v1-gate-tok": "bash ../scripts/v1-gate-tok.sh",
     "test:watch": "vitest",
     "test:unit": "vitest run tests/unit",
     "test:integration": "vitest run tests/integration",
@@ -29,6 +34,7 @@
     "evolve": "./dist/cli/evolve.js"
   },
   "devDependencies": {
+    "@types/better-sqlite3": "^9.6.0",
     "@types/node": "^22.10.0",
     "typescript": "^5.7.0",
     "vitest": "^2.1.0",
@@ -36,5 +42,13 @@
   },
   "engines": {
     "node": ">=20"
+  },
+  "dependencies": {
+    "@mongodb-js/zstd": "^7.0.0",
+    "better-sqlite3": "^13.2.0",
+    "sqlite-vec": "^0.1.9",
+    "tree-sitter-javascript": "^0.23.1",
+    "tree-sitter-typescript": "^0.23.2",
+    "web-tree-sitter": "^0.27.2"
   }
 }

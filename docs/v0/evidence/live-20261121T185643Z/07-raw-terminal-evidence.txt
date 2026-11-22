@@ -1,0 +1,138 @@
+=== exact commands (from harness log head) ===
+=== V0 live five-tasks harness ===
+ts=20261121T185643Z
+repo=/home/gaab/orca/workspaces/EvolveLoop/seagrass
+evidence=/home/gaab/orca/workspaces/EvolveLoop/seagrass/docs/v0/evidence/live-20261121T185643Z
+worktree_base=/home/gaab/orca/workspaces/EvolveLoop/seagrass/.evolveloop/live-wt/20261121T185643Z
+state_db=/home/gaab/orca/workspaces/EvolveLoop/seagrass/docs/v0/evidence/live-20261121T185643Z/state.db
+consent=true
+OPENROUTER=
+OPENROUTER=UNAVAILABLE
+
+=== 01 probe (1+1+1) ===
+{
+  "kind": "V0CircuitProbe",
+  "rule": "1+1+1",
+  "local_model": {
+    "kind": "ModelHealth",
+    "provider_id": "ollama",
+    "ok": true,
+    "code": "OK",
+    "message": "Ollama ok; model=bonsai-64k:latest",
+    "model": "bonsai-64k:latest",
+    "base_url": "http://127.0.0.1:11434",
+    "checked_at": "2026-11-21T18:56:43.512Z",
+    "limitations": [
+      "Local Ollama only — no FreeLLMAPI gateway",
+      "Availability is probed via GET /api/tags"
+    ]
+  },
+  "remote_provider": {
+    "kind": "ModelHealth",
+    "provider_id": "openrouter",
+    "ok": false,
+    "code": "MISSING_CREDENTIALS",
+    "message": "OpenRouter API key absent — healthCheck failed honestly",
+    "base_url": "https://openrouter.ai/api/v1",
+    "model": "openai/gpt-4o-mini",
+    "checked_at": "2026-11-21T18:56:43.528Z",
+    "limitations": [
+      "Remote OpenRouter never used as silent default",
+      "Requires OPENROUTER_API_KEY or EVOLVELOOP_OPENROUTER_API_KEY",
+
+=== per-task durations from ledger ===
+[
+  {
+    "task": "fire-5",
+    "status": "ok",
+    "latency_ms": 78462,
+    "cost_provenance": "UNAVAILABLE",
+    "adapter": "cursor",
+    "tokens_in": null,
+    "tokens_out": null
+  },
+  {
+    "task": "fire-4",
+    "status": "ok",
+    "latency_ms": 81358,
+    "cost_provenance": "UNAVAILABLE",
+    "adapter": "cursor",
+    "tokens_in": null,
+    "tokens_out": null
+  },
+  {
+    "task": "fire-3",
+    "status": "ok",
+    "latency_ms": 81910,
+    "cost_provenance": "UNAVAILABLE",
+    "adapter": "cursor",
+    "tokens_in": null,
+    "tokens_out": null
+  },
+  {
+    "task": "fire-2",
+    "status": "ok",
+    "latency_ms": 83267,
+    "cost_provenance": "UNAVAILABLE",
+    "adapter": "cursor",
+    "tokens_in": null,
+    "tokens_out": null
+  },
+  {
+    "task": "fire-1",
+    "status": "ok",
+    "latency_ms": 85130,
+    "cost_provenance": "UNAVAILABLE",
+    "adapter": "cursor",
+    "tokens_in": null,
+    "tokens_out": null
+  }
+]
+circuit_runs [
+  {
+    task: 'fire-5',
+    status: 'TRUE_FULL_PASS',
+    reason: 'TRUE_FULL_PASS'
+  },
+  {
+    task: 'fire-4',
+    status: 'TRUE_FULL_PASS',
+    reason: 'TRUE_FULL_PASS'
+  },
+  {
+    task: 'fire-3',
+    status: 'TRUE_FULL_PASS',
+    reason: 'TRUE_FULL_PASS'
+  },
+  {
+    task: 'fire-2',
+    status: 'TRUE_FULL_PASS',
+    reason: 'TRUE_FULL_PASS'
+  },
+  {
+    task: 'fire-1',
+    status: 'TRUE_FULL_PASS',
+    reason: 'TRUE_FULL_PASS'
+  }
+]
+
+=== markers in worktrees ===
+OK .evolveloop/live-wt/20261121T185643Z/fire-1/.evolveloop/circuit-markers/fire-1.txt => 0000000   f   i   r   e   -   1  
+
+OK .evolveloop/live-wt/20261121T185643Z/fire-2/.evolveloop/circuit-markers/fire-2.txt => 0000000   f   i   r   e   -   2  
+
+OK .evolveloop/live-wt/20261121T185643Z/fire-3/.evolveloop/circuit-markers/fire-3.txt => 0000000   f   i   r   e   -   3  
+
+OK .evolveloop/live-wt/20261121T185643Z/fire-4/.evolveloop/circuit-markers/fire-4.txt => 0000000   f   i   r   e   -   4  
+
+OK .evolveloop/live-wt/20261121T185643Z/fire-5/.evolveloop/circuit-markers/fire-5.txt => 0000000   f   i   r   e   -   5  
+
+
+=== git diff --stat harness-only ===
+ orchestrator/package.json | 6 ++++++
+ 1 file changed, 6 insertions(+)
+ M orchestrator/package.json
+?? bin/evolve
+?? docs/v0/
+?? scripts/v0-live-five-tasks.sh
+?? scripts/v0-live-token-compare.mjs

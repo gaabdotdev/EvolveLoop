@@ -81,6 +81,9 @@ export class GoalContractStore {
       risks: input.risks ?? [],
       criteria,
       work_id: input.work_id,
+      require_independent_review: input.require_independent_review,
+      require_mutation_gate: input.require_mutation_gate,
+      mutation_score_threshold: input.mutation_score_threshold,
     };
     this.writeVersion(contract);
     return contract;

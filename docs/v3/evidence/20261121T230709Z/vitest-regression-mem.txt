@@ -1,0 +1,18 @@
+
+ RUN  v2.1.9 /home/gaab/orca/workspaces/EvolveLoop/seagrass/orchestrator
+
+ ✓ tests/unit/v3-mem-01-cold-storage.test.ts (6 tests) 22ms
+stdout | tests/unit/v3-mem-02-pyramid.test.ts > V3-MEM-02 Pyramid Index (RAPTOR) > measures p95 coarse-to-fine latency on fixture ≥1k nodes (real ms)
+{"gate":"V3-MEM-02","fixture_n0":1200,"fixture_nodes":1358,"by_level":{"0":1200,"1":153,"2":4,"3":1},"samples":40,"p50_ms":0.417,"p95_ms":0.814,"max_ms":2.322,"limitation":"Fixture scale = ≥1k pyramid nodes (not 100k events). Full Suíte E 100k deferred."}
+
+ ✓ tests/unit/v3-mem-02-pyramid.test.ts (4 tests) 68ms
+stdout | tests/unit/v3-mem-03-virtual-memory.test.ts > V3-MEM-03 Virtual Memory (MemGPT paging) > token budget does not grow with 100× history (measured)
+{"gate":"V3-MEM-03","token_budget":800,"baseline_n":4,"scale":100,"history_n":400,"baseline_tokens":656,"final_tokens":795,"growth_ratio":1.2119,"resident":1,"tombstoned":45,"pages_total":46,"naive_full_history_tokens":62245,"TOKEN_BUDGET_100X":"BOUNDED"}
+
+ ✓ tests/unit/v3-mem-03-virtual-memory.test.ts (7 tests) 305ms
+
+ Test Files  3 passed (3)
+      Tests  17 passed (17)
+   Start at  20:07:11
+   Duration  763ms (transform 208ms, setup 40ms, collect 604ms, tests 394ms, environment 0ms, prepare 205ms)
+

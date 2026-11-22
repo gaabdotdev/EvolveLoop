@@ -1,0 +1,54 @@
+{
+  "k": 5,
+  "gates": {
+    "recall_at_k_min": 0.85,
+    "precision_at_k_min": 0.8,
+    "invalidated_return_rate_max": 0
+  },
+  "queries": [
+    {
+      "query_id": "gq-sandbox",
+      "query": "bubblewrap sandbox isolation agent",
+      "relevant_ids": [
+        "mem-sandbox-policy",
+        "mem-bwrap-flags",
+        "mem-sandbox-network",
+        "mem-sandbox-landlock",
+        "mem-sandbox-cgroup"
+      ]
+    },
+    {
+      "query_id": "gq-promotion",
+      "query": "memory promotion gate validator human mso",
+      "relevant_ids": [
+        "mem-promo-gate",
+        "mem-no-self-promote",
+        "mem-promo-actor",
+        "mem-promo-audit",
+        "mem-promo-contract"
+      ]
+    },
+    {
+      "query_id": "gq-idempotency",
+      "query": "idempotency key saga compensation",
+      "relevant_ids": [
+        "mem-idem-key",
+        "mem-saga-comp",
+        "mem-idem-claim",
+        "mem-idem-replay",
+        "mem-saga-unknown"
+      ]
+    },
+    {
+      "query_id": "gq-tokens",
+      "query": "token economy crystallizer zero token skill",
+      "relevant_ids": [
+        "mem-crystallizer",
+        "mem-prefix-pin",
+        "mem-nl-compress",
+        "mem-tombstone",
+        "mem-stateless-snap"
+      ]
+    }
+  ]
+}

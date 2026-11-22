@@ -360,7 +360,7 @@ function runOneTask(input: {
   const baselinePass = baseline.status === 0;
 
   const beforeFiles = new Map(
-    walkRelFiles(ws.root).map((f) => [f, ws.exists(f) ? ws.readFile(f) : ""]),
+    walkRelFiles(ws.root).map((f) => [f, ws.exists(f) ? ws.readFileHost(f) : ""]),
   );
 
   // Optional recovery injection: partial progress → handoff → substitute continues
@@ -391,7 +391,7 @@ function runOneTask(input: {
   const files_changed: string[] = [];
   for (const f of afterListing) {
     const prev = beforeFiles.get(f);
-    const next = ws.readFile(f);
+    const next = ws.readFileHost(f);
     if (prev === undefined || prev !== next) files_changed.push(f);
   }
   files_changed.sort();

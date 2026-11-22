@@ -1,0 +1,73 @@
+{
+  "utc": "2026-11-22T01:44:34.144Z",
+  "root": "/tmp/aud-stub-02-2V0rT1",
+  "components": {
+    "state_db": {
+      "classification": "REAL_DISK",
+      "journal_mode": "wal",
+      "synchronous": 2,
+      "busy_timeout": 5000,
+      "integrity_check": {
+        "integrity_check": "ok"
+      },
+      "event_survived_reopen": true,
+      "event_id": "evt-8475a4ce-d32d-46cb-9fad-564d043ae19c",
+      "file_bytes": 204800,
+      "integrity_before_close": {
+        "integrity_check": "ok"
+      }
+    },
+    "event_store": {
+      "classification": "REAL_DISK",
+      "events_after_reopen": 1,
+      "seq": 1,
+      "payload": {
+        "proof": "persist-across-close",
+        "n": 42
+      }
+    },
+    "memory_broker": {
+      "classification": "REAL_DISK",
+      "journal_mode": "wal",
+      "integrity_check": "ok",
+      "row_survived_reopen": true,
+      "fts5_match_after_reopen": true,
+      "fts_hit_count": 1,
+      "file_bytes": 245760
+    },
+    "sqlite_vec": {
+      "classification": "REAL_DISK",
+      "available_on_host": true,
+      "load_error": null,
+      "hybrid_channels": [
+        "fts5",
+        "lexical_secondary",
+        "sqlite_vec"
+      ],
+      "hybrid_gaps": [],
+      "note": "When unavailable, UnavailableVectorSearch.gap is explicit; no fake vector hits."
+    },
+    "cold_storage": {
+      "classification": "REAL_DISK",
+      "cas_hash": "sha256:b7260d36462ee8c6a94e01712f07f5974764aa2d1470ed673b026bc638ebd3a5",
+      "blob_exists": true,
+      "raw_bytes": 536,
+      "compressed_bytes": 55,
+      "sha256_raw_matches": true,
+      "roundtrip_ok": true,
+      "compressed_file_sha256": "35eece599cad550067accff318e5f2fb75efcac658cd5e340c1ad64f84176aba"
+    },
+    "pyramid_index": {
+      "classification": "NÃO_HABILITADO",
+      "PYRAMID_DISK_PERSISTENCE": "NÃO_HABILITADO",
+      "note": "InMemoryPyramidIndex (Map); SQL sketch not executed"
+    },
+    "virtual_memory_ram": {
+      "classification": "IN_MEMORY_STUB",
+      "note": "Intentional RAM window; disk backend is MemoryBroker SQLite + ColdStorage CAS — not fake persistence of archival"
+    }
+  },
+  "refusals": {
+    "state_db_memory": "StateDb requires a filesystem path (SQLite WAL on disk); :memory: is refused"
+  }
+}

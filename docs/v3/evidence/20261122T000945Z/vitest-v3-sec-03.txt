@@ -1,0 +1,10 @@
+
+ RUN  v2.1.9 /home/gaab/orca/workspaces/EvolveLoop/seagrass/orchestrator
+
+ ✓ tests/unit/v3-sec-03-ebpf-audit.test.ts (12 tests) 13ms
+
+ Test Files  1 passed (1)
+      Tests  12 passed (12)
+   Start at  21:09:46
+   Duration  455ms (transform 122ms, setup 13ms, collect 124ms, tests 13ms, environment 0ms, prepare 99ms)
+

@@ -1,0 +1,25 @@
+
+ RUN  v2.1.9 /home/gaab/orca/workspaces/EvolveLoop/seagrass/orchestrator
+
+ ✓ tests/unit/v3-mem-07-federated-sanitize.test.ts (9 tests) 17ms
+ ✓ tests/unit/v2-mem-03-memory-eval.test.ts (7 tests) 27ms
+ ✓ tests/unit/v1-mem-01-hybrid-search.test.ts (4 tests) 26ms
+ ✓ tests/unit/v1-mem-02-context-engineering.test.ts (2 tests) 31ms
+ ✓ tests/unit/v2-mem-01-consolidation.test.ts (10 tests) 30ms
+ ✓ tests/unit/v3-mem-01-cold-storage.test.ts (6 tests) 61ms
+ ✓ tests/unit/v1-mem-03-contradiction.test.ts (4 tests) 63ms
+ ✓ tests/unit/v2-mem-02-hybrid-graph.test.ts (8 tests) 68ms
+stdout | tests/unit/audit-mem-01-06.test.ts > AUD-MEM-05 cold storage scale sample + p95 > honest sample N=500 put/get with measured p95; 100k marked NÃO_HABILITADO
+{"gate":"AUD-MEM-05","sample_n":500,"put_p95_ms":0.395,"get_p95_ms":0.314,"cold_scale_100k_this_session":"NÃO_HABILITADO","prior_100k_evidence":"docs/v3/evidence/20261122T005507Z/gates/EXIT-03.md"}
+
+ ✓ tests/unit/audit-mem-01-06.test.ts (6 tests) 298ms
+ ✓ tests/unit/v0-adapt-memory.test.ts (8 tests) 2219ms
+   ✓ V0-ADAPT 1+1+1 + adapter contract + stubs > V0-ADAPT-01: exposes Ollama + OpenRouter + Cursor adapter 790ms
+   ✓ V0-ADAPT 1+1+1 + adapter contract + stubs > V0-ADAPT-02: adapter contract healthCheck/normalizeResult/cancel via runner 1402ms
+
+ Test Files  10 passed (10)
+      Tests  64 passed (64)
+   Start at  23:03:55
+   Duration  3.31s (transform 947ms, setup 185ms, collect 3.96s, tests 2.84s, environment 2ms, prepare 912ms)
+
+EXIT_CODE=0

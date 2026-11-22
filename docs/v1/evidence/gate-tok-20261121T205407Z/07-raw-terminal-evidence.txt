@@ -1,0 +1,118 @@
+=== V1-GATE-TOK harness ===
+ts=20261121T205407Z
+evidence=/home/gaab/orca/workspaces/EvolveLoop/seagrass/docs/v1/evidence/gate-tok-20261121T205407Z
+v0_baseline=/home/gaab/orca/workspaces/EvolveLoop/seagrass/docs/v0/evidence/latest/04-token-compare.json
+estimation=chars/4 proxy — NOT provider billing
+o1_proven=true sizes=[1652,1652,1652,1652,1652]
+crystallizer_zero_token=true
+
+=== verdict ===
+{
+  "kind": "V1GateTokVerdict",
+  "pass": true,
+  "label": "V1-GATE-TOK_PASS_75.54pct",
+  "reasons": [
+    "OK_REDUCTION: measured 75.54% >= 75%",
+    "OK_CRYSTALLIZER: 0-token path proven",
+    "OK_O1_SNAPSHOT: stable across 5 iterations"
+  ],
+  "target_min_pct": 75,
+  "measured_reduction_pct": 75.53740326741186
+}
+
+=== combined_gate (thin vs V0) ===
+{
+  "baseline_total": 11630,
+  "phase_total": 2845,
+  "reduction_pct": 75.53740326741186,
+  "meets_target": true,
+  "target_min_pct": 75,
+  "honesty": "estimated",
+  "notes": [
+    "Same prompt+stdout surface as V0 compare",
+    "V1 adds pin reuse + nl-compress + crystallizer 0-token on tasks 4-5"
+  ]
+}
+
+=== extended_supplemental ===
+{
+  "baseline_total": 53170,
+  "phase_total": 3247,
+  "reduction_pct": 93.8931728418281,
+  "meets_target": true,
+  "target_min_pct": 75,
+  "honesty": "estimated",
+  "notes": [
+    "Baseline = V0 uncompressed prompt+stdout + naive full-file + RAG + growing history",
+    "Phase = V1 pin/nl/telegraphic/crystallizer + outline/read_lines + prune + O(1) snapshot + filtered stdout"
+  ],
+  "baseline_breakdown": {
+    "v0_prompt": 10805,
+    "v0_stdout": 825,
+    "naive_full_file": 37060,
+    "naive_rag": 2200,
+    "naive_history": 2280
+  },
+  "phase_breakdown": {
+    "prompts_with_v1_stack": 2941,
+    "stdout_filtered": 306,
+    "pin_cache_hits": 2
+  },
+  "phase_samples": [
+    {
+      "label": "v1_fire-1",
+      "total_tokens": 1027,
+      "subsystem": "v1.pin_full+slice+prune+snapshot+nl",
+      "cache_hit": false
+    },
+    {
+      "label": "v1_fire-2",
+      "total_tokens": 957,
+      "subsystem": "v1.pin_cache_hit+slice+prune+snapshot+nl",
+      "cache_hit": true
+    },
+    {
+      "label": "v1_fire-3",
+      "total_tokens": 957,
+      "subsystem": "v1.pin_cache_hit+slice+prune+snapshot+nl",
+      "cache_hit": true
+    },
+    {
+      "label": "v1_fire-4",
+      "total_tokens": 0,
+      "subsystem": "crystallizer.zero_token_script",
+      "cache_hit": false
+    },
+    {
+      "label": "v1_fire-5",
+      "total_tokens": 0,
+      "subsystem": "crystallizer.zero_token_script",
+      "cache_hit": false
+    }
+  ],
+  "thin_samples": [
+    {
+      "label": "thin_fire-1",
+      "total_tokens": 895,
+      "cache_hit": false
+    },
+    {
+      "label": "thin_fire-2",
+      "total_tokens": 822,
+      "cache_hit": true
+    },
+    {
+      "label": "thin_fire-3",
+      "total_tokens": 822,
+      "cache_hit": true
+    },
+    {
+      "label": "thin_fire-4",
+      "total_tokens": 0
+    },
+    {
+      "label": "thin_fire-5",
+      "total_tokens": 0
+    }
+  ]
+}

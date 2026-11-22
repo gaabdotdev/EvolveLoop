@@ -64,11 +64,19 @@ describe("V0 Token Ledger + Evidence Validator", () => {
       const entry = db.recordTokenLedger({
         work_id: "w1",
         task_id: "t1",
+        subsystem: "circuit.adapter",
         provider_id: "ollama",
         adapter_id: "cursor",
         model: "bonsai-64k:latest",
+        model_requested: "bonsai-64k:latest",
+        model_served: "bonsai-64k:latest",
         tokens_in: 10,
         tokens_out: 20,
+        tokens_system: 2,
+        tokens_context: 5,
+        tokens_tools: 3,
+        tokens_output: 20,
+        tokens_cache_hit: 1,
         latency_ms: 123,
         cost_usd: null,
         cost_provenance: "reported",
@@ -90,6 +98,9 @@ describe("V0 Token Ledger + Evidence Validator", () => {
       const rows = db.listTokenLedger("w1");
       expect(rows.length).toBe(3);
       expect(entry.cost_provenance).toBe("reported");
+      expect(entry.subsystem).toBe("circuit.adapter");
+      expect(entry.model_requested).toBe("bonsai-64k:latest");
+      expect(entry.tokens_cache_hit).toBe(1);
       expect(estimated.cost_provenance).toBe("estimated");
       expect(unavailable.cost_provenance).toBe("UNAVAILABLE");
       expect(rows.some((r) => r.model === "bonsai-64k:latest")).toBe(true);

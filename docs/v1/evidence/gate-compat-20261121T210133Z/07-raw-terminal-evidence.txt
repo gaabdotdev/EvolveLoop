@@ -1,0 +1,7 @@
+=== V1-GATE-COMPAT harness ===
+ts=20261121T210133Z
+verdict=V1-GATE-COMPAT_PASS
+vitest_exit=0
+live_state=needsKey
+matrix_cells=24
+faults_ok=true

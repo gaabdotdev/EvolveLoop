@@ -1,21 +1,11 @@
 #!/usr/bin/env node
 /**
- * EvolveLoop V3 product CLI (non-interactive foundation).
+ * EvolveLoop product CLI — workspace = cwd, state = .evolveloop/
  *
- * Usage:
- *   evolve goal create --data-dir ./v3-data --id gc-1 --objective "..." [--criteria-json path]
- *   evolve goal show|evaluate --data-dir ./v3-data --id gc-1
- *   evolve goal criterion --data-dir ./v3-data --id gc-1 --criterion c1 --state PASS --evidence e1
- *   evolve work init --data-dir ./v3-data --work-id w1 --goal-id gc-1
- *   evolve work status --data-dir ./v3-data --work-id w1
- *   evolve task add --data-dir ./v3-data --work-id w1 --task-id t1 --title "..." --goal-id gc-1
- *   evolve task approve-plan --data-dir ./v3-data --work-id w1 --task-id plan-1 --plan-version 1
- *   evolve agents register|heartbeat|list|reconcile|adopt --data-dir ./v3-data --work-id w1 ...
- *   evolve coordinator start|stop|tick|status --data-dir ./v3-data [--work-id w1]
- *   evolve ledger show|rebuild --data-dir ./v3-data --work-id w1
- *   evolve adapters list|show|drivers|invoke|handoff-envelope --data-dir ./v3-data ...
- *   evolve tui status|run --data-dir ./v3-data [--work-id w1] [--format text|json]
- *   evolve models seed|list|show|enable --data-dir ./v3-data ...
+ * Default (no args): conversational shell (PT) with status panel + Ctrl+P/Ctrl+C.
+ * Subcommands remain available (intent, circuit, goal, …).
+ *
+ * Installable: repo bin/evolve → orchestrator/dist/cli/evolve.js
  */
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
@@ -33,13 +23,26 @@ import {
 } from "../v3/grill-me/intake.js";
 import type { GrillMeResult } from "../v3/grill-me/types.js";
 import { runIntentFlow } from "../v3/intake/intent-flow.js";
+import {
+  runEvolveShell,
+  detectWorkspaceSession,
+  runFirstRunSetup,
+} from "../v3/evolve-shell/index.js";
 import { defaultStateDbPath, StateDb } from "../v3/state-db/store.js";
 import {
   runFireFive,
   runV0Circuit,
   selectV0AgentAdapter,
 } from "../v3/circuit/index.js";
-import { probeV0ModelProviders } from "../v3/model-providers/index.js";
+import {
+  probeV0ModelProviders,
+  createV1FreeLLMAPI,
+} from "../v3/model-providers/index.js";
+import {
+  createEvolveDaemon,
+  createEvolveDaemonClient,
+  defaultRuntimeSockPath,
+} from "../v3/daemon/index.js";
 import { spawnDomainHierarchy, approveDomainPlan, spawnAuxiliary } from "../v3/hierarchy/spawn.js";
 import { ContinuityEngine } from "../v3/continuity/engine.js";
 import type { HandoffTrigger } from "../v3/continuity/types.js";
@@ -128,12 +131,18 @@ function print(obj: unknown) {
 function usage() {
   print({
     name: "evolve",
-    version: "3.6.0-multi-workflow",
+    version: "0.1.0-v0-cli",
+    default: "evolve  → conversational shell (PT); state in <cwd>/.evolveloop/",
     groups: {
-      intent: ["<text|--text> → silent scan + Grill-Me ≤5 → Goal Contract SQLite"],
+      shell: ["conversational REPL (default when no args)"],
+      setup: ["first-run guided detection + readiness report (V1-PROD-01)"],
+      daemon: ["start|status|ping via Unix Domain Socket (V1-ORCH-01)"],
+      freellm: ["catalog|health FreeLLMAPI (V1-PROD-02)"],
+      intent: ["<text|--text> → silent scan + Grill-Me ≤5 → Goal Document+Contract SQLite"],
       status: ["trivial zero-token status from .evolveloop/state.db"],
       pause: ["trivial zero-token pause"],
-      resume: ["trivial zero-token resume"],
+      resume: ["trivial zero-token resume / session detect"],
+      progress: ["trivial zero-token progress from TaskGraph/SQLite"],
       circuit: [
         "probe (1+1+1 health)",
         "run --task-id … --intent …",
@@ -182,32 +191,17 @@ function usage() {
       eval: ["battery"],
     },
     notes: [
-      "V0 Bloco 2: `evolve intent --text \"...\"` runs silent scan + Grill-Me (3–5 Qs) and persists Goal Contract to <workspace>/.evolveloop/state.db (SQLite WAL).",
+      "V0-CLI: `evolve` (no args) opens PT conversational shell; Ctrl+P pause, Ctrl+C interrupt (see docs/v0/CLI-KEYBINDINGS.md).",
+      "V0-CLI-03: re-running evolve in the same cwd auto-detects .evolveloop/state.db session/contracts.",
+      "V1-PROD-01: `evolve setup` → readiness report; credentials written 0600, never logged.",
+      "V1-ORCH-01: `evolve daemon start` listens on .evolveloop/runtime.sock; client disconnect ≠ kill runs.",
+      "V0-GRILL: medium/large intents require runtime code gate (silent scan + Grill-Me) before planning; LLM boolean ≠ proof.",
+      "V0 Bloco 2: `evolve intent --text \"...\"` → Goal Document + Goal Contract in <workspace>/.evolveloop/state.db.",
       "Use --answers-json for offline/non-interactive answers (Enter/ok → defaults). --confirm-mso flags MSO ready.",
       "V0 Bloco 3: `evolve circuit probe|run|fire-5|ledger` — ExecutionRunner + Evidence Validator + Token Ledger + 1+1+1.",
-      "circuit fire-5 needs EVOLVELOOP_HARNESS_CONSENT=true for real Cursor invoke; --offline-fixture exercises Validator/Ledger/Runner without claiming agent pass.",
-      "Trivial ops (status|pause|resume|help) bypass Grill-Me with zero tokens via regex+SQLite.",
-      "Closing this CLI does not erase --data-dir state.",
-      "V3.5: prefer `evolve service start` for persistent coordinator (IPC); legacy `coordinator start` only marks PID in-process.",
-      "coordinator start only marks process running in this Node process; use scripts/v3/coordinator-supervise.sh or systemd user template for supervised ticks.",
-      "grill apply requires a GRILL_ME_RESULT JSON (fail-closed → Goal Contract).",
-      "exec run / adapters invoke require PLAN_APPROVED for implement tasks; use --provider-mode real|mock.",
-      "adapters: only cursor can_invoke; claude-code/codex/antigravity drivers fail-closed (blocked).",
-      "tui run is a minimal readline loop; closing it does not stop a supervisor.",
-      "models catalog is metadata only — no invented tokens; remote models stay disabled until enable.",
-      "context compact/reinject/savings operate on disposable views; savings never invent tokens.",
-      "embeddings index-build persists --data-dir/vector-index; OmniRoute held (ADR-V3-0005).",
-      "route --decision-backend openrouter requires --consent true + API key; local systemone otherwise.",
-      "lock/fencing is best-effort — NOT exactly-once (ADR-V3-0006).",
-      "recovery plan|apply handles subtree after leader loss; tick only suggests.",
-      "worktree is git worktree isolation only — not an OS sandbox.",
-      "cancel applies to Core coordination state; use --idempotency-key for safe retries.",
-      "parallel schedule advances TaskGraph READY→IN_PROGRESS up to --max-in-progress (no harness spawn).",
-      "battery run exercises V3.3 failure/handoff/lock/cancel/parallel scenarios in-process.",
-      "battery engineering injects eng-stage failures + adversarial evaluator checks.",
-      "battery eval / eval battery runs ≥10 multi-repo engineering tasks (deterministic solvers).",
-      "engineering run executes V3.4 Engineering Loop against a real --workspace (deterministic workers).",
-      "harness matrix classifies adapters as SUPPORTED|PARTIAL|DRY_RUN|PROBE_ONLY|BLOCKED|UNSUPPORTED.",
+      "Trivial ops (status|pause|resume|progress|help|tsc|test) bypass Grill-Me with zero tokens via regex+SQLite (V0-TOK-02).",
+      "V0-TOK: Token Ledger breakdown + stdout filter head30/tail20 + fail-fast cascade + node max_tokens_budget.",
+      "Install: bash scripts/install-evolve-cli.sh (symlink bin/evolve onto PATH).",
     ],
   });
 }
@@ -225,6 +219,30 @@ function defaultCriteria(objective: string): GoalContractCreateInput["criteria"]
 }
 
 async function main() {
+  const argv = process.argv;
+  const first = argv[2];
+
+  // V0-CLI-01/02: default entry → conversational shell on cwd
+  if (
+    first === undefined ||
+    first === "shell" ||
+    first === "repl" ||
+    first === "--shell"
+  ) {
+    const workspace = resolve(
+      (() => {
+        for (let i = 2; i < argv.length; i++) {
+          if (argv[i] === "--workspace" && argv[i + 1]) return argv[i + 1]!;
+          if (argv[i] === "--cwd" && argv[i + 1]) return argv[i + 1]!;
+        }
+        return process.cwd();
+      })(),
+    );
+    const result = await runEvolveShell({ workspace });
+    process.exitCode = result.exit_code;
+    return;
+  }
+
   const args = parseArgs(process.argv);
   if (args.group === "help") {
     usage();
@@ -232,6 +250,109 @@ async function main() {
   }
 
   try {
+    // V1-PROD-01 — first-run setup / readiness
+    if (args.group === "setup") {
+      const workspace = resolve(args.workspace ?? args.cwd ?? process.cwd());
+      const credentials: Array<{ name: string; value: string }> = [];
+      // Accept --set KEY=VALUE without echoing secrets into report beyond names
+      for (const [k, v] of Object.entries(args)) {
+        if (k.startsWith("set-") && typeof v === "string") {
+          credentials.push({ name: k.slice(4).toUpperCase().replace(/-/g, "_"), value: v });
+        }
+      }
+      if (args["openrouter-key"]) {
+        credentials.push({ name: "OPENROUTER_API_KEY", value: args["openrouter-key"] });
+      }
+      if (args["freellmapi-key"]) {
+        credentials.push({ name: "FREELLMAPI_API_KEY", value: args["freellmapi-key"] });
+      }
+      const report = await runFirstRunSetup({
+        workspace,
+        non_interactive: true,
+        credentials: credentials.length ? credentials : undefined,
+        limits: {
+          max_parallel_tasks: args["max-parallel"]
+            ? Number(args["max-parallel"])
+            : undefined,
+          max_agent_sessions: args["max-sessions"]
+            ? Number(args["max-sessions"])
+            : undefined,
+        },
+      });
+      print(report);
+      process.exitCode = report.ready ? 0 : 1;
+      return;
+    }
+
+    // V1-PROD-02 — FreeLLMAPI catalog/health
+    if (args.group === "freellm") {
+      const provider = createV1FreeLLMAPI({
+        baseUrl: args["base-url"],
+        apiKey: args.key,
+      });
+      if (args.command === "catalog") {
+        print(await provider.discoverCatalog());
+        return;
+      }
+      print(await provider.healthCheck());
+      return;
+    }
+
+    // V1-ORCH-01 — UDS daemon
+    if (args.group === "daemon") {
+      const workspace = resolve(args.workspace ?? args.cwd ?? process.cwd());
+      const sock = args.sock ? resolve(args.sock) : defaultRuntimeSockPath(workspace);
+
+      if (args.command === "start") {
+        const daemon = createEvolveDaemon({ sock_path: sock });
+        await daemon.start();
+        print({
+          kind: "EvolveDaemonStarted",
+          server_id: daemon.server_id,
+          sock_path: daemon.sock_path,
+          message: "listening; Ctrl+C stops daemon; client Ctrl+D does not kill runs",
+        });
+        const shutdown = async () => {
+          await daemon.stop();
+          process.exit(0);
+        };
+        process.on("SIGINT", () => void shutdown());
+        process.on("SIGTERM", () => void shutdown());
+        await new Promise(() => {
+          /* keep alive */
+        });
+        return;
+      }
+
+      if (args.command === "ping" || args.command === "status") {
+        const client = createEvolveDaemonClient(sock);
+        await client.connect();
+        try {
+          const msg =
+            args.command === "ping"
+              ? await client.request({ type: "ping" })
+              : await client.request({ type: "status" });
+          print(msg);
+        } finally {
+          await client.disconnect();
+        }
+        return;
+      }
+
+      print({
+        usage: "evolve daemon start|ping|status [--sock path] [--workspace path]",
+        default_sock: sock,
+      });
+      return;
+    }
+
+    // V0-CLI-03 helper: evolve resume → print detected session JSON
+    if (args.group === "resume" && (args.command === "help" || args.command === "detect" || !argv[3])) {
+      const workspace = resolve(args.workspace ?? args.cwd ?? process.cwd());
+      print(detectWorkspaceSession(workspace));
+      return;
+    }
+
     // V3.6 Global Operations Center (ops-dir; does not require --data-dir)
     const v36Groups = new Set(Object.keys(V36_USAGE_GROUPS));
     if (v36Groups.has(args.group)) {
@@ -404,6 +525,12 @@ async function main() {
         console.error(result.grill_prompts_pt.join("\n---\n"));
         console.error("");
         console.error(result.summary_lines.join("\n"));
+        if (result.goal_document_id) {
+          console.error(`Goal Document: ${result.goal_document_id}`);
+        }
+        console.error(
+          `Runtime gate: scale=${result.scale} planning=${result.planning.planning_authorized}`,
+        );
         if (result.mso_ready) {
           console.error("MSO: confirmado (pronto para Bloco 3 — não executado neste comando).");
         } else {

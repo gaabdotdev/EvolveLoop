@@ -66,6 +66,18 @@ export interface GoalContract {
   /** Immutable parent version when this is a revision. */
   supersedes_version?: number;
   work_id?: string;
+  /**
+   * V2-QUAL-01 — When true, TRUE_FULL_PASS / VERIFIED_PASS require a valid
+   * IndependentReviewGate submission (distinct agent_id and session_id).
+   */
+  require_independent_review?: boolean;
+  /**
+   * V2-QUAL-02 — When true, TRUE_FULL_PASS requires mutation battery score
+   * >= mutation_score_threshold (default 1.0). Weak tests → block.
+   */
+  require_mutation_gate?: boolean;
+  /** Kill ratio required when require_mutation_gate is set (0..1). Default 1.0. */
+  mutation_score_threshold?: number;
 }
 
 export interface GoalContractCreateInput {
@@ -82,6 +94,12 @@ export interface GoalContractCreateInput {
     state?: CriterionState;
   }>;
   work_id?: string;
+  /** V2-QUAL-01 — require IndependentReviewGate before verified pass. */
+  require_independent_review?: boolean;
+  /** V2-QUAL-02 — require selective mutation battery before TRUE_FULL_PASS. */
+  require_mutation_gate?: boolean;
+  /** V2-QUAL-02 — minimum mutation kill ratio (0..1). */
+  mutation_score_threshold?: number;
 }
 
 export function evaluateTrueFullPass(contract: GoalContract): {

@@ -1,0 +1,9 @@
+ orchestrator/package.json | 6 ++++++
+ 1 file changed, 6 insertions(+)
+ M orchestrator/package.json
+ M scripts/sync-agents-from-cursor.sh
+?? bin/evolve
+?? docs/v0/
+?? scripts/install-evolve-cli.sh
+?? scripts/v0-live-five-tasks.sh
+?? scripts/v0-live-token-compare.mjs

@@ -1,6 +1,7 @@
 /**
  * Policy enforcer — evaluates capabilities against a SandboxProfile.
  * Fail-closed for unknown actions. Integrates with AuthorityContext flags.
+ * V2-INT-04 — optional DelegationRegistry gate for destroy/network/credential.
  */
 
 import type { AuthorityContext } from "../../authority/capability-authority.js";
@@ -14,6 +15,12 @@ import type {
   SandboxProfile,
   SecurityDecision,
 } from "./types.js";
+import {
+  ACTION_TO_DELEGATION_CATEGORY,
+  type DelegationRegistry,
+} from "./delegation.js";
+
+export type { SecurityDecision };
 
 function nowIso(): string {
   return new Date().toISOString();
@@ -63,10 +70,18 @@ export function narrowProfileByAuthority(
   return { ...profile, capabilities: caps };
 }
 
+export interface EvaluateCapabilityOpts {
+  resource?: string;
+  targetPath?: string;
+  /** V2-INT-04 — when set with principal, narrows destroy/network/credential. */
+  principal?: string;
+  delegation_registry?: DelegationRegistry;
+}
+
 export function evaluateCapability(
   profile: SandboxProfile,
   action: CapabilityAction,
-  opts?: { resource?: string; targetPath?: string },
+  opts?: EvaluateCapabilityOpts,
 ): SecurityDecision {
   const grant = grantFor(profile, action, opts?.resource);
   let decision: CapabilityDecision = grant?.decision ?? "deny";
@@ -105,6 +120,23 @@ export function evaluateCapability(
   if (action === "network.egress" && profile.network.mode === "deny") {
     decision = "deny";
     reason = "network_mode_deny";
+  }
+
+  // V2-INT-04 — delegation matrix narrows only (never widens deny → allow).
+  const category = ACTION_TO_DELEGATION_CATEGORY[action];
+  if (
+    category &&
+    decision !== "deny" &&
+    opts?.principal &&
+    opts.delegation_registry
+  ) {
+    const path =
+      opts.targetPath ?? opts.resource ?? profile.filesystem.workspace_rw ?? "/";
+    const d = opts.delegation_registry.isAllowed(opts.principal, category, path);
+    if (!d.allowed) {
+      decision = "deny";
+      reason = `delegation_denied:${category}:${d.reason}`;
+    }
   }
 
   return {

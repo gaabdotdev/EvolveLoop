@@ -1,0 +1,69 @@
+{
+  "plan": [
+    {
+      "task_id": "fire-1",
+      "attempt1_status": "TRUE_FULL_PASS",
+      "needs_retry": false,
+      "attempts": [
+        {
+          "n": 1,
+          "status": "TRUE_FULL_PASS",
+          "reason": "TRUE_FULL_PASS",
+          "run_id": "cr-240647eb-dca1-4add-8bf2-d49435c4559e"
+        }
+      ]
+    },
+    {
+      "task_id": "fire-2",
+      "attempt1_status": "TRUE_FULL_PASS",
+      "needs_retry": false,
+      "attempts": [
+        {
+          "n": 1,
+          "status": "TRUE_FULL_PASS",
+          "reason": "TRUE_FULL_PASS",
+          "run_id": "cr-aa3cfb92-2fc9-44ea-8a13-e607ac70c11a"
+        }
+      ]
+    },
+    {
+      "task_id": "fire-3",
+      "attempt1_status": "TRUE_FULL_PASS",
+      "needs_retry": false,
+      "attempts": [
+        {
+          "n": 1,
+          "status": "TRUE_FULL_PASS",
+          "reason": "TRUE_FULL_PASS",
+          "run_id": "cr-75fd2577-1f03-4a76-bca1-6351499d0718"
+        }
+      ]
+    },
+    {
+      "task_id": "fire-4",
+      "attempt1_status": "TRUE_FULL_PASS",
+      "needs_retry": false,
+      "attempts": [
+        {
+          "n": 1,
+          "status": "TRUE_FULL_PASS",
+          "reason": "TRUE_FULL_PASS",
+          "run_id": "cr-21e14572-a203-4ee5-90f7-f1a4e4b44284"
+        }
+      ]
+    },
+    {
+      "task_id": "fire-5",
+      "attempt1_status": "TRUE_FULL_PASS",
+      "needs_retry": false,
+      "attempts": [
+        {
+          "n": 1,
+          "status": "TRUE_FULL_PASS",
+          "reason": "TRUE_FULL_PASS",
+          "run_id": "cr-35a99f70-95ca-4f8d-835c-741706fa2c78"
+        }
+      ]
+    }
+  ]
+}

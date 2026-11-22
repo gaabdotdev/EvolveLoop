@@ -1,0 +1,37 @@
+{
+  "source": "/home/gaab/orca/workspaces/EvolveLoop/seagrass/docs/v0/evidence/latest/04-token-compare.json",
+  "combined_compare": {
+    "baseline_total": 11630,
+    "phase_total": 4844,
+    "reduction_pct": 58.349097162510745,
+    "meets_target": true,
+    "target_min_pct": 50
+  },
+  "prompt_compare": {
+    "baseline_total": 10805,
+    "phase_total": 4285,
+    "reduction_pct": 60.34243405830634,
+    "meets_target": true,
+    "target_min_pct": 50
+  },
+  "stdout_compare": {
+    "baseline_tokens_est": 825,
+    "phase_tokens_est": 559,
+    "baseline_total": 825,
+    "phase_total": 559,
+    "reduction_pct": 32.24242424242424,
+    "meets_target": false,
+    "target_min_pct": 50,
+    "filter_stats": {
+      "input_lines": 76,
+      "output_lines": 51,
+      "ansi_stripped": false,
+      "passed_tests_hidden": 0,
+      "stack_frames_deduped": 0,
+      "truncated_middle": true
+    },
+    "note": "Measured on captured adapter stdout/stderr when present"
+  },
+  "verdict": "PASS_LIVE_REDUCTION_58.35pct",
+  "claim_live_reduction": true
+}

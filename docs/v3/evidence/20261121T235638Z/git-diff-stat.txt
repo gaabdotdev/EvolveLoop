@@ -1,0 +1,19 @@
+=== scoped ===
+=== tracked diff ===
+ orchestrator/src/v3/sandbox/index.ts | 5 +++++
+ 1 file changed, 5 insertions(+)
+=== untracked (new) ===
+  541 orchestrator/src/v3/sandbox/microvm-profile.ts
+  238 orchestrator/tests/unit/v3-sec-01-microvm.test.ts
+  779 total
+microvm-profile.ts (new untracked)
+v3-sec-01-microvm.test.ts (new untracked)
+=== evidence tree ===
+docs/v3/evidence/20261121T235638Z/gates/SEC-01.md
+docs/v3/evidence/20261121T235638Z/git-diff-stat-scoped.txt
+docs/v3/evidence/20261121T235638Z/git-diff-stat.txt
+docs/v3/evidence/20261121T235638Z/raw/microvm-probe.json
+docs/v3/evidence/20261121T235638Z/SUMMARY.md
+docs/v3/evidence/20261121T235638Z/vitest-v3-sec-01.exit
+docs/v3/evidence/20261121T235638Z/vitest-v3-sec-01.log
+docs/v3/evidence/20261121T235638Z/vitest-v3-sec-01.txt

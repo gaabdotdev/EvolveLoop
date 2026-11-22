@@ -1,5 +1,6 @@
 /**
  * EvolveLoop V3.6 — Global Operations Plane public exports.
+ * V3-DIST-01 — diagnose / exportState / importState / backup / restore.
  */
 
 export * from "./types.js";
@@ -15,3 +16,4 @@ export * from "./team-composer.js";
 export * from "./quality-gates.js";
 export * from "./recovery.js";
 export * from "./global-ops-service.js";
+export * from "./dist-ops.js";

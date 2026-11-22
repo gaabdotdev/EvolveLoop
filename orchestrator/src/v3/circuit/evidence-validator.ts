@@ -3,7 +3,6 @@
  * Blocks if git diff touches tests/build scripts without Goal Contract authorization.
  */
 
-import { spawnSync } from "node:child_process";
 import { existsSync, readFileSync } from "node:fs";
 import { join, resolve } from "node:path";
 import {
@@ -13,6 +12,16 @@ import {
 } from "../execution-runner/index.js";
 import type { GoalContract } from "../goal-contract/types.js";
 import { evaluateTrueFullPass } from "../goal-contract/types.js";
+import {
+  contractRequiresIndependentReview,
+  type IndependentReviewGate,
+} from "../evaluation/independent-review-gate.js";
+import {
+  contractMutationThreshold,
+  contractRequiresMutationGate,
+  evaluateMutationGate,
+  type MutationBatteryResult,
+} from "../evaluation/selective-mutation.js";
 
 const TEST_OR_BUILD_PATTERNS = [
   /(^|\/)tests?\//i,
@@ -37,6 +46,18 @@ export interface EvidenceValidatorOptions {
   timeout_ms?: number;
   /** Skip git-diff gate (tests only). */
   skip_diff_gate?: boolean;
+  /**
+   * V2-QUAL-01 — When goal_contract.require_independent_review, a valid PASS
+   * review on this gate is required before TRUE_FULL_PASS / VERIFIED_PASS.
+   */
+  independent_review_gate?: IndependentReviewGate;
+  /**
+   * V2-QUAL-02 — Precomputed selective mutation battery. Required when
+   * goal_contract.require_mutation_gate; score must meet threshold.
+   */
+  mutation_battery?: MutationBatteryResult;
+  /** Override threshold (else contract.mutation_score_threshold or 1.0). */
+  mutation_score_threshold?: number;
 }
 
 export interface EvidenceValidatorResult {
@@ -56,16 +77,29 @@ export interface EvidenceValidatorResult {
   limitations: string[];
 }
 
-function listChangedFiles(workspace: string, _runner: ExecutionRunner): string[] {
-  const r = spawnSync("git", ["diff", "--name-only", "HEAD"], {
+/** All git inspection goes through ExecutionRunner (V0-SEC-01 / V0-SEC-06). */
+function listChangedFiles(workspace: string, runner: ExecutionRunner): string[] {
+  const unstaged = runner.runSync({
+    argv: ["git", "diff", "--name-only", "HEAD"],
     cwd: workspace,
-    encoding: "utf-8",
+    workspace_root: workspace,
+    timeout_ms: 30_000,
   });
-  if (r.status !== 0) return [];
-  return (r.stdout ?? "")
-    .split("\n")
-    .map((s) => s.trim())
-    .filter(Boolean);
+  const staged = runner.runSync({
+    argv: ["git", "diff", "--name-only", "--cached"],
+    cwd: workspace,
+    workspace_root: workspace,
+    timeout_ms: 30_000,
+  });
+  const files = new Set<string>();
+  for (const block of [unstaged, staged]) {
+    if (block.status !== "ok" && block.exit_code !== 0) continue;
+    for (const line of block.stdout.split("\n")) {
+      const rel = line.trim();
+      if (rel) files.add(rel);
+    }
+  }
+  return [...files];
 }
 
 function isSensitive(rel: string): boolean {
@@ -116,7 +150,51 @@ export async function runEvidenceValidator(
   const limitations = [
     "Validator runs outside agent session via ExecutionRunner",
     "TRUE_FULL_PASS requires mandatory criteria PASS + commands exit 0 + no unauthorized sensitive diffs",
+    "V2-QUAL-01: require_independent_review blocks TRUE_FULL_PASS/VERIFIED_PASS without IndependentReviewGate PASS",
+    "V2-QUAL-02: require_mutation_gate blocks TRUE_FULL_PASS when mutation score < threshold or WEAK_TESTS",
   ];
+
+  // V2-QUAL-01 — independent review before verified pass
+  if (contractRequiresIndependentReview(opts.goal_contract)) {
+    const gate = opts.independent_review_gate;
+    const filter = {
+      work_id: opts.goal_contract.work_id,
+      goal_contract_id: opts.goal_contract.goal_contract_id,
+    };
+    if (!gate) {
+      reasons.push("missing_independent_review_gate");
+      reasons.push("missing_valid_independent_review:TRUE_FULL_PASS");
+      reasons.push("missing_valid_independent_review:VERIFIED_PASS");
+    } else {
+      gate.bindContract(opts.goal_contract);
+      const full = gate.evaluateForPass("TRUE_FULL_PASS", filter);
+      const verified = gate.evaluateForPass("VERIFIED_PASS", filter);
+      if (!full.allowed) reasons.push(...full.reasons);
+      if (!verified.allowed) {
+        for (const r of verified.reasons) {
+          if (!reasons.includes(r)) reasons.push(r);
+        }
+      }
+    }
+  }
+
+  // V2-QUAL-02 — selective mutation gate before TRUE_FULL_PASS
+  if (contractRequiresMutationGate(opts.goal_contract)) {
+    const threshold =
+      opts.mutation_score_threshold ?? contractMutationThreshold(opts.goal_contract);
+    const gate = evaluateMutationGate({
+      required: true,
+      threshold,
+      battery: opts.mutation_battery ?? null,
+      score: opts.mutation_battery?.score,
+    });
+    if (!gate.allowed) {
+      for (const r of gate.reasons) {
+        if (!reasons.includes(r)) reasons.push(r);
+      }
+      reasons.push("mutation_gate_blocked:TRUE_FULL_PASS");
+    }
+  }
 
   if (!opts.skip_diff_gate) {
     const changed = listChangedFiles(workspace, runner);

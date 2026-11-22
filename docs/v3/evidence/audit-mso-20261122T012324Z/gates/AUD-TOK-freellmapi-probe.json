@@ -1,0 +1,28 @@
+{
+  "kind": "AUD-TOK-FreeLLMAPI-Probe",
+  "ts": "2026-11-22T02:03:01.277Z",
+  "catalog": {
+    "state": "needsKey",
+    "message": "catalog HTTP 401",
+    "models_len": 0
+  },
+  "invoke": {
+    "status": "blocked",
+    "code": "NEEDSKEY",
+    "message": "FreeLLMAPI invoke HTTP 401",
+    "tokens_in": null,
+    "tokens_out": null,
+    "cost_usd": null,
+    "cost_provenance": "UNAVAILABLE",
+    "freellmapi": {
+      "model_requested": "auto",
+      "model_served": null,
+      "provider_state": "needsKey",
+      "fallback_used": false
+    }
+  },
+  "honesty": {
+    "rule": "401/needsKey → cost_provenance=UNAVAILABLE; tokens remain null (never silent 0)",
+    "silent_zero": "OK_NULL"
+  }
+}

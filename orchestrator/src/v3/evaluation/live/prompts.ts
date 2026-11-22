@@ -1,6 +1,9 @@
 /**
  * Live LLM prompts — intentionally do NOT include solver answers or task-id cheat sheets.
+ * V1-TOK-06: worker prompts assemble via buildStatelessWorkerSnapshot (O(1) context).
  */
+
+import { buildStatelessWorkerPrompt } from "../../token-economy/stateless-snapshot.js";
 
 export interface LiveTaskBrief {
   task_id: string;
@@ -8,6 +11,13 @@ export interface LiveTaskBrief {
   objective: string;
   acceptance: string[];
   constraints: string[];
+}
+
+export interface WorkerPromptExtras {
+  /** Optional git diff for the O(1) snapshot. */
+  git_diff?: string;
+  /** Optional last filtered error for the O(1) snapshot. */
+  last_filtered_error?: string;
 }
 
 /** Public briefs for live runs — no pre-coded solution body. */
@@ -35,19 +45,30 @@ export const LIVE_TASK_BRIEFS: Record<string, LiveTaskBrief> = {
   },
 };
 
-export function buildWorkerPrompt(brief: LiveTaskBrief, workspaceHint: string): string {
-  return [
-    "You are an engineering agent working inside an isolated workspace.",
-    `Workspace root (edit files here): ${workspaceHint}`,
-    `Objective: ${brief.objective}`,
-    "Acceptance criteria:",
-    ...brief.acceptance.map((a) => `- ${a}`),
-    "Constraints:",
-    ...brief.constraints.map((c) => `- ${c}`),
-    "Explore the repository yourself. Do not assume a hidden solution.",
-    "Make real file edits under the workspace root, run `node --test` on test/*.test.js, and stop when criteria are met.",
-    "Do not claim success without tests passing.",
-  ].join("\n");
+/**
+ * Worker prompt via V1-TOK-06 stateless snapshot (Goal + Diff + Last Error).
+ * Never grows with chat history — extras only carry O(1) fields.
+ */
+export function buildWorkerPrompt(
+  brief: LiveTaskBrief,
+  workspaceHint: string,
+  extras: WorkerPromptExtras = {},
+): string {
+  const { prompt } = buildStatelessWorkerPrompt({
+    goal: brief.objective,
+    git_diff: extras.git_diff,
+    last_filtered_error: extras.last_filtered_error,
+    workspace_hint: workspaceHint,
+    worker_id: brief.task_id,
+    acceptance: brief.acceptance,
+    constraints: [
+      ...brief.constraints,
+      "Explore the repository yourself. Do not assume a hidden solution.",
+      "Make real file edits under the workspace root, run `node --test` on test/*.test.js, and stop when criteria are met.",
+      "Do not claim success without tests passing.",
+    ],
+  });
+  return prompt;
 }
 
 export function buildReviewerPrompt(input: {

@@ -33,8 +33,31 @@ export interface OrchestrationTask {
   ir_id?: string;
   run_id?: string;
   evidence_ids: string[];
+  /**
+   * Path prefixes this task may mutate — used by parallel File-Ownership Locking
+   * and by MSO strictly-disjoint checks (V0-ORCH-04 / V2-ORCH-01).
+   */
+  touch_paths?: string[];
+  /** Explicit owned paths; merged with touch_paths for scheduler locking. */
+  owned_paths?: string[];
+  /** Logical modules declaring scope (treated as path-like prefixes for overlap). */
+  modules?: string[];
   created_at: string;
   updated_at: string;
+}
+
+/** Deduplicated scope paths used for file-ownership locking. */
+export function taskScopePaths(task: Pick<OrchestrationTask, "touch_paths" | "owned_paths" | "modules">): string[] {
+  const raw = [...(task.touch_paths ?? []), ...(task.owned_paths ?? []), ...(task.modules ?? [])];
+  const seen = new Set<string>();
+  const out: string[] = [];
+  for (const p of raw) {
+    const n = p.replace(/\\/g, "/").replace(/\/+$/, "");
+    if (!n || seen.has(n)) continue;
+    seen.add(n);
+    out.push(n);
+  }
+  return out;
 }
 
 export interface TaskGraphSnapshot {

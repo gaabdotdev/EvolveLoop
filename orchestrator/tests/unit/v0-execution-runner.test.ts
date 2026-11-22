@@ -3,11 +3,11 @@ import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { symlinkSync, writeFileSync, mkdirSync } from "node:fs";
-import { ExecutionRunner } from "../../src/v3/execution-runner/index.js";
+import { DefaultExecutionRunner } from "../../src/v3/execution-runner/index.js";
 
 describe("V0 ExecutionRunner", () => {
   let tmp: string;
-  const runner = new ExecutionRunner();
+  const runner = new DefaultExecutionRunner();
 
   beforeEach(async () => {
     tmp = await fs.mkdtemp(path.join(os.tmpdir(), "v0-runner-"));
@@ -17,12 +17,18 @@ describe("V0 ExecutionRunner", () => {
     await fs.rm(tmp, { recursive: true, force: true });
   });
 
-  it("runs command with scrubbed env (secrets not inherited)", async () => {
+  it("runs command with scrubbed env (secrets not inherited) + ephemeral HOME", async () => {
     const prev = process.env.SUPER_SECRET_TOKEN;
+    const prevHome = process.env.HOME;
     process.env.SUPER_SECRET_TOKEN = "should-not-leak";
+    process.env.HOME = "/should/not/inherit/real/home";
     try {
       const result = await runner.run({
-        argv: ["bash", "-lc", "echo SECRET=$SUPER_SECRET_TOKEN; echo PATH_OK=${PATH:+yes}"],
+        argv: [
+          "bash",
+          "-lc",
+          "echo SECRET=$SUPER_SECRET_TOKEN; echo PATH_OK=${PATH:+yes}; echo HOME=$HOME",
+        ],
         cwd: tmp,
         workspace_root: tmp,
         timeout_ms: 5000,
@@ -31,10 +37,14 @@ describe("V0 ExecutionRunner", () => {
       expect(result.stdout).toContain("SECRET=");
       expect(result.stdout).not.toContain("should-not-leak");
       expect(result.stdout).toContain("PATH_OK=yes");
+      expect(result.stdout).not.toContain("/should/not/inherit/real/home");
+      expect(result.ephemeral_home).toBeTypeOf("string");
       expect(result.pgid).toBeTypeOf("number");
     } finally {
       if (prev === undefined) delete process.env.SUPER_SECRET_TOKEN;
       else process.env.SUPER_SECRET_TOKEN = prev;
+      if (prevHome === undefined) delete process.env.HOME;
+      else process.env.HOME = prevHome;
     }
   });
 
@@ -57,15 +67,41 @@ describe("V0 ExecutionRunner", () => {
     }
   });
 
-  it("times out and kills process group", async () => {
+  it("times out and kills process group (SIGTERM→SIGKILL)", async () => {
     const result = await runner.run({
       argv: ["bash", "-lc", "sleep 30"],
       cwd: tmp,
       workspace_root: tmp,
       timeout_ms: 400,
+      kill_grace_ms: 200,
     });
     expect(result.status).toBe("timeout");
     expect(result.code).toBe("TIMEOUT");
+  });
+
+  it("redacts secrets in captured stdout", async () => {
+    const result = await runner.run({
+      argv: ["bash", "-lc", "echo API_KEY=abc123secretvalue999; echo ok"],
+      cwd: tmp,
+      workspace_root: tmp,
+      timeout_ms: 3000,
+    });
+    expect(result.status).toBe("ok");
+    expect(result.stdout).toContain("ok");
+    expect(result.stdout).not.toContain("abc123secretvalue999");
+    expect(result.stdout).toMatch(/REDACTED/i);
+  });
+
+  it("blocks destructive capability via Capability Gate", async () => {
+    const result = await runner.run({
+      argv: ["true"],
+      cwd: tmp,
+      workspace_root: tmp,
+      capability: "filesystem.delete",
+      timeout_ms: 3000,
+    });
+    expect(result.status).toBe("blocked");
+    expect(result.code).toBe("CAPABILITY_BLOCKED");
   });
 
   it("filters denied stdout patterns", async () => {

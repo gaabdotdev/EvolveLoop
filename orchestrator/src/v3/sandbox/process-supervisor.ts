@@ -77,6 +77,36 @@ export function cancelProcessTree(identity: SupervisedProcessIdentity, signal: N
   }
 }
 
+/**
+ * V0-SEC-04 — full-tree kill with SIGTERM → grace → SIGKILL escalation.
+ */
+export async function cancelProcessTreeEscalating(
+  identity: SupervisedProcessIdentity,
+  opts?: { grace_ms?: number },
+): Promise<{ signalled: boolean; reason: string; escalated: boolean }> {
+  const grace_ms = opts?.grace_ms ?? 2_000;
+  const first = cancelProcessTree(identity, "SIGTERM");
+  if (!first.signalled && first.reason === "pid_reuse_or_gone") {
+    return { ...first, escalated: false };
+  }
+  const deadline = Date.now() + grace_ms;
+  while (Date.now() < deadline) {
+    if (!sameProcess(identity)) {
+      return { signalled: first.signalled, reason: "terminated_after_SIGTERM", escalated: false };
+    }
+    await new Promise((r) => setTimeout(r, 50));
+  }
+  if (!sameProcess(identity)) {
+    return { signalled: first.signalled, reason: "terminated_after_SIGTERM", escalated: false };
+  }
+  const second = cancelProcessTree(identity, "SIGKILL");
+  return {
+    signalled: second.signalled || first.signalled,
+    reason: second.signalled ? "escalated_SIGKILL" : first.reason,
+    escalated: true,
+  };
+}
+
 export interface SpawnSupervisedOptions {
   argv: string[];
   cwd?: string;

@@ -1,0 +1,11 @@
+
+ RUN  v2.1.9 /home/gaab/orca/workspaces/EvolveLoop/seagrass/orchestrator
+
+ ✓ tests/unit/v3-sec-01-microvm.test.ts (15 tests) 35ms
+ ✓ tests/unit/v1-sec-01-bwrap-wrapper.test.ts (6 tests | 1 skipped) 51ms
+
+ Test Files  2 passed (2)
+      Tests  20 passed | 1 skipped (21)
+   Start at  20:57:41
+   Duration  16.29s (transform 215ms, setup 16ms, collect 300ms, tests 85ms, environment 0ms, prepare 109ms)
+

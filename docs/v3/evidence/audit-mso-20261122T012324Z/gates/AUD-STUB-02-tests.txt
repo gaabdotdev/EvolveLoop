@@ -1,0 +1,31 @@
+
+ RUN  v2.1.9 /home/gaab/orca/workspaces/EvolveLoop/seagrass/orchestrator
+
+(node:3275371) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ tests/unit/v1-orch-02-event-sourcing.test.ts (3 tests) 35ms
+ ✓ tests/unit/v2-mem-01-consolidation.test.ts (10 tests) 29ms
+ ✓ tests/unit/v1-mem-01-hybrid-search.test.ts (4 tests) 38ms
+ ✓ tests/unit/v3-mem-01-cold-storage.test.ts (6 tests) 49ms
+(node:3275285) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+stdout | tests/unit/v3-mem-02-pyramid.test.ts > V3-MEM-02 Pyramid Index (RAPTOR) > measures p95 coarse-to-fine latency on fixture ≥1k nodes (real ms)
+{"gate":"V3-MEM-02","fixture_n0":1200,"fixture_nodes":1358,"by_level":{"0":1200,"1":153,"2":4,"3":1},"samples":40,"p50_ms":0.69,"p95_ms":2.731,"max_ms":6.27,"limitation":"Fixture scale = ≥1k pyramid nodes (not 100k events). Full Suíte E 100k deferred."}
+
+ ✓ tests/unit/v3-mem-02-pyramid.test.ts (4 tests) 132ms
+ ✓ tests/unit/v0-orch-persistence.test.ts (6 tests) 103ms
+stdout | tests/unit/v3-mem-03-virtual-memory.test.ts > V3-MEM-03 Virtual Memory (MemGPT paging) > token budget does not grow with 100× history (measured)
+{"gate":"V3-MEM-03","token_budget":800,"baseline_n":4,"scale":100,"history_n":400,"baseline_tokens":656,"final_tokens":795,"growth_ratio":1.2119,"resident":1,"tombstoned":45,"pages_total":46,"naive_full_history_tokens":62245,"TOKEN_BUDGET_100X":"BOUNDED"}
+
+ ✓ tests/unit/v3-mem-03-virtual-memory.test.ts (7 tests) 659ms
+   ✓ V3-MEM-03 Virtual Memory (MemGPT paging) > token budget does not grow with 100× history (measured) 620ms
+ ✓ tests/unit/v0-adapt-memory.test.ts (8 tests) 2791ms
+   ✓ V0-ADAPT 1+1+1 + adapter contract + stubs > V0-ADAPT-01: exposes Ollama + OpenRouter + Cursor adapter 953ms
+   ✓ V0-ADAPT 1+1+1 + adapter contract + stubs > V0-ADAPT-02: adapter contract healthCheck/normalizeResult/cancel via runner 1812ms
+
+ Test Files  8 passed (8)
+      Tests  48 passed (48)
+   Start at  22:43:18
+   Duration  4.43s (transform 1.86s, setup 222ms, collect 5.08s, tests 3.84s, environment 2ms, prepare 1.07s)
+
+EXIT_CODE=0

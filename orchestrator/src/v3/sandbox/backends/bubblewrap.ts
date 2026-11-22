@@ -99,6 +99,12 @@ function buildBwrapArgs(req: SandboxExecRequest, bwrapPath: string): { args: str
   args.push("--proc", "/proc");
   args.push("--tmpfs", "/tmp");
   args.push("--tmpfs", "/run");
+
+  // V1-SEC-01 — isolate /home (and therefore ~/.ssh under /home/*).
+  if (existsSync("/home")) {
+    args.push("--tmpfs", "/home");
+  }
+
   args.push("--bind", workspace, workspace);
 
   // Explicitly avoid binding home / primary checkout.

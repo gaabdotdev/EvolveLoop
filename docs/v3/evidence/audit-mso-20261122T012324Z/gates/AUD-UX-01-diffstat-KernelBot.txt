@@ -1,0 +1,15 @@
+# AUD-UX-01 KernelBot session files (untracked at HEAD 8b0b2ef)
+# session_branch: aud-ux-01/live-stress-20261122
+# touched:
+#   engine/__init__.py (new shim)
+#   engine/wiki_doc.py (new shim)
+#   tests/test_wiki_doc.py (import fix kernel.knowledge.wiki_doc)
+#   tests/test_rate_limit.py (added reset + limit-one tests)
+# env-only: .venv pip install python-multipart (already in requirements.txt)
+
+## diffstat (line counts of session artifacts)
+   1 engine/__init__.py
+   7 engine/wiki_doc.py
+  22 tests/test_wiki_doc.py
+  42 tests/test_rate_limit.py
+  72 total

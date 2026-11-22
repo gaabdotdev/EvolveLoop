@@ -25,3 +25,28 @@ export {
   type TrivialKind,
   type TrivialMatch,
 } from "./trivial-bypass.js";
+export {
+  classifyRequestScale,
+  authorizePlanning,
+  assertPlanningAuthorized,
+  type RequestScale,
+  type PlanningAuthorization,
+  type AuthorizePlanningInput,
+} from "./runtime-gate.js";
+export {
+  applyDeltaGrillMe,
+  listStaleEvidence,
+  type DeltaGrillMeInput,
+  type DeltaGrillMeResult,
+  type RunningTaskProcess,
+  type KillFn,
+} from "./delta.js";
+export {
+  attachDelegationGrant,
+  listAttachedGrants,
+  queryGrillDelegation,
+  validateGrillDelegationRefs,
+  type GrillMeDelegationAttachment,
+  type AttachGrantInput,
+  type AttachGrantResult,
+} from "./delegated-authority.js";

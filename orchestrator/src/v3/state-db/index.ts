@@ -1,11 +1,31 @@
-export { STATE_DB_SCHEMA_SQL, STATE_DB_SCHEMA_VERSION } from "./schema.js";
+export {
+  STATE_DB_SCHEMA_SQL,
+  STATE_DB_SCHEMA_VERSION,
+  SQLITE_SYNC_FULL,
+  SQLITE_BUSY_TIMEOUT_MS,
+} from "./schema.js";
 export { StateDb, StateDbError, defaultStateDbPath } from "./store.js";
 export type {
   GoalContractRow,
   PersistedGoalContract,
+  PersistedGoalDocument,
   TrivialOpRow,
   TokenCostProvenance,
+  TokenBreakdown,
   TokenLedgerInsert,
   TokenLedgerEntry,
   CircuitRunRow,
+  WorkspaceLeaseStatus,
+  WorkspaceLease,
+  MsoSession,
+  MsoTransitionRow,
+  OutboxStatus,
+  OutboxRow,
+  TaskGraphNodeRow,
+  InboxMessageRow,
+  WorkLedgerDbEntry,
+  EventRow,
+  TaskSubstateRow,
+  EvidenceStatus,
+  EvidenceRecordRow,
 } from "./types.js";

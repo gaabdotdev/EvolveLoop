@@ -1,0 +1,23 @@
+# Scoped paths for M4-V3-MEM-04
+
+## New / touched (this task)
+  611 orchestrator/src/v3/memory/multi-hop-synthesis.ts
+  274 orchestrator/tests/unit/v3-mem-04-multihop.test.ts
+  211 orchestrator/src/v3/memory/index.ts
+ 1096 total
+
+## git status (scoped)
+## chore/v0-consolidation
+ M .agent_history.md
+ M .ai/log.md
+?? docs/v3/evidence/20261121T230709Z/
+?? docs/v3/evidence/LATEST_PATH.txt
+?? docs/v3/evidence/latest
+?? orchestrator/src/v3/memory/index.ts
+?? orchestrator/src/v3/memory/multi-hop-synthesis.ts
+?? orchestrator/tests/unit/v3-mem-04-multihop.test.ts
+
+## git diff --stat (index barrel if tracked)
+ .agent_history.md | 294 +++++++++++++++++++++++++++++++++++++++++++++
+ .ai/log.md        | 349 ++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 643 insertions(+)

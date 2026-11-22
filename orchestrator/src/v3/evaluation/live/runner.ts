@@ -113,7 +113,7 @@ function diffFiles(
   const files_changed: string[] = [];
   for (const f of afterListing) {
     const prev = before.get(f);
-    const next = existsSync(join(ws.root, f)) ? ws.readFile(f) : "";
+    const next = existsSync(join(ws.root, f)) ? ws.readFileHost(f) : "";
     if (prev === undefined || prev !== next) files_changed.push(f);
   }
   files_changed.sort();
@@ -330,7 +330,7 @@ export function runLiveEngineeringCase(opts: LiveRunOptions): LiveRunResult {
     }
   }
 
-  const before = new Map(walkRelFiles(ws.root).map((f) => [f, ws.readFile(f)]));
+  const before = new Map(walkRelFiles(ws.root).map((f) => [f, ws.readFileHost(f)]));
   const promptDir = join(opts.paths.root, "harness-prompts", work_id);
   const workerPrompt = buildWorkerPrompt(brief, ws.root);
 
@@ -516,7 +516,7 @@ export function runLiveEngineeringCase(opts: LiveRunOptions): LiveRunResult {
   const diffParts: string[] = [];
   for (const f of files_changed) {
     const prev = before.get(f) ?? "";
-    const next = existsSync(join(ws.root, f)) ? ws.readFile(f) : "";
+    const next = existsSync(join(ws.root, f)) ? ws.readFileHost(f) : "";
     diffParts.push(`--- a/${f}\n+++ b/${f}\nPREV:\n${prev.slice(0, 4000)}\nNEXT:\n${next.slice(0, 4000)}`);
   }
   const reviewPrompt = buildReviewerPrompt({

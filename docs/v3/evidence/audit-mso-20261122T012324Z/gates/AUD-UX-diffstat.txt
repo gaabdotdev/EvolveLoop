@@ -1,0 +1,7 @@
+# AUD-UX + BM diffstat
+# UTC 2026-11-22T02:11:06Z
+
+## Scripts / evidence written this batch
+?? orchestrator/scripts/aud-ux-02-timing-probe.mts
+?? docs/v3/evidence/audit-mso-20261122T012324Z/gates/AUD-UX-*
+?? docs/v3/evidence/audit-mso-20261122T012324Z/gates/BM-*

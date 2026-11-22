@@ -1,0 +1,40 @@
+{
+  "kind": "v3_sec_04_host_probe",
+  "task": "M16-V3-SEC-04-REDTEAM",
+  "ts": "20261122T001528Z",
+  "profile_id": "redteam-continuous-v3-sec-04",
+  "schema_version": "1",
+  "catalog_size": 31,
+  "sandbox_cases": 14,
+  "ssrf_cases": 9,
+  "dlp_cases": 8,
+  "total_attack_cases": 28,
+  "bypass_rate": 0,
+  "zero_bypass": true,
+  "bypass_count": 0,
+  "blocked_count": 28,
+  "by_category": {
+    "sandbox_escape": {
+      "total": 14,
+      "bypass": 0,
+      "blocked": 13,
+      "allowed": 1
+    },
+    "ssrf": {
+      "total": 9,
+      "bypass": 0,
+      "blocked": 8,
+      "allowed": 1
+    },
+    "dlp_exfil": {
+      "total": 8,
+      "bypass": 0,
+      "blocked": 7,
+      "allowed": 1
+    }
+  },
+  "gate_status": "PASS_SIMULATED",
+  "honesty": "reported",
+  "default_interval_ms": 60000,
+  "note": "Synthetic in-process oracles only; no live network / no attacks outside workspace"
+}

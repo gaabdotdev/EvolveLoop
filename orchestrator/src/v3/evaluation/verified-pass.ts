@@ -1,12 +1,24 @@
 /**
  * Verified TRUE_FULL_PASS — adversarial-hardened evaluator.
  * Rejects agent prose, missing/corrupt evidence, self-review, stale tests, etc.
+ * V2-QUAL-01 — when Goal Contract require_independent_review, consult IndependentReviewGate.
+ * V2-QUAL-02 — when Goal Contract require_mutation_gate, consult mutation battery score.
  */
 
 import type { GoalContract } from "../goal-contract/types.js";
 import { evaluateTrueFullPass } from "../goal-contract/types.js";
 import type { EvidenceStore } from "./evidence.js";
 import { fingerprintWorkspace } from "./evidence.js";
+import {
+  contractRequiresIndependentReview,
+  type IndependentReviewGate,
+} from "./independent-review-gate.js";
+import {
+  contractMutationThreshold,
+  contractRequiresMutationGate,
+  evaluateMutationGate,
+  type MutationBatteryResult,
+} from "./selective-mutation.js";
 
 export interface VerifiedPassContext {
   evidence: EvidenceStore;
@@ -14,12 +26,20 @@ export interface VerifiedPassContext {
   workspace_root: string;
   /** Implementer agent — review must not equal this */
   implementer_agent_id?: string;
+  /** Implementer session — review session must not equal this (V2-QUAL-01) */
+  implementer_session_id?: string;
   /** Require at least one diff with files_changed > 0 */
   require_code_changes?: boolean;
   /** ISO timestamp of last mutation; test evidence must be >= this */
   last_mutation_at?: string;
   /** Expected fingerprint after changes (optional strict bind) */
   expected_workspace_fingerprint?: string;
+  /** V2-QUAL-01 runtime gate (required when contract.require_independent_review) */
+  independent_review_gate?: IndependentReviewGate;
+  /** V2-QUAL-02 — selective mutation battery (required when contract.require_mutation_gate) */
+  mutation_battery?: MutationBatteryResult;
+  /** Override mutation score threshold */
+  mutation_score_threshold?: number;
 }
 
 export interface VerifiedPassResult {
@@ -113,6 +133,12 @@ export function evaluateVerifiedTrueFullPass(
 
       if (rec.evidence_kind === "review") {
         reviewActor = rec.actor_agent_id ?? (rec.payload.reviewer_agent_id as string | undefined);
+        const reviewSession =
+          typeof rec.payload.session_id === "string"
+            ? rec.payload.session_id
+            : typeof rec.payload.reviewer_session_id === "string"
+              ? rec.payload.reviewer_session_id
+              : undefined;
         const verdict = String(rec.payload.verdict ?? "").toUpperCase();
         if (verdict !== "PASS") {
           reasons.push(`review_not_pass:${eid}`);
@@ -122,11 +148,30 @@ export function evaluateVerifiedTrueFullPass(
           reasons.push(`review_not_independent:${eid}`);
           adversarial_checks.push("reject_self_review");
         }
+        if (
+          ctx.implementer_session_id &&
+          reviewSession &&
+          reviewSession === ctx.implementer_session_id
+        ) {
+          reasons.push(`review_same_session:${eid}`);
+          adversarial_checks.push("reject_same_session_review");
+        }
         if (!reviewActor) {
           reasons.push(`review_missing_actor:${eid}`);
           adversarial_checks.push("reject_anonymous_review");
         }
-        if (verdict === "PASS" && reviewActor) sawValidReview = true;
+        const sessionOk =
+          !ctx.implementer_session_id ||
+          !reviewSession ||
+          reviewSession !== ctx.implementer_session_id;
+        if (
+          verdict === "PASS" &&
+          reviewActor &&
+          reviewActor !== ctx.implementer_agent_id &&
+          sessionOk
+        ) {
+          sawValidReview = true;
+        }
       }
 
       if (rec.evidence_kind === "diff") {
@@ -178,6 +223,52 @@ export function evaluateVerifiedTrueFullPass(
   if (needsDiff && !sawDiffWithChanges) {
     reasons.push("missing_diff_with_changes");
     adversarial_checks.push("reject_no_code_changes");
+  }
+
+  // V2-QUAL-01 — Goal Contract flag mandates IndependentReviewGate PASS
+  if (contractRequiresIndependentReview(contract)) {
+    const gate = ctx.independent_review_gate;
+    const filter = {
+      work_id: contract.work_id,
+      goal_contract_id: contract.goal_contract_id,
+    };
+    if (!gate) {
+      reasons.push("missing_independent_review_gate");
+      adversarial_checks.push("reject_missing_independent_review_gate");
+      reasons.push("missing_valid_independent_review:TRUE_FULL_PASS");
+      reasons.push("missing_valid_independent_review:VERIFIED_PASS");
+      adversarial_checks.push("reject_missing_independent_review");
+    } else {
+      // Keep gate flag aligned with contract under evaluation
+      gate.bindContract(contract);
+      const forFull = gate.evaluateForPass("TRUE_FULL_PASS", filter);
+      const forVerified = gate.evaluateForPass("VERIFIED_PASS", filter);
+      if (!forFull.allowed || !forVerified.allowed) {
+        for (const r of [...forFull.reasons, ...forVerified.reasons]) {
+          reasons.push(r);
+        }
+        adversarial_checks.push("reject_missing_independent_review");
+      }
+    }
+  }
+
+  // V2-QUAL-02 — selective mutation gate
+  if (contractRequiresMutationGate(contract)) {
+    const threshold =
+      ctx.mutation_score_threshold ?? contractMutationThreshold(contract);
+    const mut = evaluateMutationGate({
+      required: true,
+      threshold,
+      battery: ctx.mutation_battery ?? null,
+      score: ctx.mutation_battery?.score,
+    });
+    if (!mut.allowed) {
+      for (const r of mut.reasons) {
+        reasons.push(r);
+      }
+      reasons.push("mutation_gate_blocked:TRUE_FULL_PASS");
+      adversarial_checks.push("reject_weak_or_missing_mutation_gate");
+    }
   }
 
   // Deduplicate reasons

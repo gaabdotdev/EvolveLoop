@@ -1,0 +1,136 @@
+{
+  "kind": "CircuitRunResult",
+  "run_id": "cr-4ab1c8aa-0f9d-4cd3-9ac8-db867a6c85b3",
+  "work_id": "work-fire5-1795281858038",
+  "task_id": "fire-5",
+  "status": "TRUE_FULL_PASS",
+  "reason": "TRUE_FULL_PASS",
+  "goal_contract_id": "gc-fire-5",
+  "workspace_path": "/tmp/m3r2-fire-wt/fire-5",
+  "model_health": {
+    "local": {
+      "kind": "ModelHealth",
+      "provider_id": "ollama",
+      "ok": true,
+      "code": "OK",
+      "message": "Ollama ok; model=bonsai-64k:latest",
+      "model": "bonsai-64k:latest",
+      "base_url": "http://127.0.0.1:11434",
+      "checked_at": "2026-11-21T17:29:45.277Z",
+      "limitations": [
+        "Local Ollama only — no FreeLLMAPI gateway",
+        "Availability is probed via GET /api/tags"
+      ]
+    },
+    "remote": {
+      "kind": "ModelHealth",
+      "provider_id": "openrouter",
+      "ok": false,
+      "code": "MISSING_CREDENTIALS",
+      "message": "OpenRouter API key absent — healthCheck failed honestly",
+      "base_url": "https://openrouter.ai/api/v1",
+      "model": "openai/gpt-4o-mini",
+      "checked_at": "2026-11-21T17:29:45.278Z",
+      "limitations": [
+        "Remote OpenRouter never used as silent default",
+        "Requires OPENROUTER_API_KEY or EVOLVELOOP_OPENROUTER_API_KEY",
+        "Does not invent cost when usage fields absent"
+      ]
+    }
+  },
+  "adapter_health_ok": true,
+  "adapter_result": {
+    "kind": "NormalizedAdapterResult",
+    "adapter_id": "cursor",
+    "status": "ok",
+    "code": "EXIT_ZERO",
+    "message": "Marcador criado em `.evolveloop/circuit-markers/fire-5.txt` com o conteúdo exato `fire-5`.\n",
+    "exit_code": 0,
+    "stdout": "Marcador criado em `.evolveloop/circuit-markers/fire-5.txt` com o conteúdo exato `fire-5`.\n",
+    "stderr": "",
+    "duration_ms": 85346,
+    "pid": 887854,
+    "pgid": 887854,
+    "tokens_in": null,
+    "tokens_out": null,
+    "cost_usd": null,
+    "cost_provenance": "UNAVAILABLE",
+    "limitations": [
+      "Not an OS sandbox — confinement is realpath + cwd + env scrub only",
+      "Cancel uses kill(-pgid) with /proc starttime reuse guard when available",
+      "env_scrubbed_allowlist",
+      "token_usage_not_reported_by_cli"
+    ],
+    "raw_runner": {
+      "kind": "ExecutionRunnerResult",
+      "status": "ok",
+      "code": "EXIT_ZERO",
+      "exit_code": 0,
+      "signal": null,
+      "stdout": "Marcador criado em `.evolveloop/circuit-markers/fire-5.txt` com o conteúdo exato `fire-5`.\n",
+      "stderr": "",
+      "duration_ms": 85346,
+      "pid": 887854,
+      "pgid": 887854,
+      "argv": [
+        "/home/gaab/.local/bin/agent",
+        "-p",
+        "--output-format",
+        "text",
+        "--trust",
+        "--workspace",
+        "/tmp/m3r2-fire-wt/fire-5",
+        "--force",
+        "Read the prompt file at /tmp/m3r2-fire-wt/fire-5/.evolveloop/harness-prompts/sess-4450c671-6872-4bc5-80ea-ded34b29eb5b.md and complete the assigned task. Stay strictly inside the workspace."
+      ],
+      "cwd": "/tmp/m3r2-fire-wt/fire-5",
+      "limitations": [
+        "Not an OS sandbox — confinement is realpath + cwd + env scrub only",
+        "Cancel uses kill(-pgid) with /proc starttime reuse guard when available",
+        "env_scrubbed_allowlist"
+      ]
+    },
+    "session_id": "sess-4450c671-6872-4bc5-80ea-ded34b29eb5b"
+  },
+  "validator": {
+    "kind": "EvidenceValidatorResult",
+    "status": "TRUE_FULL_PASS",
+    "code": "TRUE_FULL_PASS",
+    "reasons": [],
+    "sensitive_diff_blocked": [],
+    "command_results": [
+      {
+        "id": "marker-exists",
+        "argv": [
+          "bash",
+          "-lc",
+          "test -f '/tmp/m3r2-fire-wt/fire-5/.evolveloop/circuit-markers/fire-5.txt'"
+        ],
+        "exit_code": 0,
+        "status": "ok",
+        "duration_ms": 21
+      },
+      {
+        "id": "marker-content",
+        "argv": [
+          "bash",
+          "-lc",
+          "test \"$(cat '/tmp/m3r2-fire-wt/fire-5/.evolveloop/circuit-markers/fire-5.txt')\" = 'fire-5'"
+        ],
+        "exit_code": 0,
+        "status": "ok",
+        "duration_ms": 21
+      }
+    ],
+    "evaluated_at": "2026-11-21T17:31:15.028Z",
+    "limitations": [
+      "Validator runs outside agent session via ExecutionRunner",
+      "TRUE_FULL_PASS requires mandatory criteria PASS + commands exit 0 + no unauthorized sensitive diffs"
+    ]
+  },
+  "token_ledger_entry_id": "tl-93f7aa8c-78fc-40da-b78c-793f1e082991",
+  "limitations": [
+    "V0 Bloco 3 circuit — no FreeLLMAPI/bwrap/daemon/Laya",
+    "TRUE_FULL_PASS only via Evidence Validator (not agent prose)"
+  ]
+}

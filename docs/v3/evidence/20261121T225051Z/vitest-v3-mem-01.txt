@@ -1,0 +1,10 @@
+
+ RUN  v2.1.9 /home/gaab/orca/workspaces/EvolveLoop/seagrass/orchestrator
+
+ ✓ tests/unit/v3-mem-01-cold-storage.test.ts (6 tests) 25ms
+
+ Test Files  1 passed (1)
+      Tests  6 passed (6)
+   Start at  19:50:58
+   Duration  507ms (transform 160ms, setup 13ms, collect 194ms, tests 25ms, environment 0ms, prepare 53ms)
+

@@ -1,0 +1,4 @@
+orchestrator/src/v3/mso/sub-mso.ts (new) 365 lines
+orchestrator/src/v3/mso/index.ts (exports V3-ORCH-03)
+orchestrator/tests/unit/v3-orch-03-sub-mso.test.ts (new) 291 lines
+docs/v3/evidence/20261121T234036Z/ (evidence pack)

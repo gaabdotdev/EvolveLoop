@@ -199,6 +199,8 @@ export class CursorCircuitAdapter implements CircuitAgentAdapter {
       workspace_root: req.workspace_path,
       // cursor-agent cold path is typically ~70–90s; keep headroom for large worktrees
       timeout_ms: req.timeout_ms ?? 300_000,
+      // Harness auth needs real HOME; still scrubbed — only allowlisted keys (V0-SEC-03).
+      inherit_home: true,
       env_extra_allowlist: [
         "HOME",
         "XDG_CONFIG_HOME",

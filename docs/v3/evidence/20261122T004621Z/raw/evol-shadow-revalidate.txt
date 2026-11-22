@@ -1,0 +1,10 @@
+
+ RUN  v2.1.9 /home/gaab/orca/workspaces/EvolveLoop/seagrass/orchestrator
+
+ ✓ tests/unit/v3-evol-01-shadow-replay.test.ts (7 tests) 6ms
+
+ Test Files  1 passed (1)
+      Tests  7 passed (7)
+   Start at  21:54:01
+   Duration  363ms (transform 56ms, setup 12ms, collect 49ms, tests 6ms, environment 0ms, prepare 51ms)
+

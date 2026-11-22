@@ -1,0 +1,647 @@
+=== AUD-STUB-04 tautological-test fault injection ===
+UTC_START=2026-11-22T01:49:10Z
+Wiki: GAP (AUD-STUB-04 contracts not in wiki corpus); code-verified.
+
+===== BASELINE (pre-fault) =====
+
+ RUN  v2.1.9 /home/gaab/orca/workspaces/EvolveLoop/seagrass/orchestrator
+
+ ✓ tests/unit/goal-contract.test.ts (4 tests) 8ms
+(node:3409923) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:3409932) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ tests/unit/v0-orch-persistence.test.ts (6 tests) 33ms
+ ✓ tests/unit/v0-evidence-token-ledger.test.ts (4 tests) 112ms
+ ✓ tests/unit/v0-execution-runner.test.ts (8 tests) 570ms
+   ✓ V0 ExecutionRunner > times out and kills process group (SIGTERM→SIGKILL) 454ms
+ ✓ tests/unit/security/audit-adversarial.test.ts (19 tests) 479ms
+   ✓ V0-SEC adversarial — ExecutionRunner / gate / evidence > V0-SEC-04 launches detached pgid and escalates kill on timeout 352ms
+
+ Test Files  5 passed (5)
+      Tests  41 passed (41)
+   Start at  22:49:11
+   Duration  1.13s (transform 689ms, setup 82ms, collect 1.27s, tests 1.20s, environment 1ms, prepare 370ms)
+
+EXIT_CODE=0
+BASELINE_EXIT_CODE=0
+
+
+===== FAULT F1: canTransitionMso always returns true (illegal MSO edges allowed) =====
+FILE=/home/gaab/orca/workspaces/EvolveLoop/seagrass/orchestrator/src/v3/mso/states.ts
+CHANGE: intentional break for tautology audit
+
+ RUN  v2.1.9 /home/gaab/orca/workspaces/EvolveLoop/seagrass/orchestrator
+
+(node:3410962) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ❯ tests/unit/v0-orch-persistence.test.ts (6 tests | 1 failed) 31ms
+   × V0-ORCH persistence (SQLite WAL + leases + MSO + outbox) > V0-ORCH-03: official 10 MSO states; all valid edges + reject illegal (no skip to TRUE-FULL-PASS) 8ms
+     → expected true to be false // Object.is equality
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/unit/v0-orch-persistence.test.ts > V0-ORCH persistence (SQLite WAL + leases + MSO + outbox) > V0-ORCH-03: official 10 MSO states; all valid edges + reject illegal (no skip to TRUE-FULL-PASS)
+AssertionError: expected true to be false // Object.is equality
+
+- Expected
++ Received
+
+- false
++ true
+
+ ❯ tests/unit/v0-orch-persistence.test.ts:153:44
+    151|       for (const to of MSO_STATES) {
+    152|         const expected = MSO_TRANSITIONS[from].includes(to);
+    153|         expect(canTransitionMso(from, to)).toBe(expected);
+       |                                            ^
+    154|       }
+    155|     }
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 5 passed (6)
+   Start at  22:49:12
+   Duration  597ms (transform 236ms, setup 13ms, collect 302ms, tests 31ms, environment 0ms, prepare 45ms)
+
+EXIT_CODE=1
+FAULT_F1_EXIT_CODE=1 (expect !=0)
+FAULT_F1_RESULT=SUITE_FAILED_AS_EXPECTED
+----- restore + verify green (F1) -----
+
+ RUN  v2.1.9 /home/gaab/orca/workspaces/EvolveLoop/seagrass/orchestrator
+
+(node:3411625) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ tests/unit/v0-orch-persistence.test.ts (6 tests) 36ms
+
+ Test Files  1 passed (1)
+      Tests  6 passed (6)
+   Start at  22:49:13
+   Duration  658ms (transform 246ms, setup 12ms, collect 333ms, tests 36ms, environment 0ms, prepare 64ms)
+
+EXIT_CODE=0
+RESTORE_F1_EXIT_CODE=0 (expect 0)
+
+===== FAULT F2: transitionMso skips canTransitionMso guard =====
+FILE=/home/gaab/orca/workspaces/EvolveLoop/seagrass/orchestrator/src/v3/state-db/store.ts
+CHANGE: intentional break for tautology audit
+
+ RUN  v2.1.9 /home/gaab/orca/workspaces/EvolveLoop/seagrass/orchestrator
+
+(node:3412292) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ❯ tests/unit/v0-orch-persistence.test.ts (6 tests | 1 failed) 35ms
+   × V0-ORCH persistence (SQLite WAL + leases + MSO + outbox) > V0-ORCH-03: official 10 MSO states; all valid edges + reject illegal (no skip to TRUE-FULL-PASS) 8ms
+     → expected function to throw an error, but it didn't
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/unit/v0-orch-persistence.test.ts > V0-ORCH persistence (SQLite WAL + leases + MSO + outbox) > V0-ORCH-03: official 10 MSO states; all valid edges + reject illegal (no skip to TRUE-FULL-PASS)
+AssertionError: expected function to throw an error, but it didn't
+ ❯ tests/unit/v0-orch-persistence.test.ts:181:7
+    179|         holder_id: "holder",
+    180|       }),
+    181|     ).toThrow(MsoError);
+       |       ^
+    182| 
+    183|     const happyPath: Array<(typeof MSO_STATES)[number]> = [
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 5 passed (6)
+   Start at  22:49:15
+   Duration  658ms (transform 247ms, setup 13ms, collect 318ms, tests 35ms, environment 0ms, prepare 61ms)
+
+EXIT_CODE=1
+FAULT_F2_EXIT_CODE=1 (expect !=0)
+FAULT_F2_RESULT=SUITE_FAILED_AS_EXPECTED
+----- restore + verify green (F2) -----
+
+ RUN  v2.1.9 /home/gaab/orca/workspaces/EvolveLoop/seagrass/orchestrator
+
+(node:3412973) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ tests/unit/v0-orch-persistence.test.ts (6 tests) 33ms
+
+ Test Files  1 passed (1)
+      Tests  6 passed (6)
+   Start at  22:49:16
+   Duration  642ms (transform 251ms, setup 12ms, collect 324ms, tests 33ms, environment 0ms, prepare 69ms)
+
+EXIT_CODE=0
+RESTORE_F2_EXIT_CODE=0 (expect 0)
+
+===== FAULT F3: evaluateTrueFullPass always eligible (contract validation bypass) =====
+FILE=/home/gaab/orca/workspaces/EvolveLoop/seagrass/orchestrator/src/v3/goal-contract/types.ts
+CHANGE: intentional break for tautology audit
+
+ RUN  v2.1.9 /home/gaab/orca/workspaces/EvolveLoop/seagrass/orchestrator
+
+ ❯ tests/unit/goal-contract.test.ts (4 tests | 2 failed) 19ms
+   × GoalContractStore (V3.0) > does not grant TRUE_FULL_PASS without mandatory PASS + evidence 8ms
+     → expected true to be false // Object.is equality
+   × GoalContractStore (V3.0) > evaluateTrueFullPass rejects agent-style incomplete states 2ms
+     → expected true to be false // Object.is equality
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/unit/goal-contract.test.ts > GoalContractStore (V3.0) > does not grant TRUE_FULL_PASS without mandatory PASS + evidence
+AssertionError: expected true to be false // Object.is equality
+
+- Expected
++ Received
+
+- false
++ true
+
+ ❯ tests/unit/goal-contract.test.ts:86:29
+     84|     });
+     85|     const before = store.evaluate("gc-3");
+     86|     expect(before.eligible).toBe(false);
+       |                             ^
+     87|     expect(before.work_state).toBe("NOT_PASS");
+     88| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  tests/unit/goal-contract.test.ts > GoalContractStore (V3.0) > evaluateTrueFullPass rejects agent-style incomplete states
+AssertionError: expected true to be false // Object.is equality
+
+- Expected
++ Received
+
+- false
++ true
+
+ ❯ tests/unit/goal-contract.test.ts:123:29
+    121|       ],
+    122|     });
+    123|     expect(result.eligible).toBe(false);
+       |                             ^
+    124|     expect(result.reasons.some((r) => r.includes("mandatory_incomplete…
+    125|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 2 passed (4)
+   Start at  22:49:17
+   Duration  391ms (transform 54ms, setup 12ms, collect 47ms, tests 19ms, environment 0ms, prepare 66ms)
+
+EXIT_CODE=1
+FAULT_F3_EXIT_CODE=1 (expect !=0)
+FAULT_F3_RESULT=SUITE_FAILED_AS_EXPECTED
+----- restore + verify green (F3) -----
+
+ RUN  v2.1.9 /home/gaab/orca/workspaces/EvolveLoop/seagrass/orchestrator
+
+ ✓ tests/unit/goal-contract.test.ts (4 tests) 8ms
+
+ Test Files  1 passed (1)
+      Tests  4 passed (4)
+   Start at  22:49:18
+   Duration  333ms (transform 58ms, setup 15ms, collect 37ms, tests 8ms, environment 0ms, prepare 80ms)
+
+EXIT_CODE=0
+RESTORE_F3_EXIT_CODE=0 (expect 0)
+
+===== FAULT F4: assertWorkspacePath returns target without symlink/escape checks =====
+FILE=/home/gaab/orca/workspaces/EvolveLoop/seagrass/orchestrator/src/v3/execution-runner/runner.ts
+CHANGE: intentional break for tautology audit
+
+ RUN  v2.1.9 /home/gaab/orca/workspaces/EvolveLoop/seagrass/orchestrator
+
+ ❯ tests/unit/v0-execution-runner.test.ts (8 tests | 1 failed) 598ms
+   × V0 ExecutionRunner > blocks cwd symlink that escapes workspace 13ms
+     → expected 'ok' to be 'blocked' // Object.is equality
+   ✓ V0 ExecutionRunner > times out and kills process group (SIGTERM→SIGKILL) 456ms
+ ❯ tests/unit/security/audit-adversarial.test.ts (19 tests | 2 failed) 500ms
+   × V0-SEC adversarial — ExecutionRunner / gate / evidence > V0-SEC-02 blocks path traversal before mutation 8ms
+     → expected function to throw an error, but it didn't
+   × V0-SEC adversarial — ExecutionRunner / gate / evidence > V0-SEC-02 blocks symlink escape outside workspace 10ms
+     → expected 'ok' to be 'blocked' // Object.is equality
+   ✓ V0-SEC adversarial — ExecutionRunner / gate / evidence > V0-SEC-04 launches detached pgid and escalates kill on timeout 354ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/unit/v0-execution-runner.test.ts > V0 ExecutionRunner > blocks cwd symlink that escapes workspace
+AssertionError: expected 'ok' to be 'blocked' // Object.is equality
+
+Expected: "blocked"
+Received: "ok"
+
+ ❯ tests/unit/v0-execution-runner.test.ts:63:29
+     61|         timeout_ms: 3000,
+     62|       });
+     63|       expect(result.status).toBe("blocked");
+       |                             ^
+     64|       expect(result.code).toMatch(/SYMLINK|ESCAPE|PATH/);
+     65|     } finally {
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯
+
+ FAIL  tests/unit/security/audit-adversarial.test.ts > V0-SEC adversarial — ExecutionRunner / gate / evidence > V0-SEC-02 blocks path traversal before mutation
+AssertionError: expected function to throw an error, but it didn't
+ ❯ tests/unit/security/audit-adversarial.test.ts:141:79
+    139| 
+    140|   it("V0-SEC-02 blocks path traversal before mutation", () => {
+    141|     expect(() => guardPathBeforeMutation(join(tmp, "..", "escape.txt")…
+       |                                                                               ^
+    142|       ExecutionRunnerError,
+    143|     );
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/3]⎯
+
+ FAIL  tests/unit/security/audit-adversarial.test.ts > V0-SEC adversarial — ExecutionRunner / gate / evidence > V0-SEC-02 blocks symlink escape outside workspace
+AssertionError: expected 'ok' to be 'blocked' // Object.is equality
+
+Expected: "blocked"
+Received: "ok"
+
+ ❯ tests/unit/security/audit-adversarial.test.ts:160:29
+    158|         timeout_ms: 3000,
+    159|       });
+    160|       expect(result.status).toBe("blocked");
+       |                             ^
+    161|       expect(result.code).toMatch(/SYMLINK|ESCAPE|PATH/);
+    162|     } finally {
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/3]⎯
+
+ Test Files  2 failed (2)
+      Tests  3 failed | 24 passed (27)
+   Start at  22:49:19
+   Duration  1.07s (transform 331ms, setup 20ms, collect 475ms, tests 1.10s, environment 0ms, prepare 138ms)
+
+EXIT_CODE=1
+FAULT_F4_EXIT_CODE=1 (expect !=0)
+FAULT_F4_RESULT=SUITE_FAILED_AS_EXPECTED
+----- restore + verify green (F4) -----
+
+ RUN  v2.1.9 /home/gaab/orca/workspaces/EvolveLoop/seagrass/orchestrator
+
+ ✓ tests/unit/v0-execution-runner.test.ts (8 tests) 581ms
+   ✓ V0 ExecutionRunner > times out and kills process group (SIGTERM→SIGKILL) 454ms
+ ✓ tests/unit/security/audit-adversarial.test.ts (19 tests) 489ms
+   ✓ V0-SEC adversarial — ExecutionRunner / gate / evidence > V0-SEC-04 launches detached pgid and escalates kill on timeout 358ms
+
+ Test Files  2 passed (2)
+      Tests  27 passed (27)
+   Start at  22:49:21
+   Duration  1.10s (transform 312ms, setup 64ms, collect 426ms, tests 1.07s, environment 0ms, prepare 131ms)
+
+EXIT_CODE=0
+RESTORE_F4_EXIT_CODE=0 (expect 0)
+
+===== FAULT F5: checkWorkspaceFencing always ok (stale fencing accepted) =====
+FILE=/home/gaab/orca/workspaces/EvolveLoop/seagrass/orchestrator/src/v3/state-db/store.ts
+CHANGE: intentional break for tautology audit
+
+ RUN  v2.1.9 /home/gaab/orca/workspaces/EvolveLoop/seagrass/orchestrator
+
+(node:3416502) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ❯ tests/unit/v0-orch-persistence.test.ts (6 tests | 2 failed) 41ms
+   × V0-ORCH persistence (SQLite WAL + leases + MSO + outbox) > V0-ORCH-02: workspace_leases monotonic fencing rejects stale token / second active MSO 12ms
+     → expected true to be false // Object.is equality
+   × V0-ORCH persistence (SQLite WAL + leases + MSO + outbox) > stale fencing cannot enqueue outbox or transition MSO 3ms
+     → expected function to throw an error, but it didn't
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/unit/v0-orch-persistence.test.ts > V0-ORCH persistence (SQLite WAL + leases + MSO + outbox) > V0-ORCH-02: workspace_leases monotonic fencing rejects stale token / second active MSO
+AssertionError: expected true to be false // Object.is equality
+
+- Expected
++ Received
+
+- false
++ true
+
+ ❯ tests/unit/v0-orch-persistence.test.ts:117:22
+    115| 
+    116|     const stale = db.checkWorkspaceFencing("ws-a", 0, "mso-1");
+    117|     expect(stale.ok).toBe(false);
+       |                      ^
+    118|     if (!stale.ok) {
+    119|       expect(stale.reason).toBe("stale_fencing_token");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  tests/unit/v0-orch-persistence.test.ts > V0-ORCH persistence (SQLite WAL + leases + MSO + outbox) > stale fencing cannot enqueue outbox or transition MSO
+AssertionError: expected function to throw an error, but it didn't
+ ❯ tests/unit/v0-orch-persistence.test.ts:308:7
+    306|         holder_id: "alive",
+    307|       }),
+    308|     ).toThrow(StateDbError);
+       |       ^
+    309| 
+    310|     expect(() =>
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 4 passed (6)
+   Start at  22:49:22
+   Duration  609ms (transform 227ms, setup 12ms, collect 295ms, tests 41ms, environment 0ms, prepare 73ms)
+
+EXIT_CODE=1
+FAULT_F5_EXIT_CODE=1 (expect !=0)
+FAULT_F5_RESULT=SUITE_FAILED_AS_EXPECTED
+----- restore + verify green (F5) -----
+
+ RUN  v2.1.9 /home/gaab/orca/workspaces/EvolveLoop/seagrass/orchestrator
+
+(node:3417009) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ tests/unit/v0-orch-persistence.test.ts (6 tests) 34ms
+
+ Test Files  1 passed (1)
+      Tests  6 passed (6)
+   Start at  22:49:24
+   Duration  662ms (transform 241ms, setup 17ms, collect 308ms, tests 34ms, environment 0ms, prepare 66ms)
+
+EXIT_CODE=0
+RESTORE_F5_EXIT_CODE=0 (expect 0)
+
+===== FAULT F6: isSensitive always false (Evidence Validator sensitive-diff gate disabled) =====
+FILE=/home/gaab/orca/workspaces/EvolveLoop/seagrass/orchestrator/src/v3/circuit/evidence-validator.ts
+CHANGE: intentional break for tautology audit
+
+ RUN  v2.1.9 /home/gaab/orca/workspaces/EvolveLoop/seagrass/orchestrator
+
+(node:3417666) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ tests/unit/v0-evidence-token-ledger.test.ts (4 tests) 120ms
+
+ Test Files  1 passed (1)
+      Tests  4 passed (4)
+   Start at  22:49:25
+   Duration  712ms (transform 261ms, setup 16ms, collect 310ms, tests 120ms, environment 0ms, prepare 66ms)
+
+EXIT_CODE=0
+FAULT_F6_EXIT_CODE=0 (expect !=0)
+FAULT_F6_RESULT=TAUTOLOGICAL_OR_MISSED (suite stayed green — BAD)
+----- restore + verify green (F6) -----
+
+ RUN  v2.1.9 /home/gaab/orca/workspaces/EvolveLoop/seagrass/orchestrator
+
+(node:3418394) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ tests/unit/v0-evidence-token-ledger.test.ts (4 tests) 105ms
+
+ Test Files  1 passed (1)
+      Tests  4 passed (4)
+   Start at  22:49:26
+   Duration  726ms (transform 251ms, setup 19ms, collect 295ms, tests 105ms, environment 0ms, prepare 50ms)
+
+EXIT_CODE=0
+RESTORE_F6_EXIT_CODE=0 (expect 0)
+
+===== FAULT F7: runEvidenceValidator short-circuits to TRUE_FULL_PASS =====
+FILE=/home/gaab/orca/workspaces/EvolveLoop/seagrass/orchestrator/src/v3/circuit/evidence-validator.ts
+CHANGE: intentional break for tautology audit
+
+ RUN  v2.1.9 /home/gaab/orca/workspaces/EvolveLoop/seagrass/orchestrator
+
+(node:3419132) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ❯ tests/unit/v0-evidence-token-ledger.test.ts (4 tests | 1 failed) 98ms
+   × V0 Token Ledger + Evidence Validator > Evidence Validator PASS on lightweight commands; BLOCKED on unauthorized test diff 32ms
+     → expected 'TRUE_FULL_PASS' to be 'BLOCKED' // Object.is equality
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/unit/v0-evidence-token-ledger.test.ts > V0 Token Ledger + Evidence Validator > Evidence Validator PASS on lightweight commands; BLOCKED on unauthorized test diff
+AssertionError: expected 'TRUE_FULL_PASS' to be 'BLOCKED' // Object.is equality
+
+Expected: "BLOCKED"
+Received: "TRUE_FULL_PASS"
+
+ ❯ tests/unit/v0-evidence-token-ledger.test.ts:136:28
+    134|       commands: [{ id: "true", argv: ["true"], cwd: tmp }],
+    135|     });
+    136|     expect(blocked.status).toBe("BLOCKED");
+       |                            ^
+    137|     expect(blocked.sensitive_diff_blocked.some((p) => p.includes("hack…
+    138|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 3 passed (4)
+   Start at  22:49:28
+   Duration  692ms (transform 256ms, setup 13ms, collect 308ms, tests 98ms, environment 0ms, prepare 85ms)
+
+EXIT_CODE=1
+FAULT_F7_EXIT_CODE=1 (expect !=0)
+FAULT_F7_RESULT=SUITE_FAILED_AS_EXPECTED
+----- restore + verify green (F7) -----
+
+ RUN  v2.1.9 /home/gaab/orca/workspaces/EvolveLoop/seagrass/orchestrator
+
+(node:3419807) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ tests/unit/v0-evidence-token-ledger.test.ts (4 tests) 109ms
+
+ Test Files  1 passed (1)
+      Tests  4 passed (4)
+   Start at  22:49:29
+   Duration  682ms (transform 262ms, setup 15ms, collect 299ms, tests 109ms, environment 0ms, prepare 74ms)
+
+EXIT_CODE=0
+RESTORE_F7_EXIT_CODE=0 (expect 0)
+
+===== FINAL RESTORED SUITE =====
+
+ RUN  v2.1.9 /home/gaab/orca/workspaces/EvolveLoop/seagrass/orchestrator
+
+ ✓ tests/unit/goal-contract.test.ts (4 tests) 16ms
+(node:3420488) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ tests/unit/v0-orch-persistence.test.ts (6 tests) 35ms
+(node:3420494) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ tests/unit/v0-evidence-token-ledger.test.ts (4 tests) 121ms
+ ✓ tests/unit/v0-execution-runner.test.ts (8 tests) 589ms
+   ✓ V0 ExecutionRunner > times out and kills process group (SIGTERM→SIGKILL) 457ms
+ ✓ tests/unit/security/audit-adversarial.test.ts (19 tests) 498ms
+   ✓ V0-SEC adversarial — ExecutionRunner / gate / evidence > V0-SEC-04 launches detached pgid and escalates kill on timeout 353ms
+
+ Test Files  5 passed (5)
+      Tests  41 passed (41)
+   Start at  22:49:30
+   Duration  1.23s (transform 822ms, setup 100ms, collect 1.59s, tests 1.26s, environment 2ms, prepare 380ms)
+
+EXIT_CODE=0
+FINAL_EXIT_CODE=0
+UTC_END=2026-11-22T01:49:31Z
+
+===== RESULTS TSV (id|fault_ec|restore_ec|detected) =====
+F1|1|0|1
+F2|1|0|1
+F3|1|0|1
+F4|1|0|1
+F5|1|0|1
+F6|0|0|0
+F7|1|0|1
+
+===== RESIDUAL FAULT MARKER SCAN =====
+RESIDUAL_FAULTS=NO
+DETECTED=6/7
+
+===== FAULT F6 (retry): isSensitive always false =====
+
+ RUN  v2.1.9 /home/gaab/orca/workspaces/EvolveLoop/seagrass/orchestrator
+
+(node:3429829) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ❯ tests/unit/v0-evidence-token-ledger.test.ts (4 tests | 1 failed) 119ms
+   × V0 Token Ledger + Evidence Validator > Evidence Validator PASS on lightweight commands; BLOCKED on unauthorized test diff 53ms
+     → expected 'TRUE_FULL_PASS' to be 'BLOCKED' // Object.is equality
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/unit/v0-evidence-token-ledger.test.ts > V0 Token Ledger + Evidence Validator > Evidence Validator PASS on lightweight commands; BLOCKED on unauthorized test diff
+AssertionError: expected 'TRUE_FULL_PASS' to be 'BLOCKED' // Object.is equality
+
+Expected: "BLOCKED"
+Received: "TRUE_FULL_PASS"
+
+ ❯ tests/unit/v0-evidence-token-ledger.test.ts:136:28
+    134|       commands: [{ id: "true", argv: ["true"], cwd: tmp }],
+    135|     });
+    136|     expect(blocked.status).toBe("BLOCKED");
+       |                            ^
+    137|     expect(blocked.sensitive_diff_blocked.some((p) => p.includes("hack…
+    138|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 3 passed (4)
+   Start at  22:50:01
+   Duration  711ms (transform 251ms, setup 12ms, collect 310ms, tests 119ms, environment 0ms, prepare 53ms)
+
+EXIT_CODE=1
+FAULT_F6_EXIT_CODE=1 (expect !=0)
+FAULT_F6_RESULT=SUITE_FAILED_AS_EXPECTED
+
+ RUN  v2.1.9 /home/gaab/orca/workspaces/EvolveLoop/seagrass/orchestrator
+
+(node:3430506) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ tests/unit/v0-evidence-token-ledger.test.ts (4 tests) 111ms
+
+ Test Files  1 passed (1)
+      Tests  4 passed (4)
+   Start at  22:50:02
+   Duration  712ms (transform 252ms, setup 11ms, collect 311ms, tests 111ms, environment 0ms, prepare 63ms)
+
+EXIT_CODE=0
+RESTORE_F6_EXIT_CODE=0
+
+===== FAULT F8: authorized always true (contract path allowlist bypass) =====
+
+ RUN  v2.1.9 /home/gaab/orca/workspaces/EvolveLoop/seagrass/orchestrator
+
+(node:3431193) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ❯ tests/unit/v0-evidence-token-ledger.test.ts (4 tests | 1 failed) 112ms
+   × V0 Token Ledger + Evidence Validator > Evidence Validator PASS on lightweight commands; BLOCKED on unauthorized test diff 51ms
+     → expected 'TRUE_FULL_PASS' to be 'BLOCKED' // Object.is equality
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/unit/v0-evidence-token-ledger.test.ts > V0 Token Ledger + Evidence Validator > Evidence Validator PASS on lightweight commands; BLOCKED on unauthorized test diff
+AssertionError: expected 'TRUE_FULL_PASS' to be 'BLOCKED' // Object.is equality
+
+Expected: "BLOCKED"
+Received: "TRUE_FULL_PASS"
+
+ ❯ tests/unit/v0-evidence-token-ledger.test.ts:136:28
+    134|       commands: [{ id: "true", argv: ["true"], cwd: tmp }],
+    135|     });
+    136|     expect(blocked.status).toBe("BLOCKED");
+       |                            ^
+    137|     expect(blocked.sensitive_diff_blocked.some((p) => p.includes("hack…
+    138|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 3 passed (4)
+   Start at  22:50:03
+   Duration  701ms (transform 255ms, setup 14ms, collect 307ms, tests 112ms, environment 0ms, prepare 57ms)
+
+EXIT_CODE=1
+FAULT_F8_EXIT_CODE=1 (expect !=0)
+FAULT_F8_RESULT=SUITE_FAILED_AS_EXPECTED
+
+ RUN  v2.1.9 /home/gaab/orca/workspaces/EvolveLoop/seagrass/orchestrator
+
+(node:3431922) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ tests/unit/v0-evidence-token-ledger.test.ts (4 tests) 107ms
+
+ Test Files  1 passed (1)
+      Tests  4 passed (4)
+   Start at  22:50:04
+   Duration  704ms (transform 253ms, setup 15ms, collect 304ms, tests 107ms, environment 0ms, prepare 58ms)
+
+EXIT_CODE=0
+RESTORE_F8_EXIT_CODE=0
+
+===== FINAL RESTORED SUITE (post F6/F8) =====
+
+ RUN  v2.1.9 /home/gaab/orca/workspaces/EvolveLoop/seagrass/orchestrator
+
+ ✓ tests/unit/goal-contract.test.ts (4 tests) 11ms
+(node:3432603) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ tests/unit/v0-orch-persistence.test.ts (6 tests) 39ms
+(node:3432609) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ tests/unit/v0-evidence-token-ledger.test.ts (4 tests) 118ms
+ ✓ tests/unit/v0-execution-runner.test.ts (8 tests) 586ms
+   ✓ V0 ExecutionRunner > times out and kills process group (SIGTERM→SIGKILL) 452ms
+ ✓ tests/unit/security/audit-adversarial.test.ts (19 tests) 501ms
+   ✓ V0-SEC adversarial — ExecutionRunner / gate / evidence > V0-SEC-04 launches detached pgid and escalates kill on timeout 354ms
+
+ Test Files  5 passed (5)
+      Tests  41 passed (41)
+   Start at  22:50:06
+   Duration  1.23s (transform 888ms, setup 48ms, collect 1.65s, tests 1.26s, environment 1ms, prepare 369ms)
+
+EXIT_CODE=0
+FINAL_EXIT_CODE=0
+RESIDUAL_FAULTS=NO
+===== RESULTS TSV FINAL =====
+F1|1|0|1
+F2|1|0|1
+F3|1|0|1
+F4|1|0|1
+F5|1|0|1
+F7|1|0|1
+F6|1|0|
+F8|1|0|
+DETECTED=6/8
+
+===== SUMMARY =====
+FAULTS=8 DETECTED=8/8
+BASELINE_EXIT_CODE=0
+FINAL_EXIT_CODE=0
+RESIDUAL_FAULTS=NO
+RESULTS:
+F1|1|0|1
+F2|1|0|1
+F3|1|0|1
+F4|1|0|1
+F5|1|0|1
+F6|1|0|1
+F7|1|0|1
+F8|1|0|1
+UTC_EVIDENCE=2026-11-22T01:50:31Z

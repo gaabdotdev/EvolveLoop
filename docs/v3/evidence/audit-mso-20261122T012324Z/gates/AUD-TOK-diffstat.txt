@@ -1,0 +1,15 @@
+# AUD-TOK-BATCH diffstat (this audit turn)
+# No orchestrator/src edits in AUD-TOK-BATCH — verification + evidence only.
+UTC=2026-11-22T02:04:04Z
+
+## Evidence artefacts written
+[0mAUD-TOK-diffstat.txt
+[0mAUD-TOK-freellmapi-probe.json
+[0mAUD-TOK-ledger-reconcile.json
+[0mAUD-TOK-tests.txt
+[0mAUD-TOK-v1-snapshot.json
+
+## Vitest (token suites)
+Test Files  10 passed (10)
+Tests       52 passed (52)
+EXIT_CODE=0

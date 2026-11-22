@@ -1,0 +1,18 @@
+# AUD-STUB-01 git diff --stat
+# generated: 2026-11-22T01:39:04Z
+
+## Modified (vs HEAD)
+ orchestrator/src/v3/execution-runner/runner.ts | 394 +++++++++++++++++++++----
+ orchestrator/src/v3/execution-runner/types.ts  |  57 +++-
+ 2 files changed, 391 insertions(+), 60 deletions(-)
+
+## Untracked (new / not in HEAD)
+?? docs/v3/evidence/audit-mso-20261122T012324Z/gates/
+?? orchestrator/tests/unit/v1-sec-01-bwrap-wrapper.test.ts
+
+## wc -l of key files
+  561 orchestrator/src/v3/execution-runner/runner.ts
+   94 orchestrator/src/v3/execution-runner/types.ts
+  185 orchestrator/tests/unit/v1-sec-01-bwrap-wrapper.test.ts
+   71 docs/v3/evidence/audit-mso-20261122T012324Z/gates/AUD-STUB-01.md
+  911 total

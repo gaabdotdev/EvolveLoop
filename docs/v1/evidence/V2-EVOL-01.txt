@@ -1,0 +1,16 @@
+V2-EVOL-01 Evolution Pipeline observation-first
+date=2026-11-21T19:21:00-03:00
+--- vitest ---
+
+ RUN  v2.1.9 /home/gaab/orca/workspaces/EvolveLoop/seagrass/orchestrator
+
+ ✓ tests/unit/v1-crystallizer.test.ts (1 test) 3ms
+ ✓ tests/unit/v2-evol-01-evolution-pipeline.test.ts (10 tests) 7ms
+
+ Test Files  2 passed (2)
+      Tests  11 passed (11)
+   Start at  19:21:01
+   Duration  445ms (transform 174ms, setup 19ms, collect 370ms, tests 10ms, environment 0ms, prepare 133ms)
+
+--- tsc --noEmit ---
+TSC_EXIT=0

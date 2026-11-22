@@ -1,0 +1,123 @@
+{
+  "kind": "V0LiveTokenCompareReport",
+  "goals": [
+    "V0-TEST-D"
+  ],
+  "evidence_dir": "/home/gaab/orca/workspaces/EvolveLoop/seagrass/docs/v0/evidence/live-20261121T185643Z",
+  "estimation": "chars/4 proxy for prompts; ledger cost_provenance respected",
+  "prompt_samples": {
+    "baseline": [
+      {
+        "label": "baseline_fire-1",
+        "total_tokens": 2161,
+        "bytes": 8643,
+        "subsystem": "prompt.uncompressed"
+      },
+      {
+        "label": "baseline_fire-2",
+        "total_tokens": 2161,
+        "bytes": 8643,
+        "subsystem": "prompt.uncompressed"
+      },
+      {
+        "label": "baseline_fire-3",
+        "total_tokens": 2161,
+        "bytes": 8643,
+        "subsystem": "prompt.uncompressed"
+      },
+      {
+        "label": "baseline_fire-4",
+        "total_tokens": 2161,
+        "bytes": 8643,
+        "subsystem": "prompt.uncompressed"
+      },
+      {
+        "label": "baseline_fire-5",
+        "total_tokens": 2161,
+        "bytes": 8643,
+        "subsystem": "prompt.uncompressed"
+      }
+    ],
+    "phase": [
+      {
+        "label": "phase_fire-1",
+        "total_tokens": 857,
+        "bytes": 3426,
+        "subsystem": "prompt.telegraphic+skill_compress"
+      },
+      {
+        "label": "phase_fire-2",
+        "total_tokens": 857,
+        "bytes": 3426,
+        "subsystem": "prompt.telegraphic+skill_compress"
+      },
+      {
+        "label": "phase_fire-3",
+        "total_tokens": 857,
+        "bytes": 3426,
+        "subsystem": "prompt.telegraphic+skill_compress"
+      },
+      {
+        "label": "phase_fire-4",
+        "total_tokens": 857,
+        "bytes": 3426,
+        "subsystem": "prompt.telegraphic+skill_compress"
+      },
+      {
+        "label": "phase_fire-5",
+        "total_tokens": 857,
+        "bytes": 3426,
+        "subsystem": "prompt.telegraphic+skill_compress"
+      }
+    ]
+  },
+  "prompt_compare": {
+    "baseline_total": 10805,
+    "phase_total": 4285,
+    "reduction_pct": 60.34243405830634,
+    "meets_target": true,
+    "target_min_pct": 50
+  },
+  "stdout_compare": {
+    "baseline_tokens_est": 682,
+    "phase_tokens_est": 580,
+    "baseline_total": 682,
+    "phase_total": 580,
+    "reduction_pct": 14.95601173020528,
+    "meets_target": false,
+    "target_min_pct": 50,
+    "filter_stats": {
+      "input_lines": 60,
+      "output_lines": 51,
+      "ansi_stripped": false,
+      "passed_tests_hidden": 0,
+      "stack_frames_deduped": 0,
+      "truncated_middle": true
+    },
+    "note": "Measured on captured adapter stdout/stderr when present"
+  },
+  "combined_compare": {
+    "baseline_total": 11487,
+    "phase_total": 4865,
+    "reduction_pct": 57.647775746496045,
+    "meets_target": true,
+    "target_min_pct": 50
+  },
+  "ledger_honesty": [
+    "ledger_rows=10",
+    "cost_provenance_UNAVAILABLE=10/10",
+    "rows_with_token_counts=0",
+    "PROVIDER_REPORTED tokens absent (cursor-agent CLI does not emit usage) — estimates used for reduction %"
+  ],
+  "openrouter": "UNAVAILABLE",
+  "claim_live_reduction": true,
+  "verdict": "PASS_LIVE_REDUCTION_57.65pct",
+  "notes": [
+    "Live adapter token fields typically UNAVAILABLE for cursor-agent — reduction measured on prompt+filter proxies used by V0-TOK stack",
+    "Do not treat chars/4 as billing-grade",
+    "ledger_rows=10",
+    "cost_provenance_UNAVAILABLE=10/10",
+    "rows_with_token_counts=0",
+    "PROVIDER_REPORTED tokens absent (cursor-agent CLI does not emit usage) — estimates used for reduction %"
+  ]
+}

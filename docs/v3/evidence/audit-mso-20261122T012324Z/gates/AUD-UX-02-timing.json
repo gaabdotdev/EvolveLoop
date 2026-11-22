@@ -1,0 +1,12 @@
+{
+  "gate": "AUD-UX-02-timing-probe",
+  "scan_ms": 0.938,
+  "grill_contract_ms": 0.388,
+  "total_ms": 1.326,
+  "under_2min": true,
+  "question_count": 4,
+  "question_count_in_3_to_5": true,
+  "contract_summary_lines": 6,
+  "readiness_for_planning": true,
+  "honesty": "synthetic workspace + default answers; not live interactive evolve wall-clock with human"
+}

@@ -1,0 +1,54 @@
+{
+  "utc": "2026-11-22T01:54:28.571Z",
+  "bwrap": true,
+  "honesty_markers": {
+    "CGROUP_CPU_CONTROLLER": "NÃO_HABILITADO",
+    "MICROVM_LIVE_RUNTIME": "NÃO_HABILITADO",
+    "EBPF_LIVE_RUNTIME": "NÃO_HABILITADO"
+  },
+  "cgroup_probe": {
+    "available": true,
+    "can_memory": true,
+    "can_cpu": false,
+    "can_pids": true,
+    "gaps": [
+      "cpu_max_write_denied"
+    ]
+  },
+  "cgroup_apply": {
+    "applied": true,
+    "mocked": false,
+    "reason": "applied:memory,pids",
+    "gaps": [
+      "cpu_max_write_denied",
+      "cpu_skipped_no_controller"
+    ]
+  },
+  "microvm": {
+    "backend": "unavailable",
+    "gate_status": "PASS_SIMULATED",
+    "notes": [
+      "firecracker_not_on_path",
+      "runsc_not_on_path",
+      "kvm_device_present_informational_only",
+      "backend_status=UNAVAILABLE",
+      "seccomp_mode=simulated",
+      "battery_mode=simulated",
+      "battery_all_denied=true",
+      "gate=PASS_SIMULATED"
+    ]
+  },
+  "ebpf": {
+    "backend_status": "unavailable",
+    "gate_status": "PASS_SIMULATED",
+    "mode": "simulated",
+    "notes": [
+      "cap_bpf_not_effective",
+      "cap_perfmon_not_effective",
+      "bpftool_unavailable",
+      "bpf_fs_inaccessible",
+      "UNAVAILABLE_live_ebpf_requires_cap_bpf_or_sys_admin_and_bpftool",
+      "PASS_SIMULATED_deterministic_oob_correlation"
+    ]
+  }
+}

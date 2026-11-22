@@ -1,0 +1,432 @@
+{
+  "kind": "V1GateTokMetrics",
+  "goal_id": "V1-GATE-TOK",
+  "attempt": "1/3",
+  "ts": "20261121T210140Z",
+  "estimation": "chars/4 proxy",
+  "honesty_rules": "PG-004: distinguish estimated/reported/UNAVAILABLE; no fake live LLM savings",
+  "gate_reduction_basis": "thin_vs_v0_baseline (V0 combined baseline_total; not extended file/RAG inflation)",
+  "v0_baseline_file": "/home/gaab/orca/workspaces/EvolveLoop/seagrass/docs/v0/evidence/latest/04-token-compare.json",
+  "v0_reference": {
+    "path": "/home/gaab/orca/workspaces/EvolveLoop/seagrass/docs/v0/evidence/latest/04-token-compare.json",
+    "combined_baseline": 11630,
+    "combined_phase_v0": 4844,
+    "combined_reduction_v0": 58.349097162510745,
+    "honesty": "estimated",
+    "note": "Authoritative V0 baseline reference; not re-invented"
+  },
+  "combined_gate": {
+    "baseline_total": 11630,
+    "phase_total": 2845,
+    "reduction_pct": 75.53740326741186,
+    "meets_target": true,
+    "target_min_pct": 75,
+    "honesty": "estimated",
+    "notes": [
+      "Same prompt+stdout surface as V0 compare",
+      "V1 adds pin reuse + nl-compress + crystallizer 0-token on tasks 4-5"
+    ]
+  },
+  "counterfactual_without_crystallizer": {
+    "baseline_total": 11630,
+    "phase_total": 4489,
+    "reduction_pct": 61.40154772141015,
+    "meets_target": false,
+    "target_min_pct": 75,
+    "honesty": "estimated",
+    "notes": [
+      "Audit-only: tasks 4-5 charged as pin-cache suffix (not 0-token)",
+      "NOT used for PASS/FAIL — shows crystallizer contribution to ceiling"
+    ],
+    "role": "audit_only_not_pass_basis"
+  },
+  "extended_true_full_pass_supplemental": {
+    "baseline_total": 53170,
+    "phase_total": 3247,
+    "reduction_pct": 93.8931728418281,
+    "meets_target": true,
+    "target_min_pct": 75,
+    "honesty": "estimated",
+    "notes": [
+      "Baseline = V0 uncompressed prompt+stdout + naive full-file + RAG + growing history",
+      "Phase = V1 pin/nl/telegraphic/crystallizer + outline/read_lines + prune + O(1) snapshot + filtered stdout"
+    ],
+    "baseline_breakdown": {
+      "v0_prompt": 10805,
+      "v0_stdout": 825,
+      "naive_full_file": 37060,
+      "naive_rag": 2200,
+      "naive_history": 2280
+    },
+    "phase_breakdown": {
+      "prompts_with_v1_stack": 2941,
+      "stdout_filtered": 306,
+      "pin_cache_hits": 2
+    },
+    "phase_samples": [
+      {
+        "label": "v1_fire-1",
+        "total_tokens": 1027,
+        "subsystem": "v1.pin_full+slice+prune+snapshot+nl",
+        "cache_hit": false
+      },
+      {
+        "label": "v1_fire-2",
+        "total_tokens": 957,
+        "subsystem": "v1.pin_cache_hit+slice+prune+snapshot+nl",
+        "cache_hit": true
+      },
+      {
+        "label": "v1_fire-3",
+        "total_tokens": 957,
+        "subsystem": "v1.pin_cache_hit+slice+prune+snapshot+nl",
+        "cache_hit": true
+      },
+      {
+        "label": "v1_fire-4",
+        "total_tokens": 0,
+        "subsystem": "crystallizer.zero_token_script",
+        "cache_hit": false
+      },
+      {
+        "label": "v1_fire-5",
+        "total_tokens": 0,
+        "subsystem": "crystallizer.zero_token_script",
+        "cache_hit": false
+      }
+    ],
+    "thin_samples": [
+      {
+        "label": "thin_fire-1",
+        "total_tokens": 895,
+        "cache_hit": false
+      },
+      {
+        "label": "thin_fire-2",
+        "total_tokens": 822,
+        "cache_hit": true
+      },
+      {
+        "label": "thin_fire-3",
+        "total_tokens": 822,
+        "cache_hit": true
+      },
+      {
+        "label": "thin_fire-4",
+        "total_tokens": 0
+      },
+      {
+        "label": "thin_fire-5",
+        "total_tokens": 0
+      }
+    ]
+  },
+  "thin_vs_v0_baseline": {
+    "baseline_total": 11630,
+    "phase_total": 2845,
+    "reduction_pct": 75.53740326741186,
+    "meets_target": true,
+    "target_min_pct": 75,
+    "honesty": "estimated",
+    "notes": [
+      "Same prompt+stdout surface as V0 compare",
+      "V1 adds pin reuse + nl-compress + crystallizer 0-token on tasks 4-5"
+    ]
+  },
+  "techniques": {
+    "o1_stateless_snapshot": {
+      "iterations": 5,
+      "sizes": [
+        1652,
+        1652,
+        1652,
+        1652,
+        1652
+      ],
+      "byte_length": 1652,
+      "proven": true,
+      "honesty": "estimated"
+    },
+    "crystallizer": {
+      "threshold": 3,
+      "runs": [
+        {
+          "status": "recorded",
+          "tokens_used": 100,
+          "success_count": 1,
+          "crystallized": false
+        },
+        {
+          "status": "recorded",
+          "tokens_used": 100,
+          "success_count": 2,
+          "crystallized": false
+        },
+        {
+          "status": "crystallized",
+          "tokens_used": 100,
+          "success_count": 3,
+          "crystallized": true
+        },
+        {
+          "status": "zero_token_script",
+          "tokens_used": 0,
+          "success_count": 3,
+          "crystallized": true
+        }
+      ],
+      "zero_token_proven": true,
+      "honesty": "estimated"
+    },
+    "context_slicing": {
+      "baseline_total": 7412,
+      "phase_total": 118,
+      "reduction_pct": 98.40798704803022,
+      "meets_target": true,
+      "target_min_pct": 75,
+      "honesty": "estimated",
+      "notes": [
+        "full_file vs outlineFile+readLines",
+        "outline_entries=3",
+        "read_lines=3",
+        "hard_cap=80"
+      ],
+      "full_tokens": 7412,
+      "phase_tokens": 118
+    },
+    "prune": {
+      "baseline_total": 440,
+      "phase_total": 34,
+      "reduction_pct": 92.27272727272727,
+      "meets_target": true,
+      "target_min_pct": 75,
+      "honesty": "estimated",
+      "notes": [
+        "kept=3",
+        "dropped=36"
+      ],
+      "stats": {
+        "input_snippets": 3,
+        "input_sentences": 39,
+        "kept_sentences": 3,
+        "dropped_sentences": 36,
+        "budget_tokens": 80,
+        "used_tokens": 34
+      }
+    },
+    "tombstone": {
+      "baseline_total": 1820,
+      "phase_total": 921,
+      "reduction_pct": 49.395604395604394,
+      "meets_target": false,
+      "target_min_pct": 75,
+      "honesty": "estimated",
+      "notes": [
+        "tombstoned=3",
+        "marker=[lápide:tool]"
+      ],
+      "stats": {
+        "scanned": 6,
+        "tool_messages": 6,
+        "tombstoned": 3,
+        "preserved": 3,
+        "marker": "[lápide:tool]",
+        "max_age_turns": 2,
+        "current_turn": 5
+      }
+    },
+    "prefix_pinning": {
+      "prefix_hash": "898247766ad157d622bec6fbbcc6f3dc019789b9ea2e74cc4315e18e4b24f32c",
+      "identical_prefix_all_turns": true,
+      "cache_hits": 4,
+      "turns": [
+        {
+          "turn": 1,
+          "prefix_hash": "898247766ad157d622bec6fbbcc6f3dc019789b9ea2e74cc4315e18e4b24f32c",
+          "cache_hit": false
+        },
+        {
+          "turn": 2,
+          "prefix_hash": "898247766ad157d622bec6fbbcc6f3dc019789b9ea2e74cc4315e18e4b24f32c",
+          "cache_hit": true
+        },
+        {
+          "turn": 3,
+          "prefix_hash": "898247766ad157d622bec6fbbcc6f3dc019789b9ea2e74cc4315e18e4b24f32c",
+          "cache_hit": true
+        },
+        {
+          "turn": 4,
+          "prefix_hash": "898247766ad157d622bec6fbbcc6f3dc019789b9ea2e74cc4315e18e4b24f32c",
+          "cache_hit": true
+        },
+        {
+          "turn": 5,
+          "prefix_hash": "898247766ad157d622bec6fbbcc6f3dc019789b9ea2e74cc4315e18e4b24f32c",
+          "cache_hit": true
+        }
+      ],
+      "baseline_total": 475,
+      "phase_total": 215,
+      "reduction_pct": 54.736842105263165,
+      "meets_target": false,
+      "target_min_pct": 75,
+      "honesty": "estimated",
+      "notes": [
+        "cache_hit charges dynamic suffix only after turn 1",
+        "simulated identical prefix hashes (KV-cache concept)"
+      ]
+    },
+    "nl_compress": {
+      "baseline_total": 85,
+      "phase_total": 52,
+      "reduction_pct": 38.82352941176471,
+      "meets_target": false,
+      "target_min_pct": 75,
+      "honesty": "estimated",
+      "notes": [
+        "ratio_requested=0.45",
+        "ratio_achieved=0.6094674556213018",
+        "code_segments_preserved=2"
+      ],
+      "original_chars": 338,
+      "compressed_chars": 206
+    },
+    "fast_apply": {
+      "baseline_total": 55,
+      "phase_total": 31,
+      "reduction_pct": 43.63636363636363,
+      "meets_target": false,
+      "target_min_pct": 75,
+      "honesty": "estimated",
+      "notes": [
+        "compact CompactEditPlan vs verbose brain prose"
+      ],
+      "plan_tokens_proxy": 31,
+      "within_soft_budget": {
+        "ok": false,
+        "tokens": 31,
+        "soft_min": 50,
+        "soft_max": 100
+      }
+    },
+    "speculative_local_resolution": {
+      "fixture_count": 5,
+      "local_resolved": 4,
+      "local_resolution_rate": 0.8,
+      "layer2_invocations": 1,
+      "reports": [
+        {
+          "id": "local-green-1",
+          "layer2_invoked": false,
+          "final_ok": true,
+          "reason": "green_local_path",
+          "tokens_proxy": 8
+        },
+        {
+          "id": "local-green-2",
+          "layer2_invoked": false,
+          "final_ok": true,
+          "reason": "green_local_path",
+          "tokens_proxy": 8
+        },
+        {
+          "id": "local-green-3",
+          "layer2_invoked": false,
+          "final_ok": true,
+          "reason": "green_local_path",
+          "tokens_proxy": 8
+        },
+        {
+          "id": "local-fail-escalate",
+          "layer2_invoked": true,
+          "final_ok": true,
+          "reason": "escalated_ok",
+          "tokens_proxy": 48
+        },
+        {
+          "id": "local-green-4",
+          "layer2_invoked": false,
+          "final_ok": true,
+          "reason": "green_local_path",
+          "tokens_proxy": 8
+        }
+      ],
+      "honesty": "estimated",
+      "notes": [
+        "fixture set; not live LLM"
+      ]
+    },
+    "constrained_decoding": {
+      "n": 100,
+      "grammar_attach_ok": 100,
+      "parse_failures": 0,
+      "parse_failure_pct": 0,
+      "adversarial_rejected": true,
+      "ollama": "UNAVAILABLE_offline_grammar_validate_loop",
+      "honesty": "estimated",
+      "samples_head_tail": [
+        {
+          "i": 0,
+          "sample": "ok",
+          "valid": true,
+          "constrained": true
+        },
+        {
+          "i": 1,
+          "sample": "fail",
+          "valid": true,
+          "constrained": true
+        },
+        {
+          "i": 2,
+          "sample": "ok",
+          "valid": true,
+          "constrained": true
+        },
+        {
+          "i": 3,
+          "sample": "fail",
+          "valid": true,
+          "constrained": true
+        },
+        {
+          "i": 4,
+          "sample": "ok",
+          "valid": true,
+          "constrained": true
+        },
+        {
+          "i": 98,
+          "sample": "ok",
+          "valid": true,
+          "constrained": true
+        },
+        {
+          "i": 99,
+          "sample": "fail",
+          "valid": true,
+          "constrained": true
+        }
+      ],
+      "notes": [
+        "Offline grammar validate loop — not live Ollama constrained decode",
+        "0% parse failures required on 100 grammar-shaped calls"
+      ]
+    }
+  },
+  "verdict": {
+    "kind": "V1GateTokVerdict",
+    "pass": true,
+    "label": "V1-GATE-TOK_PASS_75.54pct",
+    "reasons": [
+      "OK_REDUCTION: measured 75.54% >= 75%",
+      "OK_CRYSTALLIZER: 0-token path proven",
+      "OK_O1_SNAPSHOT: stable across 5 iterations"
+    ],
+    "target_min_pct": 75,
+    "measured_reduction_pct": 75.53740326741186
+  },
+  "openrouter": "UNAVAILABLE",
+  "live_llm_savings": "UNAVAILABLE"
+}
