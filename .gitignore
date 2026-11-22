@@ -20,8 +20,8 @@ agent-setup/.pytest_cache/
 *.pyc
 *.tsbuildinfo
 
-# Local memory / sessions / workspaces
-memory/
+# Local memory artefacts (repo-root only) — NOT source under orchestrator/src/**/memory/
+/memory/
 *-workspace/
 security-workspace/
 **/runs/
@@ -57,3 +57,7 @@ orchestrator/v36-live-run/
 
 # Local absolute skill symlinks (machine-specific); agents/rules stay tracked
 .agents/skills/
+
+# Consolidation hygiene (exports / caches)
+*.zip
+.vite/
